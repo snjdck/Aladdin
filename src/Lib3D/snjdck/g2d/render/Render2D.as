@@ -1,6 +1,5 @@
 package snjdck.g2d.render
 {
-	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
 	import flash.geom.Matrix;
 	
@@ -10,12 +9,10 @@ package snjdck.g2d.render
 	import snjdck.g2d.core.ITexture2D;
 	import snjdck.g2d.support.QuadBatch;
 	import snjdck.g2d.support.VertexData;
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.IGpuTexture;
 	import snjdck.g3d.asset.helper.AssetMgr;
 	import snjdck.g3d.asset.helper.ShaderName;
-	import snjdck.g3d.core.BlendMode;
-	import snjdck.g3d.ns_g3d;
 	
 	use namespace ns_g3d;
 
