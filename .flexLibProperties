@@ -1,38 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
   <includeClasses>
-    <classEntry path="ui.popup.NormalButton"/>
-    <classEntry path="snjdck.tesla.kernel.services.INoticeService"/>
-    <classEntry path="snjdck.tesla.kernel.services.impl.NoticeService"/>
-    <classEntry path="system.getURL"/>
-    <classEntry path="system.callJS"/>
-    <classEntry path="snjdck.g3d.core.IDrawUnitCollector"/>
-    <classEntry path="snjdck.g3d.asset.impl.GpuFrameBuffer"/>
-    <classEntry path="snjdck.g3d.asset.impl.GpuRenterTarget"/>
-    <classEntry path="snjdck.g3d.core.ViewPort3D"/>
-    <classEntry path="snjdck.g3d.asset.helper.GpuColor"/>
-    <classEntry path="snjdck.g2d.obj2d.Scale9Image"/>
-    <classEntry path="snjdck.g2d.pick.PickCollector2D"/>
-    <classEntry path="snjdck.g2d.ns_g2d"/>
-    <classEntry path="snjdck.g2d.core.IDisplayObject"/>
-    <classEntry path="snjdck.net.socket.IPacket"/>
-    <classEntry path="snjdck.net.socket.PacketTrait"/>
-    <classEntry path="system.isAdobeAir"/>
-    <classEntry path="snjdck.g2d.obj2d.MaskImage"/>
-    <classEntry path="vec2.dotProd"/>
-    <classEntry path="geom2d.getProjectPtOnLine"/>
-    <classEntry path="vec2.crossProd"/>
-    <classEntry path="geom2d.isPtInCircle"/>
-    <classEntry path="snjdck.tesla.kernel.services.INotificationService"/>
-    <classEntry path="snjdck.ai.navmesh.Bound"/>
-    <classEntry path="snjdck.ai.navmesh.Edge"/>
-    <classEntry path="snjdck.ai.navmesh.test.DebugDrawer"/>
-    <classEntry path="snjdck.ai.navmesh.Triangle"/>
-    <classEntry path="snjdck.ai.navmesh.TriAstarNode"/>
-    <classEntry path="snjdck.ai.navmesh.ScanArea"/>
-    <classEntry path="snjdck.ai.navmesh.Delaunay"/>
-    <classEntry path="snjdck.ai.navmesh.test.TestNavMesh"/>
-    <classEntry path="geom3d.createIsoMatrix"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>
