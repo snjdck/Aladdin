@@ -1,8 +1,10 @@
 package snjdck.entityengine.components
 {
 	import flash.geom.Point;
+	
+	import snjdck.entityengine.IComponent;
 
-	public class PositionComponent
+	public class PositionComponent implements IComponent
 	{
 		public var x:Number;
 		public var y:Number;

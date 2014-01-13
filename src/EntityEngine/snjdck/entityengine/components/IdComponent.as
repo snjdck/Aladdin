@@ -1,6 +1,8 @@
 package snjdck.entityengine.components
 {
-	public class IdComponent
+	import snjdck.entityengine.IComponent;
+
+	public class IdComponent implements IComponent
 	{
 		public var id:String;
 		

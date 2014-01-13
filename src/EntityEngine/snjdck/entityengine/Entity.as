@@ -1,28 +1,29 @@
 package snjdck.entityengine
 {
-	import flash.utils.Dictionary;
-	
 	import dict.deleteKey;
 	import dict.hasKey;
+	
+	import flash.utils.Dictionary;
 	
 	import snjdck.signal.ISignal;
 	import snjdck.signal.Signal;
 	
 	import stdlib.reflection.getType;
 
-	public class Entity
+	public class Entity implements IComponent
 	{
 		public const onComponentAdd:Signal = new Signal(Entity);
 		public const onComponentDel:Signal = new Signal(Entity);
 		
 		private const componentDict:Object = new Dictionary();
+		private const behaviorDict:Object = new Dictionary();
 		
 		public function Entity()
 		{
 			addComponent(this, Entity);
 		}
 		
-		public function addComponent(component:Object, componentType:Class=null):void
+		public function addComponent(component:IComponent, componentType:Class=null):void
 		{
 			if(null == componentType){
 				componentType = getType(component);
@@ -39,7 +40,7 @@ package snjdck.entityengine
 			if(false == hasComponent(componentType)){
 				return;
 			}
-			var component:Object = deleteKey(componentDict, componentType);
+			var component:IComponent = deleteKey(componentDict, componentType);
 			onComponentDel.notify(this);
 			return component;
 		}
@@ -51,7 +52,39 @@ package snjdck.entityengine
 		
 		public function getComponent(componentType:Class):*
 		{
-			return componentDict[componentType];
+			var component:IComponent = componentDict[componentType];
+			return component;
+		}
+		
+		public function addBehavior(behavior:IBehavior, behaviorType:Class=null):void
+		{
+			if(null == behaviorType){
+				behaviorType = getType(behavior);
+			}
+			if(hasBehavior(behaviorType)){
+				return;
+			}
+			behaviorDict[behaviorType] = behavior;
+		}
+		
+		public function delBehavior(behaviorType:Class):*
+		{
+			if(false == hasBehavior(behaviorType)){
+				return;
+			}
+			var behavior:IBehavior = deleteKey(behaviorDict, behaviorType);
+			return behavior;
+		}
+		
+		public function hasBehavior(behaviorType:Class):Boolean
+		{
+			return hasKey(behaviorDict, behaviorType);
+		}
+		
+		public function getBehavior(behaviorType:Class):*
+		{
+			var behavior:IBehavior = behaviorDict[behaviorType];
+			return behavior;
 		}
 	}
 }
