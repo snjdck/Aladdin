@@ -1,12 +1,13 @@
 package snjdck.g2d.impl
 {
-	import flash.geom.Matrix;
-	
 	import array.delAt;
 	import array.insert;
 	
+	import flash.geom.Matrix;
+	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.asset.IGpuContext;
 	
 	public class DisplayObjectContainer2D extends DisplayObject2D implements IDisplayObjectContainer2D
@@ -124,6 +125,25 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
+		override public function draw(render2d:Render2D, context3d:IGpuContext):void
+		{
+			for each(var child:DisplayObject2D in _childList){
+				child.draw(render2d, context3d);
+			}
+		}
+		
+		override public function pickup(px:Number, py:Number):IDisplayObject2D
+		{
+			for each(var child:DisplayObject2D in _childList){
+				var target:IDisplayObject2D = child.pickup(px, py);
+				if(target != null){
+					return target;
+				}
+			}
+			return null;
+		}
+		
+		/*
 		override public function collectDrawUnits(collector:Collector2D):void
 		{
 			for each(var child:DisplayObject2D in _childList){
@@ -137,6 +157,7 @@ package snjdck.g2d.impl
 				child.collectPickUnits(collector, px, py);
 			}
 		}
+		*/
 		
 		override public function preDrawRenderTargets(context3d:IGpuContext):void
 		{

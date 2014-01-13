@@ -2,10 +2,10 @@ package snjdck.g2d.obj2d
 {
 	import flash.geom.Rectangle;
 	
-	import snjdck.g2d.impl.Collector2D;
 	import snjdck.g2d.impl.DisplayObject2D;
-	import snjdck.g2d.render.DrawUnit2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.texture.Texture2D;
+	import snjdck.g3d.asset.IGpuContext;
 
 	public class Image extends DisplayObject2D
 	{
@@ -39,7 +39,7 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		override public function collectDrawUnits(collector:Collector2D):void
+		override public function draw(render2d:Render2D, context3d:IGpuContext):void
 		{
 			if(null == texture || false == visible){
 				return;
@@ -49,12 +49,7 @@ package snjdck.g2d.obj2d
 				return;
 			}
 			
-			var drawUnit:DrawUnit2D = collector.getFreeDrawUnit();
-			
-			drawUnit.target = this;
-			drawUnit.texture = texture;
-			
-			collector.addDrawUnit(drawUnit);
+			render2d.draw(context3d, this, texture);
 		}
 	}
 }

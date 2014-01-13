@@ -3,10 +3,11 @@ package snjdck.g2d.obj2d
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	import snjdck.g2d.impl.Collector2D;
 	import snjdck.g2d.impl.DisplayObject2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.texture.SubTexture2D;
 	import snjdck.g2d.texture.Texture2D;
+	import snjdck.g3d.asset.IGpuContext;
 	
 	final public class Scale9Image extends DisplayObject2D
 	{
@@ -143,6 +144,25 @@ package snjdck.g2d.obj2d
 			bottomRight.y = bottomY;
 		}
 		
+		override public function draw(render2d:Render2D, context3d:IGpuContext):void
+		{
+			if(false == visible){
+				return;
+			}
+			
+			topLeft.draw(render2d, context3d);
+			top.draw(render2d, context3d);
+			topRight.draw(render2d, context3d);
+			
+			left.draw(render2d, context3d);
+			center.draw(render2d, context3d);
+			right.draw(render2d, context3d);
+			
+			bottomLeft.draw(render2d, context3d);
+			bottom.draw(render2d, context3d);
+			bottomRight.draw(render2d, context3d);
+		}
+		/*
 		override public function collectDrawUnits(collector:Collector2D):void
 		{
 			if(false == visible){
@@ -161,7 +181,7 @@ package snjdck.g2d.obj2d
 			bottom.collectDrawUnits(collector);
 			bottomRight.collectDrawUnits(collector);
 		}
-		
+		*/
 		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
 		{
 			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);

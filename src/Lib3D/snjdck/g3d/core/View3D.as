@@ -6,31 +6,21 @@ package snjdck.g3d.core
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 	import flash.system.Capabilities;
 	import flash.utils.getTimer;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
-	import snjdck.g2d.impl.DisplayObjectContainer2D;
-	import snjdck.g2d.render.DrawUnitCollector2D;
-	import snjdck.g2d.render.Render2D;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.asset.impl.GpuAssetFactory;
 	import snjdck.g3d.asset.impl.GpuFrameBuffer;
-	import snjdck.g3d.geom.ProjectionFactory;
-	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
-	import snjdck.g3d.render.DrawUnitCollector3D;
-	import snjdck.g3d.render.Render3D;
+	import snjdck.g3d.ns_g3d;
 	
 	use namespace ns_g3d;
 	
 	public class View3D extends Sprite
 	{
-		
 		private var hasInit:Boolean;
 		
 		private var frameBuffer:GpuFrameBuffer;

@@ -4,14 +4,18 @@ package snjdck.g2d.core
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import snjdck.g2d.impl.Collector2D;
+	import snjdck.g2d.render.Render2D;
+	import snjdck.g3d.asset.IGpuContext;
 
 	public interface IDisplayObject2D extends IDisplayObject
 	{
 		function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void;
-		
+		/*
 		function collectDrawUnits(collector:Collector2D):void;
 		function collectPickUnits(collector:Collector2D, px:Number, py:Number):void;
+		*/
+		function draw(render2d:Render2D, context3d:IGpuContext):void;
+		function pickup(px:Number, py:Number):IDisplayObject2D;
 		
 		function getRect(targetCoordinateSpace:IDisplayObject2D):Rectangle;
 		

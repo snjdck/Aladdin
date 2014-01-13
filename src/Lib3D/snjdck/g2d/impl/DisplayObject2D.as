@@ -10,7 +10,7 @@ package snjdck.g2d.impl
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
-	import snjdck.g2d.render.DrawUnit2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.core.BlendMode;
 
@@ -90,6 +90,31 @@ package snjdck.g2d.impl
 		*/
 		private const tempPoint:Point = new Point();
 		
+		virtual public function draw(render2d:Render2D, context3d:IGpuContext):void
+		{
+		}
+		
+		virtual public function pickup(px:Number, py:Number):IDisplayObject2D
+		{
+			if(false == visible){
+				return null;
+			}
+			
+			transformCoords(_worldMatrixInvert, px, py, tempPoint);
+			
+			if(tempPoint.x >= 0
+				&& tempPoint.y >= 0
+				&& tempPoint.x < width
+				&& tempPoint.y < height
+			){
+				return this;
+			}
+			
+			return null;
+		}
+		
+		
+		/*
 		virtual public function collectDrawUnits(collector:Collector2D):void
 		{
 		}
@@ -112,7 +137,7 @@ package snjdck.g2d.impl
 				collector.addDrawUnit(pickUnit);
 			}
 		}
-		
+		*/
 		virtual public function preDrawRenderTargets(context3d:IGpuContext):void
 		{
 		}

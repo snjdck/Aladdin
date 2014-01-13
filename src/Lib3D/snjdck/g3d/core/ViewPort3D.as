@@ -9,16 +9,13 @@ package snjdck.g3d.core
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
-	import snjdck.g2d.pick.PickCollector2D;
-	import snjdck.g2d.render.DrawUnit2D;
-	import snjdck.g2d.render.DrawUnitCollector2D;
 	import snjdck.g2d.render.Render2D;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.asset.IRenderTarget;
 	import snjdck.g3d.geom.ProjectionFactory;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.Render3D;
 	
@@ -33,9 +30,9 @@ package snjdck.g3d.core
 		public const render2d:Render2D = new Render2D();
 		
 		private const collector3d:DrawUnitCollector3D = new DrawUnitCollector3D();
-		private const collector2d:DrawUnitCollector2D = new DrawUnitCollector2D();
+//		private const collector2d:DrawUnitCollector2D = new DrawUnitCollector2D();
 		
-		private const pickCollector2d:PickCollector2D = new PickCollector2D();
+//		private const pickCollector2d:PickCollector2D = new PickCollector2D();
 		
 		public var lens:Matrix3D;
 		private var isoMatrix:Matrix3D;
@@ -69,20 +66,20 @@ package snjdck.g3d.core
 			scene2d.preDrawRenderTargets(context3d);
 			
 			scene3d.collectDrawUnit(collector3d, null);
-			scene2d.collectDrawUnits(collector2d);
+//			scene2d.collectDrawUnits(collector2d);
 			
 			collector3d.onFrameBegin();
-			collector2d.onFrameBegin();
+//			collector2d.onFrameBegin();
 			
 			context3d.setRenderToTexture(renderTarget);
 			renderTarget.clear(context3d);
 			
-			render2d.preDrawDepth(context3d, collector2d);
 			render3d.draw(context3d, collector3d, lens);
-			render2d.draw(context3d, collector2d);
+			scene2d.draw(render2d, context3d);
+//			render2d.draw(context3d, collector2d);
 			
 			collector3d.clear();
-			collector2d.clear();
+//			collector2d.clear();
 		}
 		
 		public function dispose():void
@@ -91,10 +88,13 @@ package snjdck.g3d.core
 		
 		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D
 		{
+			/*
 			scene2d.collectPickUnits(pickCollector2d, px, py);
 			pickCollector2d.onFrameBegin();
 			var firstDrawUnit:DrawUnit2D = pickCollector2d.getFirstDrawUnit();
 			return null == firstDrawUnit ? null : firstDrawUnit.target;
+			*/
+			return scene2d.pickup(px, py);
 		}
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
@@ -121,7 +121,7 @@ package snjdck.g3d.core
 			return result[0];
 		}
 		
-		static private function __sort (a:RayTestInfo, b:RayTestInfo):int
+		static private function __sort(a:RayTestInfo, b:RayTestInfo):int
 		{
 			var pa:Vector3D = a.globalPos;
 			var pb:Vector3D = b.globalPos;
