@@ -18,7 +18,7 @@ package snjdck.g2d.render
 		public var texture:ITexture2D;
 		
 		ns_g2d var index:int;
-		ns_g2d var layer:int;
+//		ns_g2d var layer:int;
 		ns_g2d var z:Number;
 		
 		public function DrawUnit2D()

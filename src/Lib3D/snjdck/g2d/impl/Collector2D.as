@@ -37,7 +37,6 @@ package snjdck.g2d.impl
 			var target:IDisplayObject2D = drawUnit.target;
 			
 			drawUnit.index = quadList.length;
-			drawUnit.layer = target.layer;
 			
 			quadList[quadList.length] = drawUnit;
 		}
@@ -66,9 +65,6 @@ package snjdck.g2d.impl
 		 */
 		static private function _sortQuadList(left:DrawUnit2D, right:DrawUnit2D):int
 		{
-			if(left.layer != right.layer){
-				return left.layer > right.layer ? -1 : 1;
-			}
 			return left.index > right.index ? -1 : 1;
 		}
 	}

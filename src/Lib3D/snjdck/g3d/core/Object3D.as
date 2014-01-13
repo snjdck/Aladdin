@@ -36,7 +36,6 @@ package snjdck.g3d.core
 		ns_g3d const worldMatrix:Matrix3D = new Matrix3D();
 		
 		public var width:Number, height:Number, length:Number;
-		private var _layer:int;
 		private var _alpha:Number = 0;
 		private var _visible:Boolean;
 		public var name:String;
@@ -336,16 +335,6 @@ package snjdck.g3d.core
 		public function set visible(value:Boolean):void
 		{
 			_visible = value;
-		}
-		
-		final public function get layer():int
-		{
-			return _layer;
-		}
-		
-		final public function set layer(value:int):void
-		{
-			_layer = value;
 		}
 		
 		public function removeFromParent():void

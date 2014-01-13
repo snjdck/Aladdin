@@ -20,7 +20,6 @@ package snjdck.g2d.impl
 		private var _y:Number, _scaleY:Number, _pivotY:Number;
 		private var _rotation:Number;
 		protected var _width:Number, _height:Number;
-		private var _layer:int;
 		
 		private var _color:uint;
 		private var _alpha:Number;
@@ -47,7 +46,6 @@ package snjdck.g2d.impl
 			_scaleX = _scaleY = 1;
 			_rotation = 0;
 			_width = _height = 0;
-			_layer = 0;
 			_color = 0xFFFFFF;
 			_alpha = 1;
 			_visible = true;
@@ -210,16 +208,6 @@ package snjdck.g2d.impl
 		{
 			_y = value;
 			isLocalMatrixDirty = true;
-		}
-
-		final public function get layer():int
-		{
-			return _layer;
-		}
-
-		final public function set layer(value:int):void
-		{
-			_layer = value;
 		}
 
 		public function get scaleX():Number

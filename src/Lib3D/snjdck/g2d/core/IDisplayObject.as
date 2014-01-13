@@ -29,9 +29,6 @@ package snjdck.g2d.core
 		function get blendMode():BlendMode;
 		function set blendMode(value:BlendMode):void;
 		
-		function get layer():int;
-		function set layer(value:int):void;
-		
 		function preDrawRenderTargets(context3d:IGpuContext):void;
 		function removeFromParent():void;
 	}
