@@ -1,0 +1,240 @@
+﻿The overall order of operations for a frame in Flash with AS3 includes:
+
+User interaction (Events like CLICK, MOUSE_MOVE, etc)
+ENTER_FRAME (Event)
+Constructors called for timeline instances
+FRAME_CONSTRUCTED (Event, FP10+)
+Frame scripts defined in the timeline
+EXIT_FRAME (Event, FP10+)
+RENDER (Event, only if stage.invalidate() is called in this frame)
+
+
+sdks\4.6.0\frameworks\libs\player
+
+
+
+FB -> 导航 - 打开调用层次结构
+FB -> 搜索 - 引用 && 声明
+
+<![CDATA[
+	|-------------------------------------------------------------------|
+	|	组			|	运算符											|
+	|---------------|---------------------------------------------------|
+	|	主要			|	[] {x:y} () f(x) new x.y x[y] <></> @ :: ..		|
+	|	后缀			|	x++ x--  										|
+	|	一元			|	++x --x + - ~ ! delete typeof void  			|
+	|	乘法			|	* / %  											|
+	|	加法			|	+ -  											|
+	|	按位移位		|	<< >> >>>  										|
+	|	关系			|	< > <= >= as in instanceof is  					|
+	|	等于			|	== != === !==  									|
+	|	按位"与"		|	&  												|
+	|	按位"异或"	|	^  												|
+	|	按位"或"		|	|  												|
+	|	逻辑"与"		|	&&  											|
+	|	逻辑"或"		|	||  											|
+	|	条件			|	?:  											|
+	|	赋值			|	= *= /= %= += -= <<= >>= >>>= &= ^= |=  		|
+	|	逗号			|	,  												|
+	|-------------------------------------------------------------------|
+	
+	Boolean()为true的情况:
+	
+		数字（非 0 或 NaN）		Boolean(4)				true
+		非空字符串				Boolean("6")			true
+		Object 类的实例			Boolean(new Object())	true
+		
+		0						Boolean(0)				false
+		NaN						Boolean(NaN)			false
+		
+		空字符串					Boolean("")				false
+		
+		null					Boolean(null)			false
+		undefined				Boolean(undefined)		false
+		无参数					Boolean()				false
+		
+		
+	正则表达式:
+		\
+		() [] (?:) (?=) (?!) (?P<name>)
+		* + ? {n} {n,} {m,n}
+		^ $ \metaChar
+		|
+	
+	字符串转义:
+	\unnnn	Unicode 字符，字符代码由十六进制数 nnnn 指定。例如，\u263a 是一个微笑字符。
+	\xnn	ASCII 字符，字符代码由十六进制数 nn 指定。 
+]]>;
+
+[ExcludeClass] 在智能提示中隐藏该类
+[Deprecated] 类已弃用
+
+asdoc：
+@throws 类名 描述
+
+arthropod air调试输出工具
+
+var myString:String = <![CDATA[第一行 第二行 第三行]]>;
+
+编程字体:
+10. Courier New
+9. ANDALE MONO
+8. MONACO
+7. PROFONT
+6. MONOFUR
+5. PROGGY
+4. DROID SANS MONO
+3. DEJA VU SANS MONO
+2. CONSOLAS
+1. INCONSOLATA
+
+正常使用3D加速功能
+html-template/index.template.htm中
+params.allowfullscreen = "true";
+params.wmode = "direct";//(新添加)
+
+socket协议设计:
+AMF3(4字节协议头) + 数据长度(2字节,后面数据的长度) //一共6字节,用于实现完整的传输一段数据至服务端
+压缩标志(1字节) - body段是否有压缩
+head段:
+消息UID(2字节) - 服务端处理后返回此uid,客户端用此uid来判断回调哪个函数
+消息ID(2字节) - 走路,上线等消息
+body段:
+amf3编码的数据
+
+svn http://subclipse.tigris.org/update_1.6.x
+Appraiser 估价师,鉴定人
+
+调试器下载
+http://www.adobe.com/support/flashplayer/downloads.html
+
+窗口背景色,85,123,205
+改变标记元素的颜色,102,205,255
+Window/preferences/general/Editors/Text Editors/Annotations/Occurences
+窗口/首选参数/常规/编辑器/文本编辑器/注释/ActionScript出现
+
+http协议抓包
+http://www.ieinspector.com/httpanalyzer/download.html
+http://www.fiddler2.com/fiddler2/version.asp
+
+火狐调试器
+Firebug插件下载地址：https://addons.mozilla.org/zh-CN/firefox/addons/versions/1843
+Flashbug插件下载地址：https://addons.mozilla.org/zh-CN/firefox/addon/14465
+
+<![CDATA[文本]]>
+<t><![CDATA[文本]]></t>.toString()
+Request
+Respond
+
+-include-libraries "${flexlib}/libs/automation.swc" "${flexlib}/libs/automation_agent.swc"
+-include-libraries D:\AsWing.swc D:\greensock.swc
+
+-keep-as3-metadata Inject
+-defaults-css-url "default.css"
+
+debug=true|false | 是否可以进行调试
+debug-password string | 远程调试用，设置密码
+-define=CONFIG::debugging,true 定义常量,如果需要多个常量,定义多次即可
+-define=CONFIG::release,false 可以接受的值为boolean,string或number,也可以为在编译时可计算出值的表达式
+-define=CONFIG::DEBUG,true -define=CONFIG::RELEASE,"!CONFIG::DEBUG"
+-define=CONFIG::SHAOKAI,false
+
+You can use inline constants in ActionScript. 
+Boolean values can be used to conditionalize top-level definitions of functions, classes, and variables
+
+
+CONFIG::debugging {
+    // Execute debugging code here.
+}
+
+
+// compilers/MyButton.as
+package  {
+    import mx.controls.Button;
+
+    CONFIG::debugging
+    public class MyButton extends Button {    
+        public function MyButton() {
+            super();
+            // Set the label text to blue.
+            setStyle("color", 0x0000FF);
+        }
+    }
+
+    CONFIG::release
+    public class MyButton extends Button {    
+        public function MyButton() {
+            super();
+            // Set the label text to red.
+            setStyle("color", 0xFF0000);
+        }
+    }
+}
+
+
+		private static var instance:Global;
+		public static function get e():Global
+		{
+			if(null == instance)
+				instance = new Global();
+			return instance;
+		}
+
+-default-size 800 600
+-default-frame-rate 24
+-default-background-color 0xCCCCFF
+
+-default-size 960 600 -default-frame-rate 30 -default-background-color 0x669900
+
+[SWF(width=550, height=400, backgroundColor=0xFFFFFF, frameRate=24)]
+[Embed(source="data.xml", mimeType="application/octet-stream")]
+[Embed("pic/1.png")]
+[Embed(source='SWFFileName.swf', symbol='symbolName')]
+[Embed(source='SWFFileName.swf#symbolName')]
+[Event(name="change", type="flash.events.Event")]
+
+
+asdoc(外部工具)
+工作目录
+${project_loc}
+自变量
+-source-path [path] [...] #代码源文件根目录,如-source-path src
+-doc-sources [path] [...] #输出src目录下所有源文件的doc文档,如-doc-sources src
+-doc-classes [cls] [...] #输出类A,类B的doc文档,如-doc-classes com.A com.B
+-exclude-sources [path] [...]
+-exclude-classes [cls] [...]
+-library-path [path] [...] #swc路径
+
+
+About the MIME type
+
+application/octet-stream 
+application/x-font 
+application/x-font-truetype 
+application/x-shockwave-flash 
+audio/mpeg 
+image/gif 
+image/jpeg 
+image/png 
+image/svg 
+image/svg-xml 
+
+
+
+
+		[Embed(source='../assets/MyriadWebProEmbed.swf', 
+            fontName='Myriad Web Pro'
+        )] 
+        private static var plainFont:Class;
+
+        [Embed(source='../assets/MyriadWebProEmbedWithFontSymbols.swf', 
+            fontName='Myriad Web Pro', 
+            fontStyle='italic'
+        )] 
+        private static var italicFont:Class;
+
+        [Embed(source='../assets/MyriadWebProEmbedWithFontSymbols.swf', 
+            fontName='Myriad Web Pro', 
+            fontWeight='bold'
+        )] 
+        private static var boldFont:Class;
