@@ -1,0 +1,8 @@
+<task id="0" name="初入江湖" parentId="0" type="1" desc="欢迎来到游戏世界">
+	<!-- 任务条件 -->
+	<condition getNpc="1000" payNpc="1001" level="10" race="0" />
+	<subTask id="0" parentId="0" name="和npc对话" type="talk" args="1000" />
+	<subTask id="1" parentId="1" name="杀死十个灰兔" type="killMonster" args="10,20" />
+	<!--物品名称通过id获取, type表明是装备,金钱,还是经验, 其实可以给金钱和经验指定一个id,这样可以拿掉type字段-->
+	<reward type="1" id="5001" count="1" />
+</task>

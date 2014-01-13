@@ -1,0 +1,19 @@
+package org.xmlui.alignment
+{
+	import f2d.layout.centerViewX;
+	
+	import org.xmlui.IAlign;
+	
+	internal class CenterAlign extends Align implements IAlign
+	{
+		public function CenterAlign(offset:Number=0)
+		{
+			super(offset);
+		}
+		
+		public function update(target:Object):void
+		{
+			centerViewX(target, target.parent.width, offset);
+		}
+	}
+}
