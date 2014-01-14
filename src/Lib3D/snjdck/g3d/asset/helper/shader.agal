@@ -1,4 +1,12 @@
-﻿@g2d.vs
+﻿#========================
+
+@g2d_drawScreen
+op = va0
+oc = fc0
+
+﻿#========================
+
+@g2d.vs
 vt0 = va0
 vt0.x = dp4: va0, vc0
 vt0.y = dp4: va0, vc1
