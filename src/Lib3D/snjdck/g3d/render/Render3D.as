@@ -8,22 +8,46 @@ package snjdck.g3d.render
 	
 	import matrix44.calcPlaneShadowMatrix;
 	
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.asset.helper.AssetMgr;
 	import snjdck.g3d.asset.helper.ShaderName;
 	import snjdck.g3d.core.BlendMode;
+	import snjdck.g3d.ns_g3d;
+	
+	import stdlib.components.ObjectPool;
 	
 	use namespace ns_g3d;
 
 	public class Render3D
 	{
+		static private const drawUnitPool:ObjectPool = new ObjectPool(DrawUnit3D);
+		private const drawUnitList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
 //		private var shadowMatrix:Matrix3D;
 		
 		public function Render3D()
 		{
 //			shadowMatrix = new Matrix3D();
 //			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
+		}
+		
+		private function recoverDrawUnit(drawUnit:DrawUnit3D):void
+		{
+			drawUnit.clear();
+			drawUnitPool.setObjectIn(drawUnit);
+		}
+		
+		public function getFreeDrawUnit():DrawUnit3D
+		{
+			var drawUnit:DrawUnit3D = drawUnitPool.getObjectOut();
+			drawUnitList.push(drawUnit);
+			return drawUnit;
+		}
+		
+		public function clear():void
+		{
+			while(drawUnitList.length > 0){
+				recoverDrawUnit(drawUnitList.pop());
+			}
 		}
 		
 		/*
@@ -102,6 +126,8 @@ package snjdck.g3d.render
 			context3d.setProgram(AssetMgr.Instance.getProgram(drawUnit.shaderName));
 			context3d.setTextureAt(0, AssetMgr.Instance.getTexture(drawUnit.textureName));
 			drawUnit.exec(context3d);
+			
+			recoverDrawUnit(drawUnit);
 		}
 	}
 }

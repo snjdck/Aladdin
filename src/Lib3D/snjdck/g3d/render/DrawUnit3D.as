@@ -84,13 +84,13 @@ package snjdck.g3d.render
 			worldMatrix.copyFrom(matrix);
 			setVcM(4, worldMatrix);
 		}
-		
+		/*
 		public function appendTransformAfterWorldMatrix(matrix:Matrix3D):void
 		{
 			worldMatrix.append(matrix);
 			setVcM(4, worldMatrix);
 		}
-		
+		*/
 		ns_g3d function setVa(slotIndex:int, buffer:IGpuVertexBuffer, offset:int=-1, format:String=null):void
 		{
 			vaSlot[slotIndex] = buffer;
