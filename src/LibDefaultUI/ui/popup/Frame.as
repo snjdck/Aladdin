@@ -19,7 +19,7 @@ package ui.popup
 	{
 		static public const BUTTON_CLOSE:int = 1;
 		
-		[Embed(source="F:/ProgramData/MU1_03H_full(Chs)/ui/comp/bg.png")]
+//		[Embed(source="F:/ProgramData/MU1_03H_full(Chs)/ui/comp/bg.png")]
 		static private const bgCls:Class;
 		static private var bg:BitmapData = new bgCls().bitmapData;
 		

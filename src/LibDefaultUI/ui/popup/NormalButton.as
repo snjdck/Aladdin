@@ -7,7 +7,7 @@ package ui.popup
 	
 	public class NormalButton extends Button
 	{
-		[Embed(source="F:/ProgramData/MU1_03H_full(Chs)/ui/comp/button.png")]
+//		[Embed(source="F:/ProgramData/MU1_03H_full(Chs)/ui/comp/button.png")]
 		static private const skinCls:Class;
 		static private const skin:BitmapData = new skinCls().bitmapData;
 		

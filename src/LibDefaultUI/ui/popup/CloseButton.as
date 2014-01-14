@@ -7,7 +7,7 @@ package ui.popup
 	
 	public class CloseButton extends Button
 	{
-		[Embed(source="F:/ProgramData/MU1_03H_full(Chs)/ui/comp/btn_close.png")]
+//		[Embed(source="F:/ProgramData/MU1_03H_full(Chs)/ui/comp/btn_close.png")]
 		static private const skinCls:Class;
 		static private const skin:BitmapData = new skinCls().bitmapData;
 		
