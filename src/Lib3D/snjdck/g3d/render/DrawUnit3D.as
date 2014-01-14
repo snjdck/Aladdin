@@ -106,16 +106,6 @@ package snjdck.g3d.render
 			}
 		}
 		
-		public function preDrawDepth(context3d:IGpuContext):void
-		{
-			this.context3d = context3d;
-			
-			context3d.setVertexBufferAt(0, vaSlot[0], vaSlotOffset[0], vaSlotFormat[0]);
-			setProgramConstImp(Context3DProgramType.VERTEX, vcSlot, vcUseInfo);
-			
-			context3d.drawTriangles(indexBuffer);
-		}
-		
 		public function exec(context3d:IGpuContext):void
 		{
 			this.context3d = context3d;
