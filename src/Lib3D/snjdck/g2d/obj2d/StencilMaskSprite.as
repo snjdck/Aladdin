@@ -1,5 +1,6 @@
 package snjdck.g2d.obj2d
 {
+	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
@@ -25,12 +26,12 @@ package snjdck.g2d.obj2d
 			}
 			
 			context3d.setStencilReferenceValue(0xFF, 0xFF, 1 << stencilIndex);
-			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.SET);
+			setStencilActions(context3d, Context3DCompareMode.ALWAYS, Context3DStencilAction.SET);
 			
 			drawMaskTexture();
 			
 			context3d.setStencilReferenceValue(0xFF, (2 << stencilIndex) - 1);
-			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP);
+			setStencilActions(context3d, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP);
 			
 			++stencilIndex;
 			
@@ -38,14 +39,16 @@ package snjdck.g2d.obj2d
 			
 			--stencilIndex;
 			
-			var stencil = (1 << stencilIndex) - 1;
 			if(stencilIndex > 0){
-				context3d.setStencilReferenceValue(0xFF, stencil);
-			}else{
-				//重置回默认状态
-				context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.ALWAYS, Context3DStencilAction.KEEP);
+				context3d.setStencilReferenceValue(0x00, 0xFF, 1 << stencilIndex);
+				setStencilActions(context3d, Context3DCompareMode.NEVER, Context3DStencilAction.KEEP, Context3DStencilAction.SET);
+				render2d.drawScreen(context3d);
+				setStencilActions(context3d, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP);
+				context3d.setStencilReferenceValue(0xFF, (1 << stencilIndex) - 1);
+			}else{//重置回默认状态
+				context3d.clear(0, 0, 0, 1, 1, 0, Context3DClearMask.STENCIL);
+				context3d.setStencilActions();
 			}
-			drawScreenRect();
 		}
 		
 		private function drawMaskTexture():void
@@ -53,9 +56,10 @@ package snjdck.g2d.obj2d
 			
 		}
 		
-		private function drawScreenRect():void
+		[Inline]
+		private function setStencilActions(context3d:IGpuContext, compareMode:String, actionOnBothPass:String, actionOnDepthPassStencilFail:String=Context3DStencilAction.KEEP):void
 		{
-			
+			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, compareMode, actionOnBothPass, Context3DStencilAction.KEEP, actionOnDepthPassStencilFail);
 		}
 	}
 }

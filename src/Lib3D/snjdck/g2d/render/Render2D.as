@@ -44,6 +44,24 @@ package snjdck.g2d.render
 			context3d.setVc(0, projectionMatrixBuffer, 2);
 		}
 		
+		public function drawScreen(context3d:IGpuContext):void
+		{
+			vertexMatrix.identity();
+			vertexMatrix.scale(2, -2);
+			vertexMatrix.translate(-1, 1);
+			
+			vertexData.reset();
+			vertexData.transformPosition(vertexMatrix);
+			
+			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D_DRAW_SCREEN));
+			
+			quadBatch.addQuad(vertexData);
+			quadBatch.draw(context3d, null);
+			quadBatch.clear();
+			
+			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
+		}
+		
 		public function draw(context3d:IGpuContext, target:IDisplayObject2D, texture:ITexture2D):void
 		{
 			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
@@ -51,18 +69,19 @@ package snjdck.g2d.render
 			context3d.setBlendFactor(target.blendMode);
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			
-			getVertexData(target, texture, sharedVertexData);
-			quadBatch.addQuad(sharedVertexData);
+			getVertexData(target, texture);
+			quadBatch.addQuad(vertexData);
 			quadBatch.draw(context3d, texture.gpuTexture);
 			quadBatch.clear();
 		}
 		
-		static public function getVertexData(target:IDisplayObject2D, texture:ITexture2D, vertexData:VertexData):void
+		static private function getVertexData(target:IDisplayObject2D, texture:ITexture2D):void
 		{
-			vertexData.reset();
-			vertexMatrix.scale(target.width, target.height);
-			vertexData.transformPosition(vertexMatrix);
 			vertexMatrix.identity();
+			vertexMatrix.scale(target.width, target.height);
+			
+			vertexData.reset();
+			vertexData.transformPosition(vertexMatrix);
 			vertexData.color = target.color;
 			vertexData.alpha = target.worldAlpha;
 			texture.adjustVertexData(vertexData);
@@ -70,7 +89,7 @@ package snjdck.g2d.render
 			vertexData.z = 0;
 		}
 		
-		static private const sharedVertexData:VertexData = new VertexData();
+		static private const vertexData:VertexData = new VertexData();
 		static private const vertexMatrix:Matrix = new Matrix();
 	}
 }
