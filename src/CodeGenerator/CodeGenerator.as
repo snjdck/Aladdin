@@ -84,7 +84,3 @@ package
 		}
 	}
 }
-
-import flash.filesystem.FileStream;
-
-const fileStream:FileStream = new FileStream();
