@@ -33,7 +33,7 @@ package snjdck.g3d.core
 		
 //		private const pickCollector2d:PickCollector2D = new PickCollector2D();
 		
-		public var lens:Matrix3D;
+//		public var lens:Matrix3D;
 		private var isoMatrix:Matrix3D;
 		
 		private var renderTarget:IRenderTarget;
@@ -47,7 +47,8 @@ package snjdck.g3d.core
 		private function init():void
 		{
 			render2d.setScreenSize(renderTarget.width, renderTarget.height);
-			lens = ProjectionFactory.OrthoLH(renderTarget.width, renderTarget.height, -4000, 4000);
+			render3d.setScreenSize(renderTarget.width, renderTarget.height);
+//			lens = ProjectionFactory.OrthoLH(renderTarget.width, renderTarget.height, -4000, 4000);
 			isoMatrix = createIsoMatrix();
 		}
 		
@@ -73,7 +74,7 @@ package snjdck.g3d.core
 			context3d.setRenderToTexture(renderTarget);
 			renderTarget.clear(context3d);
 			
-			context3d.setVcM(0, lens);
+			render3d.uploadProjectionMatrix(context3d);
 			scene3d.draw(render3d, context3d);
 			
 			render2d.uploadProjectionMatrix(context3d);
@@ -102,12 +103,18 @@ package snjdck.g3d.core
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
 		{
+			/*
 			var screenPt:Vector3D = new Vector3D(
 				2 * mouseX / renderTarget.width - 1,
 				1 - 2 * mouseY / renderTarget.height
 			);
+			*/
+			var screenPt:Vector3D = new Vector3D(
+				mouseX - 0.5 * renderTarget.width,
+				0.5 * renderTarget.height - mouseY
+			);
 			var ray:Ray = new Ray(screenPt, Vector3D.Z_AXIS);
-			scene3d.testRay(ray.transformToLocal(lens), result);
+			scene3d.testRay(ray, result);
 		}
 		
 		public function pickNearestObjectUnderPoint(mouseX:Number, mouseY:Number):RayTestInfo

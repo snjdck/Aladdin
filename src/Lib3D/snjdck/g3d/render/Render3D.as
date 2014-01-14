@@ -13,6 +13,7 @@ package snjdck.g3d.render
 	import snjdck.g3d.asset.helper.AssetMgr;
 	import snjdck.g3d.asset.helper.ShaderName;
 	import snjdck.g3d.core.BlendMode;
+	import snjdck.g3d.geom.ProjectionFactory;
 	import snjdck.g3d.ns_g3d;
 	
 	import stdlib.components.ObjectPool;
@@ -23,6 +24,8 @@ package snjdck.g3d.render
 	{
 		static private const drawUnitPool:ObjectPool = new ObjectPool(DrawUnit3D);
 		private const drawUnitList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
+		
+		private var projectionMatrix:Matrix3D;
 //		private var shadowMatrix:Matrix3D;
 		
 		public function Render3D()
@@ -33,7 +36,12 @@ package snjdck.g3d.render
 		
 		public function setScreenSize(width:int, height:int):void
 		{
-			
+			projectionMatrix = ProjectionFactory.OrthoLH(width, height, -4000, 4000);
+		}
+		
+		public function uploadProjectionMatrix(context3d:IGpuContext):void
+		{
+			context3d.setVcM(0, projectionMatrix);
 		}
 		
 		private function recoverDrawUnit(drawUnit:DrawUnit3D):void
