@@ -8,6 +8,7 @@ package snjdck.g3d.render
 	
 	import matrix44.calcPlaneShadowMatrix;
 	
+	import snjdck.g2d.core.IRender;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.asset.helper.AssetMgr;
 	import snjdck.g3d.asset.helper.ShaderName;
@@ -18,7 +19,7 @@ package snjdck.g3d.render
 	
 	use namespace ns_g3d;
 
-	public class Render3D
+	public class Render3D implements IRender
 	{
 		static private const drawUnitPool:ObjectPool = new ObjectPool(DrawUnit3D);
 		private const drawUnitList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
@@ -28,6 +29,11 @@ package snjdck.g3d.render
 		{
 //			shadowMatrix = new Matrix3D();
 //			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
+		}
+		
+		public function setScreenSize(width:int, height:int):void
+		{
+			
 		}
 		
 		private function recoverDrawUnit(drawUnit:DrawUnit3D):void

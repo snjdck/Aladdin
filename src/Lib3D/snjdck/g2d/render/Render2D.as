@@ -6,17 +6,18 @@ package snjdck.g2d.render
 	import matrix33.toBuffer;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
+	import snjdck.g2d.core.IRender;
 	import snjdck.g2d.core.ITexture2D;
 	import snjdck.g2d.support.QuadBatch;
 	import snjdck.g2d.support.VertexData;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.asset.helper.AssetMgr;
 	import snjdck.g3d.asset.helper.ShaderName;
+	import snjdck.g3d.ns_g3d;
 	
 	use namespace ns_g3d;
 
-	public class Render2D
+	public class Render2D implements IRender
 	{
 		private const quadBatch:QuadBatch = new QuadBatch();
 		
@@ -28,7 +29,7 @@ package snjdck.g2d.render
 		{
 		}
 		
-		public function setOrthographicProjection(width:Number, height:Number):void
+		public function setScreenSize(width:int, height:int):void
 		{
 			projectionMatrix.setTo(2.0/width, 0, 0, -2.0/height, -1.0, 1.0);
 			isProjectionMatrixDirty = true;

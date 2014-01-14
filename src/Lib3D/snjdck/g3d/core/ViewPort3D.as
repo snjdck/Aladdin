@@ -46,7 +46,7 @@ package snjdck.g3d.core
 		
 		private function init():void
 		{
-			render2d.setOrthographicProjection(renderTarget.width, renderTarget.height);
+			render2d.setScreenSize(renderTarget.width, renderTarget.height);
 			lens = ProjectionFactory.OrthoLH(renderTarget.width, renderTarget.height, -4000, 4000);
 			isoMatrix = createIsoMatrix();
 		}
