@@ -1,6 +1,7 @@
 package snjdck.g2d.support
 {
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	
 	import matrix33.transformCoords;
 
@@ -65,9 +66,9 @@ package snjdck.g2d.support
 			var offset:int = 0;
 			for(var i:int=0; i<4; i++)
 			{
-				transformCoords(matrix, buffer[offset], buffer[offset+1], pt);
-				buffer[offset] = pt.x;
-				buffer[offset+1] = pt.y;
+				transformCoords(matrix, buffer[offset], buffer[offset+1], tempPt);
+				buffer[offset] = tempPt.x;
+				buffer[offset+1] = tempPt.y;
 				offset += DATA32_PER_VERTEX;
 			}
 		}
@@ -77,9 +78,9 @@ package snjdck.g2d.support
 			var offset:int = 3;
 			for(var i:int=0; i<4; i++)
 			{
-				transformCoords(matrix, buffer[offset], buffer[offset+1], pt);
-				buffer[offset] = pt.x;
-				buffer[offset+1] = pt.y;
+				transformCoords(matrix, buffer[offset], buffer[offset+1], tempPt);
+				buffer[offset] = tempPt.x;
+				buffer[offset+1] = tempPt.y;
 				offset += DATA32_PER_VERTEX;
 			}
 		}
@@ -119,9 +120,7 @@ package snjdck.g2d.support
 				offset += DATA32_PER_VERTEX;
 			}
 		}
+		
+		static private const tempPt:Point = new Point();
 	}
 }
-
-import flash.geom.Point;
-
-const pt:Point = new Point();

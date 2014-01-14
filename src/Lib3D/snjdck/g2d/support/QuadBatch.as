@@ -54,17 +54,7 @@ package snjdck.g2d.support
 				return;
 			}
 			
-			if(isGpuBufferDirty){
-				if(gpuVertexBuffer){
-					gpuVertexBuffer.dispose();
-				}
-				if(gpuIndexBuffer){
-					gpuIndexBuffer.dispose();
-				}
-				gpuVertexBuffer = GpuAssetFactory.CreateGpuVertexBuffer2(maxQuadCount * 4, VertexData.DATA32_PER_VERTEX);
-				gpuIndexBuffer = GpuAssetFactory.CreateGpuIndexBuffer(indexBuffer);
-				isGpuBufferDirty = false;
-			}
+			updateGpuBuffer();
 			
 			gpuVertexBuffer.upload(vertexBuffer, quadCount * 4);
 			
@@ -78,6 +68,24 @@ package snjdck.g2d.support
 			}
 			
 			context3d.drawTriangles(gpuIndexBuffer, 0, quadCount * 2);
+		}
+		
+		private function updateGpuBuffer():void
+		{
+			if(false == isGpuBufferDirty){
+				return;
+			}
+			isGpuBufferDirty = false;
+			
+			if(gpuVertexBuffer){
+				gpuVertexBuffer.dispose();
+			}
+			gpuVertexBuffer = GpuAssetFactory.CreateGpuVertexBuffer2(maxQuadCount * 4, VertexData.DATA32_PER_VERTEX);
+			
+			if(gpuIndexBuffer){
+				gpuIndexBuffer.dispose();
+			}
+			gpuIndexBuffer = GpuAssetFactory.CreateGpuIndexBuffer(indexBuffer);
 		}
 	}
 }
