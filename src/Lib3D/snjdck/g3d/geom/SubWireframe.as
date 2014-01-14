@@ -11,7 +11,7 @@ package snjdck.g3d.geom
 	import snjdck.g3d.core.BlendMode;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.render.DrawUnit3D;
-	import snjdck.g3d.render.DrawUnitCollector3D;
+//	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.IGeometry;
@@ -31,7 +31,7 @@ package snjdck.g3d.geom
 			this.thickness = thickness * 0.5;
 			generate(subMesh.geometry);
 		}
-		
+		/*
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera:Camera3D):void
 		{
 			super.collectDrawUnit(collector, camera);
@@ -56,7 +56,7 @@ package snjdck.g3d.geom
 			
 			collector.addDrawUnit(drawUnit);
 		}
-		
+		*/
 		private function generate(geometry:IGeometry):void
 		{
 			var indexBuffer:Vector.<uint> = geometry.getIndexData();

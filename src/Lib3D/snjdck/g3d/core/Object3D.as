@@ -9,11 +9,11 @@ package snjdck.g3d.core
 	
 	import snjdck.common.DataEvent;
 	import snjdck.g2d.core.IDisplayObject;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
-	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.render.Render3D;
 	
 	use namespace ns_g3d;
 	
@@ -106,6 +106,15 @@ package snjdck.g3d.core
 			}
 		}
 		
+		public function draw(render3d:Render3D, context3d:IGpuContext):void
+		{
+			for(var child:Object3D=firstChild; child; child=child.nextSibling){
+				if(child.visible){
+					child.draw(render3d, context3d);
+				}
+			}
+		}
+		/*
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera:Camera3D):void
 		{
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
@@ -114,7 +123,7 @@ package snjdck.g3d.core
 				}
 			}
 		}
-		
+		*/
 		final public function testRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
 		{
 			if(mouseEnabled){

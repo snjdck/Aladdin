@@ -3,7 +3,6 @@ package snjdck.g3d.obj3d
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.ns_g3d;
 	
@@ -15,7 +14,7 @@ package snjdck.g3d.obj3d
 		{
 			super(mesh, boneDict);
 		}
-		
+		/*
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera:Camera3D):void
 		{
 				var componentVec:Vector.<Vector3D> = worldMatrix.decompose();
@@ -25,6 +24,6 @@ package snjdck.g3d.obj3d
 				worldMatrix.recompose(componentVec);
 			super.ns_g3d::collectDrawUnit(collector, camera);
 		}
-		
+		*/
 	}
 }

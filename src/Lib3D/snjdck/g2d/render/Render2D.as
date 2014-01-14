@@ -34,7 +34,7 @@ package snjdck.g2d.render
 			isProjectionMatrixDirty = true;
 		}
 		
-		private function uploadProjectionMatrix(context3d:IGpuContext):void
+		public function uploadProjectionMatrix(context3d:IGpuContext):void
 		{
 			if(isProjectionMatrixDirty){
 				matrix33.toBuffer(projectionMatrix, projectionMatrixBuffer);
@@ -46,7 +46,6 @@ package snjdck.g2d.render
 		public function draw(context3d:IGpuContext, target:IDisplayObject2D, texture:ITexture2D):void
 		{
 			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
-			uploadProjectionMatrix(context3d);
 
 			context3d.setBlendFactor(target.blendMode);
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);

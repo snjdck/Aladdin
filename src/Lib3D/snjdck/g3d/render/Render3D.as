@@ -18,14 +18,15 @@ package snjdck.g3d.render
 
 	public class Render3D
 	{
-		private var shadowMatrix:Matrix3D;
+//		private var shadowMatrix:Matrix3D;
 		
 		public function Render3D()
 		{
-			shadowMatrix = new Matrix3D();
-			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
+//			shadowMatrix = new Matrix3D();
+//			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
 		}
 		
+		/*
 		private function preDrawDepth(context3d:IGpuContext, drawUnitList:Vector.<DrawUnit3D>):void
 		{
 			context3d.setBlendFactor(BlendMode.NORMAL);
@@ -38,7 +39,6 @@ package snjdck.g3d.render
 			context3d.setColorMask(true, true, true, true);
 			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 		}
-		
 		public function draw(context3d:IGpuContext, collector:DrawUnitCollector3D, mvpMatrix:Matrix3D):void
 		{
 			const hasOpaqueDrawUnits:Boolean = collector.opaqueList.length > 0;
@@ -60,7 +60,7 @@ package snjdck.g3d.render
 				drawUnits(context3d, collector.blendList);
 			}
 			
-			/*
+			
 			if(!(hasBlendDrawUnits || hasShadowDrawUnits)){
 				return;
 			}
@@ -77,7 +77,6 @@ package snjdck.g3d.render
 				context3d.setStencilActions();
 			}
 			drawUnits(context3d, collector.blendList);
-			*/
 		}
 		
 		private function drawUnits(context3d:IGpuContext, drawUnitList:Vector.<DrawUnit3D>):void
@@ -96,6 +95,13 @@ package snjdck.g3d.render
 				}
 				drawUnit.exec(context3d);
 			}
+		}
+		*/
+		public function renderDrawUnit(drawUnit:DrawUnit3D, context3d:IGpuContext):void
+		{
+			context3d.setProgram(AssetMgr.Instance.getProgram(drawUnit.shaderName));
+			context3d.setTextureAt(0, AssetMgr.Instance.getTexture(drawUnit.textureName));
+			drawUnit.exec(context3d);
 		}
 	}
 }

@@ -1,12 +1,12 @@
 package snjdck.g3d.obj3d
 {
-	import flash.geom.Matrix3D;
-	import flash.utils.Dictionary;
-	
 	import d3d.createChild;
 	import d3d.removeAllChildren;
 	
-	import snjdck.g3d.ns_g3d;
+	import flash.geom.Matrix3D;
+	import flash.utils.Dictionary;
+	
+	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.core.BlendMode;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
@@ -14,8 +14,9 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.render.DrawUnit3D;
-	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.Render3D;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.Skeleton;
 	
@@ -51,16 +52,29 @@ package snjdck.g3d.obj3d
 			}
 		}
 		
+		override public function draw(render3d:Render3D, context3d:IGpuContext):void
+		{
+			super.draw(render3d, context3d);
+			for each(var subMesh:SubMesh in mesh.subMeshes)
+			{
+				var drawUnit:DrawUnit3D = new DrawUnit3D();
+				drawUnit.blendFactor = blendMode;
+				drawUnit.setWorldMatrix(worldMatrix);
+				subMesh.getDrawUnit(drawUnit, boneDict);
+				render3d.renderDrawUnit(drawUnit, context3d);
+			}
+		}
+		/*
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera:Camera3D):void
 		{
 			super.collectDrawUnit(collector, camera);
-			/*
+			
 			if(!camera.viewFrustum.isBoundVisible(mesh.bound, worldMatrix)){
 				++collector.numCulledEntities;
 				collector.numCulledDrawUnits += mesh.subMeshes.length;
 				return;
 			}
-			*/
+			
 			
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
@@ -71,7 +85,7 @@ package snjdck.g3d.obj3d
 				collector.addDrawUnit(drawUnit);
 			}
 		}
-		
+		*/
 		override protected function onTestRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
 		{
 			var ray:Ray = getLocalRay(globalRay);

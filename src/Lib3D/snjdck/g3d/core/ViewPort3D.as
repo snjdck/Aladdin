@@ -16,7 +16,6 @@ package snjdck.g3d.core
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.Render3D;
 	
 	use namespace ns_g3d;
@@ -29,7 +28,7 @@ package snjdck.g3d.core
 		public const render3d:Render3D = new Render3D();
 		public const render2d:Render2D = new Render2D();
 		
-		private const collector3d:DrawUnitCollector3D = new DrawUnitCollector3D();
+//		private const collector3d:DrawUnitCollector3D = new DrawUnitCollector3D();
 //		private const collector2d:DrawUnitCollector2D = new DrawUnitCollector2D();
 		
 //		private const pickCollector2d:PickCollector2D = new PickCollector2D();
@@ -65,20 +64,24 @@ package snjdck.g3d.core
 			scene3d.preDrawRenderTargets(context3d);
 			scene2d.preDrawRenderTargets(context3d);
 			
-			scene3d.collectDrawUnit(collector3d, null);
+//			scene3d.collectDrawUnit(collector3d, null);
 //			scene2d.collectDrawUnits(collector2d);
 			
-			collector3d.onFrameBegin();
+//			collector3d.onFrameBegin();
 //			collector2d.onFrameBegin();
 			
 			context3d.setRenderToTexture(renderTarget);
 			renderTarget.clear(context3d);
 			
-			render3d.draw(context3d, collector3d, lens);
+			context3d.setVcM(0, lens);
+			scene3d.draw(render3d, context3d);
+			
+			render2d.uploadProjectionMatrix(context3d);
 			scene2d.draw(render2d, context3d);
+//			render3d.draw(context3d, collector3d, lens);
 //			render2d.draw(context3d, collector2d);
 			
-			collector3d.clear();
+//			collector3d.clear();
 //			collector2d.clear();
 		}
 		

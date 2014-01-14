@@ -14,7 +14,6 @@ package snjdck.g3d.geom
 	import snjdck.g3d.core.BlendMode;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.render.DrawUnit3D;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	
 	import stdlib.components.Range;
@@ -113,7 +112,7 @@ package snjdck.g3d.geom
 			super.onUpdate(timeElapsed, parentWorldMatrix);
 			globalTime += timeElapsed * 0.001;
 		}
-		
+		/*
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera:Camera3D):void
 		{
 			var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
@@ -135,7 +134,7 @@ package snjdck.g3d.geom
 			
 			collector.addDrawUnit(drawUnit);
 		}
-		
+		*/
 		private function initVertexBuffer():void
 		{
 			var vertexBuffer:Vector.<Number> = new Vector.<Number>();
