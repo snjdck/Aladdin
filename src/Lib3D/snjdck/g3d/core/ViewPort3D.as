@@ -28,12 +28,6 @@ package snjdck.g3d.core
 		public const render3d:Render3D = new Render3D();
 		public const render2d:Render2D = new Render2D();
 		
-//		private const collector3d:DrawUnitCollector3D = new DrawUnitCollector3D();
-//		private const collector2d:DrawUnitCollector2D = new DrawUnitCollector2D();
-		
-//		private const pickCollector2d:PickCollector2D = new PickCollector2D();
-		
-//		public var lens:Matrix3D;
 		private var isoMatrix:Matrix3D;
 		
 		private var renderTarget:IRenderTarget;
@@ -48,7 +42,6 @@ package snjdck.g3d.core
 		{
 			render2d.setScreenSize(renderTarget.width, renderTarget.height);
 			render3d.setScreenSize(renderTarget.width, renderTarget.height);
-//			lens = ProjectionFactory.OrthoLH(renderTarget.width, renderTarget.height, -4000, 4000);
 			isoMatrix = createIsoMatrix();
 		}
 		
@@ -65,12 +58,6 @@ package snjdck.g3d.core
 			scene3d.preDrawRenderTargets(context3d);
 			scene2d.preDrawRenderTargets(context3d);
 			
-//			scene3d.collectDrawUnit(collector3d, null);
-//			scene2d.collectDrawUnits(collector2d);
-			
-//			collector3d.onFrameBegin();
-//			collector2d.onFrameBegin();
-			
 			context3d.setRenderToTexture(renderTarget);
 			renderTarget.clear(context3d);
 			
@@ -79,11 +66,6 @@ package snjdck.g3d.core
 			
 			render2d.uploadProjectionMatrix(context3d);
 			scene2d.draw(render2d, context3d);
-//			render3d.draw(context3d, collector3d, lens);
-//			render2d.draw(context3d, collector2d);
-			
-//			collector3d.clear();
-//			collector2d.clear();
 		}
 		
 		public function dispose():void
@@ -92,12 +74,6 @@ package snjdck.g3d.core
 		
 		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D
 		{
-			/*
-			scene2d.collectPickUnits(pickCollector2d, px, py);
-			pickCollector2d.onFrameBegin();
-			var firstDrawUnit:DrawUnit2D = pickCollector2d.getFirstDrawUnit();
-			return null == firstDrawUnit ? null : firstDrawUnit.target;
-			*/
 			return scene2d.pickup(px, py);
 		}
 		
