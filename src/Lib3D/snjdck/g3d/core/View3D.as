@@ -136,7 +136,12 @@ package snjdck.g3d.core
 		
 		protected function onDeviceLost():void
 		{
-			context3d.setFc(0, new <Number>[0.004, 0, 0, 0.6], 1);//0.6 是阴影的alpha值
+			var fcData:Vector.<Number> = new Vector.<Number>();
+			
+			fcData.push(0.004, 0, 0, 0.6);//0.6 是阴影的alpha值
+			
+			var regCount:int = Math.ceil(fcData.length / 4);
+			context3d.setFc(0, fcData, regCount);
 		}
 		
 		private function update(timeElapsed:int):void

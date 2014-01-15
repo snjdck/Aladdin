@@ -4,6 +4,7 @@ package snjdck.g2d.obj2d
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
+	import flash.geom.Matrix;
 	
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
@@ -14,9 +15,17 @@ package snjdck.g2d.obj2d
 		static private const MAX_RECURSIVE_COUNT:int = 8;
 		static private var stencilIndex:int = 0;
 		
-		public function StencilMaskSprite()
+		private var maskImage:Image;
+		
+		public function StencilMaskSprite(maskImage:Image)
 		{
-			super();
+			this.maskImage = maskImage;
+		}
+		
+		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
+		{
+			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
+			maskImage.onUpdate(timeElapsed, worldMatrix, worldAlpha);
 		}
 		
 		override public function draw(render2d:Render2D, context3d:IGpuContext):void
@@ -25,13 +34,8 @@ package snjdck.g2d.obj2d
 				throw new Error("stencil mask is too much!");
 			}
 			
-			context3d.setStencilReferenceValue(0xFF, 0xFF, 1 << stencilIndex);
-			setStencilActions(context3d, Context3DCompareMode.ALWAYS, Context3DStencilAction.SET);
-			
-			drawMaskTexture();
-			
-			context3d.setStencilReferenceValue(0xFF, (2 << stencilIndex) - 1);
-			setStencilActions(context3d, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP);
+			drawMask(render2d, context3d, 0xFF);
+			enableClipping(context3d, (2 << stencilIndex) - 1);
 			
 			++stencilIndex;
 			
@@ -40,26 +44,31 @@ package snjdck.g2d.obj2d
 			--stencilIndex;
 			
 			if(stencilIndex > 0){
-				context3d.setStencilReferenceValue(0x00, 0xFF, 1 << stencilIndex);
-				setStencilActions(context3d, Context3DCompareMode.NEVER, Context3DStencilAction.KEEP, Context3DStencilAction.SET);
-				render2d.drawScreen(context3d);
-				setStencilActions(context3d, Context3DCompareMode.EQUAL, Context3DStencilAction.KEEP);
-				context3d.setStencilReferenceValue(0xFF, (1 << stencilIndex) - 1);
+				drawMask(render2d, context3d, 0x00);
+				enableClipping(context3d, (1 << stencilIndex) - 1);
 			}else{//重置回默认状态
 				context3d.clear(0, 0, 0, 1, 1, 0, Context3DClearMask.STENCIL);
 				context3d.setStencilActions();
 			}
 		}
 		
-		private function drawMaskTexture():void
+		private function drawMask(render2d:Render2D, context3d:IGpuContext, refValue:uint):void
 		{
-			
+			context3d.setStencilReferenceValue(refValue, 0xFF, 1 << stencilIndex);
+			context3d.setStencilActions(
+				Context3DTriangleFace.FRONT_AND_BACK,
+				Context3DCompareMode.NEVER,
+				Context3DStencilAction.KEEP,
+				Context3DStencilAction.KEEP,
+				Context3DStencilAction.SET
+			);
+			maskImage.draw(render2d, context3d);
 		}
 		
-		[Inline]
-		private function setStencilActions(context3d:IGpuContext, compareMode:String, actionOnBothPass:String, actionOnDepthPassStencilFail:String=Context3DStencilAction.KEEP):void
+		private function enableClipping(context3d:IGpuContext, readMask:uint):void
 		{
-			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, compareMode, actionOnBothPass, Context3DStencilAction.KEEP, actionOnDepthPassStencilFail);
+			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL);
+			context3d.setStencilReferenceValue(0xFF, readMask);
 		}
 	}
 }
