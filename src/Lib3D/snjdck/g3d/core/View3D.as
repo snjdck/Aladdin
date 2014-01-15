@@ -46,12 +46,7 @@ package snjdck.g3d.core
 			viewPort.scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
 			viewPort.scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
 		}
-		/*
-		public function get camera():Camera3D
-		{
-			return viewPort.camera;
-		}
-		*/
+		
 		public function get scene2d():IDisplayObjectContainer2D
 		{
 			return viewPort.scene2d;
@@ -69,8 +64,6 @@ package snjdck.g3d.core
 		
 		private function forwardEvt(evt:Event):void
 		{
-//			dispatchEvent(new Event3D(evt.type, evt.target));
-//			return
 			dispatchEvent(evt);
 		}
 		
@@ -93,8 +86,6 @@ package snjdck.g3d.core
 			addEventListener(MouseEvent.CLICK,			__onStageEvent);
 			addEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
 			addEventListener(MouseEvent.MOUSE_UP,		__onStageEvent);
-			addEventListener(MouseEvent.RIGHT_MOUSE_DOWN,	__onStageEvent);
-			addEventListener(MouseEvent.RIGHT_MOUSE_UP,	__onStageEvent);
 		}
 		
 		private function __onRemovedFromStage(evt:Event):void
@@ -108,8 +99,6 @@ package snjdck.g3d.core
 			removeEventListener(MouseEvent.CLICK,			__onStageEvent);
 			removeEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
 			removeEventListener(MouseEvent.MOUSE_UP,		__onStageEvent);
-			removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN,	__onStageEvent);
-			removeEventListener(MouseEvent.RIGHT_MOUSE_UP,	__onStageEvent);
 		}
 		
 		private function drawSelf():void
