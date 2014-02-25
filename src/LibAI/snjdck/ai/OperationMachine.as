@@ -1,4 +1,4 @@
-package snjdck.utils
+package snjdck.ai
 {
 	import flash.utils.Dictionary;
 	

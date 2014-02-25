@@ -1,4 +1,4 @@
-﻿package snjdck.media
+﻿package snjdck.media.video
 {
 	
 	import flash.display.Sprite;
