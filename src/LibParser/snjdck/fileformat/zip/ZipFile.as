@@ -1,4 +1,4 @@
-package snjdck.fileformat
+package snjdck.fileformat.zip
 {
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
