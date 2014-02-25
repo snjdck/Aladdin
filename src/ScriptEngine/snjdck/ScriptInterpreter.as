@@ -1,8 +1,8 @@
 package snjdck
 {
-	public class ScriptParser
+	public class ScriptInterpreter
 	{
-		public function ScriptParser()
+		public function ScriptInterpreter()
 		{
 		}
 		
