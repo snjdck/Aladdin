@@ -4,7 +4,7 @@ package snjdck.fileformat.swf
 	
 	import stdlib.factory.newBuffer;
 	
-	internal class SwfTag
+	final internal class SwfTag
 	{
 		public var type:uint;
 		public var size:uint;

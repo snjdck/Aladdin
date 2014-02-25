@@ -1,6 +1,6 @@
 package snjdck.fileformat.swf.enum
 {
-	public class SwfTagType
+	final public class SwfTagType
 	{
 		static public const End:uint = 0;
 		static public const ShowFrame:uint = 1;
@@ -67,7 +67,6 @@ package snjdck.fileformat.swf.enum
 		static public const StartSound2:uint = 89;
 		static public const DefineBitsJPEG4:uint = 90;
 		static public const DefineFont4:uint = 91;
-
-		static public const Telemetry:uint = 93;
+		static public const EnableTelemetry:uint = 93;
 	}
 }

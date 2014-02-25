@@ -101,27 +101,31 @@ package snjdck.fileformat.swf
 		
 		private function parseTags(bin:ByteArray):void
 		{
-			while(bin.bytesAvailable > 0)
-			{
+			while(bin.bytesAvailable > 0){
 				var tag:SwfTag = new SwfTag();
 				tag.read(bin);
-				
-				if(!has([SwfTagType.Metadata, SwfTagType.ProductInfo], tag.type)){
-					tagList.push(tag);
-					switch(tag.type){
-						case SwfTagType.FileAttributes:
-							tag.data[0] &= 0xEF;//hasMetadata = false
-							break;
-						case SwfTagType.DoABC:
-							tag.data.readUnsignedInt();//LazyInitializeFlag
-							readString(tag.data);//abc file name
-							abcFileList.push(new AbcFile(tag.data));
-							break;
-						case SwfTagType.SymbolClass:
-							parseSymbolClass(tag.data);
-							break;
-					}
+				if(has([SwfTagType.Metadata, SwfTagType.ProductInfo], tag.type)){
+					continue;
 				}
+				tagList.push(tag);
+				parseTag(tag);
+			}
+		}
+		
+		private function parseTag(tag:SwfTag):void
+		{
+			switch(tag.type){
+				case SwfTagType.FileAttributes:
+					tag.data[0] &= 0xEF;//hasMetadata = false
+					break;
+				case SwfTagType.DoABC:
+					tag.data.readUnsignedInt();//LazyInitializeFlag
+					readString(tag.data);//abc file name
+					abcFileList.push(new AbcFile(tag.data));
+					break;
+				case SwfTagType.SymbolClass:
+					parseSymbolClass(tag.data);
+					break;
 			}
 		}
 		
@@ -155,7 +159,7 @@ package snjdck.fileformat.swf
 			}
 			
 			var tag:SwfTag = new SwfTag();
-			tag.type = SwfTagType.Telemetry;
+			tag.type = SwfTagType.EnableTelemetry;
 			tag.size = 2;
 			tag.data = newBuffer(null, 2);
 			
