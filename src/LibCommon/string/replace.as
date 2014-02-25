@@ -9,7 +9,7 @@ package string
 	 */
 	public function replace(source:String, args:Object):String
 	{
-		return source.replace(/\$\{\s*([.\w]+)\s*\}/g, function():String{
+		return source.replace(/\$\{\s*([^{}\s]+)\s*\}/g, function():String{
 			var key:String = arguments[1];
 			if(hasKey(args, key)){
 				return args[key];
