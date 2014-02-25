@@ -6,7 +6,7 @@ package stdlib
 
 	public function event_addOnce(target:IEventDispatcher, evtType:String, listener:Function):void
 	{
-		target.addEventListener(target, evtType, function(evt:Event):void{
+		target.addEventListener(evtType, function(evt:Event):void{
 			target.removeEventListener(evtType, arguments.callee);
 			execFunc(listener, evt);
 		});
