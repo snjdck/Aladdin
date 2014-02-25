@@ -1,26 +1,23 @@
-package snjdck.utils
+package flash.util
 {
 	import flash.net.LocalConnection;
 
-	public class SingleApp
+	final public class SingleApp
 	{
 		static private const LC_NAME_1:String = "SingleApp_1";
 		static private const LC_NAME_2:String = "SingleApp_2";
 		
-		static private var lc:LocalConnection;
+		private var lc:LocalConnection;
 		private var callback:Function;
 		
 		public function SingleApp(callback:Function)
 		{
-			if(null == lc)
-			{
-				this.callback = callback;
-				
-				lc = new LocalConnection();
-				lc.client = this;
-				
-				this.init();
-			}
+			this.callback = callback;
+			
+			lc = new LocalConnection();
+			lc.client = this;
+			
+			init();
 		}
 		
 		private function init():void
@@ -37,7 +34,6 @@ package snjdck.utils
 		{
 			lc.close();
 			lc.send(LC_NAME_2, "__open");
-			//
 			callback();
 		}
 		
