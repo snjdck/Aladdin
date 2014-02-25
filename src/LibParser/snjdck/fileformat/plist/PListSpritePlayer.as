@@ -5,7 +5,7 @@ package snjdck.fileformat.plist
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	import snjdck.gdi.drawRect;
+	import snjdck.GDI;
 	
 	public class PListSpritePlayer
 	{
@@ -79,7 +79,7 @@ package snjdck.fileformat.plist
 			prepareBitmapMatrix(bitmapMatrix, frameData.frame, frameData.sourceColorRect, frameData.rotated);
 			
 			g.beginBitmapFill(bitmapData, bitmapMatrix, false, true);
-			drawRect(g, frameData.sourceColorRect);
+			GDI.drawRect(g, frameData.sourceColorRect);
 			g.endFill();
 		}
 		

@@ -6,11 +6,6 @@ package geom2d
 	import flash.filters.GlowFilter;
 	import flash.geom.Point;
 	
-	import geom2d.JudgePtInScanArea;
-	import geom2d.JudgePtToCircle;
-	import geom2d.JudgePtToTriangle;
-	import snjdck.gdi.moveTo;
-	
 	public class JudgeTest extends Sprite
 	{
 		private var pts:Array = [];
