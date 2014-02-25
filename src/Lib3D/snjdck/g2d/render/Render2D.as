@@ -23,7 +23,6 @@ package snjdck.g2d.render
 		
 		private const projectionMatrix:Matrix = new Matrix();
 		private const projectionMatrixBuffer:Vector.<Number> = new Vector.<Number>(8, true);
-		private var isProjectionMatrixDirty:Boolean;
 		
 		public function Render2D()
 		{
@@ -32,15 +31,11 @@ package snjdck.g2d.render
 		public function setScreenSize(width:int, height:int):void
 		{
 			projectionMatrix.setTo(2.0/width, 0, 0, -2.0/height, -1.0, 1.0);
-			isProjectionMatrixDirty = true;
+			matrix33.toBuffer(projectionMatrix, projectionMatrixBuffer);
 		}
 		
 		public function uploadProjectionMatrix(context3d:IGpuContext):void
 		{
-			if(isProjectionMatrixDirty){
-				matrix33.toBuffer(projectionMatrix, projectionMatrixBuffer);
-				isProjectionMatrixDirty = false;
-			}
 			context3d.setVc(0, projectionMatrixBuffer, 2);
 		}
 		

@@ -8,7 +8,8 @@ package snjdck.g3d.core
 	
 	use namespace ns_g3d;
 
-	public class Camera3D extends Object3D
+	[Deprecated]
+	internal class Camera3D extends Object3D
 	{
 		private var origin:Vector3D;
 		

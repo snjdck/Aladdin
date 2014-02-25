@@ -41,7 +41,6 @@ package snjdck.g3d.core
 			viewPort = new ViewPort3D(frameBuffer);
 			
 			addEventListener(Event.ADDED_TO_STAGE,		__onAddedToStage);
-			addEventListener(Event.REMOVED_FROM_STAGE,	__onRemovedFromStage);
 			
 			viewPort.scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
 			viewPort.scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
@@ -86,19 +85,6 @@ package snjdck.g3d.core
 			addEventListener(MouseEvent.CLICK,			__onStageEvent);
 			addEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
 			addEventListener(MouseEvent.MOUSE_UP,		__onStageEvent);
-		}
-		
-		private function __onRemovedFromStage(evt:Event):void
-		{
-			if(evt.target != this){
-				return;
-			}
-			
-			stage3d.removeEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
-			
-			removeEventListener(MouseEvent.CLICK,			__onStageEvent);
-			removeEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
-			removeEventListener(MouseEvent.MOUSE_UP,		__onStageEvent);
 		}
 		
 		private function drawSelf():void
@@ -168,6 +154,17 @@ package snjdck.g3d.core
 			}
 		}
 		
+		private var timestamp:int;
+		
+		private function __onEnterFrame(evt:Event):void
+		{
+			var now:int = getTimer();
+			var timeElapsed:int = now - timestamp;
+			timestamp = now;
+			
+			update(timeElapsed);
+		}
+		
 		override public function set visible(value:Boolean):void
 		{
 			super.visible = value;
@@ -190,17 +187,6 @@ package snjdck.g3d.core
 			if(stage3d){
 				stage3d.y = value;
 			}
-		}
-		
-		private var timestamp:int;
-		
-		private function __onEnterFrame(evt:Event):void
-		{
-			var now:int = getTimer();
-			var timeElapsed:int = now - timestamp;
-			timestamp = now;
-			
-			update(timeElapsed);
 		}
 	}
 }

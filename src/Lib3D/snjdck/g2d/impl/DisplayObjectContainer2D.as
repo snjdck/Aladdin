@@ -143,22 +143,6 @@ package snjdck.g2d.impl
 			return null;
 		}
 		
-		/*
-		override public function collectDrawUnits(collector:Collector2D):void
-		{
-			for each(var child:DisplayObject2D in _childList){
-				child.collectDrawUnits(collector);
-			}
-		}
-		
-		override public function collectPickUnits(collector:Collector2D, px:Number, py:Number):void
-		{
-			for each(var child:DisplayObject2D in _childList){
-				child.collectPickUnits(collector, px, py);
-			}
-		}
-		*/
-		
 		override public function preDrawRenderTargets(context3d:IGpuContext):void
 		{
 			for each(var child:DisplayObject2D in _childList){
