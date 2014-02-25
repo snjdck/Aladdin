@@ -1,6 +1,6 @@
 package org.xmlui.alignment
 {
-	import f2d.layout.centerViewX;
+	import f2d.Layout;
 	
 	import org.xmlui.IAlign;
 	
@@ -13,7 +13,7 @@ package org.xmlui.alignment
 		
 		public function update(target:Object):void
 		{
-			centerViewX(target, target.parent.width, offset);
+			Layout.CenterViewX(target, target.parent.width, offset);
 		}
 	}
 }
