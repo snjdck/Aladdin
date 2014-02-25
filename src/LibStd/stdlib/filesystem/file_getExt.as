@@ -1,4 +1,4 @@
-package filesystem
+package stdlib.filesystem
 {
 	public function file_getExt(filePath:String):String
 	{

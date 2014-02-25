@@ -1,4 +1,4 @@
-package filesystem
+package stdlib.filesystem
 {
 	/**
 	 * 获取文件路径的目录地址<br>

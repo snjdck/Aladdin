@@ -1,4 +1,4 @@
-package filesystem
+package stdlib.filesystem
 {
 	public function file_getName(filePath:String):String
 	{

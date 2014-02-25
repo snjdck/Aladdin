@@ -1,4 +1,4 @@
-package filesystem
+package stdlib.filesystem
 {
 	import flash.filesystem.File;
 
