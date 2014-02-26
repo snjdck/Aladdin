@@ -18,9 +18,7 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="src/EntityEngine"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/ScriptEngine"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/UnitTest"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/CodeGenerator"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibParser"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/LibPhysics"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibMedia"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/GameEngine"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/RemoteLogger"/>
