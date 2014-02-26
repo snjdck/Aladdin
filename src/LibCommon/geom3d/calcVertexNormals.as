@@ -1,9 +1,9 @@
-package stdlib
+package geom3d
 {
 	/**
 	 * vertexNormals = new Vector.<Number>(vertexData.length, true);
 	 */
-	public function geometry_calcVertexNormals(faceNormals:Vector.<Number>, indexData:Vector.<uint>, vertexNormals:Vector.<Number>):void
+	public function calcVertexNormals(faceNormals:Vector.<Number>, indexData:Vector.<uint>, vertexNormals:Vector.<Number>):void
 	{
 		var nx:Number, ny:Number, nz:Number;
 		var f0:int, f1:int, f2:int;

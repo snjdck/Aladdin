@@ -1,4 +1,4 @@
-package stdlib
+package geom3d
 {
 	import vec3.crossProd;
 	import vec3.readFromArray;
@@ -7,7 +7,7 @@ package stdlib
 	/**
 	 * faceNormals = new Vector.<Number>(indexData.length, true);
 	 */
-	public function geometry_calcFaceNormals(vertexData:Vector.<Number>, indexData:Vector.<uint>, faceNormals:Vector.<Number>):void
+	public function calcFaceNormals(vertexData:Vector.<Number>, indexData:Vector.<uint>, faceNormals:Vector.<Number>):void
 	{
 		const count:int = indexData.length;
 		
