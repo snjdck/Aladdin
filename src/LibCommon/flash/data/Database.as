@@ -1,8 +1,5 @@
-package snjdck.data
+package flash.data
 {
-	import flash.data.SQLConnection;
-	import flash.data.SQLMode;
-	import flash.data.SQLStatement;
 	import flash.errors.SQLError;
 	import flash.events.SQLEvent;
 	import flash.filesystem.File;

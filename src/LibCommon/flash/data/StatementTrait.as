@@ -1,6 +1,5 @@
-package snjdck.data
+package flash.data
 {
-	import flash.data.SQLStatement;
 
 	internal class StatementTrait
 	{
