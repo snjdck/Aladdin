@@ -1,8 +1,6 @@
-package stdlib
+package flash.text
 {
-	import flash.text.StyleSheet;
-
-	public function css_stringify(target:StyleSheet):String
+	public function stringifyCSS(target:StyleSheet):String
 	{
 		var result:String = "";
 		

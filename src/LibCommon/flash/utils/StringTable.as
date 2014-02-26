@@ -1,4 +1,4 @@
-package flash.util
+package flash.utils
 {
 	import string.replace;
 	import string.trim;
