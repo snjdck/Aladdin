@@ -3,7 +3,7 @@ package snjdck.utils
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
-	import stdlib.factory.newBuffer;
+	import flash.factory.newBuffer;
 	import string.formatInt;
 
 	public class HexUtil
