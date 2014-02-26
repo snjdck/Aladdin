@@ -1,6 +1,6 @@
-package stdlib.graphics.brush
+package flash.graphics.brush
 {
-	import stdlib.graphics.IBrush;
+	import flash.graphics.IBrush;
 	
 	import flash.display.Graphics;
 	import flash.geom.Matrix;

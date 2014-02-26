@@ -1,7 +1,7 @@
-package stdlib.graphics.brush
+package flash.graphics.brush
 {
 	import flash.display.Graphics;
-	import stdlib.graphics.IBrush;
+	import flash.graphics.IBrush;
 
 	public class SolidBrush implements IBrush
 	{

@@ -1,8 +1,8 @@
-package stdlib.graphics.pen
+package flash.graphics.pen
 {
 	import flash.display.Graphics;
 	
-	import stdlib.graphics.IPen;
+	import flash.graphics.IPen;
 
 	public class SolidPen implements IPen
 	{

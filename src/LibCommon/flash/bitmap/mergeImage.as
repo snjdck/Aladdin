@@ -1,4 +1,4 @@
-package stdlib.bitmapdata
+package flash.bitmap
 {
 	import flash.display.BitmapData;
 	import flash.geom.Point;
@@ -10,7 +10,7 @@ package stdlib.bitmapdata
 	 * @param list Array or Vector.&lt;BitmapData&gt;
 	 * @param hNum 一行上放几张小位图
 	 */
-	public function bmd_merge(list:Object, hNum:int=int.MAX_VALUE):BitmapData
+	public function mergeImage(list:Object, hNum:int=int.MAX_VALUE):BitmapData
 	{
 		const vNum:int = Math.ceil(list.length / hNum);
 		

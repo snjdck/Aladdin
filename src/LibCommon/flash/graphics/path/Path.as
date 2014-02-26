@@ -1,10 +1,10 @@
-package stdlib.graphics.path
+package flash.graphics.path
 {
 	import flash.display.Graphics;
 	import flash.display.GraphicsPathCommand;
 	import flash.display.GraphicsPathWinding;
 	
-	import stdlib.graphics.IPath;
+	import flash.graphics.IPath;
 	
 	public class Path implements IPath
 	{

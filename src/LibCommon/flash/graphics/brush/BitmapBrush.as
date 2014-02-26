@@ -1,9 +1,9 @@
-package stdlib.graphics.brush
+package flash.graphics.brush
 {
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
-	import stdlib.graphics.IBrush;
+	import flash.graphics.IBrush;
 
 	public class BitmapBrush implements IBrush
 	{

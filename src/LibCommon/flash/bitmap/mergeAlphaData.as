@@ -1,10 +1,10 @@
-package stdlib.bitmapdata
+package flash.bitmap
 {
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 		
-	public function bmd_alphaMerge(fg:BitmapData, bg:BitmapData, fgPos:Point, outputFg:BitmapData):void
+	public function mergeAlphaData(fg:BitmapData, bg:BitmapData, fgPos:Point, outputFg:BitmapData):void
 	{
 		const rect:Rectangle = new Rectangle(0, 0, fg.width, fg.height);
 		const pt:Point = new Point(0, 0);

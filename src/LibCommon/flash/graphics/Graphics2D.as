@@ -1,4 +1,4 @@
-package stdlib.graphics
+package flash.graphics
 {
 	import flash.display.BitmapData;
 	import flash.display.Graphics;

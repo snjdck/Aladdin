@@ -1,6 +1,6 @@
-package stdlib.graphics.path.other
+package flash.graphics.path.others
 {
-	import stdlib.graphics.IPath;
+	import flash.graphics.IPath;
 	
 	import flash.display.Graphics;
 	

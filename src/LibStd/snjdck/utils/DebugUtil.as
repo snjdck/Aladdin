@@ -4,10 +4,10 @@ package snjdck.utils
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
-	import stdlib.graphics.Graphics2D;
-	import stdlib.graphics.path.Path;
-	import stdlib.graphics.path.RectPath;
-	import stdlib.graphics.pen.SolidPen;
+	import flash.graphics.Graphics2D;
+	import flash.graphics.path.Path;
+	import flash.graphics.path.RectPath;
+	import flash.graphics.pen.SolidPen;
 
 	public class DebugUtil
 	{

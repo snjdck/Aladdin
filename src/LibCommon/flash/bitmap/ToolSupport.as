@@ -1,4 +1,4 @@
-package stdlib.bitmapdata
+package flash.bitmap
 {
 	import flash.display.BitmapData;
 	import flash.display.BitmapDataChannel;

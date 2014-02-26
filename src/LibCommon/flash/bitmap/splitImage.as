@@ -1,10 +1,10 @@
-package stdlib.bitmapdata
+package flash.bitmap
 {
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 
-	public function bmd_split(source:BitmapData, hNum:int, vNum:int=1):Array
+	public function splitImage(source:BitmapData, hNum:int, vNum:int=1):Array
 	{
 		if(1 == hNum && 1 == vNum){
 			return [source.clone()];

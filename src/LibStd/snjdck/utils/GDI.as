@@ -8,11 +8,11 @@ package snjdck.utils
 	
 	import stdlib.constant.Direction;
 	
-	import stdlib.graphics.Graphics2D;
-	import stdlib.graphics.IPath;
-	import stdlib.graphics.brush.SolidBrush;
-	import stdlib.graphics.path.Path;
-	import stdlib.graphics.pen.SolidPen;
+	import flash.graphics.Graphics2D;
+	import flash.graphics.IPath;
+	import flash.graphics.brush.SolidBrush;
+	import flash.graphics.path.Path;
+	import flash.graphics.pen.SolidPen;
 	
 	import string.has;
 

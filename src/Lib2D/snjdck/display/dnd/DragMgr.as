@@ -12,7 +12,7 @@ package snjdck.display.dnd
 	
 	import snjdck.display.d2.InteractiveBitmap;
 	
-	import stdlib.bitmapdata.bmd_draw;
+	import flash.bitmap.drawMC;
 
 	final public class DragMgr
 	{
@@ -43,7 +43,7 @@ package snjdck.display.dnd
 		{
 			dragTarget = target;
 			dragData = extraData;
-			dragImage.bitmapData = dragTarget is Bitmap ? (dragTarget as Bitmap).bitmapData : bmd_draw(dragTarget);
+			dragImage.bitmapData = dragTarget is Bitmap ? (dragTarget as Bitmap).bitmapData : drawMC(dragTarget);
 			notifyEvt(dragTarget, DragDropEvent.DRAG_START);
 			beginDrag();
 		}

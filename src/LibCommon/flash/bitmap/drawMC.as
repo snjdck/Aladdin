@@ -1,11 +1,11 @@
-package stdlib.bitmapdata
+package flash.bitmap
 {
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 
-	public function bmd_draw(shape:DisplayObject, output:BitmapData=null):BitmapData
+	public function drawMC(shape:DisplayObject, output:BitmapData=null):BitmapData
 	{
 		const rect:Rectangle = shape.getBounds(shape);
 		const matrix:Matrix = new Matrix();
