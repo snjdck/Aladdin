@@ -61,5 +61,23 @@ package flash.filesystem
 			}
 			return file;
 		}
+		
+		static public function XOR(fileOrPath:*, newFileName:String, key:String, bytePerChunk:uint=0xFFFFFFFF):void
+		{
+			var file:File = CastFile(fileOrPath);
+			
+			var ba:ByteArray = Read(file);
+			
+			FileEncrypt.XOR(ba, ba, key, bytePerChunk);
+			
+			file = file.resolvePath("../" + newFileName);
+			
+			if(false == file.exists){
+				Write(file, ba);
+				return true;
+			}
+			
+			return false;
+		}
 	}
 }
