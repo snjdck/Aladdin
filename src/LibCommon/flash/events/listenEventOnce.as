@@ -1,10 +1,8 @@
-package stdlib
+package flash.events
 {
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import lambda.execFunc;
 
-	public function event_addOnce(target:IEventDispatcher, evtType:String, listener:Function):void
+	public function listenEventOnce(target:IEventDispatcher, evtType:String, listener:Function):void
 	{
 		target.addEventListener(evtType, function(evt:Event):void{
 			target.removeEventListener(evtType, arguments.callee);

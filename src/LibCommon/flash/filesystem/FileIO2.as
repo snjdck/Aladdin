@@ -62,7 +62,7 @@ package flash.filesystem
 			return file;
 		}
 		
-		static public function XOR(fileOrPath:*, newFileName:String, key:String, bytePerChunk:uint=0xFFFFFFFF):void
+		static public function XOR(fileOrPath:*, newFileName:String, key:Array, bytePerChunk:uint=0xFFFFFFFF):Boolean
 		{
 			var file:File = CastFile(fileOrPath);
 			
