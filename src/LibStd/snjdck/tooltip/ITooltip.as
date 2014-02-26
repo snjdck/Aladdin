@@ -1,6 +1,6 @@
 package snjdck.tooltip
 {
-	import snjdck.display.d2.IDisplayObject;
+	import flash.display.IDisplayObject;
 	
 	public interface ITooltip extends IDisplayObject
 	{

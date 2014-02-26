@@ -8,7 +8,7 @@ package snjdck.tesla.kernel.services.impl.bitmapservice
 	
 	import net.http.loadMedia;
 	
-	import snjdck.display.d2.IDisplayObject;
+	import flash.display.IDisplayObject;
 
 	internal class BitmapInfo implements IDisplayObject
 	{

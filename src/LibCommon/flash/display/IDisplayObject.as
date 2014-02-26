@@ -1,7 +1,5 @@
-package snjdck.display.d2
+package flash.display
 {
-	import flash.display.DisplayObject;
-	
 	public interface IDisplayObject
 	{
 		function getDisplayObject():DisplayObject;
