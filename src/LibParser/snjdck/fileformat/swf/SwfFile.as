@@ -1,14 +1,14 @@
 package snjdck.fileformat.swf
 {
-	import flash.utils.ByteArray;
-	
-	import snjdck.fileformat.swf.enum.SwfTagType;
-	import snjdck.utils.HexUtil;
-	
 	import array.has;
 	import array.insert;
 	import array.pushIfNotHas;
-	import stdlib.factory.newBuffer;
+	
+	import flash.factory.newBuffer;
+	import flash.utils.ByteArray;
+	
+	import snjdck.fileformat.swf.enum.SwfTagType;
+	
 	import stream.readString;
 
 	internal class SwfFile

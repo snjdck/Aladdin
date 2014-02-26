@@ -2,12 +2,11 @@ package snjdck.fileformat.swf
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.factory.newBuffer;
 	import flash.net.FileFilter;
 	import flash.net.FileReference;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
-	
-	import stdlib.factory.newBuffer;
 	
 	public class SwfCodeMixer extends Sprite
 	{

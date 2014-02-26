@@ -16,7 +16,7 @@ package snjdck.tesla.kernel.services.impl
 	import snjdck.tesla.kernel.ui.IViewPortLayer;
 	import snjdck.tesla.kernel.ui.ViewPortLayerName;
 	
-	import stdlib.factory.newSprite;
+	import flash.factory.newSprite;
 	
 	public class PopupService extends Service implements IPopupService
 	{

@@ -6,7 +6,7 @@ package snjdck.agalc
 	import array.has;
 	import array.unique;
 	
-	import stdlib.factory.newBuffer;
+	import flash.factory.newBuffer;
 	
 	import lambda.apply;
 	
@@ -113,7 +113,7 @@ package snjdck.agalc
 			parser = new AgalCodeWriter(writer);
 			arith = new AgalArithmetic();
 			
-			shaderData = stdlib.factory.newBuffer();
+			shaderData = flash.factory.newBuffer();
 			isFragmentProgram = (Context3DProgramType.FRAGMENT == programType);
 			writer.setRawData(shaderData);
 		}

@@ -1,8 +1,7 @@
 package snjdck.fileformat.swf
 {
+	import flash.factory.newBuffer;
 	import flash.utils.ByteArray;
-	
-	import stdlib.factory.newBuffer;
 	
 	final internal class SwfTag
 	{
