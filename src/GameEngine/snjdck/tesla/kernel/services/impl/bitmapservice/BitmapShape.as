@@ -2,10 +2,9 @@ package snjdck.tesla.kernel.services.impl.bitmapservice
 {
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
+	import flash.display.Scale9GridDrawer;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	
-	import snjdck.utils.Scale9GridDrawer;
 	
 	internal class BitmapShape extends Sprite
 	{

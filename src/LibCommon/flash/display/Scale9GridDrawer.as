@@ -1,7 +1,5 @@
-package snjdck.utils
+package flash.display
 {
-	import flash.display.BitmapData;
-	import flash.display.Graphics;
 	import flash.geom.Rectangle;
 	
 	import geom3d.createMeshIndices;

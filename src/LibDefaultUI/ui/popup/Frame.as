@@ -11,7 +11,7 @@ package ui.popup
 	import org.xmlui.button.Button;
 	
 	import snjdck.signal.Signal;
-	import snjdck.utils.Scale9GridDrawer;
+	import flash.display.Scale9GridDrawer;
 	
 	import ui.core.Container;
 	
