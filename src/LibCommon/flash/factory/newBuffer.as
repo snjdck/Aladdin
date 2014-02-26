@@ -1,4 +1,4 @@
-package stdlib.factory
+package flash.factory
 {
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;

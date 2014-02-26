@@ -1,4 +1,4 @@
-package stdlib.factory
+package flash.factory
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
