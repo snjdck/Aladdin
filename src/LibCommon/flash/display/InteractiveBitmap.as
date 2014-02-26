@@ -1,9 +1,5 @@
-package snjdck.display.d2
+package flash.display
 {
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.Sprite;
-	
 	import flash.factory.newBitmap;
 	
 	public class InteractiveBitmap extends Sprite
@@ -12,7 +8,7 @@ package snjdck.display.d2
 		
 		public function InteractiveBitmap(bitmapData:BitmapData=null)
 		{
-			bitmap = flash.factory.newBitmap(this, bitmapData);
+			bitmap = newBitmap(this, bitmapData);
 		}
 		
 		public function get bitmapData():BitmapData

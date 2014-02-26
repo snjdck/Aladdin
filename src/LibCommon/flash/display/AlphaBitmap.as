@@ -1,6 +1,5 @@
-package snjdck.display.d2
+package flash.display
 {
-	import flash.display.BitmapData;
 	import flash.events.MouseEvent;
 	
 	public class AlphaBitmap extends InteractiveBitmap

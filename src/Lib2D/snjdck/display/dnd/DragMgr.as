@@ -10,7 +10,7 @@ package snjdck.display.dnd
 	
 	import f2d.setEnable;
 	
-	import snjdck.display.d2.InteractiveBitmap;
+	import flash.display.InteractiveBitmap;
 	
 	import flash.bitmap.drawMC;
 

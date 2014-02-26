@@ -1,9 +1,7 @@
-package snjdck.display.d2
+package flash.display
 {
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
-	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.factory.newBitmap;
 	
 	public class AniBitmap extends Sprite
 	{
@@ -19,10 +17,8 @@ package snjdck.display.d2
 		
 		public function AniBitmap(bmdList:Array)
 		{
-			bitmap = new Bitmap();
-			bitmap.addEventListener(Event.ENTER_FRAME, __onEnterFrame);
-			addChild(bitmap);
-			
+			bitmap = newBitmap(this);
+			addEventListener(Event.ENTER_FRAME, __onEnterFrame);
 			this.bmdList = bmdList;
 		}
 		

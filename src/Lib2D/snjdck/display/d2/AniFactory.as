@@ -6,6 +6,7 @@ package snjdck.display.d2
 	
 	import stdlib.object_map;
 	import flash.bitmap.splitImage;
+	import flash.display.AniBitmap;
 
 	public class AniFactory extends EventDispatcher
 	{
