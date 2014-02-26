@@ -1,7 +1,6 @@
-package stdlib
+package flash.utils
 {
 	import flash.system.Capabilities;
-	import flash.utils.getTimer;
 	
 	import stdlib.reflection.getTypeName;
 	
