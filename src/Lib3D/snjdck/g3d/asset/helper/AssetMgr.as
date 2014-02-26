@@ -22,7 +22,7 @@ package snjdck.g3d.asset.helper
 	import snjdck.g3d.parser.ogre.OgreSkeletonParser;
 	import snjdck.g3d.skeleton.Skeleton;
 	
-	import stdlib.filesystem.FileIO;
+	import flash.filesystem.FileIO2;
 	
 	import string.has;
 	import string.removeComments;

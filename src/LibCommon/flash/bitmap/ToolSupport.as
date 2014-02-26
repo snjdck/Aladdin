@@ -2,9 +2,6 @@ package flash.bitmap
 {
 	import flash.display.BitmapData;
 	import flash.display.BitmapDataChannel;
-	import flash.filesystem.File;
-	import flash.filesystem.FileMode;
-	import flash.filesystem.FileStream;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
@@ -13,44 +10,6 @@ package flash.bitmap
 
 	public class ToolSupport
 	{
-		static public function readFile(fs:FileStream, file:File):ByteArray
-		{
-			var data:ByteArray = new ByteArray();
-			
-			fs.open(file, FileMode.READ);
-			fs.readBytes(data);
-			fs.close();
-			
-			return data;
-		}
-		
-		static public function writeFile(fs:FileStream, file:File, data:ByteArray):void
-		{
-			fs.open(file, FileMode.WRITE);
-			fs.writeBytes(data);
-			fs.close();
-		}
-		
-		static public function getFileName(filePath:String):String
-		{
-			var index:int = filePath.lastIndexOf(".");
-			if(index < 0){
-				return filePath;
-			}
-			return filePath.slice(0, index);
-		}
-		
-		static public function walkFile(file:File, handler:Function):void
-		{
-			if(false == file.isDirectory){
-				handler(file);
-				return;
-			}
-			for each(var subFile:File in file.getDirectoryListing()){
-				walkFile(subFile, handler);
-			}
-		}
-		
 		static public function generateColorAlphaImage(sourceData:BitmapData, colorQuality:Number, alphaQuality:Number):Array
 		{
 			var colorData:BitmapData = generateColorImage(sourceData);

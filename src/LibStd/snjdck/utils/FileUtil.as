@@ -3,7 +3,7 @@ package snjdck.utils
 	import flash.filesystem.File;
 	import flash.utils.ByteArray;
 	
-	import stdlib.filesystem.FileIO;
+	import flash.filesystem.FileIO2;
 	
 	import string.removeSpace;
 
@@ -24,7 +24,7 @@ package snjdck.utils
 		{
 			var file:File = new File(filePath);
 			
-			var ba:ByteArray = FileIO.Read(file);
+			var ba:ByteArray = FileIO2.Read(file);
 			
 			XOR_BIN(ba, ba, key, bytePerChunk);
 			
@@ -33,7 +33,7 @@ package snjdck.utils
 			if(file.exists){
 				trace(file.nativePath, "文件已存在,写入失败!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 			}else{
-				FileIO.Write(file, ba);
+				FileIO2.Write(file, ba);
 				trace(file.nativePath, "文件写入成功***************************************");
 			}
 		}

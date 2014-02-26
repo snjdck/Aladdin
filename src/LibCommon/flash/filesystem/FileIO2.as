@@ -1,17 +1,22 @@
-package stdlib.filesystem
+package flash.filesystem
 {
-	import flash.filesystem.File;
-	import flash.filesystem.FileMode;
-	import flash.filesystem.FileStream;
 	import flash.utils.ByteArray;
 
-	final public class FileIO
+	final public class FileIO2
 	{
 		static private const fs:FileStream = new FileStream();
 		
+		static private function CastFile(fileOrPath:*):File
+		{
+			if(fileOrPath is File){
+				return fileOrPath;
+			}
+			return new File(fileOrPath);
+		}
+		
 		static public function Read(fileOrPath:*, output:ByteArray=null):ByteArray
 		{
-			var file:File = (fileOrPath is File) ? fileOrPath : new File(fileOrPath);
+			var file:File = CastFile(fileOrPath);
 			if(!file.exists){
 				return null;
 			}
@@ -27,7 +32,7 @@ package stdlib.filesystem
 		
 		static public function Write(fileOrPath:*, data:ByteArray):void
 		{
-			var file:File = (fileOrPath is File) ? fileOrPath : new File(fileOrPath);
+			var file:File = CastFile(fileOrPath);
 			fs.open(file, FileMode.WRITE);
 			fs.writeBytes(data);
 			fs.close();
@@ -35,7 +40,7 @@ package stdlib.filesystem
 		
 		static public function Traverse(fileOrPath:*, handler:Function):void
 		{
-			var file:File = (fileOrPath is File) ? fileOrPath : new File(fileOrPath);
+			var file:File = CastFile(fileOrPath);
 			if(false == file.isDirectory){
 				handler(file);
 				return;
@@ -43,6 +48,18 @@ package stdlib.filesystem
 			for each(var subFile:File in file.getDirectoryListing()){
 				arguments.callee(subFile, handler);
 			}
+		}
+		
+		/** 修改文件扩展名 */
+		static public function ModifyExt(fileOrPath:*, extension:String):File
+		{
+			var file:File = CastFile(fileOrPath);
+			var filePath:String = file.nativePath;
+			var index:int = filePath.lastIndexOf(".");
+			if(-1 != index){
+				return new File(filePath.slice(0, index+1) + extension);
+			}
+			return file;
 		}
 	}
 }
