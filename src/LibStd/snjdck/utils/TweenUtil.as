@@ -1,6 +1,6 @@
 package snjdck.utils
 {
-	import f2d.Layout;
+	import flash.support.Layout;
 	
 	import flash.display.DisplayObject;
 	

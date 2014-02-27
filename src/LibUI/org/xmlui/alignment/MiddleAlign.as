@@ -1,6 +1,6 @@
 package org.xmlui.alignment
 {
-	import f2d.Layout;
+	import flash.support.Layout;
 	
 	import org.xmlui.IAlign;
 	

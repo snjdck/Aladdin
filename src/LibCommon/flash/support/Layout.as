@@ -1,4 +1,4 @@
-package f2d
+package flash.support
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
@@ -112,8 +112,7 @@ package f2d
 		}
 		
 		/**
-		 * result.x = alignRegionX(outer, inner, ratioX);
-		 * <br/>
+		 * result.x = alignRegionX(outer, inner, ratioX);<br/>
 		 * result.y = alignRegionY(outer, inner, ratioY);
 		 */
 		static public function AlignRegion(outer:Object, inner:Object, result:Object, ratioX:Number=0.5, ratioY:Number=0.5):void
