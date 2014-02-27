@@ -1,8 +1,9 @@
-package flash.utils
+package flash.support
 {
 	import flash.system.Capabilities;
 	
 	import stdlib.reflection.getTypeName;
+	import flash.utils.getTimer;
 	
 	final public class UUID
 	{

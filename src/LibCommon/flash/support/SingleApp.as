@@ -1,4 +1,4 @@
-package flash.utils
+package flash.support
 {
 	import flash.net.LocalConnection;
 

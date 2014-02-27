@@ -1,4 +1,4 @@
-package flash.xml
+package flash.utils
 {
 	final public class XmlUtil
 	{
