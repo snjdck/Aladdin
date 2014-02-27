@@ -1,6 +1,6 @@
-package snjdck.injector.ip
+package flash.ioc.ip
 {
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 
 	internal class InjectionPoint
 	{

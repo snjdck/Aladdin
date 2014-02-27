@@ -1,6 +1,6 @@
-package snjdck.injector.it
+package flash.ioc.it
 {
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 
 	[ExcludeClass]
 	final public class InjectionTypeValue implements IInjectionType

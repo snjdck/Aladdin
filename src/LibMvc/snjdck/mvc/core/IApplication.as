@@ -1,6 +1,6 @@
 package snjdck.mvc.core
 {
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 	import snjdck.mvc.Module;
 
 	public interface IApplication

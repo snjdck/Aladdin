@@ -1,7 +1,7 @@
 package snjdck.mvc
 {
-	import snjdck.injector.IInjector;
-	import snjdck.injector.Injector;
+	import flash.ioc.IInjector;
+	import flash.ioc.Injector;
 	import snjdck.mvc.core.IApplication;
 	import snjdck.mvc.core.IController;
 	import snjdck.mvc.core.IModel;

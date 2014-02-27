@@ -11,7 +11,7 @@ package snjdck.mvc.imp
 	import snjdck.mvc.ns_mvc;
 	import snjdck.mvc.core.IController;
 	
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 
 	public class Controller implements IController
 	{

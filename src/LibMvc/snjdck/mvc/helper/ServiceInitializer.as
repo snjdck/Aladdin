@@ -5,7 +5,7 @@ package snjdck.mvc.helper
 	import array.push;
 	import array.pushIfNotHas;
 	
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 	
 	import flash.reflection.getTypeName;
 	

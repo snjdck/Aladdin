@@ -1,10 +1,10 @@
-package snjdck.injector.ip
+package flash.ioc.ip
 {
 	import array.push;
 	
 	import avmplus.getTypeInfo;
 	
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 	
 	import flash.reflection.typeinfo.MethodInfo;
 	import flash.reflection.typeinfo.TypeInfo;

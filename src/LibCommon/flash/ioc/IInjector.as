@@ -1,6 +1,6 @@
-package snjdck.injector
+package flash.ioc
 {
-	import snjdck.injector.it.IInjectionType;
+	import flash.ioc.it.IInjectionType;
 
 	public interface IInjector
 	{

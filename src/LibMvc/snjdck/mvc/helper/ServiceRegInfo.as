@@ -1,6 +1,6 @@
 package snjdck.mvc.helper
 {
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 	import snjdck.mvc.core.IService;
 
 	final public class ServiceRegInfo

@@ -2,8 +2,8 @@ package snjdck.mvc
 {
 	import dict.hasKey;
 	
-	import snjdck.injector.IInjector;
-	import snjdck.injector.Injector;
+	import flash.ioc.IInjector;
+	import flash.ioc.Injector;
 	import snjdck.mvc.core.IApplication;
 	import snjdck.mvc.helper.ServiceInitializer;
 	import snjdck.mvc.helper.ServiceRegInfo;

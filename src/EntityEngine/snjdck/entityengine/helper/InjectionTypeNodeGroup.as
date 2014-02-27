@@ -3,8 +3,8 @@ package snjdck.entityengine.helper
 	import snjdck.entityengine.EntityEngine;
 	import snjdck.entityengine.Node;
 	
-	import snjdck.injector.IInjector;
-	import snjdck.injector.it.IInjectionType;
+	import flash.ioc.IInjector;
+	import flash.ioc.it.IInjectionType;
 	
 	import flash.reflection.getType;
 	

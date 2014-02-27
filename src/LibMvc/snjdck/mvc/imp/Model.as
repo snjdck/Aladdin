@@ -8,7 +8,7 @@ package snjdck.mvc.imp
 	import snjdck.mvc.Module;
 	import snjdck.mvc.core.IModel;
 	
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 
 	public class Model implements IModel
 	{

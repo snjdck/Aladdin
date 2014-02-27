@@ -1,12 +1,12 @@
-package snjdck.injector
+package flash.ioc
 {
 	import dict.deleteKey;
 	
-	import snjdck.injector.ip.InjectionPoints;
-	import snjdck.injector.it.IInjectionType;
-	import snjdck.injector.it.InjectionTypeClass;
-	import snjdck.injector.it.InjectionTypeSingleton;
-	import snjdck.injector.it.InjectionTypeValue;
+	import flash.ioc.ip.InjectionPoints;
+	import flash.ioc.it.IInjectionType;
+	import flash.ioc.it.InjectionTypeClass;
+	import flash.ioc.it.InjectionTypeSingleton;
+	import flash.ioc.it.InjectionTypeValue;
 	
 	import flash.reflection.getType;
 	import flash.reflection.getTypeName;

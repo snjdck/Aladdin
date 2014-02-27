@@ -1,10 +1,10 @@
-package snjdck.injector.ip
+package flash.ioc.ip
 {
 	import array.append;
 	
 	import lambda.apply;
 	
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 
 	final internal class InjectionPointMethod extends InjectionPoint implements IInjectionPoint
 	{

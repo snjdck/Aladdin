@@ -7,7 +7,7 @@ package snjdck.entityengine
 	import dict.hasKey;
 	
 	import snjdck.entityengine.helper.InjectionTypeNodeGroup;
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 	
 	import flash.reflection.getType;
 

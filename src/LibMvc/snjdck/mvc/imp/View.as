@@ -9,7 +9,7 @@ package snjdck.mvc.imp
 	import dict.hasKey;
 	import dict.hasValue;
 	
-	import snjdck.injector.IInjector;
+	import flash.ioc.IInjector;
 	import snjdck.mvc.Module;
 	import snjdck.mvc.Msg;
 	import snjdck.mvc.ns_mvc;
