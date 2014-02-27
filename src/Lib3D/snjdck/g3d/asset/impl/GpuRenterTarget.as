@@ -34,9 +34,12 @@ package snjdck.g3d.asset.impl
 		{
 		}
 		
+		/**
+		 * antiAlias(0=none,1=low,2=middle,3=high,4=very high)
+		 */
 		public function setRenderTarget(context3d:Context3D):void
 		{
-			context3d.setRenderToTexture(getRawGpuAsset(context3d), true);
+			context3d.setRenderToTexture(getRawGpuAsset(context3d), true, 2, 0);
 		}
 		
 		public function clear(context3d:IGpuContext):void
