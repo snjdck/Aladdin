@@ -45,16 +45,6 @@ package flash.utils
 			target.gotoAndStop(frame);
 		}
 		
-		static public function PlayChildMcAtFrame(target:MovieClip, frame:Object, mcName:String, funcData:Object):void
-		{
-			GotoAndStop(target, frame, function():void{
-				AddFrameScriptAtLastFrameOnce(target[mcName], function():void{
-					(target[mcName] as MovieClip).stop();
-					apply(funcData);
-				});
-			});
-		}
-		
 		/**
 		 * movieclip_getChildren(mc, "fish_", 1, 2) => [mc(which name equals "fish_1"), mc(which name equals "fish_2")]
 		 */
