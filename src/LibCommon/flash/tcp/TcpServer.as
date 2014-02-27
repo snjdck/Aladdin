@@ -1,4 +1,4 @@
-package snjdck.net
+package flash.tcp
 {
 	import flash.events.ServerSocketConnectEvent;
 	import flash.net.ServerSocket;

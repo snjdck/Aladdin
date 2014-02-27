@@ -1,4 +1,4 @@
-package snjdck.net.socket
+package flash.tcp
 {
 	internal class PacketIO
 	{

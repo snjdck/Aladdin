@@ -1,4 +1,4 @@
-package snjdck.net.udp
+package flash.udp
 {
 	import flash.utils.ByteArray;
 

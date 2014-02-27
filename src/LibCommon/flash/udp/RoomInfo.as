@@ -1,4 +1,4 @@
-package snjdck.net.udp
+package flash.udp
 {
 	import flash.net.registerClassAlias;
 	import flash.utils.ByteArray;

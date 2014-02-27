@@ -1,4 +1,4 @@
-package snjdck.net.socket
+package flash.tcp
 {
 	import flash.utils.IDataInput;
 

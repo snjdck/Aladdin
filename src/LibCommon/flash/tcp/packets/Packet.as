@@ -1,10 +1,10 @@
-package snjdck.net.socket.packets
+package flash.tcp.packets
 {
 	import flash.utils.ByteArray;
 	import flash.utils.IDataInput;
 	import flash.utils.IDataOutput;
 	
-	import snjdck.net.socket.IPacket;
+	import flash.tcp.IPacket;
 	
 	import string.replace;
 	
