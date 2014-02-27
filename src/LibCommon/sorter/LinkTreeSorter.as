@@ -17,27 +17,5 @@ package sorter
 			}
 			return LinkListSorter.Sort(head, compare);
 		}
-		
-		/**
-		 * 
-		 * director.mainloop
-		 * ccobject
-		 * ccnode.draw
-		 * 
-		 */		
-		function draw(head)
-		{
-			var drawUnit = head;
-			while(drawUnit != null){
-				if(null == drawUnit.child){
-					//normal draw
-				}else{
-					drawUnit.onEnter();
-					draw(drawUnit.child);
-					drawUnit.onExit();
-				}
-				drawUnit = drawUnit.next;
-			}
-		}
 	}
 }
