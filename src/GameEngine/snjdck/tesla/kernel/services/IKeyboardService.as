@@ -1,7 +1,7 @@
 package snjdck.tesla.kernel.services
 {
 	import snjdck.mvc.core.IService;
-	import snjdck.signal.ISignal;
+	import flash.signals.ISignal;
 
 	public interface IKeyboardService extends IService
 	{

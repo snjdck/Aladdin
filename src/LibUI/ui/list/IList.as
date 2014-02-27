@@ -1,7 +1,7 @@
 package ui.list
 {
 	import flash.display.IDisplayObject;
-	import snjdck.signal.ISignal;
+	import flash.signals.ISignal;
 	
 	public interface IList extends IDisplayObject
 	{

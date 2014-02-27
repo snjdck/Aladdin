@@ -8,8 +8,8 @@ package snjdck.tesla
 	import snjdck.tesla.core.IPanel;
 	import snjdck.tesla.core.PanelShowPolicy;
 	
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 
 	public class Panel implements IPanel
 	{

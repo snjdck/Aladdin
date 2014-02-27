@@ -1,7 +1,7 @@
 package snjdck.tesla.kernel.services.impl
 {
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 	import snjdck.tesla.kernel.services.ISceneService;
 	import snjdck.tesla.kernel.services.support.Service;
 

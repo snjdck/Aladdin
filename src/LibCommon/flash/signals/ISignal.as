@@ -1,4 +1,4 @@
-package snjdck.signal
+package flash.signals
 {
 	public interface ISignal
 	{

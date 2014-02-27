@@ -2,8 +2,8 @@ package snjdck.effect.tween.impl
 {
 	import snjdck.effect.tween.ITween;
 	import snjdck.effect.tween.ITweenGroup;
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 	
 	internal class TweenGroup implements ITweenGroup
 	{

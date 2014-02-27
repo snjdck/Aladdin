@@ -2,7 +2,7 @@ package snjdck.tesla.core
 {
 	import flash.display.DisplayObject;
 	
-	import snjdck.signal.ISignal;
+	import flash.signals.ISignal;
 
 	public interface IPanel
 	{

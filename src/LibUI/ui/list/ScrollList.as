@@ -4,7 +4,7 @@ package ui.list
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
-	import snjdck.signal.ISignal;
+	import flash.signals.ISignal;
 	
 	import ui.core.Container;
 	import ui.scrollpane.ScrollBar;

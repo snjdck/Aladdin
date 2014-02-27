@@ -1,6 +1,6 @@
 package snjdck.effect.tween
 {
-	import snjdck.signal.ISignal;
+	import flash.signals.ISignal;
 
 	public interface ITween
 	{

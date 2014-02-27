@@ -1,4 +1,4 @@
-package snjdck.signal
+package flash.signals
 {
 	import flash.events.Event;
 	import flash.events.IEventDispatcher;

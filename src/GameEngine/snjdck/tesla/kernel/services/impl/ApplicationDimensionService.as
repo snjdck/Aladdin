@@ -3,8 +3,8 @@ package snjdck.tesla.kernel.services.impl
 	import flash.display.Stage;
 	import flash.events.Event;
 	
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 	import snjdck.tesla.kernel.services.IApplicationDimensionService;
 	import snjdck.tesla.kernel.services.support.Service;
 	

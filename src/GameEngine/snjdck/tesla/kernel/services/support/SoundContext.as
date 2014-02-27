@@ -3,7 +3,7 @@ package snjdck.tesla.kernel.services.support
 	import flash.media.SoundChannel;
 	import flash.media.SoundTransform;
 	
-	import snjdck.signal.ISignal;
+	import flash.signals.ISignal;
 
 	public class SoundContext
 	{

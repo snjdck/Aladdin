@@ -8,8 +8,8 @@ package snjdck.tesla.kernel.services.impl
 	import array.del;
 	
 	import snjdck.effect.tween.impl.Tween;
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 	import snjdck.tesla.core.IPanel;
 	import snjdck.tesla.core.PanelShowPolicy;
 	import snjdck.tesla.kernel.services.IPanelService;

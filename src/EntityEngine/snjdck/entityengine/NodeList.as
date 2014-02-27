@@ -12,7 +12,7 @@ package snjdck.entityengine
 	import stdlib.reflection.getType;
 	import stdlib.reflection.typeinfo.VariableInfo;
 	
-	import snjdck.signal.Signal;
+	import flash.signals.Signal;
 
 	final public class NodeList extends Proxy
 	{

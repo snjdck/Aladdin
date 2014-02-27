@@ -6,8 +6,8 @@ package snjdck.net.socket
 	import flash.events.SecurityErrorEvent;
 	import flash.net.Socket;
 	
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 	
 	internal class TCPSocket
 	{		

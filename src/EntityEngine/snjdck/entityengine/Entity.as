@@ -5,8 +5,8 @@ package snjdck.entityengine
 	
 	import flash.utils.Dictionary;
 	
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 	
 	import stdlib.reflection.getType;
 

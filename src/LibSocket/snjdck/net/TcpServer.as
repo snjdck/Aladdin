@@ -4,8 +4,8 @@ package snjdck.net
 	import flash.net.ServerSocket;
 	import flash.net.Socket;
 	
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 
 	final public class TcpServer
 	{

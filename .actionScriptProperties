@@ -4,7 +4,6 @@
     <compilerSourcePath>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibSocket"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibHttp"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/LibSignal"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibInjector"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/Agalc"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibMvc"/>

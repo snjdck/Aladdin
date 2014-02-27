@@ -3,8 +3,8 @@ package ui.list
 	import flash.display.DisplayObject;
 	import flash.events.MouseEvent;
 	
-	import snjdck.signal.ISignal;
-	import snjdck.signal.Signal;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
 	
 	import ui.core.Container;
 	
