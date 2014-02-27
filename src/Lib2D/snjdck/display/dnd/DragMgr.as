@@ -8,8 +8,6 @@ package snjdck.display.dnd
 	
 	import array.sub;
 	
-	import f2d.setEnable;
-	
 	import flash.display.InteractiveBitmap;
 	
 	import flash.bitmap.drawMC;
@@ -101,7 +99,7 @@ package snjdck.display.dnd
 			dragImage.x = rect.x;
 			dragImage.y = rect.y;
 			
-			f2d.setEnable(dragImage, false);
+			dragImage.mouseChildren = dragImage.mouseEnabled = false;
 			
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
 			stage.addEventListener(MouseEvent.MOUSE_UP, __onMouseUp);

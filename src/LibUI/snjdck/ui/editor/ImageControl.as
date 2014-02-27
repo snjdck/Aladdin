@@ -5,8 +5,7 @@ package snjdck.ui.editor
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	import f2d.addChildren;
+	import flash.utils.DisplayUtil;
 	
 	public class ImageControl extends Sprite
 	{
@@ -64,7 +63,7 @@ package snjdck.ui.editor
 			bottomLeft = ShapeUtil.createCircle(size, color);
 			bottomRight = ShapeUtil.createCircle(size, color);
 			
-			f2d.addChildren(this, [moveBtn, top, bottom, left, right, topLeft, topRight, bottomLeft, bottomRight]);
+			DisplayUtil.AddChildren(this, [moveBtn, top, bottom, left, right, topLeft, topRight, bottomLeft, bottomRight]);
 			
 			addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown);
 		}

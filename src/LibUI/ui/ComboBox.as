@@ -1,11 +1,10 @@
 package ui
 {
-	import f2d.moveTo;
-	
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.utils.DisplayUtil;
 	
 	import ui.button.Button;
 	import ui.core.Component;
@@ -70,7 +69,7 @@ package ui
 			lastPopupListXY.x = popupList.getDisplayObject().x;
 			lastPopupListXY.y = popupList.getDisplayObject().y;
 			var pos:Point = localToGlobal(lastPopupListXY);
-			f2d.moveTo(popupList.getDisplayObject(), pos.x, pos.y);
+			DisplayUtil.MoveTo(popupList.getDisplayObject(), pos.x, pos.y);
 			stage.addChild(popupList.getDisplayObject());
 			stage.addEventListener(MouseEvent.CLICK, __onStageClick);
 		}
@@ -79,7 +78,7 @@ package ui
 		{
 			stage.removeEventListener(MouseEvent.CLICK, __onStageClick);
 			stage.removeChild(popupList.getDisplayObject());
-			f2d.moveTo(popupList.getDisplayObject(), lastPopupListXY.x, lastPopupListXY.y);
+			DisplayUtil.MoveTo(popupList.getDisplayObject(), lastPopupListXY.x, lastPopupListXY.y);
 		}
 		
 		private function __onStageClick(event:MouseEvent):void

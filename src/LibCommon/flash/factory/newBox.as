@@ -1,9 +1,9 @@
-package f2d
+package flash.factory
 {
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 
-	public function createBox(width:Number, height:Number, fillColor:uint=0xFF0000FF, borderColor:uint=0xFFFFFFFF):Sprite
+	public function newBox(width:Number, height:Number, fillColor:uint=0xFF0000FF, borderColor:uint=0xFFFFFFFF):Sprite
 	{
 		var sp:Sprite = new Sprite();
 		

@@ -1,4 +1,4 @@
-package f2d
+package math
 {
 	public function calcScaleRatio(oldWidth:Number, oldHeight:Number, newWidth:Number, newHeight:Number):Number
 	{

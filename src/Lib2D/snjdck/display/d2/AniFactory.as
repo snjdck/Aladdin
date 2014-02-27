@@ -1,12 +1,11 @@
 package snjdck.display.d2
 {
+	import flash.bitmap.splitImage;
+	import flash.display.AniBitmap;
 	import flash.display.BitmapData;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	
-	import stdlib.object_map;
-	import flash.bitmap.splitImage;
-	import flash.display.AniBitmap;
+	import flash.utils.DictUtil;
 
 	public class AniFactory extends EventDispatcher
 	{
@@ -49,7 +48,7 @@ package snjdck.display.d2
 		private function calcFrameList(frameIndex:String, bmdList:Array):Array
 		{
 			////framelist加上空白,负数,浮点,范围(0,2-9,12)支持
-			return object_map(frameIndex.split(","), bmdList, []);
+			return DictUtil.ReMap(frameIndex.split(","), bmdList, []);
 		}
 		/*
 		public function load(path:String):void
