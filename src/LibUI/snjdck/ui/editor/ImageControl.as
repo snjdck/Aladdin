@@ -6,6 +6,7 @@ package snjdck.ui.editor
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.DisplayUtil;
+	import flash.utils.ShapeUtil;
 	
 	public class ImageControl extends Sprite
 	{
@@ -51,17 +52,17 @@ package snjdck.ui.editor
 		
 		private function init():void
 		{
-			moveBtn = ShapeUtil.createCircle(size, color);
+			moveBtn = ShapeUtil.CreateCircle(size, color);
 			
-			top = ShapeUtil.createRect(size, color);
-			left = ShapeUtil.createRect(size, color);
-			right = ShapeUtil.createRect(size, color);
-			bottom = ShapeUtil.createRect(size, color);
+			top = ShapeUtil.CreateCircle(size, color);
+			left = ShapeUtil.CreateCircle(size, color);
+			right = ShapeUtil.CreateCircle(size, color);
+			bottom = ShapeUtil.CreateCircle(size, color);
 			
-			topLeft = ShapeUtil.createCircle(size, color);
-			topRight = ShapeUtil.createCircle(size, color);
-			bottomLeft = ShapeUtil.createCircle(size, color);
-			bottomRight = ShapeUtil.createCircle(size, color);
+			topLeft = ShapeUtil.CreateCircle(size, color);
+			topRight = ShapeUtil.CreateCircle(size, color);
+			bottomLeft = ShapeUtil.CreateCircle(size, color);
+			bottomRight = ShapeUtil.CreateCircle(size, color);
 			
 			DisplayUtil.AddChildren(this, [moveBtn, top, bottom, left, right, topLeft, topRight, bottomLeft, bottomRight]);
 			

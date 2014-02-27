@@ -3,32 +3,22 @@ package
 	
 //	import engine.ui.components.VButton;
 	
-	import flash.display.Bitmap;
 	import flash.display.Sprite;
-	import flash.display.StageDisplayState;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.filters.BlurFilter;
-	import flash.filters.ColorMatrixFilter;
-	import flash.filters.GlowFilter;
-	import flash.utils.setInterval;
 	
-	import ui.CheckBox;
 	import ui.ComboBox;
 	import ui.Frame;
 	import ui.ProgressBar;
 	import ui.button.Button;
 	import ui.core.Container;
-	import ui.events.TabedPaneEvent;
 	import ui.list.List;
 	import ui.list.ScrollList;
 	import ui.scrollpane.ScrollPane;
-	import ui.support.DefaultConfig;
 	import ui.tabedpane.Accordion;
 	import ui.tabedpane.TabNav;
 	import ui.text.Label;
 	import ui.text.TextArea;
-	import ui.text.TextComponent;
 	import ui.text.TextInput;
 	
 	[SWF(width=1280, height=800, backgroundColor=0xFFFFFF, frameRate=60)]
@@ -68,7 +58,7 @@ package
 				list.setValue(val);
 			});
 			
-			btn = new CheckBox();
+//			btn = new CheckBox();
 			btn.label.text = "check box";
 			
 			var accordion:Accordion = new Accordion();

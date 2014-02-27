@@ -9,7 +9,7 @@ package ui.tabedpane
 	{
 		public function Accordion()
 		{
-			titleButtonFactory = DefaultAccordionTitleButton;
+//			titleButtonFactory = DefaultAccordionTitleButton;
 			tabGap = 6;
 			allowEmptyFocusTab = true;
 		}

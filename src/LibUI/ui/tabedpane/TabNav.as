@@ -4,7 +4,7 @@ package ui.tabedpane
 	{
 		public function TabNav()
 		{
-			titleButtonFactory = DefaultAccordionTitleButton;
+//			titleButtonFactory = DefaultAccordionTitleButton;
 			tabGap = 6;
 			maxVisibleTabCount = 1;
 		}

@@ -18,10 +18,10 @@ package ui.support
 			0, 0, 0, 1, 0
 		]);
 		
-		[Embed(source="/assets/scroll_bar_up_arrow.png")]
+//		[Embed(source="/assets/scroll_bar_up_arrow.png")]
 		static private const SCROLL_BAR_UP_ARROW:Class;
 		
-		[Embed(source="/assets/scroll_bar_down_arrow.png")]
+//		[Embed(source="/assets/scroll_bar_down_arrow.png")]
 		static private const SCROLL_BAR_DOWN_ARROW:Class;
 		
 		static private const SCROLL_BAR_WIDTH:int = 11;
@@ -68,7 +68,7 @@ package ui.support
 			return btn;
 		}
 		
-		[Embed(source="/assets/vehicle_comboBox_rollButton_normal.png")]
+//		[Embed(source="/assets/vehicle_comboBox_rollButton_normal.png")]
 		static private const COMBOBOX_POPUP_BUTTON_NORMAL:Class;
 		
 		static public function createComboBoxPopupBtn():Button
