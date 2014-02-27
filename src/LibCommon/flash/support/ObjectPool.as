@@ -1,11 +1,11 @@
-package stdlib.components
+package flash.support
 {
 	import array.del;
 	import array.has;
 	
 	import lambda.apply;
 	
-	import stdlib.reflection.getTypeName;
+	import flash.reflection.getTypeName;
 
 	final public class ObjectPool
 	{

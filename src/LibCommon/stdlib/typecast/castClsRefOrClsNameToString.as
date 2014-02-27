@@ -1,6 +1,6 @@
 package stdlib.typecast
 {
-	import stdlib.reflection.getTypeName;
+	import flash.reflection.getTypeName;
 
 	public function castClsRefOrClsNameToString(clsRefOrClsName:*):String
 	{

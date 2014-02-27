@@ -3,7 +3,7 @@ package snjdck.game.common.board
 	
 	import flash.display.DisplayObject;
 	
-	import stdlib.components.ObjectPool;
+	import flash.support.ObjectPool;
 
 	internal class SelectedLayer extends Layer
 	{

@@ -7,7 +7,7 @@ package snjdck.mvc.helper
 	
 	import snjdck.injector.IInjector;
 	
-	import stdlib.reflection.getTypeName;
+	import flash.reflection.getTypeName;
 	
 	import string.replace;
 

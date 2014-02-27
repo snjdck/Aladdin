@@ -4,7 +4,7 @@ package snjdck.arithmetic.impl
 	
 	import snjdck.arithmetic.IScriptContext;
 	
-	import stdlib.reflection.getType;
+	import flash.reflection.getType;
 
 	public class ScriptContextFactory
 	{

@@ -11,7 +11,7 @@ package snjdck.mvc.ext
 	import snjdck.mvc.Module;
 	import snjdck.net.http.Http;
 	
-	import stdlib.reflection.getType;
+	import flash.reflection.getType;
 	
 	import string.trim;
 

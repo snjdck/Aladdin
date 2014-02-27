@@ -4,13 +4,13 @@ package snjdck.entityengine
 	
 	import avmplus.getTypeInfo;
 	
-	import stdlib.components.ObjectPool;
+	import flash.support.ObjectPool;
 	
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
 	
-	import stdlib.reflection.getType;
-	import stdlib.reflection.typeinfo.VariableInfo;
+	import flash.reflection.getType;
+	import flash.reflection.typeinfo.VariableInfo;
 	
 	import flash.signals.Signal;
 

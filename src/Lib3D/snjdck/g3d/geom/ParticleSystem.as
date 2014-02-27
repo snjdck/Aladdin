@@ -16,7 +16,7 @@ package snjdck.g3d.geom
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.core.Object3D;
 	
-	import stdlib.components.Range;
+	import flash.support.Range;
 	
 	use namespace ns_g3d;
 

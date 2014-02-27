@@ -2,7 +2,7 @@ package snjdck.g3d.geom
 {
 	import flash.geom.Vector3D;
 	
-	import stdlib.components.Range;
+	import flash.support.Range;
 
 	final public class RangeVec
 	{

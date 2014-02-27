@@ -16,7 +16,7 @@ package snjdck.g3d.render
 	import snjdck.g3d.geom.ProjectionFactory;
 	import snjdck.g3d.ns_g3d;
 	
-	import stdlib.components.ObjectPool;
+	import flash.support.ObjectPool;
 	
 	use namespace ns_g3d;
 

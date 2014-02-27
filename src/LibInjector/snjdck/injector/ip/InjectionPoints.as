@@ -6,9 +6,9 @@ package snjdck.injector.ip
 	
 	import snjdck.injector.IInjector;
 	
-	import stdlib.reflection.typeinfo.MethodInfo;
-	import stdlib.reflection.typeinfo.TypeInfo;
-	import stdlib.reflection.typeinfo.VariableInfo;
+	import flash.reflection.typeinfo.MethodInfo;
+	import flash.reflection.typeinfo.TypeInfo;
+	import flash.reflection.typeinfo.VariableInfo;
 
 	[ExcludeClass]
 	final public class InjectionPoints implements IInjectionPoint

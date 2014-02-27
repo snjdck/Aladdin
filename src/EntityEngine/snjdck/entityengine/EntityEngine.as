@@ -9,7 +9,7 @@ package snjdck.entityengine
 	import snjdck.entityengine.helper.InjectionTypeNodeGroup;
 	import snjdck.injector.IInjector;
 	
-	import stdlib.reflection.getType;
+	import flash.reflection.getType;
 
 	public class EntityEngine
 	{

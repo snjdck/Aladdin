@@ -8,8 +8,8 @@ package snjdck.injector
 	import snjdck.injector.it.InjectionTypeSingleton;
 	import snjdck.injector.it.InjectionTypeValue;
 	
-	import stdlib.reflection.getType;
-	import stdlib.reflection.getTypeName;
+	import flash.reflection.getType;
+	import flash.reflection.getTypeName;
 	import stdlib.typecast.castClsRefOrClsNameToString;
 
 	public class Injector implements IInjector

@@ -1,6 +1,6 @@
 package lambda
 {
-	import stdlib.reflection.getType;
+	import flash.reflection.getType;
 	import array.prepend;
 
 	/**

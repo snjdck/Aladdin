@@ -8,7 +8,7 @@ package snjdck.mvc
 	import snjdck.mvc.helper.ServiceInitializer;
 	import snjdck.mvc.helper.ServiceRegInfo;
 	
-	import stdlib.reflection.getTypeName;
+	import flash.reflection.getTypeName;
 	
 	use namespace ns_mvc;
 

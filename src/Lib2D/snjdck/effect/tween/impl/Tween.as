@@ -15,7 +15,7 @@ package snjdck.effect.tween.impl
 	import flash.signals.ISignal;
 	import flash.signals.Signal;
 	
-	import stdlib.components.Range;
+	import flash.support.Range;
 
 	final public class Tween implements ITween
 	{

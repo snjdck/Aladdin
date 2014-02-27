@@ -1,4 +1,4 @@
-package stdlib.reflection
+package flash.reflection
 {
 	import flash.system.ApplicationDomain;
 

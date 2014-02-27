@@ -11,7 +11,6 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="src/Lib2D"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibStd"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibUI"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/LibReflection"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibAI"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/EntityEngine"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/ScriptEngine"/>

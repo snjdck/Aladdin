@@ -1,8 +1,8 @@
 package avmplus
 {
-	import stdlib.reflection.getTypeName;
+	import flash.reflection.getTypeName;
 	
-	import stdlib.reflection.typeinfo.TypeInfo;
+	import flash.reflection.typeinfo.TypeInfo;
 
 	public function getTypeInfo(target:Object):TypeInfo
 	{

@@ -30,6 +30,6 @@ package net.http
 
 import flash.display.Loader;
 
-import stdlib.components.ObjectPool;
+import flash.support.ObjectPool;
 
 const pool:ObjectPool = new ObjectPool(Loader);

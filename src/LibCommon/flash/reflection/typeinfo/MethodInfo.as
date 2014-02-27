@@ -1,4 +1,4 @@
-package stdlib.reflection.typeinfo
+package flash.reflection.typeinfo
 {
 	import array.getField;
 

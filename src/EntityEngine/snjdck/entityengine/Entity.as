@@ -8,7 +8,7 @@ package snjdck.entityengine
 	import flash.signals.ISignal;
 	import flash.signals.Signal;
 	
-	import stdlib.reflection.getType;
+	import flash.reflection.getType;
 
 	public class Entity implements IComponent
 	{

@@ -1,4 +1,4 @@
-package stdlib.components
+package flash.support
 {
 	final public class Range
 	{

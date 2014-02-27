@@ -6,7 +6,7 @@ package snjdck.entityengine.helper
 	import snjdck.injector.IInjector;
 	import snjdck.injector.it.IInjectionType;
 	
-	import stdlib.reflection.getType;
+	import flash.reflection.getType;
 	
 	[ExcludeClass]
 	public class InjectionTypeNodeGroup implements IInjectionType

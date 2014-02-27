@@ -16,7 +16,7 @@ package snjdck.mvc.imp
 	import snjdck.mvc.core.IView;
 	import snjdck.tesla.kernel.ui.IViewPortLayer;
 	
-	import stdlib.reflection.getTypeName;
+	import flash.reflection.getTypeName;
 	import stdlib.typecast.castClsRefOrClsNameToString;
 	
 	use namespace ns_mvc;

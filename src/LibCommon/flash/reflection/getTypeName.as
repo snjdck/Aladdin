@@ -1,4 +1,4 @@
-package stdlib.reflection
+package flash.reflection
 {
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getQualifiedSuperclassName;
