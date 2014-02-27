@@ -1,4 +1,4 @@
-package ui.support
+package flash.support
 {
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;

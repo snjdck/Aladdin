@@ -6,9 +6,10 @@ package ui
 	import flash.events.TimerEvent;
 	
 	import ui.core.Component;
-	import ui.ScrollBarType;
+	import ui.enum.ScrollBarType;
 	import ui.support.DefaultConfig;
-	import ui.support.StepTimer;
+	import flash.support.StepTimer;
+	import ui.enum.ScrollBarType;
 	
 	[Event(name="scroll", type="flash.events.Event")]
 	

@@ -1,4 +1,4 @@
-package ui
+package ui.enum
 {
 	final public class ScrollBarType
 	{
