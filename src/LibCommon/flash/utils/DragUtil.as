@@ -1,9 +1,9 @@
-package snjdck.utils
+package flash.utils
 {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
-	public class DragUtil
+	final public class DragUtil
 	{
 		static public function SetDraggable(target:Sprite, flag:Boolean=true):void
 		{

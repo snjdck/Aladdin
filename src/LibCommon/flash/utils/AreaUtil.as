@@ -1,10 +1,10 @@
-package snjdck.utils
+package flash.utils
 {
 	import flash.geom.Rectangle;
 	
 	import math.truncate;
 
-	public class AreaUtil
+	final public class AreaUtil
 	{
 		static public function bindViewInArea(target:Object, area:Object):void
 		{
