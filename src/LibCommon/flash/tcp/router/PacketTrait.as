@@ -1,5 +1,7 @@
-package flash.tcp
+package flash.tcp.router
 {
+	import flash.tcp.IPacket;
+
 	final internal class PacketTrait
 	{
 		public var packet:IPacket;

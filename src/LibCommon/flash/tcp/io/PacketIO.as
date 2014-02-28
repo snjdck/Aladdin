@@ -1,5 +1,7 @@
-package flash.tcp
+package flash.tcp.io
 {
+	import flash.tcp.IPacket;
+
 	internal class PacketIO
 	{
 		private var packetList:Vector.<IPacket>;

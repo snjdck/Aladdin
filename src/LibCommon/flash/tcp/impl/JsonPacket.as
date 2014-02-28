@@ -1,29 +1,28 @@
-package flash.tcp.packets
+package flash.tcp.impl
 {
+	import flash.tcp.IPacket;
 	import flash.utils.ByteArray;
 	import flash.utils.IDataInput;
 	import flash.utils.IDataOutput;
 	
-	import flash.tcp.IPacket;
-	
 	import string.replace;
 	
-	internal class Packet implements IPacket
+	public class JsonPacket implements IPacket
 	{
-		static protected const tempBuffer:ByteArray = new ByteArray();
+		static private const tempBuffer:ByteArray = new ByteArray();
 		
 		private var _bodySize:uint;
 		
 		private var _msgId:uint;
 		private var _msgData:Object;
 		
-		public function Packet()
+		public function JsonPacket()
 		{
 		}
 		
 		public function create(msgId:uint=0, msgData:Object=null):IPacket
 		{
-			var packet:Packet = new Packet();
+			var packet:JsonPacket = new JsonPacket();
 			packet._msgId = msgId;
 			packet._msgData = msgData;
 			return packet;
@@ -50,15 +49,15 @@ package flash.tcp.packets
 			if(_bodySize <= 0){
 				return;
 			}
-			buffer.readBytes(tempBuffer, 0, _bodySize);
-			_msgData = tempBuffer.readObject();
-			tempBuffer.clear();
+			var body:String = buffer.readUTFBytes(_bodySize);
+			_msgData = JSON.parse(body);
 		}
 		
 		public function write(buffer:IDataOutput):void
 		{
 			if(null != msgData){
-				tempBuffer.writeObject(msgData);
+				var body:String = JSON.stringify(msgData);
+				tempBuffer.writeUTFBytes(body);
 			}
 			
 			assert(tempBuffer.length <= 0xFFFF, "发送的数据大小不能超过64K!");

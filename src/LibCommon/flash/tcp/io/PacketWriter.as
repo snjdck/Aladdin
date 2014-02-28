@@ -1,8 +1,8 @@
-package flash.tcp
+package flash.tcp.io
 {
 	import flash.utils.IDataOutput;
 
-	final internal class PacketWriter extends PacketIO
+	final public class PacketWriter extends PacketIO
 	{
 		private var socket:IDataOutput;
 		

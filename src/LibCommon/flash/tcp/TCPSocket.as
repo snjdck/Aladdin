@@ -5,7 +5,6 @@ package flash.tcp
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.net.Socket;
-	
 	import flash.signals.ISignal;
 	import flash.signals.Signal;
 	

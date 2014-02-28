@@ -1,5 +1,9 @@
 package flash.tcp
 {
+	import flash.tcp.io.PacketReader;
+	import flash.tcp.io.PacketWriter;
+	import flash.tcp.router.PacketRouter;
+
 	final public class PacketSocket extends TCPSocket
 	{
 		private var packetReader:PacketReader;

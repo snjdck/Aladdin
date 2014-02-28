@@ -1,13 +1,14 @@
-package flash.tcp
+package flash.tcp.router
 {
+	import dict.hasKey;
+	
+	import flash.tcp.IPacket;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
-	import dict.hasKey;
-	
 	import lambda.call;
 
-	final internal class PacketRouter
+	final public class PacketRouter
 	{
 		private const handlerDict:Object = new Dictionary();
 		

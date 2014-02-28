@@ -1,8 +1,9 @@
-package flash.tcp
+package flash.tcp.io
 {
+	import flash.tcp.IPacket;
 	import flash.utils.IDataInput;
 
-	final internal class PacketReader extends PacketIO
+	final public class PacketReader extends PacketIO
 	{
 		private var socket:IDataInput;
 		private var packet:IPacket;

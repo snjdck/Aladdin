@@ -3,7 +3,6 @@ package flash.tcp
 	import flash.events.ServerSocketConnectEvent;
 	import flash.net.ServerSocket;
 	import flash.net.Socket;
-	
 	import flash.signals.ISignal;
 	import flash.signals.Signal;
 
