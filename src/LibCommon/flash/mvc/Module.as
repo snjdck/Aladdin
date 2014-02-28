@@ -13,7 +13,7 @@ package flash.mvc
 	import flash.mvc.view.Mediator;
 	import flash.mvc.view.View;
 	
-	import snjdck.tesla.kernel.ui.IViewPortLayer;
+	import flash.viewport.IViewPortLayer;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
 	

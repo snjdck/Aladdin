@@ -1,7 +1,7 @@
 package flash.mvc.kernel
 {
 	import flash.mvc.view.Mediator;
-	import snjdck.tesla.kernel.ui.IViewPortLayer;
+	import flash.viewport.IViewPortLayer;
 
 	public interface IView
 	{

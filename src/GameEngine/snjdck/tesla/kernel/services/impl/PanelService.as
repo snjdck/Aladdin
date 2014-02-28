@@ -15,9 +15,9 @@ package snjdck.tesla.kernel.services.impl
 	import snjdck.tesla.kernel.services.IPanelService;
 	import snjdck.tesla.kernel.services.ISceneService;
 	import snjdck.tesla.kernel.services.support.Service;
-	import snjdck.tesla.kernel.ui.IViewPort;
-	import snjdck.tesla.kernel.ui.IViewPortLayer;
-	import snjdck.tesla.kernel.ui.ViewPortLayerName;
+	import flash.viewport.IViewPort;
+	import flash.viewport.IViewPortLayer;
+	import flash.viewport.ViewPortLayerName;
 
 	public class PanelService extends Service implements IPanelService
 	{

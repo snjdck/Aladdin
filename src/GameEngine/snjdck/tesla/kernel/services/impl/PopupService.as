@@ -12,9 +12,9 @@ package snjdck.tesla.kernel.services.impl
 	import snjdck.tesla.kernel.services.IApplicationDimensionService;
 	import snjdck.tesla.kernel.services.IPopupService;
 	import snjdck.tesla.kernel.services.support.Service;
-	import snjdck.tesla.kernel.ui.IViewPort;
-	import snjdck.tesla.kernel.ui.IViewPortLayer;
-	import snjdck.tesla.kernel.ui.ViewPortLayerName;
+	import flash.viewport.IViewPort;
+	import flash.viewport.IViewPortLayer;
+	import flash.viewport.ViewPortLayerName;
 	
 	import flash.factory.newSprite;
 	

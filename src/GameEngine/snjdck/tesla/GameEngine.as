@@ -18,8 +18,8 @@ package snjdck.tesla
 	import snjdck.tesla.kernel.services.impl.PopupService;
 	import snjdck.tesla.kernel.services.impl.SceneService;
 	import snjdck.tesla.kernel.services.impl.bitmapservice.BitmapService;
-	import snjdck.tesla.kernel.ui.IViewPort;
-	import snjdck.tesla.kernel.ui.ViewPort;
+	import flash.viewport.IViewPort;
+	import flash.viewport.ViewPort;
 
 	public class GameEngine extends Application
 	{

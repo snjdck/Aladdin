@@ -15,7 +15,7 @@ package flash.mvc.view
 	import flash.support.TypeCast;
 	import flash.utils.Dictionary;
 	
-	import snjdck.tesla.kernel.ui.IViewPortLayer;
+	import flash.viewport.IViewPortLayer;
 	
 	use namespace ns_mvc;
 
