@@ -8,7 +8,7 @@ package flash.support
 	
 	import lambda.call;
 	
-	import http.loadData;
+	import flash.http.loadData;
 	
 	import protocols.Rpc;
 	

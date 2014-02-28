@@ -5,7 +5,7 @@ package flash.support
 	import flash.net.URLRequestMethod;
 	import flash.utils.ByteArray;
 	
-	import http.loadData;
+	import flash.http.loadData;
 
 	final public class Uploader
 	{

@@ -1,4 +1,4 @@
-package http
+package flash.http
 {
 	import flash.display.Loader;
 	import flash.lang.ICloseable;

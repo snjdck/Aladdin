@@ -6,7 +6,7 @@ package flash.asset
 	import flash.utils.ByteArray;
 	
 	import flash.support.Http;
-	import http.loadMedia;
+	import flash.http.loadMedia;
 
 	public class AssetLoader extends EventDispatcher
 	{

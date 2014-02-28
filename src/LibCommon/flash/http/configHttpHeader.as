@@ -1,9 +1,9 @@
-package http
+package flash.http
 {
 	import flash.net.URLRequest;
 	import flash.net.URLRequestHeader;
 	
-	import system.isAdobeAir;
+	import flash.system.isAdobeAir;
 
 	internal function configHttpHeader(request:URLRequest, headerDict:Object):void
 	{

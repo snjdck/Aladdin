@@ -1,4 +1,4 @@
-package system
+package flash.system
 {
 	import flash.external.ExternalInterface;
 	
