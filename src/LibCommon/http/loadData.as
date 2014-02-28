@@ -21,7 +21,6 @@ package http
 }
 
 import flash.net.URLStream;
-
 import flash.support.ObjectPool;
 
 const pool:ObjectPool = new ObjectPool(URLStream);

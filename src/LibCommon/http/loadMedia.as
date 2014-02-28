@@ -29,7 +29,6 @@ package http
 }
 
 import flash.display.Loader;
-
 import flash.support.ObjectPool;
 
 const pool:ObjectPool = new ObjectPool(Loader);
