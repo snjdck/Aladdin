@@ -9,7 +9,7 @@ package snjdck.g3d.asset.helper
 	import dict.deleteKey;
 	import dict.hasKey;
 	
-	import net.http.loadMedia;
+	import http.loadMedia;
 	
 	import snjdck.fileformat.image.BmpParser;
 	import snjdck.fileformat.image.TgaParser;

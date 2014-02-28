@@ -1,11 +1,11 @@
-package snjdck.net.http
+package flash.support
 {
 	import flash.net.URLRequest;
 	import flash.net.URLRequestHeader;
 	import flash.net.URLRequestMethod;
 	import flash.utils.ByteArray;
 	
-	import net.http.loadData;
+	import http.loadData;
 
 	final public class Uploader
 	{

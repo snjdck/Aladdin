@@ -1,4 +1,4 @@
-package net.http
+package http
 {
 	import flash.lang.ICloseable;
 	import flash.net.URLRequest;

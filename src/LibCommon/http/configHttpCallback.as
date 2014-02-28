@@ -1,4 +1,4 @@
-package net.http
+package http
 {
 	import flash.display.LoaderInfo;
 	import flash.events.ErrorEvent;

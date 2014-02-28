@@ -1,4 +1,4 @@
-package snjdck.net
+package flash.data
 {
 	import flash.net.SharedObject;
 	

@@ -1,6 +1,5 @@
 package flash.data
 {
-
 	internal class StatementTrait
 	{
 		public var statement:SQLStatement;

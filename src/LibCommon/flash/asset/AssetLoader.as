@@ -1,12 +1,12 @@
-package snjdck.net
+package flash.asset
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.net.URLRequest;
 	import flash.utils.ByteArray;
 	
-	import snjdck.net.http.Http;
-	import net.http.loadMedia;
+	import flash.support.Http;
+	import http.loadMedia;
 
 	public class AssetLoader extends EventDispatcher
 	{

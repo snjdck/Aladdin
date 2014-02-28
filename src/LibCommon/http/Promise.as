@@ -1,4 +1,4 @@
-package net.http
+package http
 {
 	import lambda.call;
 	import flash.lang.ICloseable;

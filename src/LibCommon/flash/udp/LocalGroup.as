@@ -1,4 +1,4 @@
-package snjdck.net
+package flash.udp
 {
 	import flash.events.NetStatusEvent;
 	import flash.net.GroupSpecifier;

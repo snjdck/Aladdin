@@ -6,7 +6,7 @@ package snjdck.tesla.kernel.services.impl.bitmapservice
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import net.http.loadMedia;
+	import http.loadMedia;
 	
 	import flash.display.IDisplayObject;
 

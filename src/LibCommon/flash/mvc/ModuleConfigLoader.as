@@ -6,9 +6,9 @@ package flash.mvc
 	
 	import lambda.apply;
 	
-	import net.http.loadMedia;
+	import http.loadMedia;
 	
-	import snjdck.net.http.Http;
+	import flash.support.Http;
 	
 	import string.trim;
 

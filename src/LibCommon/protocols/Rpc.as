@@ -1,4 +1,4 @@
-package snjdck.net.protocols
+package protocols
 {
 	import flash.utils.ByteArray;
 

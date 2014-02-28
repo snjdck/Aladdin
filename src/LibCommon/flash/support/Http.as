@@ -1,4 +1,4 @@
-package snjdck.net.http
+package flash.support
 {
 	import flash.lang.ICloseable;
 	import flash.net.URLRequest;
@@ -8,13 +8,13 @@ package snjdck.net.http
 	
 	import lambda.call;
 	
-	import net.http.loadData;
+	import http.loadData;
 	
-	import snjdck.net.protocols.Rpc;
+	import protocols.Rpc;
 	
 	import stdlib.common.copyProps;
 	
-	public class Http
+	final public class Http
 	{
 		static public function Call(gateway:String, cmd:String, args:Array, handler:Function):ICloseable
 		{
