@@ -2,10 +2,8 @@ package snjdck.tesla.kernel.services
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	
-	import snjdck.mvc.core.IService;
 
-	public interface IPopupService extends IService
+	public interface IPopupService
 	{
 		/**
 		 * @param popup 弹出框

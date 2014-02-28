@@ -1,9 +1,8 @@
 package snjdck.tesla.kernel.services
 {
-	import snjdck.mvc.core.IService;
 	import flash.signals.ISignal;
 
-	public interface IKeyboardService extends IService
+	public interface IKeyboardService
 	{
 		function get keyDownSignal():ISignal;
 		function get keyUpSignal():ISignal;

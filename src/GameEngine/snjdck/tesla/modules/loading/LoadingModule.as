@@ -1,6 +1,6 @@
 package snjdck.tesla.modules.loading
 {
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class LoadingModule extends Module
 	{

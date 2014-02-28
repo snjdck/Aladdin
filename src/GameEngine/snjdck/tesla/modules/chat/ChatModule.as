@@ -1,6 +1,6 @@
 package snjdck.tesla.modules.chat
 {
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class ChatModule extends Module
 	{

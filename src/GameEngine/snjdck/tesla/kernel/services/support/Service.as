@@ -1,9 +1,8 @@
 package snjdck.tesla.kernel.services.support
 {
-	import snjdck.mvc.Module;
-	import snjdck.mvc.core.IService;
+	import flash.mvc.Module;
 	
-	public class Service implements IService
+	public class Service
 	{
 		[Inject]
 		public var module:Module;

@@ -2,9 +2,7 @@ package snjdck.tesla.kernel.services
 {
 	import flash.media.Sound;
 	
-	import snjdck.mvc.core.IService;
-	
-	public interface IAssetService extends IService
+	public interface IAssetService
 	{
 		function regAsset(assetName:String, data:Object):void;
 		function hasAsset(assetName:String):Boolean;

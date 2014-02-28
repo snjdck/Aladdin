@@ -3,7 +3,7 @@ package snjdck.tesla
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	
-	import snjdck.mvc.Application;
+	import flash.mvc.Application;
 	import snjdck.tesla.kernel.services.IApplicationDimensionService;
 	import snjdck.tesla.kernel.services.IBitmapService;
 	import snjdck.tesla.kernel.services.IKeyboardService;

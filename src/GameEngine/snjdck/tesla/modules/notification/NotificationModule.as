@@ -1,6 +1,6 @@
 package snjdck.tesla.modules.notification
 {
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class NotificationModule extends Module
 	{

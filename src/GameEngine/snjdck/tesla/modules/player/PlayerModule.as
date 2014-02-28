@@ -1,6 +1,6 @@
 package snjdck.tesla.modules.player
 {
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class PlayerModule extends Module
 	{

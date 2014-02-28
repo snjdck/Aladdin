@@ -1,9 +1,8 @@
 package snjdck.tesla.kernel.services
 {
-	import snjdck.mvc.core.IService;
 	import flash.signals.ISignal;
 
-	public interface IApplicationDimensionService extends IService
+	public interface IApplicationDimensionService
 	{
 		function get resizeSignal():ISignal;
 		function get width():int;

@@ -1,6 +1,6 @@
 package snjdck.tesla.modules.bag
 {
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class BagModule extends Module
 	{

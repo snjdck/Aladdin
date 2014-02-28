@@ -10,7 +10,7 @@ package snjdck.entityengine.helper
 	import snjdck.entityengine.EntityEngine;
 	import snjdck.entityengine.NodeList;
 	import snjdck.entityengine.nodes.DisplayNode;
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class EntityEngineFacade extends Module
 	{

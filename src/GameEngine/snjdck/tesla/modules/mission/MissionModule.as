@@ -1,6 +1,6 @@
 package snjdck.tesla.modules.mission
 {
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class MissionModule extends Module
 	{

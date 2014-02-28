@@ -1,9 +1,8 @@
 package snjdck.tesla.kernel.services
 {
-	import snjdck.mvc.core.IService;
 	import flash.signals.ISignal;
 
-	public interface ISceneService extends IService
+	public interface ISceneService
 	{
 		function gotoScene(sceneName:String):void;
 		function backToLastScene():void;

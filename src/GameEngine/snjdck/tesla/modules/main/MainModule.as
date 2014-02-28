@@ -1,6 +1,6 @@
 package snjdck.tesla.modules.main
 {
-	import snjdck.mvc.Module;
+	import flash.mvc.Module;
 	
 	public class MainModule extends Module
 	{
