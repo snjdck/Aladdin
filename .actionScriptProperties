@@ -2,9 +2,7 @@
 <actionScriptProperties analytics="false" mainApplicationPath="Aladdin.as" projectUUID="475d86d7-dd9f-44af-b51c-3b11c2b8fc57" version="11">
   <compiler additionalCompilerArguments="-keep-as3-metadata Inject" autoRSLOrdering="true" copyDependentFiles="false" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="false" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin" removeUnusedRSL="true" sourceFolderPath="src/LibCommon" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="true" useDebugRSLSwfs="true" useFlashSDK="false" verifyDigests="true" warn="true">
     <compilerSourcePath>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/LibHttp"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/Agalc"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/LibMvc"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/Lib3D"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/Lib2D"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibStd"/>
