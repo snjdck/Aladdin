@@ -2,7 +2,7 @@ package snjdck.entityengine
 {
 	import array.delWhen;
 	
-	import avmplus.getTypeInfo;
+	import flash.reflection.getTypeInfo;
 	
 	import flash.support.ObjectPool;
 	

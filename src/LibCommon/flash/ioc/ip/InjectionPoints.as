@@ -2,7 +2,7 @@ package flash.ioc.ip
 {
 	import array.push;
 	
-	import avmplus.getTypeInfo;
+	import flash.reflection.getTypeInfo;
 	
 	import flash.ioc.IInjector;
 	
