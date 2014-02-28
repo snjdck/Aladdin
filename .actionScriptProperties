@@ -14,7 +14,6 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibParser"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibMedia"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/GameEngine"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/RemoteLogger"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="0">
       <libraryPathEntry kind="4" path="">
