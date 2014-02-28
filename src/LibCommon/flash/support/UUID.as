@@ -9,7 +9,7 @@ package flash.support
 	{
 		static private var counter:uint = 0;
 		
-		public function CreateUID():String
+		static public function CreateUID():String
 		{
 			var uid:String = Capabilities.serverString;
 			var now:Date = new Date();
@@ -22,7 +22,7 @@ package flash.support
 			return uid;
 		}
 		
-		public function CreateUniqueName(target:Object):String
+		static public function CreateUniqueName(target:Object):String
 		{
 			return getTypeName(target, true) + "_" + (counter++).toString();
 		}

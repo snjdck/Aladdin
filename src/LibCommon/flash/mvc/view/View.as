@@ -1,23 +1,21 @@
 package flash.mvc.view
 {
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
-	import flash.utils.Dictionary;
-	
 	import dict.deleteKey;
 	import dict.hasKey;
 	import dict.hasValue;
 	
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.ioc.IInjector;
 	import flash.mvc.Module;
+	import flash.mvc.kernel.IView;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.ns_mvc;
-	import flash.mvc.kernel.IView;
-	import snjdck.tesla.kernel.ui.IViewPortLayer;
-	
 	import flash.reflection.getTypeName;
-	import stdlib.typecast.castClsRefOrClsNameToString;
+	import flash.support.TypeCast;
+	import flash.utils.Dictionary;
+	
+	import snjdck.tesla.kernel.ui.IViewPortLayer;
 	
 	use namespace ns_mvc;
 
@@ -70,7 +68,7 @@ package flash.mvc.view
 		
 		public function mapViewToMediated(viewClsOrName:Object, mediatorCls:Class):void
 		{
-			var viewTypeName:String = castClsRefOrClsNameToString(viewClsOrName);
+			var viewTypeName:String = TypeCast.CastClsToStr(viewClsOrName);
 			viewMapToMediated[viewTypeName] = mediatorCls;
 		}
 		

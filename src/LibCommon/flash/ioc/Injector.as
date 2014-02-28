@@ -7,10 +7,9 @@ package flash.ioc
 	import flash.ioc.it.InjectionTypeClass;
 	import flash.ioc.it.InjectionTypeSingleton;
 	import flash.ioc.it.InjectionTypeValue;
-	
 	import flash.reflection.getType;
 	import flash.reflection.getTypeName;
-	import stdlib.typecast.castClsRefOrClsNameToString;
+	import flash.support.TypeCast;
 
 	public class Injector implements IInjector
 	{
@@ -33,7 +32,7 @@ package flash.ioc
 
 		private function getKey(keyClsOrName:Object, id:String=null):String
 		{
-			var key:String = castClsRefOrClsNameToString(keyClsOrName);
+			var key:String = TypeCast.CastClsToStr(keyClsOrName);
 			return id ? (key + "@" + id) : key;
 		}
 		
