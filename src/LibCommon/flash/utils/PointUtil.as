@@ -1,5 +1,7 @@
-package flash.geom
+package flash.utils
 {
+	import flash.geom.Point;
+
 	final public class PointUtil
 	{
 		static public function Length(pt:Point):Number

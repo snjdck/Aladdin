@@ -1,4 +1,4 @@
-package geom3d
+package flash.geom.d3
 {
 	public function createMeshIndices(numVertexPerRow:int, numVertexPerCol:int, result:Object):void
 	{

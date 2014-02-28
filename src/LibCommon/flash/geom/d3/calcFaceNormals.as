@@ -1,4 +1,4 @@
-package geom3d
+package flash.geom.d3
 {
 	import vec3.crossProd;
 	import vec3.readFromArray;

@@ -1,4 +1,4 @@
-package geom2d
+package flash.geom.d2
 {
 	import flash.geom.Point;
 

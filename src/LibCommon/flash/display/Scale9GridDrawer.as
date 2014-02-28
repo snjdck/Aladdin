@@ -2,7 +2,7 @@ package flash.display
 {
 	import flash.geom.Rectangle;
 	
-	import geom3d.createMeshIndices;
+	import flash.geom.d3.createMeshIndices;
 
 	final public class Scale9GridDrawer
 	{

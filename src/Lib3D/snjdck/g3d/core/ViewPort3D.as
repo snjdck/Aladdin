@@ -4,7 +4,7 @@ package snjdck.g3d.core
 	import flash.geom.Vector3D;
 	import flash.lang.IDisposable;
 	
-	import geom3d.createIsoMatrix;
+	import flash.geom.d3.createIsoMatrix;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;

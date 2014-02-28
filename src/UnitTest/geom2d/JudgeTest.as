@@ -5,6 +5,7 @@ package geom2d
 	import flash.events.MouseEvent;
 	import flash.filters.GlowFilter;
 	import flash.geom.Point;
+	import flash.geom.d2.JudgePtInScanArea;
 	
 	public class JudgeTest extends Sprite
 	{

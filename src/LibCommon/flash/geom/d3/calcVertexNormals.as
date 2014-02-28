@@ -1,4 +1,4 @@
-package geom3d
+package flash.geom.d3
 {
 	/**
 	 * vertexNormals = new Vector.<Number>(vertexData.length, true);

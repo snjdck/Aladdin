@@ -2,8 +2,8 @@ package snjdck.ai.navmesh
 {
 	import flash.geom.Point;
 	
-	import geom2d.JudgePtToCircle;
-	import geom2d.JudgePtToTriangle;
+	import flash.geom.d2.JudgePtToCircle;
+	import flash.geom.d2.JudgePtToTriangle;
 
 	public class Triangle
 	{

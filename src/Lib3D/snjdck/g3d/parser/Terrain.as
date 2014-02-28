@@ -1,6 +1,6 @@
 package snjdck.g3d.parser
 {
-	import geom3d.createMeshIndices;
+	import flash.geom.d3.createMeshIndices;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.mesh.Mesh;

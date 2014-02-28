@@ -2,9 +2,9 @@ package snjdck.ai.navmesh
 {
 	import flash.geom.Point;
 	
-	import geom2d.JudgeLineToLine;
-	import geom2d.JudgePtToCircle;
-	import geom2d.JudgePtToLine;
+	import flash.geom.d2.JudgeLineToLine;
+	import flash.geom.d2.JudgePtToCircle;
+	import flash.geom.d2.JudgePtToLine;
 
 	/**
 	 * 最小内角优先原则 三角化 凹多边形

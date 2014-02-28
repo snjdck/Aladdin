@@ -1,4 +1,4 @@
-package geom3d
+package flash.geom.d3
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
