@@ -1,4 +1,4 @@
-package sorter
+package flash.support
 {
 	/**
 	 * Node{next}
