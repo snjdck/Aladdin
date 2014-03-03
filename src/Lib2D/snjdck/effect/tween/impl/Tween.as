@@ -1,23 +1,20 @@
 package snjdck.effect.tween.impl
 {
+	import dict.deleteKey;
+	
 	import flash.display.Shape;
 	import flash.events.Event;
+	import flash.signals.ISignal;
+	import flash.signals.Signal;
+	import flash.support.Range;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
-	import dict.deleteKey;
-	
 	import lambda.call;
 	
-	import snjdck.effect.tween.ITween;
 	import snjdck.effect.tween.TweenEase;
-	import snjdck.effect.tween.plugin.TargetProxy;
-	import flash.signals.ISignal;
-	import flash.signals.Signal;
-	
-	import flash.support.Range;
 
-	final public class Tween implements ITween
+	final public class Tween
 	{
 		static private var evtSource:Shape = new Shape();
 		static private var timestamp:int;
@@ -39,7 +36,7 @@ package snjdck.effect.tween.impl
 			}
 		}
 		
-		static private const tweenDict:Dictionary = new Dictionary();
+		static private const tweenDict:Object = new Dictionary();
 		
 		static public function KillTweensOf(target:Object):void
 		{
@@ -48,7 +45,7 @@ package snjdck.effect.tween.impl
 		
 		private var propInfoDict:Object;
 		
-		private var targetProxy:TargetProxy;
+		private var _target:Object;
 		private var _position:int;
 		private var _duration:int;
 		private var ease:Function;
@@ -66,7 +63,7 @@ package snjdck.effect.tween.impl
 		 */		
 		public function Tween(target:Object, duration:int, props:Object=null, ease:Function=null, onEnd:Object=null, onUpdate:Object=null)
 		{
-			this.targetProxy = new TargetProxy(target);
+			this._target = target;
 			this._position = 0;
 			this._duration = duration;
 			this.ease = ease || TweenEase.Linear;
@@ -141,7 +138,7 @@ package snjdck.effect.tween.impl
 		
 		public function get target():Object
 		{
-			return targetProxy.valueOf();
+			return _target.valueOf();
 		}
 		
 		public function get position():int
@@ -184,7 +181,7 @@ package snjdck.effect.tween.impl
 		private function updateTargetPropValues(ratio:Number):void
 		{
 			for(var propName:String in propInfoDict){
-				targetProxy[propName] = (propInfoDict[propName] as Range).getValue(ratio);
+				_target[propName] = (propInfoDict[propName] as Range).getValue(ratio);
 			}
 		}
 		
@@ -208,12 +205,12 @@ package snjdck.effect.tween.impl
 			
 			if(propValue is Array){
 				propEndValue = getValue(propName, propValue[1]);
-				targetProxy[propName] = getValue(propName, propValue[0]);
+				_target[propName] = getValue(propName, propValue[0]);
 			}else{
 				propEndValue = getValue(propName, propValue);
 			}
 			
-			propInfoDict[propName] = new Range(targetProxy[propName], propEndValue);
+			propInfoDict[propName] = new Range(_target[propName], propEndValue);
 		}
 		
 		private function delConflictProp(propName:String):void
@@ -230,7 +227,7 @@ package snjdck.effect.tween.impl
 		
 		private function getValue(propName:String, val:*):Number
 		{
-			return (val is String) ? (Number(targetProxy[propName]) + Number(val)) : (val as Number);
+			return (val is String) ? (Number(_target[propName]) + Number(val)) : (val as Number);
 		}
 		
 		public function get completeSignal():ISignal

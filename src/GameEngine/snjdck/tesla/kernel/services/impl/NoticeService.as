@@ -4,8 +4,6 @@ package snjdck.tesla.kernel.services.impl
 	
 	import flash.display.DisplayObject;
 	
-	import snjdck.effect.tween.ITweenBuilder;
-	import snjdck.effect.tween.impl.TweenBuilder;
 	import snjdck.tesla.kernel.services.IApplicationDimensionService;
 	import snjdck.tesla.kernel.services.INoticeService;
 	import snjdck.tesla.kernel.services.support.Service;
@@ -36,7 +34,7 @@ package snjdck.tesla.kernel.services.impl
 			notice.alpha = 0;
 			noticeLayer.addChild(notice);
 			Layout.CenterDisplay(notice, appSize.width, appSize.height);
-			
+			/*
 			var tweenBuilder:ITweenBuilder = new TweenBuilder();
 			tweenBuilder.sequenceBegin();
 			tweenBuilder.tween(notice, 500, {"alpha":1, "y":"-20"});
@@ -46,7 +44,7 @@ package snjdck.tesla.kernel.services.impl
 				noticeLayer.removeChild(notice);
 			});
 			tweenBuilder.getRootTween().play();
-			
+			*/
 //			TweenOp.Sequence(
 //				new Tween(ui, 500, {"alpha":1, "y":"-10"}),
 //				new Tween(ui, 1000),
