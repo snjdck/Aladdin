@@ -1,22 +1,19 @@
-package snjdck.utils
+package flash.display
 {
-	import flash.display.Graphics;
-	import flash.display.Sprite;
 	import flash.geom.Point;
-	
-	import snjdck.common.geom.Rect2D;
-	
-	import stdlib.constant.Direction;
-	
 	import flash.graphics.Graphics2D;
 	import flash.graphics.IPath;
 	import flash.graphics.brush.SolidBrush;
 	import flash.graphics.path.Path;
 	import flash.graphics.pen.SolidPen;
 	
+	import snjdck.common.geom.Rect2D;
+	
+	import stdlib.constant.Direction;
+	
 	import string.has;
 
-	public class GDI
+	final public class ToolTipDrawer
 	{
 		static public function CreateInfoTipPath(width:Number, height:Number, thumbDir:String):IPath
 		{
@@ -131,7 +128,7 @@ package snjdck.utils
 			}
 			
 			g.clear();
-			GDI.DrawBorder(g, GDI.CreateInfoTipPath(size.x, size.y, dir), 0, 0xFFFFFF, 0xFFFF00);
+			DrawBorder(g, CreateInfoTipPath(size.x, size.y, dir), 0, 0xFFFFFF, 0xFFFF00);
 		}
 	}
 }
