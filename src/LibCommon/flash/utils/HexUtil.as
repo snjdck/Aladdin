@@ -1,12 +1,10 @@
-package snjdck.utils
+package flash.utils
 {
-	import flash.utils.ByteArray;
-	import flash.utils.Endian;
-	
 	import flash.factory.newBuffer;
+	
 	import string.formatInt;
 
-	public class HexUtil
+	final public class HexUtil
 	{
 		static public function FormatBin(bin:ByteArray, begin:uint=0, length:uint=0, separator:String=null):String
 		{
