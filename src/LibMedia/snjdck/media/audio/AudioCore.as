@@ -11,8 +11,6 @@ package snjdck.media.audio
 	import flash.net.URLRequest;
 	
 	[Event(name="ioError", 		type="flash.events.IOErrorEvent")]
-	[Event(name="open", 		type="flash.events.Event")]
-	[Event(name="complete", 	type="flash.events.Event")]
 	[Event(name="soundComplete",type="flash.events.Event")]
 	
 	public class AudioCore extends EventDispatcher
@@ -28,8 +26,6 @@ package snjdck.media.audio
 		
 		public function AudioCore()
 		{
-			super();
-			//
 			_position = 0;
 			_percentLoaded = 0;
 		}
@@ -154,24 +150,18 @@ package snjdck.media.audio
 		}
 		
 		private function __onSoundComplete(evt:Event):void 			{ dispatchEvent(evt); }
-		private function __onOpen(evt:Event):void 					{ dispatchEvent(evt); }
 		private function __onIOError(evt:IOErrorEvent):void 		{ dispatchEvent(evt); }
-		private function __onLoaded(evt:Event):void 				{ dispatchEvent(evt); }
 		private function __onLoading(evt:ProgressEvent):void 		{ _percentLoaded = sound.bytesLoaded / sound.bytesTotal; }
 		
 		private function addSoundEventListener(target:Sound):void
 		{
-			target.addEventListener(Event.OPEN, 				__onOpen);
 			target.addEventListener(IOErrorEvent.IO_ERROR, 		__onIOError);
-			target.addEventListener(Event.COMPLETE, 			__onLoaded);
 			target.addEventListener(ProgressEvent.PROGRESS, 	__onLoading);
 		}
 		
 		private function removeSoundEventListener(target:Sound):void
 		{
-			target.removeEventListener(Event.OPEN, 				__onOpen);
 			target.removeEventListener(IOErrorEvent.IO_ERROR, 	__onIOError);
-			target.removeEventListener(Event.COMPLETE, 			__onLoaded);
 			target.removeEventListener(ProgressEvent.PROGRESS, 	__onLoading);
 		}
 	}
