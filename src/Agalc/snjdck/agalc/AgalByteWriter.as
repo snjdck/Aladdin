@@ -71,7 +71,7 @@ package snjdck.agalc
 		{
 			rawData.writeShort(registerIndex);
 			rawData.writeShort(0);
-			rawData.writeByte(RegisterType.Sampler);
+			rawData.writeByte(Register.TYPE_Sampler);
 			rawData.writeByte(format	| (dimension	<< 4));
 			rawData.writeByte(special	| (wrapping		<< 4));
 			rawData.writeByte(mipmap	| (filter		<< 4));

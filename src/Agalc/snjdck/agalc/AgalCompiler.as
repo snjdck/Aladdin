@@ -25,16 +25,16 @@ package snjdck.agalc
 	 */
 	final public class AgalCompiler
 	{
-		new Register("va", RegisterType.Attribute);
-		new Register("fs", RegisterType.Sampler);
-		new Register("vc", RegisterType.Constant);
-		new Register("fc", RegisterType.Constant);
-		new Register("vt", RegisterType.Temporary);
-		new Register("ft", RegisterType.Temporary);
-		new Register("v",  RegisterType.Varying);
-		new Register("op", RegisterType.Output);
-		new Register("oc", RegisterType.Output);
-		new Register("od", RegisterType.DepthOutput);
+		new Register("va", Register.TYPE_Attribute);
+		new Register("fs", Register.TYPE_Sampler);
+		new Register("vc", Register.TYPE_Constant);
+		new Register("fc", Register.TYPE_Constant);
+		new Register("vt", Register.TYPE_Temporary);
+		new Register("ft", Register.TYPE_Temporary);
+		new Register("v",  Register.TYPE_Varying);
+		new Register("op", Register.TYPE_Output);
+		new Register("oc", Register.TYPE_Output);
+		new Register("od", Register.TYPE_DepthOutput);
 		
 		new Operation("mov", 0x00, 2);	//		=
 		new Operation("add", 0x01, 3);	//		+
