@@ -4,8 +4,6 @@ package snjdck.effect.tween.impl
 	
 	import flash.display.Shape;
 	import flash.events.Event;
-	import flash.signals.ISignal;
-	import flash.signals.Signal;
 	import flash.support.Range;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
@@ -16,8 +14,14 @@ package snjdck.effect.tween.impl
 
 	final public class Tween
 	{
-		static private var evtSource:Shape = new Shape();
+		static private const tweenDict:Object = new Dictionary();
+		static private const evtSource:Shape = new Shape();
 		static private var timestamp:int;
+		
+		static public function KillTweensOf(target:Object):void
+		{
+			delete tweenDict[target];
+		}
 		
 		evtSource.addEventListener(Event.ENTER_FRAME, __onTick);
 		timestamp = getTimer();
@@ -36,13 +40,6 @@ package snjdck.effect.tween.impl
 			}
 		}
 		
-		static private const tweenDict:Object = new Dictionary();
-		
-		static public function KillTweensOf(target:Object):void
-		{
-			delete tweenDict[target];
-		}
-		
 		private var propInfoDict:Object;
 		
 		private var _target:Object;
@@ -55,8 +52,6 @@ package snjdck.effect.tween.impl
 		private var onEnd:Object;
 		
 		private var nextSibling:Tween;
-		
-		private var _completeSignal:Signal;
 		
 		/**
 		 * 要实现循环缓动的话,可以设置 nextTask = this
@@ -71,13 +66,6 @@ package snjdck.effect.tween.impl
 			
 			this.onUpdate = onUpdate;
 			this.onEnd = onEnd;
-			
-			_completeSignal = new Signal();
-		}
-		
-		public function play():void
-		{
-			start();
 		}
 		
 		public function start():void
@@ -125,20 +113,18 @@ package snjdck.effect.tween.impl
 		public function get running():Boolean
 		{
 			var tween:Tween = tweenDict[target];
-			
 			while(tween){
 				if(this == tween){
 					return true;
 				}
 				tween = tween.nextSibling;
 			}
-			
 			return false;
 		}
 		
 		public function get target():Object
 		{
-			return _target.valueOf();
+			return _target;
 		}
 		
 		public function get position():int
@@ -164,7 +150,7 @@ package snjdck.effect.tween.impl
 			return _duration;
 		}
 		
-		internal function update(timeElapsed:int):void
+		private function update(timeElapsed:int):void
 		{
 			position += timeElapsed;
 			
@@ -174,14 +160,14 @@ package snjdck.effect.tween.impl
 			{
 				this.stop();
 				lambda.call(onEnd);
-				_completeSignal.notify();
 			}
 		}
 		
 		private function updateTargetPropValues(ratio:Number):void
 		{
 			for(var propName:String in propInfoDict){
-				_target[propName] = (propInfoDict[propName] as Range).getValue(ratio);
+				var propRange:Range = propInfoDict[propName];
+				_target[propName] = propRange.getValue(ratio);
 			}
 		}
 		
@@ -195,8 +181,6 @@ package snjdck.effect.tween.impl
 			for(var propName:String in props){
 				addProp(propName, props[propName]);
 			}
-			props = null;
-			lambda.call(onUpdate);
 		}
 		
 		private function addProp(propName:String, propValue:*):void
@@ -218,21 +202,12 @@ package snjdck.effect.tween.impl
 			deleteKey(propInfoDict, propName);
 		}
 		
-		public function flipProps():void
-		{
-			for each(var propInfo:Range in propInfoDict){
-				propInfo.flip();
-			}
-		}
-		
 		private function getValue(propName:String, val:*):Number
 		{
-			return (val is String) ? (Number(_target[propName]) + Number(val)) : (val as Number);
-		}
-		
-		public function get completeSignal():ISignal
-		{
-			return _completeSignal;
+			if(!(val is String)){
+				return val as Number;
+			}
+			return Number(_target[propName]) + Number(val);
 		}
 	}
 }
