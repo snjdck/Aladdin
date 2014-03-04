@@ -1,7 +1,5 @@
-package snjdck.ui.editor
+package flash.display
 {
-	import flash.display.DisplayObject;
-	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
