@@ -1,15 +1,13 @@
 package ui.text
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.filters.DropShadowFilter;
 	import flash.filters.GlowFilter;
 	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	import ui.core.Component;
-	
-	internal class TextComponent extends Component
+	internal class TextComponent extends Sprite
 	{
 		protected var labelTf:TextField;
 		
@@ -17,7 +15,7 @@ package ui.text
 		{
 		}
 		
-		override protected function createChildren():void
+		protected function createChildren():void
 		{
 			labelTf = new TextField();
 			labelTf.defaultTextFormat = new TextFormat("微软雅黑", 12, 0xE7E6E5);
@@ -26,9 +24,8 @@ package ui.text
 			addChild(labelTf);
 		}
 		
-		override public function onResize():void
+		public function onResize():void
 		{
-			super.onResize();
 			labelTf.width = width;
 			labelTf.height = height;
 		}

@@ -1,15 +1,14 @@
 package ui.list
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	
 	import flash.signals.ISignal;
 	
-	import ui.core.Container;
 	import ui.scrollpane.ScrollBar;
 	
-	public class ScrollList extends Container implements IList
+	public class ScrollList extends Sprite implements IList
 	{
 		private var _maxVisibleItems:int;
 		private var _firstVisibleItemIndex:int;
@@ -28,7 +27,7 @@ package ui.list
 		{
 			return _scrollBar;
 		}
-		
+		/*
 		override protected function createChildren():void
 		{
 			super.createChildren();
@@ -42,7 +41,7 @@ package ui.list
 			scrollBar.x = _list.width;
 			scrollBar.visible = false;
 		}
-		
+		*/
 		public function setValue(value:Array):void
 		{
 			_listData = value;

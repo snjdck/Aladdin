@@ -1,11 +1,11 @@
 package ui
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	
-	import ui.core.Component;
 	import ui.support.createBox;
 	
-	public class ProgressBar extends Component
+	public class ProgressBar extends Sprite
 	{
 		private var trackUI:DisplayObject;
 		private var thumbUI:DisplayObject;
@@ -17,7 +17,7 @@ package ui
 			super();
 		}
 		
-		override protected function createChildren():void
+		protected function createChildren():void
 		{
 			trackUI = createBox(100, 20);
 			thumbUI = createBox(100, 20, 0xFF00, 0.6);

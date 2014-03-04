@@ -1,21 +1,18 @@
 package ui.tabedpane
 {
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Sprite;
 	import flash.events.IEventDispatcher;
-	
-	import ui.button.Button;
-	import ui.core.Component;
-	import ui.events.TabedPaneEvent;
 
 	internal class Tab
 	{
-		private var _title:Button;
-		private var _component:Component;
+		private var _title:Sprite;
+		private var _component:Sprite;
 		
 		private var index:int;
 		private var eventDispatch:IEventDispatcher;
 		
-		public function Tab(title:Button, component:Component, index:int, eventDispatch:IEventDispatcher)
+		public function Tab(title:Sprite, component:Sprite, index:int, eventDispatch:IEventDispatcher)
 		{
 			this._title = title;
 			this._component = component;
@@ -38,9 +35,9 @@ package ui.tabedpane
 			if(isContentShowing()){
 				return;
 			}
-			title.selected = true;
+//			title.selected = true;
 			parent.addChildAt(component, 0);
-			eventDispatch.dispatchEvent(new TabedPaneEvent(TabedPaneEvent.TAB_FOCUS_IN, index));
+//			eventDispatch.dispatchEvent(new TabedPaneEvent(TabedPaneEvent.TAB_FOCUS_IN, index));
 		}
 		
 		public function hideContent():void
@@ -48,17 +45,17 @@ package ui.tabedpane
 			if(isContentShowing() == false){
 				return;
 			}
-			title.selected = false;
+//			title.selected = false;
 			parent.removeChild(component);
-			eventDispatch.dispatchEvent(new TabedPaneEvent(TabedPaneEvent.TAB_FOCUS_OUT, index));
+//			eventDispatch.dispatchEvent(new TabedPaneEvent(TabedPaneEvent.TAB_FOCUS_OUT, index));
 		}
 
-		public function get title():Button
+		public function get title():Sprite
 		{
 			return _title;
 		}
 
-		public function get component():Component
+		public function get component():Sprite
 		{
 			return _component;
 		}

@@ -6,8 +6,6 @@ package ui.support
 	import flash.display.Sprite;
 	import flash.filters.BitmapFilter;
 	import flash.filters.ColorMatrixFilter;
-	
-	import ui.button.Button;
 
 	public class DefaultConfig
 	{
@@ -59,24 +57,25 @@ package ui.support
 //		[Embed(source="assets/formation_closeButton_highlight.png")]
 //		static private const CLOSE_BUTTON_HIGHLIGHT:Class;
 		
-		static public function createCloseBtn():Button
-		{
-			var btn:Button = new Button();
-//			btn.upSkin = new CLOSE_BUTTON_NORMAL();
-//			btn.overSkin = new CLOSE_BUTTON_HIGHLIGHT();
-//			btn.downSkin = new CLOSE_BUTTON_PUSHED();
-			return btn;
-		}
+//		static public function createCloseBtn():Button
+//		{
+//			return null;
+////			var btn:Button = new Button();
+////			btn.upSkin = new CLOSE_BUTTON_NORMAL();
+////			btn.overSkin = new CLOSE_BUTTON_HIGHLIGHT();
+////			btn.downSkin = new CLOSE_BUTTON_PUSHED();
+////			return btn;
+//		}
 		
 //		[Embed(source="/assets/vehicle_comboBox_rollButton_normal.png")]
 		static private const COMBOBOX_POPUP_BUTTON_NORMAL:Class;
 		
-		static public function createComboBoxPopupBtn():Button
-		{
-			var btn:Button = new Button();
-			btn.upSkin = new COMBOBOX_POPUP_BUTTON_NORMAL();
-			return btn;
-		}
+//		static public function createComboBoxPopupBtn():Button
+//		{
+//			var btn:Button = new Button();
+//			btn.upSkin = new COMBOBOX_POPUP_BUTTON_NORMAL();
+//			return btn;
+//		}
 		
 //		[Embed(source="assets/formation_panel.png")]
 //		static private const FRAME_BG:Class;

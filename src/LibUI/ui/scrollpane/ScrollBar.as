@@ -1,16 +1,16 @@
 package ui.scrollpane
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	import ui.Slider;
-	import ui.core.Component;
 	import ui.support.DefaultConfig;
 	
 	[Event(name="scroll", type="flash.events.Event")]
 	
-	public class ScrollBar extends Component
+	public class ScrollBar extends Sprite
 	{
 		private var _upArrowUI:DisplayObject;
 		private var _downArrowUI:DisplayObject;

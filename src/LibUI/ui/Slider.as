@@ -1,19 +1,17 @@
 package ui
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
-	
-	import ui.core.Component;
-	import ui.enum.ScrollBarType;
-	import ui.support.DefaultConfig;
 	import flash.support.StepTimer;
-	import ui.enum.ScrollBarType;
+	
+	import ui.support.DefaultConfig;
 	
 	[Event(name="scroll", type="flash.events.Event")]
 	
-	public class Slider extends Component
+	public class Slider extends Sprite
 	{
 		private var _thumbBtn:DisplayObject;
 		private var _trackUI:DisplayObject;
@@ -28,7 +26,7 @@ package ui
 		public var minValue:Number = 0;
 		public var maxValue:Number = 1;
 		
-		private var _type:String = ScrollBarType.VERTICAL;
+		private var _type:String = "v";
 		
 		public function Slider()
 		{
@@ -177,7 +175,7 @@ package ui
 			switch(event.type)
 			{
 				case MouseEvent.MOUSE_MOVE:
-					var distance:Number = (ScrollBarType.VERTICAL == type) ? (event.stageY - dragMouseY) : (event.stageX - dragMouseX);
+					var distance:Number = ("vertical" == type) ? (event.stageY - dragMouseY) : (event.stageX - dragMouseX);
 					scrollV = dragThumbY + distance / maxThumbLocation;
 					break;
 				case MouseEvent.MOUSE_DOWN:
@@ -253,8 +251,8 @@ package ui
 		{
 			switch(value)
 			{
-				case ScrollBarType.HORIZONTAL:
-				case ScrollBarType.VERTICAL:
+				case "horizontal":
+				case "vertical":
 					_type = value;
 					break;
 				default:

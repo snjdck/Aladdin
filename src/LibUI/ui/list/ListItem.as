@@ -1,8 +1,8 @@
 package ui.list
 {
-	import ui.core.Component;
+	import flash.display.Sprite;
 	
-	public class ListItem extends Component
+	public class ListItem extends Sprite
 	{
 		private var _isFocus:Boolean;
 		protected var _data:*;

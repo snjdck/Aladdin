@@ -48,7 +48,7 @@ package ui.text
 			scrollBar.height = height;
 			scrollBar.visible = false;
 			
-			$_addChild(scrollBar);
+			addChild(scrollBar);
 		}
 		
 		private function __onViewAreaChange(event:Event):void

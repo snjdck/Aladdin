@@ -1,14 +1,12 @@
 package ui.list
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
 	import flash.signals.ISignal;
 	import flash.signals.Signal;
 	
-	import ui.core.Container;
-	
-	public class List extends Container implements IList
+	public class List extends Sprite implements IList
 	{
 		private const _selectedSignal:Signal = new Signal();
 		

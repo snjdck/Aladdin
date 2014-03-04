@@ -2,17 +2,15 @@ package ui.tabedpane
 {
 	import array.del;
 	
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	
-	import ui.button.Button;
-	import ui.core.Component;
 	
 	[Event(name="tabFocusIn", type="ui.events.TabedPaneEvent")]
 	[Event(name="tabFocusOut", type="ui.events.TabedPaneEvent")]
 	[Event(name="change", type="flash.events.Event")]
 	
-	public class AbstractTabedPane extends Component
+	public class AbstractTabedPane extends Sprite
 	{
 		protected const tabList:Array = [];
 		private const visibleTabList:Array = [];
@@ -27,7 +25,7 @@ package ui.tabedpane
 			super();
 		}
 		
-		private function createTitleButton():Button
+		private function createTitleButton():Sprite
 		{
 			if(titleButtonFactory){
 				return new titleButtonFactory();
@@ -35,7 +33,7 @@ package ui.tabedpane
 			throw new Error("titleButtonFactory must be set!");
 		}
 		
-		public function getTab(component:Component):Tab
+		public function getTab(component:Sprite):Tab
 		{
 			return getTabAt(findTabIndex(component));
 		}
@@ -45,19 +43,19 @@ package ui.tabedpane
 			return tabList[index];
 		}
 		
-		public function addTab(component:Component, title:String=null):void
+		public function addTab(component:Sprite, title:String=null):void
 		{
 			addTabAt(component, tabList.length, title);
 		}
 		
-		public function addTabAt(component:Component, index:int, title:String=null):void
+		public function addTabAt(component:Sprite, index:int, title:String=null):void
 		{
 			const tabCount:int = tabList.length;
 			index = (index < 0) ? 0 : (index > tabCount ? tabCount : index);
 			
-			var btn:Button = createTitleButton();
+			var btn:Sprite = createTitleButton();
 			btn.addEventListener(MouseEvent.CLICK, __onItemClick);
-			btn.label.text = title;
+//			btn.label.text = title;
 			
 			var tab:Tab = new Tab(btn, component, index, this);
 			addChildAt(btn, numChildren-tabCount+index);
@@ -67,7 +65,7 @@ package ui.tabedpane
 			checkFocusTab(tab);
 		}
 		
-		public function removeTab(component:Component):void
+		public function removeTab(component:*):void
 		{
 			removeTabAt(findTabIndex(component));
 		}
@@ -102,7 +100,7 @@ package ui.tabedpane
 			visibleTabList.length = 0;
 		}
 		
-		private function findTabIndex(component:Component):int
+		private function findTabIndex(component:Sprite):int
 		{
 			for(var index:int = tabList.length - 1; index >= 0; index--){
 				var tab:Tab = tabList[index];
@@ -115,7 +113,7 @@ package ui.tabedpane
 		
 		private function __onItemClick(event:MouseEvent):void
 		{
-			toggleTab(findTabByButton(event.currentTarget as Button));
+//			toggleTab(findTabByButton(event.currentTarget));
 		}
 		
 		private function toggleTab(tab:Tab):void
@@ -173,7 +171,7 @@ package ui.tabedpane
 			this.height = offsetY - tabGap;
 		}
 		
-		private function findTabByButton(btn:Button):Tab
+		private function findTabByButton(btn:Sprite):Tab
 		{
 			for each(var tab:Tab in tabList){
 				if(tab.title == btn){

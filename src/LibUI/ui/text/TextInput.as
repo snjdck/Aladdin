@@ -1,9 +1,6 @@
 package ui.text
 {
-	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
-	
-	import ui.core.Component;
 	
 	public class TextInput extends TextComponent
 	{

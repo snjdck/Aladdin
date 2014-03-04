@@ -1,11 +1,9 @@
 package ui
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	
-	import ui.core.Component;
-	import ui.core.Container;
-	
-	public class ViewStack extends Container
+	public class ViewStack extends Sprite
 	{
 		private var focusChild:DisplayObject;
 		

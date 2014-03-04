@@ -1,15 +1,13 @@
 package ui.scrollpane
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import flash.utils.setTimeout;
 	
-	import ui.core.Component;
-	import ui.core.Container;
-	
-	public class ScrollPane extends Container
+	public class ScrollPane extends Sprite
 	{
 		private var _scrollBar:ScrollBar;
 		
@@ -33,9 +31,8 @@ package ui.scrollpane
 			}
 		}
 		
-		override public function onResize():void
+		public function onResize():void
 		{
-			super.onResize();
 			scrollBar.x = width;
 			scrollBar.height = height;
 			scrollBar.viewSize = height;
@@ -57,16 +54,17 @@ package ui.scrollpane
 			return _scrollBar;
 		}
 		
-		override protected function createChildren():void
+		protected function createChildren():void
 		{ 
 			_scrollBar = new ScrollBar();
 			scrollBar.visible = false;
-			$_addChild(scrollBar);
+			addChild(scrollBar);
 		}
 		
 		private function __onViewAreaChange():void
 		{
-			scrollBar.pageSize = contentHeight;
+			scrollBar.pageSize = height;
+//			scrollBar.pageSize = contentHeight;
 			scrollBar.visible = scrollBar.canScroll();
 		}
 		
@@ -77,7 +75,7 @@ package ui.scrollpane
 		
 		private function __onScroll(event:Event):void
 		{
-			contentY = scrollBar.scrollV * (height - contentHeight);
+//			contentY = scrollBar.scrollV * (height - contentHeight);
 		}
 	}
 }
