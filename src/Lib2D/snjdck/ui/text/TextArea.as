@@ -1,17 +1,21 @@
-package ui.text
+package snjdck.ui.text
 {
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	
-	import ui.Slider;
+	import snjdck.ui.Slider;
 
-	public class TextArea extends TextComponent
+	public class TextArea extends Sprite
 	{
+		private var labelTf:TextField;
 		private var _scrollBar:Slider;
 		
 		public function TextArea()
 		{
+			createChildren();
 			scrollBar.addEventListener(Event.SCROLL, __onScroll);
 			addEventListener(MouseEvent.MOUSE_WHEEL, __onMouseWheel);
 			labelTf.addEventListener(Event.CHANGE, __onViewAreaChange);
@@ -34,10 +38,8 @@ package ui.text
 			return _scrollBar;
 		}
 		
-		override protected function createChildren():void
+		protected function createChildren():void
 		{
-			super.createChildren();
-			
 			labelTf.multiline = true;
 			labelTf.wordWrap = true;
 			
@@ -79,15 +81,15 @@ package ui.text
 			scrollBar.height = height;
 		}
 		
-		override public function set text(value:String):void
+		public function set text(value:String):void
 		{
-			super.text = value;
+			labelTf.text = value;
 			__onViewAreaChange(null);
 		}
 		
-		override public function appendText(newText:String):void
+		public function appendText(newText:String):void
 		{
-			super.appendText(newText);
+			labelTf.appendText(newText);
 			__onViewAreaChange(null);
 		}
 	}

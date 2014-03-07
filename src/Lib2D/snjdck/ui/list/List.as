@@ -1,4 +1,4 @@
-package ui.list
+package snjdck.ui.list
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -17,7 +17,7 @@ package ui.list
 		
 		private var _labelField:String;
 		
-		private var _listItemFactory:Class = DefaultListItem;
+		private var _listItemFactory:Class;
 		private var _numCols:int = 1;
 		private var _hGap:Number = 0;
 		private var _vGap:Number = 0;
@@ -113,7 +113,7 @@ package ui.list
 		private function getListItemIndex(px:Number, py:Number):int
 		{
 			for(var i:int=listItemRefs.length-1; i>=0; i--){
-				const listItem:ListItem = listItemRefs[i];
+				const listItem:DisplayObject = listItemRefs[i];
 				if(listItem.parent && listItem.hitTestPoint(px, py)){
 					return i;
 				}
@@ -200,7 +200,7 @@ package ui.list
 		
 		private function relayoutImp(index:int):void
 		{
-			var listItem:ListItem = listItemRefs[index];
+			var listItem:DisplayObject = listItemRefs[index];
 			listItem.x = (listItem.width + hGap) * (index % numCols);
 			listItem.y = (listItem.height + vGap) * int(index / numCols);
 		}

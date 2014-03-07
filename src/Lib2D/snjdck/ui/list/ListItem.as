@@ -1,4 +1,4 @@
-package ui.list
+package snjdck.ui.list
 {
 	import flash.display.Sprite;
 	

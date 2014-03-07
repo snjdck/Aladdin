@@ -1,4 +1,4 @@
-package ui
+package snjdck.ui
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -170,7 +170,7 @@ package ui
 			switch(event.type)
 			{
 				case MouseEvent.MOUSE_MOVE:
-					var distance:Number = ("vertical" == type) ? (event.stageY - dragMouseY) : (event.stageX - dragMouseX);
+					var distance:Number = ("vertical" == _type) ? (event.stageY - dragMouseY) : (event.stageX - dragMouseX);
 					scrollV = dragThumbY + distance / maxThumbLocation;
 					break;
 				case MouseEvent.MOUSE_DOWN:
@@ -235,24 +235,6 @@ package ui
 		public function set value(newValue:Number):void
 		{
 			scrollV = (newValue - minValue) / (maxValue - minValue);
-		}
-		
-		public function get type():String
-		{
-			return _type;
-		}
-		
-		public function set type(value:String):void
-		{
-			switch(value)
-			{
-				case "horizontal":
-				case "vertical":
-					_type = value;
-					break;
-				default:
-					throw new Error("invalid value");
-			}
 		}
 	}
 }

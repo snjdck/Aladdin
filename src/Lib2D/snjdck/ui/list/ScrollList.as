@@ -1,4 +1,4 @@
-package ui.list
+package snjdck.ui.list
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -6,7 +6,7 @@ package ui.list
 	import flash.events.MouseEvent;
 	import flash.signals.ISignal;
 	
-	import ui.Slider;
+	import snjdck.ui.Slider;
 	
 	public class ScrollList extends Sprite implements IList
 	{
