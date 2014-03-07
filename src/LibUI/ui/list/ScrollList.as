@@ -6,7 +6,7 @@ package ui.list
 	import flash.events.MouseEvent;
 	import flash.signals.ISignal;
 	
-	import ui.scrollpane.ScrollBar;
+	import ui.Slider;
 	
 	public class ScrollList extends Sprite implements IList
 	{
@@ -15,7 +15,7 @@ package ui.list
 		private var _listData:Array;
 		
 		private var _list:List;
-		private var _scrollBar:ScrollBar;
+		private var _scrollBar:Slider;
 		
 		public function ScrollList()
 		{
@@ -23,7 +23,7 @@ package ui.list
 			addEventListener(MouseEvent.MOUSE_WHEEL, __onMouseWheel);
 		}
 		
-		public function get scrollBar():ScrollBar
+		public function get scrollBar():Slider
 		{
 			return _scrollBar;
 		}

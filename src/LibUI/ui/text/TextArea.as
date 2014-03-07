@@ -1,15 +1,14 @@
 package ui.text
 {
-	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextFieldType;
 	
-	import ui.scrollpane.ScrollBar;
+	import ui.Slider;
 
 	public class TextArea extends TextComponent
 	{
-		private var _scrollBar:ScrollBar;
+		private var _scrollBar:Slider;
 		
 		public function TextArea()
 		{
@@ -30,7 +29,7 @@ package ui.text
 			}
 		}
 		
-		public function get scrollBar():ScrollBar
+		public function get scrollBar():Slider
 		{
 			return _scrollBar;
 		}
@@ -42,7 +41,7 @@ package ui.text
 			labelTf.multiline = true;
 			labelTf.wordWrap = true;
 			
-			_scrollBar = new ScrollBar();
+			_scrollBar = new Slider();
 			
 			scrollBar.x = width;
 			scrollBar.height = height;
