@@ -1,8 +1,7 @@
 package flash.factory
 {
+	import flash.support.Font;
 	import flash.text.StyleSheet;
-	
-	import snjdck.text.Font;
 
 	public function newStyleSheet(font:Font, align:String, leading:int):StyleSheet
 	{

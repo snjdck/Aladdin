@@ -1,4 +1,4 @@
-package snjdck.text
+package flash.support
 {
 	final public class Font
 	{
