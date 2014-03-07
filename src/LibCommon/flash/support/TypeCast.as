@@ -2,9 +2,26 @@ package flash.support
 {
 	import flash.reflection.getTypeName;
 	import flash.utils.ByteArray;
+	
+	import string.execRegExp;
 
 	final public class TypeCast
 	{
+		static public function CastStrToVal(str:String):*
+		{
+			if ("undefined" == str) return undefined;
+			if ("null" == str) return null;
+			if ("true" == str) return true;
+			if ("false" == str) return false;
+			if(execRegExp(/^[+\-]?(\d+|0[xX][0-9a-fA-F]+)$/, str)){
+				return parseInt(str);
+			}
+			if(execRegExp(/^[+\-]?\d+\.\d+$/, str)){
+				return parseFloat(str);
+			}
+			return str;
+		}
+		
 		static public function CastClsToStr(clsRefOrClsName:*):String
 		{
 			if(clsRefOrClsName is Class){
