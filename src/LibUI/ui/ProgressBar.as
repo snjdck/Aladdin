@@ -2,8 +2,7 @@ package ui
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	
-	import ui.support.createBox;
+	import flash.utils.ShapeUtil;
 	
 	public class ProgressBar extends Sprite
 	{
@@ -19,8 +18,8 @@ package ui
 		
 		protected function createChildren():void
 		{
-			trackUI = createBox(100, 20);
-			thumbUI = createBox(100, 20, 0xFF00, 0.6);
+			trackUI = ShapeUtil.CreateBox(100, 20);
+			thumbUI = ShapeUtil.CreateBox(100, 20, 0xFF00, 0.6);
 			
 			addChild(trackUI);
 			addChild(thumbUI);

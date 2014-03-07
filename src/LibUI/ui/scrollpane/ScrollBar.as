@@ -6,7 +6,6 @@ package ui.scrollpane
 	import flash.events.MouseEvent;
 	
 	import ui.Slider;
-	import ui.support.DefaultConfig;
 	
 	[Event(name="scroll", type="flash.events.Event")]
 	
@@ -20,9 +19,6 @@ package ui.scrollpane
 		{
 			_slider = new Slider();
 			addChild(_slider);
-			
-			upArrowUI = DefaultConfig.createUpArrow();
-			downArrowUI = DefaultConfig.createDownArrow();
 			
 			addEventListener(MouseEvent.MOUSE_DOWN, __onTrackMouseDown);
 			height = 100;

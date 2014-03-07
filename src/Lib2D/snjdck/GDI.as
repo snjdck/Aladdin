@@ -147,5 +147,22 @@ package snjdck
 		}
 		
 		static private const matrix:Matrix = new Matrix();
+		
+		static public function drawListBg(g:Graphics, x:Number, y:Number, width:Number, height:Number):void
+		{
+			g.beginFill(0x4F4E4D);
+			drawRing(g, x, y, width, height);
+			g.beginFill(0x000000);
+			drawRing(g, x+1, y+1, width-2, height-2);
+			g.beginFill(0x000000, 0.7);
+			g.drawRect(x+2, y+2, width-4, height-4);
+			g.endFill();
+		}
+		
+		static private function drawRing(g:Graphics, x:Number, y:Number, width:Number, height:Number, offset:Number=1):void
+		{
+			g.drawRect(x, y, width, height);
+			g.drawRect(x+offset, y+offset, width-offset*2, height-offset*2);
+		}
 	}
 }

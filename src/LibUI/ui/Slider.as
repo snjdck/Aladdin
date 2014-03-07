@@ -7,8 +7,6 @@ package ui
 	import flash.events.TimerEvent;
 	import flash.support.StepTimer;
 	
-	import ui.support.DefaultConfig;
-	
 	[Event(name="scroll", type="flash.events.Event")]
 	
 	public class Slider extends Sprite
@@ -34,9 +32,6 @@ package ui
 			delayTimer.addEventListener(TimerEvent.TIMER, __onTimerTrigged);
 			
 			super.height = 100;
-			
-			trackUI = DefaultConfig.createTrackUI();
-			thumbBtn = DefaultConfig.createThumbBtn();
 			
 			addEventListener(MouseEvent.MOUSE_DOWN, __onTrackMouseDown);
 			addEventListener(MouseEvent.MOUSE_UP, __onTrackMouseUp);
