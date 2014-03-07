@@ -75,7 +75,7 @@ package snjdck
 			for(var i:int=0; i<years; ++i)
 			{
 				result += val;
-				val *= 1.025;
+				val *= 1.026;
 			}
 			return result;
 		}
