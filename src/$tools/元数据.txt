@@ -117,6 +117,8 @@ http协议抓包
 http://www.ieinspector.com/httpanalyzer/download.html
 http://www.fiddler2.com/fiddler2/version.asp
 
+http://wiresharkdownloads.riverbed.com/wireshark/win64/Wireshark-win64-1.8.6.exe
+
 火狐调试器
 Firebug插件下载地址：https://addons.mozilla.org/zh-CN/firefox/addons/versions/1843
 Flashbug插件下载地址：https://addons.mozilla.org/zh-CN/firefox/addon/14465
@@ -170,15 +172,6 @@ package  {
         }
     }
 }
-
-
-		private static var instance:Global;
-		public static function get e():Global
-		{
-			if(null == instance)
-				instance = new Global();
-			return instance;
-		}
 
 -default-size 800 600
 -default-frame-rate 24
