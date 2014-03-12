@@ -1,4 +1,4 @@
-package snjdck.g3d.parser
+package snjdck.fileformat.bmd
 {
 	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
@@ -16,6 +16,7 @@ package snjdck.g3d.parser
 	import snjdck.g3d.skeleton.Skeleton;
 	
 	import stream.readFixedString;
+	import snjdck.g3d.parser.DynamicGeometry;
 	
 	use namespace ns_g3d;
 

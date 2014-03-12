@@ -1,4 +1,4 @@
-package snjdck.g3d.parser.ogre
+package snjdck.fileformat.ogre
 {
 	import flash.utils.ByteArray;
 	

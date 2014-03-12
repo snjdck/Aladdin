@@ -1,4 +1,4 @@
-package snjdck.g3d.parser.ogre.support
+package snjdck.fileformat.ogre.support
 {
 	public class MeshChunkID
 	{

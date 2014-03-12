@@ -17,9 +17,9 @@ package snjdck.g3d.asset.helper
 	import snjdck.g3d.asset.IGpuTexture;
 	import snjdck.g3d.asset.impl.GpuAssetFactory;
 	import snjdck.g3d.mesh.Mesh;
-	import snjdck.g3d.parser.BmdParser;
-	import snjdck.g3d.parser.ogre.OgreMeshParser;
-	import snjdck.g3d.parser.ogre.OgreSkeletonParser;
+	import snjdck.fileformat.bmd.BmdParser;
+	import snjdck.fileformat.ogre.OgreMeshParser;
+	import snjdck.fileformat.ogre.OgreSkeletonParser;
 	import snjdck.g3d.skeleton.Skeleton;
 	
 	import flash.filesystem.FileIO2;

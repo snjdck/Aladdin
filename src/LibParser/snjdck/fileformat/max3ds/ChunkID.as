@@ -1,4 +1,4 @@
-package snjdck.g3d.parser.max3ds
+package snjdck.fileformat.max3ds
 {
 	internal class ChunkID
 	{

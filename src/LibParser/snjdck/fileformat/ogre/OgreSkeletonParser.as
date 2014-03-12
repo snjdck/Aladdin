@@ -1,10 +1,10 @@
-package snjdck.g3d.parser.ogre
+package snjdck.fileformat.ogre
 {
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.parser.ogre.support.SkeletonChunkID;
+	import snjdck.fileformat.ogre.support.SkeletonChunkID;
 	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.KeyFrame;

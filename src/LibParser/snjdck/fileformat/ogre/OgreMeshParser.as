@@ -1,4 +1,4 @@
-package snjdck.g3d.parser.ogre
+package snjdck.fileformat.ogre
 {
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
@@ -14,11 +14,11 @@ package snjdck.g3d.parser.ogre
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.DynamicGeometry;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.g3d.parser.ogre.support.MeshChunkID;
-	import snjdck.g3d.parser.ogre.support.VertexBufferParam;
-	import snjdck.g3d.parser.ogre.support.VertexElement;
-	import snjdck.g3d.parser.ogre.support.VertexElementSemantic;
-	import snjdck.g3d.parser.ogre.support.VertexElementType;
+	import snjdck.fileformat.ogre.support.MeshChunkID;
+	import snjdck.fileformat.ogre.support.VertexBufferParam;
+	import snjdck.fileformat.ogre.support.VertexElement;
+	import snjdck.fileformat.ogre.support.VertexElementSemantic;
+	import snjdck.fileformat.ogre.support.VertexElementType;
 	
 	import stream.readCString;
 	
