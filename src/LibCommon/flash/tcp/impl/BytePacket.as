@@ -7,22 +7,20 @@ package flash.tcp.impl
 	
 	import string.replace;
 	
-	public class AmfPacket implements IPacket
+	public class BytePacket implements IPacket
 	{
-		static private const tempBuffer:ByteArray = new ByteArray();
-		
 		private var _bodySize:uint;
 		
 		private var _msgId:uint;
 		private var _msgData:Object;
 		
-		public function AmfPacket()
+		public function BytePacket()
 		{
 		}
 		
 		public function create(msgId:uint=0, msgData:Object=null):IPacket
 		{
-			var packet:AmfPacket = new AmfPacket();
+			var packet:BytePacket = new BytePacket();
 			packet._msgId = msgId;
 			packet._msgData = msgData;
 			return packet;
@@ -49,24 +47,25 @@ package flash.tcp.impl
 			if(_bodySize <= 0){
 				return;
 			}
+			var tempBuffer:ByteArray = new ByteArray();
 			buffer.readBytes(tempBuffer, 0, _bodySize);
-			_msgData = tempBuffer.readObject();
-			tempBuffer.clear();
+			_msgData = tempBuffer;
 		}
 		
 		public function write(buffer:IDataOutput):void
 		{
-			if(null != msgData){
-				tempBuffer.writeObject(msgData);
+			if(null == _msgData){
+				buffer.writeShort(0);
+				buffer.writeShort(msgId);
+				return;
 			}
 			
+			var tempBuffer:ByteArray = _msgData as ByteArray;
 			assert(tempBuffer.length <= 0xFFFF, "发送的数据大小不能超过64K!");
 			
 			buffer.writeShort(tempBuffer.length);
 			buffer.writeShort(msgId);
 			buffer.writeBytes(tempBuffer);
-			
-			tempBuffer.clear();
 		}
 
 		public function get msgId():uint

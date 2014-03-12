@@ -11,7 +11,6 @@ package flash.tcp
 	internal class TCPSocket
 	{		
 		private const _connectSignal:Signal = new Signal();
-		protected const _recvDataSignal:Signal = new Signal(uint, Object);
 		private const _closeSignal:Signal = new Signal();
 		private const _errorSignal:Signal = new Signal(String);
 		
@@ -63,7 +62,7 @@ package flash.tcp
 		{
 			this.host = host;
 			this.port = port;
-			reconnect();
+			socket.connect(host, port);
 		}
 		
 		/** @param server 127.0.0.1:7777 */
@@ -74,7 +73,9 @@ package flash.tcp
 		
 		public function reconnect():void
 		{
-			socket.connect(host, port);
+			if(!socket.connected){
+				socket.connect(host, port);
+			}
 		}
 		
 		public function close():void
@@ -98,11 +99,6 @@ package flash.tcp
 		public function get connectSignal():ISignal
 		{
 			return _connectSignal;
-		}
-
-		public function get recvDataSignal():ISignal
-		{
-			return _recvDataSignal;
 		}
 
 		public function get closeSignal():ISignal

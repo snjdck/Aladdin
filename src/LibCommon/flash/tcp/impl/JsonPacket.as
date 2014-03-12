@@ -55,10 +55,14 @@ package flash.tcp.impl
 		
 		public function write(buffer:IDataOutput):void
 		{
-			if(null != msgData){
-				var body:String = JSON.stringify(msgData);
-				tempBuffer.writeUTFBytes(body);
+			if(null == _msgData){
+				buffer.writeShort(0);
+				buffer.writeShort(msgId);
+				return;
 			}
+			
+			var body:String = JSON.stringify(msgData);
+			tempBuffer.writeUTFBytes(body);
 			
 			assert(tempBuffer.length <= 0xFFFF, "发送的数据大小不能超过64K!");
 			

@@ -23,7 +23,7 @@ package flash.tcp
 		public function send(msgId:uint, msgData:Object, callback:Object=null, flushToServer:Boolean=false):void
 		{
 			var packet:IPacket = packetFactory.create(msgId, msgData);
-			packetRouter.regRequest(packet, callback);
+			packetRouter.regRequestHandler(packet, callback);
 			packetWriter.addPacket(packet);
 			if(flushToServer){
 				flush();
@@ -55,11 +55,17 @@ package flash.tcp
 		
 		private function handlePacket(packet:IPacket):void
 		{
-			if(packetRouter.hasHandler(packet.msgId)){
-				packetRouter.route(packet);
+			if(packetRouter.hasRequestHandler(packet.msgId)){
+				packetRouter.routeResponse(packet);
 			}else{
-				_recvDataSignal.notify(packet.msgId, packet.msgData);
+				packetRouter.routeNotice(packet);
 			}
+		}
+		
+		/** function handler(Object):void */
+		public function regNoticeHandler(msgId:uint, handler:Object):void
+		{
+			packetRouter.regNoticeHandler(msgId, handler);
 		}
 	}
 }
