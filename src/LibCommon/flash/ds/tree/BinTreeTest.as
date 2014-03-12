@@ -1,4 +1,4 @@
-package snjdck.common.ds.tree
+package flash.ds.tree
 {
 	import flash.utils.getTimer;
 
@@ -85,7 +85,7 @@ package snjdck.common.ds.tree
 		}
 	}
 }
-import snjdck.common.ds.tree.IBinTreeNode;
+import flash.ds.tree.IBinTreeNode;
 
 
 function printNode(node:TestNode):void

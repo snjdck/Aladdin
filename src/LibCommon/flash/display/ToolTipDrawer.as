@@ -7,7 +7,7 @@ package flash.display
 	import flash.graphics.path.Path;
 	import flash.graphics.pen.SolidPen;
 	
-	import snjdck.common.geom.Rect2D;
+	import flash.geom.Rect2D;
 	
 	import stdlib.constant.Direction;
 	

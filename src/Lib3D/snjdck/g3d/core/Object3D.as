@@ -7,7 +7,7 @@ package snjdck.g3d.core
 	
 	import matrix44.recompose;
 	
-	import snjdck.common.DataEvent;
+	import flash.support.DataEvent;
 	import snjdck.g2d.core.IDisplayObject;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.geom.Ray;

@@ -2,7 +2,7 @@ package snjdck.ai.astar
 {
 	import array.has;
 	
-	import snjdck.common.ds.BinHeap;
+	import flash.ds.BinHeap;
 	
 	final public class AStar
 	{

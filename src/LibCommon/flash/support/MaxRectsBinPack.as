@@ -9,7 +9,7 @@
 	http://www.duzengqiang.com/blog/post/971.html
 	This version is also public domain - do whatever you want with it.
 */
-package snjdck.geom
+package flash.support
 {
 	import flash.geom.Rectangle;
 

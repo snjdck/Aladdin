@@ -1,4 +1,4 @@
-package snjdck.common.geom
+package flash.geom
 {
 	import math.nearEquals;
 

@@ -1,6 +1,6 @@
-package snjdck.common.ds
+package flash.ds
 {
-	import snjdck.common.geom.Vec2D;
+	import flash.geom.Vec2D;
 
 	public class Array2ItemOp
 	{

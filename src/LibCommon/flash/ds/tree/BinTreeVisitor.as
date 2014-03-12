@@ -1,4 +1,4 @@
-package snjdck.common.ds.tree
+package flash.ds.tree
 {
 	final public class BinTreeVisitor
 	{

@@ -1,7 +1,7 @@
 package snjdck.ai.astar.nodetype
 {
 	import snjdck.ai.astar.IAstarNode;
-	import snjdck.common.ds.Array2;
+	import flash.ds.Array2;
 
 	public class AStarGridNode implements IAstarNode
 	{

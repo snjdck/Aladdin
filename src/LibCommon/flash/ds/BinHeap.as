@@ -1,4 +1,4 @@
-package snjdck.common.ds
+package flash.ds
 {
 	import array.has;
 

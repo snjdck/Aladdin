@@ -1,4 +1,4 @@
-﻿package snjdck.common
+﻿package flash.support
 {
 	import flash.events.Event;
 	

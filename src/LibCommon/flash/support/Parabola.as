@@ -1,4 +1,4 @@
-package snjdck.geom
+package flash.support
 {
 	public class Parabola
 	{

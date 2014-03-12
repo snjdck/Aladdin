@@ -1,4 +1,4 @@
-package snjdck.common.ds
+package flash.ds
 {
 	/**
 	 * 优先级高的先出列
