@@ -1,4 +1,4 @@
-package snjdck.utils
+package flash.utils
 {
 	import flash.display.Graphics;
 	import flash.display.Sprite;

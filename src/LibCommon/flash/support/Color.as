@@ -1,4 +1,4 @@
-package snjdck.utils
+package flash.support
 {
 	final public class Color
 	{

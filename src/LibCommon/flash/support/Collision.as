@@ -1,4 +1,4 @@
-package snjdck.game.common.utils
+package flash.support
 {
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
@@ -22,7 +22,7 @@ package snjdck.game.common.utils
 	 * @author SK
 	 * 
 	 */	
-	public class Collision
+	final public class Collision
 	{
 		static private const ctf_red	:ColorTransform = new ColorTransform(0, 0, 0, 0, 255, 0, 0, 255);
 		static private const ctf_aqua	:ColorTransform = new ColorTransform(0, 0, 0, 0, 0, 255, 255, 255);
