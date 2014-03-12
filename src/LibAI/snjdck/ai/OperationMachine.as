@@ -3,6 +3,8 @@ package snjdck.ai
 	import flash.utils.Dictionary;
 	
 	import lambda.apply;
+	
+	import string.execRegExp;
 
 	public class OperationMachine
 	{
@@ -32,11 +34,13 @@ package snjdck.ai
 		
 		public function exec(input:String):*
 		{
-			for(var pattern:* in patternDict){
-				var paramList:Array = pattern.exec(input);
-				if(paramList){
-					return apply(this[patternDict[pattern]], paramList.slice(1));
-				}
+			for(var pattern:* in patternDict)
+			{
+				var paramList:Array = execRegExp(pattern, input);
+				if (null == paramList) continue;
+				var methodName:String = patternDict[pattern];
+				var method:Function = context[methodName];
+				return apply(method, paramList.slice(1));
 			}
 		}
 	}
