@@ -3,9 +3,12 @@ package flash.tcp
 	import flash.tcp.io.PacketReader;
 	import flash.tcp.io.PacketWriter;
 	import flash.tcp.router.PacketRouter;
+	import flash.utils.ByteArray;
 
-	final public class PacketSocket extends TCPSocket
+	final public class PacketSocket extends TCPSocket implements IPacketRouter
 	{
+		static public var ERROR_ID_REQUEST_TIMEOUT:uint;
+		
 		private var packetReader:PacketReader;
 		private var packetWriter:PacketWriter;
 		private var packetRouter:PacketRouter;
@@ -18,16 +21,13 @@ package flash.tcp
 			packetReader = new PacketReader(socket, packet);
 			packetWriter = new PacketWriter(socket);
 			packetRouter = new PacketRouter();
+			socket.endian = packet.endian;
 		}
 		
-		public function send(msgId:uint, msgData:Object, callback:Object=null, flushToServer:Boolean=false):void
+		public function send(msgId:uint, msgData:ByteArray):void
 		{
 			var packet:IPacket = packetFactory.create(msgId, msgData);
-			packetRouter.regRequestHandler(packet, callback);
 			packetWriter.addPacket(packet);
-			if(flushToServer){
-				flush();
-			}
 			packetRouter.checkTimeout();
 		}
 		
@@ -48,24 +48,33 @@ package flash.tcp
 		{
 			packetReader.readPacketsFromInputCache();
 			while(packetReader.hasPacket()){
-				handlePacket(packetReader.getPacket());
+				packetRouter.routePacket(packetReader.getPacket());
 			}
 			packetRouter.checkTimeout();
 		}
 		
-		private function handlePacket(packet:IPacket):void
+		public function regRequest(requestId:uint, requestType:Class, responseId:uint=0, responseType:Class=null, errorId:uint=0):void
 		{
-			if(packetRouter.hasRequestHandler(packet.msgId)){
-				packetRouter.routeResponse(packet);
-			}else{
-				packetRouter.routeNotice(packet);
-			}
+			packetRouter.regRequest(requestId, requestType, responseId, responseType, errorId);
 		}
 		
 		/** function handler(Object):void */
-		public function regNoticeHandler(msgId:uint, handler:Object):void
+		public function regNotice(noticeId:uint, noticeType:Class, handler:Object):void
 		{
-			packetRouter.regNoticeHandler(msgId, handler);
+			packetRouter.regNotice(noticeId, noticeType, handler);
+		}
+		
+		public function request(message:Object, onSuccess:Object=null, onError:Object=null):void
+		{
+			var requestId:uint = packetRouter.fetchRequestId(message);
+			packetRouter.listenResponse(requestId, onSuccess, onError);
+			
+			var msgData:ByteArray = new ByteArray();
+			msgData.endian = socket.endian;
+			message.writeTo(msgData);
+			send(requestId, msgData);
+			
+			flush();
 		}
 	}
 }

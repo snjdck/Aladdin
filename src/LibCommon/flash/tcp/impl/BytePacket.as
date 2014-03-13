@@ -2,23 +2,22 @@ package flash.tcp.impl
 {
 	import flash.tcp.IPacket;
 	import flash.utils.ByteArray;
+	import flash.utils.Endian;
 	import flash.utils.IDataInput;
 	import flash.utils.IDataOutput;
 	
-	import string.replace;
-	
-	public class BytePacket implements IPacket
+	internal class BytePacket implements IPacket
 	{
 		private var _bodySize:uint;
 		
 		private var _msgId:uint;
-		private var _msgData:Object;
+		private var _msgData:ByteArray;
 		
 		public function BytePacket()
 		{
 		}
 		
-		public function create(msgId:uint=0, msgData:Object=null):IPacket
+		public function create(msgId:uint=0, msgData:ByteArray=null):IPacket
 		{
 			var packet:BytePacket = new BytePacket();
 			packet._msgId = msgId;
@@ -44,28 +43,25 @@ package flash.tcp.impl
 		
 		public function readBody(buffer:IDataInput):void
 		{
-			if(_bodySize <= 0){
-				return;
-			}
-			var tempBuffer:ByteArray = new ByteArray();
-			buffer.readBytes(tempBuffer, 0, _bodySize);
-			_msgData = tempBuffer;
+			if (_bodySize <= 0) return;
+			_msgData = new ByteArray();
+			_msgData.endian = endian;
+			buffer.readBytes(_msgData, 0, _bodySize);
 		}
 		
 		public function write(buffer:IDataOutput):void
 		{
-			if(null == _msgData){
+			if(null == _msgData || _msgData.length <= 0){
 				buffer.writeShort(0);
 				buffer.writeShort(msgId);
 				return;
 			}
 			
-			var tempBuffer:ByteArray = _msgData as ByteArray;
-			assert(tempBuffer.length <= 0xFFFF, "发送的数据大小不能超过64K!");
+			assert(_msgData.length <= 0xFFFF, "发送的数据大小不能超过64K!");
 			
-			buffer.writeShort(tempBuffer.length);
+			buffer.writeShort(_msgData.length);
 			buffer.writeShort(msgId);
-			buffer.writeBytes(tempBuffer);
+			buffer.writeBytes(_msgData);
 		}
 
 		public function get msgId():uint
@@ -73,14 +69,19 @@ package flash.tcp.impl
 			return _msgId;
 		}
 
-		public function get msgData():*
+		public function get msgData():ByteArray
 		{
 			return _msgData;
 		}
 		
-		public function toString():String
+		public function get endian():String
 		{
-			return string.replace("[msgId=${0}, msgData=${1}]", [msgId, JSON.stringify(msgData)]);
+			return Endian.BIG_ENDIAN;
+		}
+		
+		public function get errorId():uint
+		{
+			return _msgData.readUnsignedShort();
 		}
 	}
 }

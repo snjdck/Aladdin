@@ -2,76 +2,90 @@ package flash.tcp.router
 {
 	import dict.hasKey;
 	
+	import flash.reflection.getType;
+	import flash.reflection.getTypeName;
 	import flash.tcp.IPacket;
+	import flash.tcp.IPacketRouter;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
-	import lambda.call;
+	import string.replace;
 
-	final public class PacketRouter
+	final public class PacketRouter implements IPacketRouter
 	{
+		private const requestTypeDict:Object = new Dictionary();
 		private const requestDict:Object = new Dictionary();
-		private const noticeDict:Object = new Dictionary();
+		private const responseDict:Object = new Dictionary();
 		
 		public function PacketRouter()
 		{
 		}
 		
-		public function hasRequestHandler(msgId:uint):Boolean
+		public function routePacket(packet:IPacket):void
 		{
-			return hasKey(requestDict, msgId);
+			var msgId:uint = packet.msgId;
+			assert(hasKey(responseDict, msgId), replace("msgId=${0} has not been registered yet!", [msgId]));
+			var info:Object = responseDict[msgId];
+			
+			if(info is NoticeInfo){
+				var noticeInfo:NoticeInfo = info as NoticeInfo;
+				noticeInfo.call(packet.msgData);
+				return;
+			}
+			if(info is RequestInfo){
+				var requestInfo:RequestInfo = info as RequestInfo;
+				requestInfo.call(packet);
+				return;
+			}
+			assert(false, "what fuck is info?");
 		}
 		
-		public function hasNoticeHandler(msgId:uint):Boolean
+		public function fetchRequestId(msgData:Object):uint
 		{
-			return hasKey(noticeDict, msgId);
+			var msgType:Class = getType(msgData);
+			assert(hasKey(requestTypeDict, msgType), replace("msgType='${0}' has not been registered yet!", [getTypeName(msgData)]));
+			return requestTypeDict[msgType];
 		}
 		
-		public function regRequestHandler(packet:IPacket, callback:Object):void
+		public function listenResponse(requestId:uint, onSuccess:Object, onError:Object=null):void
 		{
-			var trait:PacketTrait = new PacketTrait(packet, callback, getTimer());
-			if(hasRequestHandler(packet.msgId)){
-				var list:Array = requestDict[packet.msgId];
-				list.push(trait);
-			}else{
-				requestDict[packet.msgId] = [trait];
+			var requestInfo:RequestInfo = requestDict[requestId];
+			assert(requestInfo != null, replace("msgId='${0}' has not been registered yet!", [requestId]));
+			if(requestInfo.hasResponse()){
+				requestInfo.addCallback(new CallbackTrait(onSuccess, onSuccess, getTimer()));
 			}
 		}
 		
-		public function regNoticeHandler(msgId:uint, handler:Object):void
+		public function regNotice(noticeId:uint, noticeType:Class, handler:Object):void
 		{
-			if(hasNoticeHandler(msgId)){
-				throw new Error("msgId has been registered yet!");
-			}
-			noticeDict[msgId] = handler;
+			var info:NoticeInfo = new NoticeInfo(noticeId, noticeType, handler);
+			addKey(responseDict, noticeId, info);
 		}
 		
-		public function routeResponse(packet:IPacket):void
+		public function regRequest(requestId:uint, requestType:Class, responseId:uint=0, responseType:Class=null, errorId:uint=0):void
 		{
-			var list:Array = requestDict[packet.msgId];
-			var trait:PacketTrait = list.shift();
-			lambda.call(trait.callback, true, packet.msgData);
+			var info:RequestInfo = new RequestInfo(requestId, requestType, responseId, responseType, errorId);
+			addKey(requestTypeDict, requestType, requestId);
+			addKey(requestDict, requestId, info);
+			if(responseId > 0){
+				addKey(responseDict, responseId, info);
+			}
+			if(errorId > 0){
+				addKey(responseDict, errorId, info);
+			}
 		}
 		
-		public function routeNotice(packet:IPacket):void
+		static private function addKey(target:Object, key:Object, value:Object):void
 		{
-			var handler:Object = noticeDict[packet.msgId];
-			if(null == handler){
-				throw new Error("msgId has not been registered yet!");
-			}
-			lambda.call(handler, packet.msgData);
+			assert(!hasKey(target, key), replace("key='${0}' has exist!", [key]));
+			target[key] = value;
 		}
 		
 		public function checkTimeout():void
 		{
 			var now:int = getTimer();
-			for each(var list:Array in requestDict){
-				for each(var trait:PacketTrait in list){
-					if(now - trait.timestamp < 10000){
-						continue;
-					}
-					lambda.call(trait.callback, false, "request timeout!");
-				}
+			for each(var requestInfo:RequestInfo in requestDict){
+				requestInfo.checkTimeout(now);
 			}
 		}
 	}
