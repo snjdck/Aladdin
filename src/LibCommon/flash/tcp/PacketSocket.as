@@ -48,7 +48,7 @@ package flash.tcp
 		{
 			packetReader.readPacketsFromInputCache();
 			while(packetReader.hasPacket()){
-				packetRouter.routePacket(packetReader.getPacket());
+				packetRouter.routePacket(packetReader.shiftPacket());
 			}
 			packetRouter.checkTimeout();
 		}

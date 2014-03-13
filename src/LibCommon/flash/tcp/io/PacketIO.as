@@ -21,7 +21,7 @@ package flash.tcp.io
 			return packetList.length > 0;
 		}
 		
-		public function getPacket():IPacket
+		public function shiftPacket():IPacket
 		{
 			return packetList.shift();
 		}

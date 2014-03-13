@@ -14,7 +14,7 @@ package flash.tcp.io
 		public function writePacketsToOutputCache():void
 		{
 			while(hasPacket()){
-				getPacket().write(socket);
+				shiftPacket().write(socket);
 			}
 		}
 	}
