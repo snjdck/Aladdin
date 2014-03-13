@@ -46,6 +46,7 @@ package flash.tcp.router
 			}
 			var response:Object = new responseType();
 			response.mergeFrom(packet.msgData);
+			assert(packet.msgData.bytesAvailable == 0, "封包中有冗余数据!");
 			lambda.call(trait.onSuccess, response);
 		}
 		

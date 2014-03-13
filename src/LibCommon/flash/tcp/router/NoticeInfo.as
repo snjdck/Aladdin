@@ -24,6 +24,7 @@ package flash.tcp.router
 			if(null != noticeType){
 				notice = new noticeType();
 				notice.mergeFrom(msgData);
+				assert(msgData.bytesAvailable == 0, "封包中有冗余数据!");
 			}
 			lambda.call(handler, notice);
 		}
