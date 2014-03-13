@@ -6,7 +6,7 @@ package flash.tcp.impl
 	import flash.utils.IDataInput;
 	import flash.utils.IDataOutput;
 	
-	internal class BytePacket implements IPacket
+	public class BytePacket implements IPacket
 	{
 		private var _bodySize:uint;
 		
