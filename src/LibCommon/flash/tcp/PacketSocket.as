@@ -5,7 +5,7 @@ package flash.tcp
 	import flash.tcp.router.PacketRouter;
 	import flash.utils.ByteArray;
 
-	final public class PacketSocket extends TCPSocket implements IPacketRouter
+	final public class PacketSocket extends TCPSocket
 	{
 		static public var ERROR_ID_REQUEST_TIMEOUT:uint;
 		

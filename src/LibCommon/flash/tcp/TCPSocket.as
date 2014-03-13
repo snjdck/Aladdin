@@ -7,6 +7,7 @@ package flash.tcp
 	import flash.net.Socket;
 	import flash.signals.ISignal;
 	import flash.signals.Signal;
+	import flash.utils.IDataOutput;
 	
 	internal class TCPSocket
 	{		
@@ -51,6 +52,12 @@ package flash.tcp
 				default:
 					_errorSignal.notify(evt.toString());
 			}
+		}
+		
+		/** 用于某些平台接入需要写入一些额外字节时,如TGW头 */
+		public function getOutputChannel():IDataOutput
+		{
+			return socket;
 		}
 		
 		public function get connected():Boolean

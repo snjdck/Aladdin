@@ -5,13 +5,12 @@ package flash.tcp.router
 	import flash.reflection.getType;
 	import flash.reflection.getTypeName;
 	import flash.tcp.IPacket;
-	import flash.tcp.IPacketRouter;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
 	import string.replace;
 
-	final public class PacketRouter implements IPacketRouter
+	final public class PacketRouter
 	{
 		private const requestTypeDict:Object = new Dictionary();
 		private const requestDict:Object = new Dictionary();
@@ -62,7 +61,7 @@ package flash.tcp.router
 			addKey(responseDict, noticeId, info);
 		}
 		
-		public function regRequest(requestId:uint, requestType:Class, responseId:uint=0, responseType:Class=null, errorId:uint=0):void
+		public function regRequest(requestId:uint, requestType:Class, responseId:uint, responseType:Class, errorId:uint):void
 		{
 			var info:RequestInfo = new RequestInfo(requestId, requestType, responseId, responseType, errorId);
 			addKey(requestTypeDict, requestType, requestId);
