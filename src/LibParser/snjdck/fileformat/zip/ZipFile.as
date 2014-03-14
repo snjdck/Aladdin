@@ -1,35 +1,15 @@
 package snjdck.fileformat.zip
 {
 	import flash.utils.ByteArray;
-	import flash.utils.Endian;
 
-	final public class ZipFile
+	internal class ZipFile
 	{
-		static private const file:ZipFile = new ZipFile();
-		
-		static public function Parse(zipFileData:ByteArray, filenameEncoding:String="utf-8"):Object
-		{
-			zipFileData.endian = Endian.LITTLE_ENDIAN;
-			
-			var result:Object = {};
-			
-			while(zipFileData.bytesAvailable > 0){
-				if(zipFileData.readUnsignedInt() != 0x04034b50){
-					break;
-				}
-				file.read(zipFileData, filenameEncoding);
-				result[file.getName()] = file.getData();
-			}
-			
-			return result;
-		}
-		
 		private var _compressionMethod:uint;
 		private var _sizeCompressed:uint;
 		
 		private var _encrypted:Boolean;
 		private var _hasDataDescriptor:Boolean;
-		private var _filenameEncoding:String;
+		public var filenameEncoding:String;
 		
 		private var _isCompressed:Boolean;
 		private var _fileName:String;
@@ -58,9 +38,8 @@ package snjdck.fileformat.zip
 			return getData().toString();
 		}
 		
-		public function read(ba:ByteArray, filenameEncoding:String):void
+		public function read(ba:ByteArray):void
 		{
-			_filenameEncoding = filenameEncoding;
 			readHead(ba);
 			readBody(ba);
 		}
@@ -140,8 +119,8 @@ package snjdck.fileformat.zip
 			_encrypted = (flag & 0x01) !== 0;
 			_hasDataDescriptor = (flag & 0x08) !== 0;
 			
-			if((flag & 800) !== 0) {
-				_filenameEncoding = "utf-8";
+			if((flag & 800) !== 0){
+				filenameEncoding = "utf-8";
 			}
 			
 			ba.position += 4;			//last modified time and date
