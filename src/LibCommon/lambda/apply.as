@@ -1,26 +1,29 @@
 package lambda
 {
-	import flash.reflection.getType;
 	import array.prepend;
+	
+	import flash.reflection.getType;
 
 	/**
 	 * func_apply([funcRef, 1, 2], [3, 4]) -> funcRef(3, 4, 1, 2)
 	 */
 	public function apply(funcData:*, args:Array=null):*
 	{
-		if(funcData is Function){
-			return funcData.apply(null, args);
-		}else if(funcData is Class){
-			return newObject(funcData, args);
-		}else if(funcData is String){
-			return arguments.callee(getType(funcData), args);
-		}else if(funcData is Array){
-			return arguments.callee(funcData[0], prepend(funcData.slice(1), args));
+		if (funcData is Function)		return funcData.apply(null, args);
+		if (funcData is Class)			return newObject(funcData, args);
+		if (funcData is String)			return apply(getType(funcData), args);
+		if (funcData is Array == false)	return funcData;
+		
+		var firstItem:Object = funcData[0];
+		if(firstItem is Array){
+			firstItem = apply(firstItem);
 		}
-		return funcData;
+		if(firstItem is Function || firstItem is Class || firstItem is String){
+			return apply(firstItem, prepend(funcData.slice(1), args));
+		}
+		return apply(firstItem[funcData[1]], prepend(funcData.slice(2), args));
 	}
 }
-
 function newObject(cls:Class, args:Array):*{
 	var n:int = args ? args.length : 0;
 	return this["apply"+n](cls, args);
