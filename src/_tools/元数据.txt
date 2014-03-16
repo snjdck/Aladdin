@@ -11,11 +11,6 @@ RENDER (Event, only if stage.invalidate() is called in this frame)
 
 sdks\4.6.0\frameworks\libs\player
 
-
-
-FB -> 导航 - 打开调用层次结构
-FB -> 搜索 - 引用 && 声明
-
 <![CDATA[
 	|-------------------------------------------------------------------|
 	|	组			|	运算符											|
