@@ -1,8 +1,5 @@
 package snjdck
 {
-	/**
-	 * 后院里面的厕所
-	 */
 	public class HousePricer
 	{
 		static public const area:Number = 112;
@@ -67,6 +64,9 @@ package snjdck
 			addItem(2000, 1, "搬迁费");
 			addItem(800, 24, "临时租房费");
 			addItem(800, 24, "临时租房费2");
+			addItem(800, 24, "临时租房费3");
+			addItem(15000, 1, "土地费");
+			addItem(30000, 1, "拆迁奖励");
 		}
 		
 		private function test(val:Number, years:int):Number
