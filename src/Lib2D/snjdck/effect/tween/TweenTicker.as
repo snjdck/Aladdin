@@ -1,4 +1,4 @@
-package snjdck.effect.tween.impl
+package snjdck.effect.tween
 {
 	import flash.display.Shape;
 	import flash.events.Event;

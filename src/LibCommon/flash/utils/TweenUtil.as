@@ -5,7 +5,7 @@ package flash.utils
 	import flash.display.DisplayObject;
 	
 	import snjdck.effect.tween.TweenEase;
-	import snjdck.effect.tween.impl.Tween;
+	import snjdck.effect.tween.Tween;
 
 	final public class TweenUtil
 	{

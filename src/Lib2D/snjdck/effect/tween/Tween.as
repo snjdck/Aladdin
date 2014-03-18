@@ -1,12 +1,10 @@
-package snjdck.effect.tween.impl
+package snjdck.effect.tween
 {
 	import dict.deleteKey;
 	
 	import flash.support.Range;
 	
 	import lambda.call;
-	
-	import snjdck.effect.tween.TweenEase;
 
 	final public class Tween
 	{

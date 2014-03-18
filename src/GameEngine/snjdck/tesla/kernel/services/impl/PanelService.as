@@ -1,23 +1,20 @@
 package snjdck.tesla.kernel.services.impl
 {
-	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
-	import flash.display.Stage;
-	
 	import array.del;
 	
-	import snjdck.effect.tween.impl.Tween;
+	import flash.display.Stage;
 	import flash.signals.ISignal;
 	import flash.signals.Signal;
+	import flash.viewport.IViewPort;
+	import flash.viewport.IViewPortLayer;
+	import flash.viewport.ViewPortLayerName;
+	
+	import snjdck.effect.tween.Tween;
 	import snjdck.tesla.core.IPanel;
 	import snjdck.tesla.core.PanelShowPolicy;
 	import snjdck.tesla.kernel.services.IPanelService;
 	import snjdck.tesla.kernel.services.ISceneService;
 	import snjdck.tesla.kernel.services.support.Service;
-	import flash.viewport.IViewPort;
-	import flash.viewport.IViewPortLayer;
-	import flash.viewport.ViewPortLayerName;
 
 	public class PanelService extends Service implements IPanelService
 	{
