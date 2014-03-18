@@ -2,11 +2,7 @@ package snjdck.effect.tween.impl
 {
 	import dict.deleteKey;
 	
-	import flash.display.Shape;
-	import flash.events.Event;
 	import flash.support.Range;
-	import flash.utils.Dictionary;
-	import flash.utils.getTimer;
 	
 	import lambda.call;
 	
@@ -14,34 +10,14 @@ package snjdck.effect.tween.impl
 
 	final public class Tween
 	{
-		static private const tweenDict:Object = new Dictionary();
-		static private const evtSource:Shape = new Shape();
-		static private var timestamp:int;
+		static private const ticker:TweenTicker = new TweenTicker();
 		
 		static public function KillTweensOf(target:Object):void
 		{
-			delete tweenDict[target];
+			ticker.killTweensOf(target);
 		}
 		
-		evtSource.addEventListener(Event.ENTER_FRAME, __onTick);
-		timestamp = getTimer();
-		
-		static private function __onTick(evt:Event):void
-		{
-			var now:int = getTimer();
-			var timeElapsed:int = now - timestamp;
-			timestamp = now;
-			
-			for each(var tween:Tween in tweenDict){
-				while(tween){
-					tween.update(timeElapsed);
-					tween = tween.nextSibling;
-				}
-			}
-		}
-		
-		private var propInfoDict:Object;
-		
+		private var hasInit:Boolean;
 		private var _target:Object;
 		private var _position:int;
 		private var _duration:int;
@@ -51,7 +27,7 @@ package snjdck.effect.tween.impl
 		private var onUpdate:Object;
 		private var onEnd:Object;
 		
-		private var nextSibling:Tween;
+		internal var nextSibling:Tween;
 		
 		/**
 		 * 要实现循环缓动的话,可以设置 nextTask = this
@@ -71,55 +47,17 @@ package snjdck.effect.tween.impl
 		public function start():void
 		{
 			createPropInfoDict();
-			
-			if(running){
-				return;
-			}
-			
-			var tween:Tween = tweenDict[target];
-			nextSibling = tween;
-			tweenDict[target] = this;
-			
-			while(tween){
-				for(var propName:String in propInfoDict){
-					tween.delConflictProp(propName);
-				}
-				tween = tween.nextSibling;
-			}
+			ticker.addTween(this);
 		}
 		
 		public function stop():void
 		{
-			var tween:Tween = tweenDict[target];
-			
-			if(null == tween){
-				return;
-			}
-			
-			if(this == tween){
-				tweenDict[target] = nextSibling;
-				return;
-			}
-			
-			while(tween.nextSibling){
-				if(this == tween.nextSibling){
-					tween.nextSibling = nextSibling;
-					return;
-				}
-				tween = tween.nextSibling;
-			}
+			ticker.removeTween(this);
 		}
 		
 		public function get running():Boolean
 		{
-			var tween:Tween = tweenDict[target];
-			while(tween){
-				if(this == tween){
-					return true;
-				}
-				tween = tween.nextSibling;
-			}
-			return false;
+			return ticker.isTweenRunning(this);
 		}
 		
 		public function get target():Object
@@ -150,7 +88,7 @@ package snjdck.effect.tween.impl
 			return _duration;
 		}
 		
-		private function update(timeElapsed:int):void
+		internal function update(timeElapsed:int):void
 		{
 			position += timeElapsed;
 			
@@ -165,25 +103,25 @@ package snjdck.effect.tween.impl
 		
 		private function updateTargetPropValues(ratio:Number):void
 		{
-			for(var propName:String in propInfoDict){
-				var propRange:Range = propInfoDict[propName];
+			for(var propName:String in props){
+				var propRange:Range = props[propName];
 				_target[propName] = propRange.getValue(ratio);
 			}
 		}
 		
 		private function createPropInfoDict():void
 		{
-			if(propInfoDict){
-				return;
-			}
+			if (hasInit) return;
+			hasInit = true;
 			
-			propInfoDict = {};
+			var propDict:Object = {};
 			for(var propName:String in props){
-				addProp(propName, props[propName]);
+				addProp(propDict, propName, props[propName]);
 			}
+			props = propDict;
 		}
 		
-		private function addProp(propName:String, propValue:*):void
+		private function addProp(propDict:Object, propName:String, propValue:*):void
 		{
 			var propEndValue:Number;
 			
@@ -194,12 +132,7 @@ package snjdck.effect.tween.impl
 				propEndValue = getValue(propName, propValue);
 			}
 			
-			propInfoDict[propName] = new Range(_target[propName], propEndValue);
-		}
-		
-		private function delConflictProp(propName:String):void
-		{
-			deleteKey(propInfoDict, propName);
+			propDict[propName] = new Range(_target[propName], propEndValue);
 		}
 		
 		private function getValue(propName:String, val:*):Number
@@ -208,6 +141,16 @@ package snjdck.effect.tween.impl
 				return val as Number;
 			}
 			return Number(_target[propName]) + Number(val);
+		}
+		
+		internal function delConflictPropsOnOtherTweens(otherTween:Tween):void
+		{
+			while(otherTween){
+				for(var propName:String in props){
+					deleteKey(otherTween.props, propName);
+				}
+				otherTween = otherTween.nextSibling;
+			}
 		}
 	}
 }
