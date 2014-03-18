@@ -88,15 +88,6 @@ html-template/index.template.htm中
 params.allowfullscreen = "true";
 params.wmode = "direct";//(新添加)
 
-socket协议设计:
-AMF3(4字节协议头) + 数据长度(2字节,后面数据的长度) //一共6字节,用于实现完整的传输一段数据至服务端
-压缩标志(1字节) - body段是否有压缩
-head段:
-消息UID(2字节) - 服务端处理后返回此uid,客户端用此uid来判断回调哪个函数
-消息ID(2字节) - 走路,上线等消息
-body段:
-amf3编码的数据
-
 svn http://subclipse.tigris.org/update_1.6.x
 Appraiser 估价师,鉴定人
 
@@ -111,7 +102,6 @@ Window/preferences/general/Editors/Text Editors/Annotations/Occurences
 http协议抓包
 http://www.ieinspector.com/httpanalyzer/download.html
 http://www.fiddler2.com/fiddler2/version.asp
-
 http://wiresharkdownloads.riverbed.com/wireshark/win64/Wireshark-win64-1.8.6.exe
 
 火狐调试器
