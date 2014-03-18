@@ -43,7 +43,7 @@ package snjdck.effect.tween.impl
 			}
 			var firstTween:Tween = tweenDict[tween.target];
 			tween.nextSibling = firstTween;
-			tween.delConflictPropOnOtherTweens(firstTween);
+			tween.delConflictPropsOnOtherTweens(firstTween);
 			tweenDict[tween.target] = tween;
 		}
 		
