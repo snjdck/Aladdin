@@ -2,7 +2,7 @@ package snjdck.fileformat.dds
 {
 	import flash.utils.IDataInput;
 
-	public class DDSPixelFormat
+	internal class DDSPixelFormat
 	{
 		public static const DXT_1:int = 1;
 		public static const DXT_2:int = 2;

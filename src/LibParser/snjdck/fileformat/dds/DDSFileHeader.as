@@ -2,7 +2,7 @@ package snjdck.fileformat.dds
 {
 	import flash.utils.IDataInput;
 
-	public class DDSFileHeader
+	internal class DDSFileHeader
 	{
 		// DDSFileHeader 的 Flags 字段可用标记如下
 		public static const DDSD_CAPS:uint                  = 0x00000001;

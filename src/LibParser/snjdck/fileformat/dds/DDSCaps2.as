@@ -2,7 +2,7 @@ package snjdck.fileformat.dds
 {
 	import flash.utils.IDataInput;
 
-	public class DDSCaps2
+	internal class DDSCaps2
 	{
 		// DDSCaps2 的 Caps1 字段可用标记如下
 		public static const DDSCAPS_COMPLEX:uint            = 0x00000008;
