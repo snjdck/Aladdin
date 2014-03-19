@@ -1,5 +1,10 @@
 package snjdck.effect.tween
 {
+	import array.del;
+	import array.has;
+	
+	import dict.hasKey;
+	
 	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.utils.Dictionary;
@@ -23,17 +28,17 @@ package snjdck.effect.tween
 			var timeElapsed:int = now - timestamp;
 			timestamp = now;
 			
-			for each(var tween:Tween in tweenDict){
-				while(tween){
+			for each(var tweenList:Vector.<Tween> in tweenDict){
+				for each(var tween:Tween in tweenList){
 					tween.update(timeElapsed);
-					tween = tween.nextSibling;
 				}
 			}
 		}
 		
 		public function killTweensOf(target:Object):void
 		{
-			delete tweenDict[target];
+			var tweenList:Vector.<Tween> = getTweenList(target);
+			tweenList.length = 0;
 		}
 		
 		public function addTween(tween:Tween):void
@@ -41,41 +46,29 @@ package snjdck.effect.tween
 			if(isTweenRunning(tween)){
 				return;
 			}
-			var firstTween:Tween = tweenDict[tween.target];
-			tween.nextSibling = firstTween;
-			tween.delConflictPropsOnOtherTweens(firstTween);
-			tweenDict[tween.target] = tween;
+			var tweenList:Vector.<Tween> = getTweenList(tween.target);
+			tween.delConflictPropsOnOtherTweens(tweenList);
+			tweenList.push(tween);
 		}
 		
 		public function removeTween(tween:Tween):void
 		{
-			var firstTween:Tween = tweenDict[tween.target];
-			if(null == firstTween){
-				return;
-			}
-			if(firstTween == tween){
-				tweenDict[tween.target] = tween.nextSibling;
-				return;
-			}
-			while(firstTween.nextSibling){
-				if(firstTween.nextSibling == tween){
-					firstTween.nextSibling = tween.nextSibling;
-					return;
-				}
-				firstTween = firstTween.nextSibling;
-			}
+			var tweenList:Vector.<Tween> = getTweenList(tween.target);
+			array.del(tweenList, tween);
 		}
 		
 		public function isTweenRunning(tween:Tween):Boolean
 		{
-			var firstTween:Tween = tweenDict[tween.target];
-			while(firstTween){
-				if(firstTween == tween){
-					return true;
-				}
-				firstTween = firstTween.nextSibling;
+			var tweenList:Vector.<Tween> = getTweenList(tween.target);
+			return array.has(tweenList, tween);
+		}
+		
+		private function getTweenList(target:Object):Vector.<Tween>
+		{
+			if(dict.hasKey(tweenDict, target) == false){
+				tweenDict[target] = new Vector.<Tween>();
 			}
-			return false;
+			return tweenDict[target];
 		}
 	}
 }

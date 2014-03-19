@@ -25,8 +25,6 @@ package snjdck.effect.tween
 		private var onUpdate:Object;
 		private var onEnd:Object;
 		
-		internal var nextSibling:Tween;
-		
 		/**
 		 * 要实现循环缓动的话,可以设置 nextTask = this
 		 */		
@@ -141,13 +139,12 @@ package snjdck.effect.tween
 			return Number(_target[propName]) + Number(val);
 		}
 		
-		internal function delConflictPropsOnOtherTweens(otherTween:Tween):void
+		internal function delConflictPropsOnOtherTweens(tweenList:Vector.<Tween>):void
 		{
-			while(otherTween){
+			for each(var tween:Tween in tweenList){
 				for(var propName:String in props){
-					deleteKey(otherTween.props, propName);
+					deleteKey(tween.props, propName);
 				}
-				otherTween = otherTween.nextSibling;
 			}
 		}
 	}
