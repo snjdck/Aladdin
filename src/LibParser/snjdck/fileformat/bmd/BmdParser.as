@@ -1,22 +1,22 @@
 package snjdck.fileformat.bmd
 {
+	import array.setValue;
+	
 	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
-	import array.setValue;
-	
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.parser.DynamicGeometry;
 	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.KeyFrame;
 	import snjdck.g3d.skeleton.Skeleton;
 	
 	import stream.readFixedString;
-	import snjdck.g3d.parser.DynamicGeometry;
 	
 	use namespace ns_g3d;
 
@@ -55,7 +55,8 @@ package snjdck.fileformat.bmd
 			for(var i:int=prevPosition, n:int=buffer.length; i<n; i++)
 			{
 				var byte:uint = buffer[i];
-				buffer[i] = (byte ^ keyList[(i-prevPosition)%keyList.length]) - offset;
+				var keyIndex:int = (i - prevPosition) % keyList.length;
+				buffer[i] = (byte ^ keyList[keyIndex]) - offset;
 				offset = (byte + 0x3D) & 0xFF;
 			}
 			
