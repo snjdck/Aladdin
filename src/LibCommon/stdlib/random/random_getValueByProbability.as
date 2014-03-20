@@ -1,9 +1,9 @@
 package stdlib.random
 {
-	import operator.add;
-	
 	import array.getField;
 	import array.reduce;
+	
+	import flash.support.Operator;
 
 	/**
 	 * list = [{"data":"a", "probability":0.1}, {"data":"b", "probability":0.9}]
@@ -17,7 +17,7 @@ package stdlib.random
 		}
 		
 		const valList:Array = getField(list, keyName);
-		randomValue *= reduce(valList, operator.add, 0);//求和
+		randomValue *= reduce(valList, Operator.Add, 0);//求和
 		
 		for(var i:int=0, n:int=valList.length; i<n; i++)
 		{
