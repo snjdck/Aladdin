@@ -2,31 +2,30 @@
 {
 	import flash.utils.ByteArray;
 	
+	import stdlib.constant.Char;
+	
 	final public class Base64
 	{
 		static public function Encode(normalString:String):String
 		{
-			var bytes:ByteArray = new ByteArray();
-			bytes.writeUTFBytes(normalString);
-			var base64String:String = EncodeImp(bytes);
-			bytes.clear();
-			return base64String;
+			buffer.clear();
+			buffer.writeUTFBytes(normalString);
+			return EncodeImp(buffer);
 		}
 				
 		static public function Decode(base64String:String):String
 		{
-			var bytes:ByteArray = DecodeImp(base64String);
-			var normalString:String = bytes.readUTFBytes(bytes.length);
-			bytes.clear();
-			return normalString;
+			buffer.clear();
+			DecodeImp(base64String, buffer);
+			buffer.position = 0;
+			return buffer.readUTFBytes(buffer.length);
 		}
 		
 		static private function EncodeImp(data:ByteArray):String
 		{
-			var output:String = "";
-			var n:int = data.length;
-			
-			for(var i:int=0; i<n; i+=3){
+			var output:Array = [];
+			for(var i:int=0,n:int=data.length; i<n; i+=3)
+			{
 				var a:int = data[i];
 				var b:int = data[i+1];
 				var c:int = data[i+2];
@@ -36,30 +35,22 @@
 				var t3:int = ((b & 0x0F) << 2) | (c >> 6);
 				var t4:int = c & 0x3F;
 				
-				if(i+2 >= n){
-					t4 = 64;
-				}
+				if (i+1 >= n) t3 = 64;
+				if (i+2 >= n) t4 = 64;
 				
-				if(i+1 >= n){
-					t3 = 64;
-				}
-				
-				output += BASE64_DICT.charAt(t1) + BASE64_DICT.charAt(t2) + BASE64_DICT.charAt(t3) + BASE64_DICT.charAt(t4);
+				output.push(charList[t1], charList[t2], charList[t3], charList[t4]);
 			}
-			
-			return output;
+			return output.join("");
 		}
 		
-		static private function DecodeImp(data:String):ByteArray
+		static private function DecodeImp(data:String, output:ByteArray):void
 		{
-			var output:ByteArray = new ByteArray();
-			var n:int = data.length;
-			
-			for(var i:int=0; i<n; i+=4){
-				var t1:int = BASE64_DICT.indexOf(data.charAt(i));
-				var t2:int = BASE64_DICT.indexOf(data.charAt(i+1));
-				var t3:int = BASE64_DICT.indexOf(data.charAt(i+2));
-				var t4:int = BASE64_DICT.indexOf(data.charAt(i+3));
+			for(var i:int=0,n:int=data.length; i<n; i+=4)
+			{
+				var t1:int = charList.indexOf(data.charAt(i));
+				var t2:int = charList.indexOf(data.charAt(i+1));
+				var t3:int = charList.indexOf(data.charAt(i+2));
+				var t4:int = charList.indexOf(data.charAt(i+3));
 				
 				var a:int = (t1 << 2) | ((t2 >> 4) & 0x03);
 				var b:int = ((t2 & 0x0F) << 4) | ((t3 >> 2) & 0x0F);
@@ -67,19 +58,12 @@
 				
 				output.writeByte(a);
 				
-				if(t3 < 64){
-					output.writeByte(b);
-				}
-				
-				if(t4 < 64){
-					output.writeByte(c);
-				}
+				if (t3 < 64) output.writeByte(b);
+				if (t4 < 64) output.writeByte(c);
 			}
-			
-			output.position = 0;
-			return output;
 		}
 		
-		static private const BASE64_DICT:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+		static private const buffer:ByteArray = new ByteArray();
+		static private const charList:Array = Char.Base64;
 	}
 }

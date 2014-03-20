@@ -11,5 +11,6 @@ package stdlib.constant
 		];
 		static public const Var1:Array = ["$","_"].concat(Words);
 		static public const Var2:Array = ["$","_"].concat(Words).concat(Digit);
+		static public const Base64:Array = Words.concat(Digit).concat(["+","/","="]);
 	}
 }

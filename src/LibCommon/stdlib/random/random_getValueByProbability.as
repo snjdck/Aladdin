@@ -24,9 +24,8 @@ package stdlib.random
 			var val:Number = valList[i];
 			if(randomValue < val){
 				return list[i];
-			}else{
-				randomValue -= val;
 			}
+			randomValue -= val;
 		}
 		
 		return null;
