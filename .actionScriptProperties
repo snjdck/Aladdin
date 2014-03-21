@@ -10,7 +10,6 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="src/ScriptEngine"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/UnitTest"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibParser"/>
-      <compilerSourcePathEntry kind="1" linkType="1" path="src/LibMedia"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/GameEngine"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="0">
