@@ -9,7 +9,7 @@ package snjdck.fileformat.plist
 		{
 		}
 		
-		public function read(source:XML):Object
+		static public function read(source:XML):Object
 		{
 			var nodeName:String = source.localName();
 			switch(nodeName)
@@ -33,7 +33,7 @@ package snjdck.fileformat.plist
 			throw new Error("not support yet!" + nodeName);
 		}
 		
-		private function readDict(source:XML):Object
+		static private function readDict(source:XML):Object
 		{
 			var result:Object = {};
 			var children:XMLList = source.children();
@@ -47,7 +47,7 @@ package snjdck.fileformat.plist
 			return result;
 		}
 		
-		private function processDictValue(key:String, value:*):Object
+		static public function processDictValue(key:String, value:*):Object
 		{
 			if(!(value is String)){
 				return value;
@@ -65,7 +65,7 @@ package snjdck.fileformat.plist
 			return value;
 		}
 		
-		private function str2point(str:String):Point
+		static private function str2point(str:String):Point
 		{
 			var index:int = str.indexOf(",");
 			var px:Number = parseFloat(str.slice(1, index));
@@ -73,7 +73,7 @@ package snjdck.fileformat.plist
 			return new Point(px, py);
 		}
 		
-		private function str2rect(str:String):Rectangle
+		static private function str2rect(str:String):Rectangle
 		{
 			var index:int = str.indexOf(",{");
 			var xy:Point = str2point(str.slice(1, index));
