@@ -53,7 +53,7 @@ package snjdck.effect.tween
 		
 		public function get running():Boolean
 		{
-			return ticker.isTweenRunning(this);
+			return ticker.hasTween(this);
 		}
 		
 		public function get target():Object

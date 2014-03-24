@@ -7,13 +7,14 @@ package snjdck.effect.tween
 	
 	import flash.display.Shape;
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 
 	final internal class TweenTicker
 	{
+		private const evtSource:IEventDispatcher = new Shape();
 		private const tweenDict:Object = new Dictionary();
-		private const evtSource:Shape = new Shape();
 		private var timestamp:int;
 		
 		public function TweenTicker()
@@ -43,7 +44,7 @@ package snjdck.effect.tween
 		
 		public function addTween(tween:Tween):void
 		{
-			if(isTweenRunning(tween)){
+			if(hasTween(tween)){
 				return;
 			}
 			var tweenList:Vector.<Tween> = getTweenList(tween.target);
@@ -57,7 +58,7 @@ package snjdck.effect.tween
 			array.del(tweenList, tween);
 		}
 		
-		public function isTweenRunning(tween:Tween):Boolean
+		public function hasTween(tween:Tween):Boolean
 		{
 			var tweenList:Vector.<Tween> = getTweenList(tween.target);
 			return array.has(tweenList, tween);
