@@ -15,7 +15,7 @@ package snjdck.fileformat.csv
 		
 		public function isComplexType(fieldName:String):Boolean
 		{
-			return has(typeDef[fieldName], ".");
+			return string.has(typeDef[fieldName], ".");
 		}
 	}
 }

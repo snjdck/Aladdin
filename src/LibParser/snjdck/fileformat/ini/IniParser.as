@@ -11,7 +11,7 @@ package snjdck.fileformat.ini
 			
 			for each(var line:String in source.split("\r\n"))
 			{
-				var execResult:Object = FIELD_PATTERN.exec(line);
+				var execResult:Object = PATTERN_FIELD.exec(line);
 				if(execResult){
 					var fieldName:String = string.trim(execResult[1]);
 					currentField = resultDict[fieldName];
@@ -21,7 +21,7 @@ package snjdck.fileformat.ini
 					}
 					continue;
 				}
-				execResult = KEY_VALUE_PATTERN.exec(line);
+				execResult = PATTERN_KEY_VALUE.exec(line);
 				if(execResult){
 					var key:String = string.trim(execResult[1]);
 					var value:String = string.trim(execResult[2]);
@@ -32,7 +32,7 @@ package snjdck.fileformat.ini
 			return resultDict;
 		}
 		
-		static private const FIELD_PATTERN		:RegExp = /^\[([^\]]*)\]/;
-		static private const KEY_VALUE_PATTERN	:RegExp = /([^=]+)=(.*)/;
+		static private const PATTERN_FIELD		:RegExp = /^\[([^\]]*)\]/;
+		static private const PATTERN_KEY_VALUE	:RegExp = /([^=]+)=(.*)/;
 	}
 }
