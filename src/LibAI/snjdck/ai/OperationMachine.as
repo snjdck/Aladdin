@@ -1,7 +1,5 @@
 package snjdck.ai
 {
-	import flash.utils.Dictionary;
-	
 	import lambda.apply;
 	
 	import string.execRegExp;
@@ -9,36 +7,34 @@ package snjdck.ai
 	public class OperationMachine
 	{
 		private var patternDict:Object;
-		private var context:Object;
+		private var _context:Object;
 		
-		public function OperationMachine(context:Object=null)
+		public function OperationMachine()
 		{
-			this.patternDict = new Dictionary();
-			this.context = context;
+			patternDict = {};
 		}
 		
-		public function getContext():*
+		public function get context():*
 		{
-			return context;
+			return _context;
 		}
 		
-		public function setContext(value:Object):void
+		public function set context(value:Object):void
 		{
-			context = value;
+			_context = value;
 		}
 		
-		public function regPattern(pattern:RegExp, methodName:String):void
+		public function regPattern(methodName:String, pattern:RegExp):void
 		{
-			patternDict[pattern] = methodName;
+			patternDict[methodName] = pattern;
 		}
 		
 		public function exec(input:String):*
 		{
-			for(var pattern:* in patternDict)
-			{
+			for(var methodName:String in patternDict){
+				var pattern:RegExp = patternDict[methodName];
 				var paramList:Array = execRegExp(pattern, input);
 				if (null == paramList) continue;
-				var methodName:String = patternDict[pattern];
 				var method:Function = context[methodName];
 				return apply(method, paramList.slice(1));
 			}
