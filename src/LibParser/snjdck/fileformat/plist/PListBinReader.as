@@ -1,5 +1,6 @@
 package snjdck.fileformat.plist
 {
+	import flash.debugger.enterDebugger;
 	import flash.utils.ByteArray;
 
 	public class PListBinReader
@@ -89,7 +90,7 @@ package snjdck.fileformat.plist
 		{
 			switch(size)
 			{
-				case 0:	return source.readByte();
+				case 0:	return source.readUnsignedByte();
 				case 1:	return source.readShort();
 				case 2:	return source.readInt();
 				case 3:
@@ -139,6 +140,9 @@ package snjdck.fileformat.plist
 			{
 				source.position = offset + objectRefSize * i;
 				var key:String = parseAt(getIndex(objectRefSize));
+//				if(key == "originalWidth"){
+//					enterDebugger();
+//				}
 				source.position = offset + objectRefSize * (i + size);
 				var val:Object = parseAt(getIndex(objectRefSize));
 				obj[key] = PListReader.processDictValue(key, val);

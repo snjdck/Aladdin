@@ -1,8 +1,11 @@
 package snjdck.fileformat.plist
 {
+	import dict.getKeys;
+	
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	import snjdck.GDI;
@@ -26,13 +29,11 @@ package snjdck.fileformat.plist
 			var frameList:Array = [];
 			for(var frameName:String in config.frames){
 				var result:Object = pattern.exec(frameName);
-				if(null == result){
-					continue;
-				}
+				if (null == result) continue;
 				var index:int = parseInt(result[1]);
 				frameList[index] = frameName;
 			}
-			if(null == frameList[0]){
+			while(null == frameList[0]){
 				frameList.shift();
 			}
 			animationDict[name] = frameList;
@@ -44,33 +45,16 @@ package snjdck.fileformat.plist
 				name = "";
 			}
 			if(!animationDict.hasOwnProperty(name)){
-				regAnimation(name, new RegExp(getKeyName(name+"(\\d+)")));
+				regAnimation(name, new RegExp(name+"(?:_(\\d+)|)"));
 			}
 			return new PListAnimation(this, animationDict[name]);
-		}
-		
-		private function getKeyName(key:String):String
-		{
-			return prefix + "_" + key + "." + suffix;
-		}
-		
-		private function get prefix():String
-		{
-			var fileName:String = config.metadata.textureFileName;
-			var index:int = fileName.search(/\d*\.png/);
-			return fileName.slice(0, index);
-		}
-		
-		private function get suffix():String
-		{
-			var fileName:String = config.metadata.textureFileName;
-			var index:int = fileName.lastIndexOf(".");
-			return fileName.slice(index+1);
 		}
 		
 		public function drawFrame(frameName:String, g:Graphics):void
 		{
 			var frameData:Object = config.frames[frameName];
+			
+			adjustFrameData(frameData);
 			
 			g.beginFill(0, 0);
 			g.drawRect(0, 0, frameData.sourceSize.x, frameData.sourceSize.y);
@@ -83,6 +67,11 @@ package snjdck.fileformat.plist
 			g.endFill();
 		}
 		
+		public function getAniNameList():Array
+		{
+			return dict.getKeys(config.frames);
+		}
+		
 		static private function prepareBitmapMatrix(matrix:Matrix, frame:Rectangle, sourceColorRect:Rectangle, rotated:Boolean):void
 		{
 			matrix.identity();
@@ -92,6 +81,16 @@ package snjdck.fileformat.plist
 				bitmapMatrix.translate(0, frame.height);
 			}
 			matrix.translate(sourceColorRect.x, sourceColorRect.y);
+		}
+		
+		static private function adjustFrameData(frameData:Object):void
+		{
+			if(frameData.hasOwnProperty("frame")){
+				return;
+			}
+			frameData.sourceSize = new Point(frameData.originalWidth, frameData.originalHeight);
+			frameData.sourceColorRect = new Rectangle(frameData.offsetX, frameData.offsetY, frameData.width, frameData.height);
+			frameData.frame = new Rectangle(frameData.x, frameData.y, frameData.originalWidth, frameData.originalHeight);
 		}
 	}
 }
