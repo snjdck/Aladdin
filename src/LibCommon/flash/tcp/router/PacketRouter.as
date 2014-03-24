@@ -51,7 +51,7 @@ package flash.tcp.router
 			var requestInfo:RequestInfo = requestDict[requestId];
 			assert(requestInfo != null, replace("msgId='${0}' has not been registered yet!", [requestId]));
 			if(requestInfo.hasResponse()){
-				requestInfo.addCallback(new CallbackTrait(onSuccess, onSuccess, getTimer()));
+				requestInfo.addCallback(new CallbackTrait(onSuccess, onError, getTimer()));
 			}
 		}
 		
