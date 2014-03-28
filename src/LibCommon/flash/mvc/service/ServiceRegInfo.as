@@ -1,6 +1,7 @@
 package flash.mvc.service
 {
 	import flash.ioc.IInjector;
+	import flash.ioc.ip.InjectionPoint;
 
 	final public class ServiceRegInfo
 	{
@@ -15,7 +16,7 @@ package flash.mvc.service
 			this.serviceInterface = serviceInterface;
 			this.serviceClass = serviceClass;
 			this.moduleInjector = moduleInjector;
-			this.typesNeedToBeInjected = moduleInjector.getTypesNeedInject(serviceClass);
+			this.typesNeedToBeInjected = InjectionPoint.GetTypesNeedInject(serviceClass);
 		}
 		
 		public function getTypesNeedToBeInjected():Array

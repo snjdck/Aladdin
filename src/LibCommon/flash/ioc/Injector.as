@@ -2,7 +2,7 @@ package flash.ioc
 {
 	import dict.deleteKey;
 	
-	import flash.ioc.ip.InjectionPoints;
+	import flash.ioc.ip.InjectionPoint;
 	import flash.ioc.it.IInjectionType;
 	import flash.ioc.it.InjectionTypeClass;
 	import flash.ioc.it.InjectionTypeSingleton;
@@ -103,27 +103,12 @@ package flash.ioc
 		
 		public function newInstance(clsRef:Class):*
 		{
-			return getInjectionPoint(clsRef).newInstance(this);
+			return InjectionPoint.NewInstance(clsRef, this);
 		}
 		
 		public function injectInto(target:Object):void
 		{
-			getInjectionPoint(getType(target)).injectInto(target, this);
+			InjectionPoint.InjectInto(target, this);
 		}
-		
-		public function getTypesNeedInject(keyClsOrName:Object):Array
-		{
-			var result:Array = [];
-			getInjectionPoint(getType(keyClsOrName)).getTypesNeedInject(result);
-			return result;
-		}
-		
-		private function getInjectionPoint(clsRef:Class):InjectionPoints
-		{
-			var clsName:String = getTypeName(clsRef);
-			return clsInfoDic[clsName] ||= new InjectionPoints(clsRef);
-		}
-		
-		static private const clsInfoDic:Object = {};
 	}
 }

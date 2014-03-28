@@ -1,20 +1,43 @@
 package flash.ioc.ip
 {
 	import flash.ioc.IInjector;
+	import flash.reflection.getType;
 	import flash.reflection.getTypeInfo;
+	import flash.reflection.getTypeName;
 	import flash.reflection.typeinfo.MethodInfo;
 	import flash.reflection.typeinfo.TypeInfo;
 	import flash.reflection.typeinfo.VariableInfo;
 
-	[ExcludeClass]
-	final public class InjectionPoints implements IInjectionPoint
+	final public class InjectionPoint
 	{
 		static private const TAG_INJECT:String = "Inject";
+		static private const injectionPointDict:Object = {};
+		
+		static private function Fetch(clsRef:Class):InjectionPoint
+		{
+			var clsName:String = getTypeName(clsRef);
+			return injectionPointDict[clsName] ||= new InjectionPoint(clsRef);
+		}
+		
+		static public function NewInstance(clsRef:Class, injector:IInjector):*
+		{
+			return Fetch(clsRef).newInstance(injector);
+		}
+		
+		static public function InjectInto(target:Object, injector:IInjector):void
+		{
+			Fetch(getType(target)).injectInto(target, injector);
+		}
+		
+		static public function GetTypesNeedInject(clsRef:Class):Array
+		{
+			return Fetch(clsRef).getTypesNeedInject();
+		}
 		
 		private var injectionPointCtor:InjectionPointConstructor;
 		private const injectionPointList:Array = [];
 		
-		public function InjectionPoints(clsRef:Class)
+		public function InjectionPoint(clsRef:Class)
 		{
 			var clsInfo:TypeInfo = getTypeInfo(clsRef);
 			
@@ -36,31 +59,28 @@ package flash.ioc.ip
 			}
 		}
 		
-		public function newInstance(injector:IInjector):*
+		private function newInstance(injector:IInjector):*
 		{
 			var obj:Object = injectionPointCtor.newInstance(injector);
 			injectInto(obj, injector);
 			return obj;
 		}
 		
-		/**
-		 * 1.注入属性
-		 * 2.注入有参数的方法
-		 * 3.注入无参数的方法
-		 */
-		public function injectInto(target:Object, injector:IInjector):void
+		private function injectInto(target:Object, injector:IInjector):void
 		{
 			for each(var injectionPoint:IInjectionPoint in injectionPointList){
 				injectionPoint.injectInto(target, injector);
 			}
 		}
 		
-		public function getTypesNeedInject(result:Array):void
+		private function getTypesNeedInject():Array
 		{
+			var result:Array = [];
 			injectionPointCtor.getTypesNeedInject(result);
 			for each(var injectionPoint:IInjectionPoint in injectionPointList){
 				injectionPoint.getTypesNeedInject(result);
 			}
+			return result;
 		}
 		
 		static private function getFieldList(clsInfo:TypeInfo):Array

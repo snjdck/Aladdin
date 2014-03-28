@@ -2,7 +2,7 @@ package flash.ioc.ip
 {
 	import flash.ioc.IInjector;
 
-	final internal class InjectionPointProperty implements IInjectionPoint
+	internal class InjectionPointProperty implements IInjectionPoint
 	{
 		private var name:String;
 		private var info:Object;

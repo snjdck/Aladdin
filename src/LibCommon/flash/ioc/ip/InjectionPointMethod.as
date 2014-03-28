@@ -2,11 +2,11 @@ package flash.ioc.ip
 {
 	import array.append;
 	
-	import lambda.apply;
-	
 	import flash.ioc.IInjector;
+	
+	import lambda.apply;
 
-	final internal class InjectionPointMethod implements IInjectionPoint
+	internal class InjectionPointMethod implements IInjectionPoint
 	{
 		private var methodName:String;
 		private var argTypes:Array;
