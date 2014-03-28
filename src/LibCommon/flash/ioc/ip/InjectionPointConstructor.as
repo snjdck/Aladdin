@@ -2,26 +2,27 @@ package flash.ioc.ip
 {
 	import array.append;
 	
-	import lambda.apply;
-	
 	import flash.ioc.IInjector;
+	
+	import lambda.apply;
 
-	internal class InjectionPointConstructor extends InjectionPoint
+	internal class InjectionPointConstructor
 	{
+		private var clsRef:Class;
 		private var argTypes:Array;
 		
-		public function InjectionPointConstructor(name:String, info:Object, argTypes:Array)
+		public function InjectionPointConstructor(clsRef:Class, argTypes:Array)
 		{
-			super(name, info);
+			this.clsRef = clsRef;
 			this.argTypes = argTypes;
 		}
 		
 		public function newInstance(injector:IInjector):Object
 		{
-			return lambda.apply(name, argTypes && getArgValues(argTypes, injector));
+			return lambda.apply(clsRef, argTypes && injector.getInstances(argTypes));
 		}
 		
-		public function getTypesNeedToBeInjected(result:Array):void
+		public function getTypesNeedInject(result:Array):void
 		{
 			array.append(result, argTypes);
 		}

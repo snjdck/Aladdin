@@ -92,6 +92,15 @@ package flash.ioc
 			return injectionType && injectionType.getValue(this, id);
 		}
 		
+		public function getInstances(argTypes:Array):Array
+		{
+			var argValues:Array = [];
+			for(var i:int=0, n:int=argTypes.length; i<n; i++){
+				argValues[i] = getInstance(argTypes[i]);
+			}
+			return argValues;
+		}
+		
 		public function newInstance(clsRef:Class):*
 		{
 			return getInjectionPoint(clsRef).newInstance(this);
@@ -102,10 +111,10 @@ package flash.ioc
 			getInjectionPoint(getType(target)).injectInto(target, this);
 		}
 		
-		public function getTypesNeedToBeInjected(keyClsOrName:Object):Array
+		public function getTypesNeedInject(keyClsOrName:Object):Array
 		{
 			var result:Array = [];
-			getInjectionPoint(getType(keyClsOrName)).getTypesNeedToBeInjected(result);
+			getInjectionPoint(getType(keyClsOrName)).getTypesNeedInject(result);
 			return result;
 		}
 		

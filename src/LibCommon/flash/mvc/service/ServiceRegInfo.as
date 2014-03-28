@@ -15,7 +15,7 @@ package flash.mvc.service
 			this.serviceInterface = serviceInterface;
 			this.serviceClass = serviceClass;
 			this.moduleInjector = moduleInjector;
-			this.typesNeedToBeInjected = moduleInjector.getTypesNeedToBeInjected(serviceClass);
+			this.typesNeedToBeInjected = moduleInjector.getTypesNeedInject(serviceClass);
 		}
 		
 		public function getTypesNeedToBeInjected():Array

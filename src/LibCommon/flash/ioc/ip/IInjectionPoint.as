@@ -5,7 +5,6 @@ package flash.ioc.ip
 	internal interface IInjectionPoint
 	{
 		function injectInto(target:Object, injector:IInjector):void;
-		function get priority():int;
-		function getTypesNeedToBeInjected(result:Array):void;
+		function getTypesNeedInject(result:Array):void;
 	}
 }

@@ -1,16 +1,17 @@
 package flash.ioc.ip
 {
-	import array.push;
-	
 	import flash.ioc.IInjector;
 
-	final internal class InjectionPointProperty extends InjectionPoint implements IInjectionPoint
+	final internal class InjectionPointProperty implements IInjectionPoint
 	{
+		private var name:String;
+		private var info:Object;
 		private var argType:String;
 		
 		public function InjectionPointProperty(name:String, info:Object, argType:String)
 		{
-			super(name, info);
+			this.name = name;
+			this.info = info;
 			this.argType = argType;
 		}
 		
@@ -22,14 +23,9 @@ package flash.ioc.ip
 			}
 		}
 		
-		public function get priority():int
+		public function getTypesNeedInject(result:Array):void
 		{
-			return 1;
-		}
-		
-		public function getTypesNeedToBeInjected(result:Array):void
-		{
-			array.push(result, argType);
+			result.push(argType);
 		}
 	}
 }

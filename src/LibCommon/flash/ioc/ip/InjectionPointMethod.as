@@ -6,27 +6,23 @@ package flash.ioc.ip
 	
 	import flash.ioc.IInjector;
 
-	final internal class InjectionPointMethod extends InjectionPoint implements IInjectionPoint
+	final internal class InjectionPointMethod implements IInjectionPoint
 	{
+		private var methodName:String;
 		private var argTypes:Array;
 		
-		public function InjectionPointMethod(name:String, info:Object, argTypes:Array)
+		public function InjectionPointMethod(methodName:String, argTypes:Array)
 		{
-			super(name, info);
+			this.methodName = methodName;
 			this.argTypes = argTypes;
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
 		{
-			lambda.apply(target[name], getArgValues(argTypes, injector));
+			lambda.apply(target[methodName], argTypes && injector.getInstances(argTypes));
 		}
 		
-		public function get priority():int
-		{
-			return argTypes.length > 0 ? 2 : 3;
-		}
-		
-		public function getTypesNeedToBeInjected(result:Array):void
+		public function getTypesNeedInject(result:Array):void
 		{
 			array.append(result, argTypes);
 		}

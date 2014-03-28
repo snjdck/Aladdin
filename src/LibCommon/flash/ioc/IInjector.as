@@ -14,10 +14,11 @@ package flash.ioc
 		function unmap(keyCls:Class, id:String=null):void;
 		
 		function getInstance(keyClsOrName:Object, id:String=null):*;
+		function getInstances(argTypes:Array):Array;
 		function newInstance(clsRef:Class):*;
 		function injectInto(target:Object):void;
 		
-		function getTypesNeedToBeInjected(keyClsOrName:Object):Array;
+		function getTypesNeedInject(keyClsOrName:Object):Array;
 		
 		function get parent():IInjector;
 		function set parent(value:IInjector):void;
