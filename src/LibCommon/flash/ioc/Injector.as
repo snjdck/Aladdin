@@ -1,15 +1,13 @@
 package flash.ioc
 {
-	import dict.deleteKey;
-	
 	import flash.ioc.ip.InjectionPoint;
 	import flash.ioc.it.IInjectionType;
 	import flash.ioc.it.InjectionTypeClass;
 	import flash.ioc.it.InjectionTypeSingleton;
 	import flash.ioc.it.InjectionTypeValue;
-	import flash.reflection.getType;
-	import flash.reflection.getTypeName;
 	import flash.support.TypeCast;
+	
+	import dict.deleteKey;
 
 	public class Injector implements IInjector
 	{
