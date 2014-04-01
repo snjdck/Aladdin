@@ -5,6 +5,8 @@ package flash.tcp.router
 	import flash.reflection.getType;
 	import flash.reflection.getTypeName;
 	import flash.tcp.IPacket;
+	import flash.tcp.error.PacketError;
+	import flash.tcp.error.PacketErrorDict;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
@@ -16,8 +18,11 @@ package flash.tcp.router
 		private const requestDict:Object = new Dictionary();
 		private const responseDict:Object = new Dictionary();
 		
-		public function PacketRouter()
+		private var packetErrorDict:PacketErrorDict;
+		
+		public function PacketRouter(packetErrorDict:PacketErrorDict)
 		{
+			this.packetErrorDict = packetErrorDict;
 		}
 		
 		public function routePacket(packet:IPacket):void
@@ -33,7 +38,7 @@ package flash.tcp.router
 			}
 			if(info is RequestInfo){
 				var requestInfo:RequestInfo = info as RequestInfo;
-				requestInfo.call(packet);
+				requestInfo.call(packet, packetErrorDict);
 				return;
 			}
 			assert(false, "what fuck is info?");
@@ -82,9 +87,10 @@ package flash.tcp.router
 		
 		public function checkTimeout():void
 		{
+			var requestTimeoutError:PacketError = packetErrorDict.fetchRequestTimeoutError();
 			var now:int = getTimer();
 			for each(var requestInfo:RequestInfo in requestDict){
-				requestInfo.checkTimeout(now);
+				requestInfo.checkTimeout(now, requestTimeoutError);
 			}
 		}
 	}

@@ -2,7 +2,8 @@ package flash.tcp.router
 {
 	import flash.lang.ISerializable;
 	import flash.tcp.IPacket;
-	import flash.tcp.PacketSocket;
+	import flash.tcp.error.PacketError;
+	import flash.tcp.error.PacketErrorDict;
 	
 	import lambda.call;
 
@@ -37,12 +38,12 @@ package flash.tcp.router
 			callbackList.push(callback);
 		}
 		
-		public function call(packet:IPacket):void
+		public function call(packet:IPacket, packetErrorDict:PacketErrorDict):void
 		{
 			var trait:CallbackTrait = callbackList.shift();
 			
 			if(packet.msgId == errorId){
-				lambda.call(trait.onError, packet.errorId);
+				lambda.call(trait.onError, packetErrorDict.fetch(packet.errorId));
 				return;
 			}
 			var response:ISerializable = new responseType();
@@ -51,7 +52,7 @@ package flash.tcp.router
 			lambda.call(trait.onSuccess, response);
 		}
 		
-		public function checkTimeout(now:int):void
+		public function checkTimeout(now:int, requestTimeoutError:PacketError):void
 		{
 			while(callbackList.length > 0){
 				var trait:CallbackTrait = callbackList[0];
@@ -59,7 +60,7 @@ package flash.tcp.router
 					return;//如果前面的都没超时,后面的也肯定没有超时
 				}
 				callbackList.shift();
-				lambda.call(trait.onError, PacketSocket.ERROR_ID_REQUEST_TIMEOUT);
+				lambda.call(trait.onError, requestTimeoutError);
 			}
 		}
 	}

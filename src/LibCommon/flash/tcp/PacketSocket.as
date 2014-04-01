@@ -1,5 +1,6 @@
 package flash.tcp
 {
+	import flash.tcp.error.PacketErrorDict;
 	import flash.tcp.io.PacketReader;
 	import flash.tcp.io.PacketWriter;
 	import flash.tcp.router.PacketRouter;
@@ -7,12 +8,11 @@ package flash.tcp
 
 	final public class PacketSocket extends TCPSocket
 	{
-		static public var ERROR_ID_REQUEST_TIMEOUT:uint;
-		
 		private var packetReader:PacketReader;
 		private var packetWriter:PacketWriter;
 		private var packetRouter:PacketRouter;
 		
+		private var packetErrorDict:PacketErrorDict;
 		private var packetFactory:IPacket;
 		
 		public function PacketSocket(packet:IPacket)
@@ -20,7 +20,8 @@ package flash.tcp
 			packetFactory = packet.create();
 			packetReader = new PacketReader(socket, packet);
 			packetWriter = new PacketWriter(socket);
-			packetRouter = new PacketRouter();
+			packetErrorDict = new PacketErrorDict();
+			packetRouter = new PacketRouter(packetErrorDict);
 			socket.endian = packet.endian;
 		}
 		
@@ -75,6 +76,11 @@ package flash.tcp
 			send(requestId, msgData);
 			
 			flush();
+		}
+		
+		public function regError(errorId:int, message:String):void
+		{
+			packetErrorDict.register(errorId, message);
 		}
 	}
 }
