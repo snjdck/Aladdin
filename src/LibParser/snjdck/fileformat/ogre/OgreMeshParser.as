@@ -138,7 +138,7 @@ package snjdck.fileformat.ogre
 			
 			if(MeshChunkID.MESH_BOUNDS == getChunkId()){
 				seekToData();
-				mesh.bound.readFromBuffer(buffer);
+				mesh.bound.readFrom(buffer);
 			}
 		}
 		

@@ -1,5 +1,6 @@
 package flash.tcp.router
 {
+	import flash.lang.ISerializable;
 	import flash.utils.IDataInput;
 	
 	import lambda.call;
@@ -20,10 +21,10 @@ package flash.tcp.router
 		
 		public function call(msgData:IDataInput):void
 		{
-			var notice:Object = null;
+			var notice:ISerializable = null;
 			if(null != noticeType){
 				notice = new noticeType();
-				notice.mergeFrom(msgData);
+				notice.readFrom(msgData);
 				assert(msgData.bytesAvailable == 0, "封包中有冗余数据!");
 			}
 			lambda.call(handler, notice);

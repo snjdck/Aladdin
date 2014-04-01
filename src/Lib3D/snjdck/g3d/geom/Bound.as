@@ -50,7 +50,7 @@ package snjdck.g3d.geom
 			return "Bound:" + minX + " " + minY + " " + minZ + " " + maxX + " " + maxY + " " + maxZ + ", radius:" + radius;
 		}
 		
-		public function readFromBuffer(buffer:IDataInput):void
+		public function readFrom(buffer:IDataInput):void
 		{
 			minX = buffer.readFloat();
 			minY = buffer.readFloat();
@@ -61,7 +61,7 @@ package snjdck.g3d.geom
 			radius = buffer.readFloat();
 		}
 		
-		public function writeToBuffer(buffer:IDataOutput):void
+		public function writeTo(buffer:IDataOutput):void
 		{
 			buffer.writeFloat(minX);
 			buffer.writeFloat(minY);

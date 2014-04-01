@@ -57,7 +57,7 @@ package snjdck.fileformat.ogre
 				var bone:Bone = new Bone(readCString(buffer), buffer.readUnsignedShort());
 				
 				readVector3(buffer, bone.transform.translation);
-				bone.transform.rotation.readFromBuffer(buffer);
+				bone.transform.rotation.readFrom(buffer);
 				
 				if(length > 30){
 					readVector3(buffer, bone.transform.scale);
@@ -109,7 +109,7 @@ package snjdck.fileformat.ogre
 			var keyFrame:KeyFrame = new KeyFrame(buffer.readFloat());
 			output.push(keyFrame);
 			
-			keyFrame.transform.rotation.readFromBuffer(buffer);
+			keyFrame.transform.rotation.readFrom(buffer);
 			readVector3(buffer, keyFrame.transform.translation);
 			if(length > 32){
 				readVector3(buffer, keyFrame.transform.scale);
@@ -134,7 +134,7 @@ package snjdck.fileformat.ogre
 				var keyFrame:KeyFrame = new KeyFrame(buffer.readFloat());
 				
 				if(hasRotation){
-					keyFrame.transform.rotation.readFromBuffer(buffer);
+					keyFrame.transform.rotation.readFrom(buffer);
 				}
 				
 				if(hasTranslation){

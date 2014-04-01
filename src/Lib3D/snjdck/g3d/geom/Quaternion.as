@@ -265,12 +265,12 @@ package snjdck.g3d.geom
 			result.copyRawDataFrom(rawData);
 		}
 		
-		public function readFromBuffer(buffer:IDataInput):void
+		public function readFrom(buffer:IDataInput):void
 		{
 			setTo(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
 		}
 		
-		public function writeToBuffer(buffer:IDataOutput):void
+		public function writeTo(buffer:IDataOutput):void
 		{
 			buffer.writeFloat(x);
 			buffer.writeFloat(y);

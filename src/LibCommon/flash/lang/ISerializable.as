@@ -5,7 +5,7 @@ package flash.lang
 
 	public interface ISerializable
 	{
-		function readFromBuffer(buffer:IDataInput):void;
-		function writeToBuffer(buffer:IDataOutput):void;
+		function readFrom(buffer:IDataInput):void;
+		function writeTo(buffer:IDataOutput):void;
 	}
 }

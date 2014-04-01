@@ -1,5 +1,6 @@
 package flash.tcp.router
 {
+	import flash.lang.ISerializable;
 	import flash.tcp.IPacket;
 	import flash.tcp.PacketSocket;
 	
@@ -44,8 +45,8 @@ package flash.tcp.router
 				lambda.call(trait.onError, packet.errorId);
 				return;
 			}
-			var response:Object = new responseType();
-			response.mergeFrom(packet.msgData);
+			var response:ISerializable = new responseType();
+			response.readFrom(packet.msgData);
 			assert(packet.msgData.bytesAvailable == 0, "封包中有冗余数据!");
 			lambda.call(trait.onSuccess, response);
 		}
