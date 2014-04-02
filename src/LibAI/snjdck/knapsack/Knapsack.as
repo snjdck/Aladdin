@@ -1,6 +1,6 @@
-package stdlib.knapsack
+package snjdck.knapsack
 {
-	public class Knapsack
+	final public class Knapsack
 	{
 		static public function ZeroOnePack(itemList:Array, capacity:uint):ItemSlot
 		{
@@ -18,7 +18,7 @@ package stdlib.knapsack
 				return null;
 			}
 			
-			const m:Vector.<ItemSlot> = createSlotList(capacity+1);
+			const m:Vector.<ItemSlot> = ItemSlot.CreateList(capacity+1);
 			
 			for each(var item:IItem in itemList){
 				strategy(item, capacity, m);
@@ -51,15 +51,6 @@ package stdlib.knapsack
 					itemSlotNotUse.addItem(item);
 				}
 			}
-		}
-		
-		static private function createSlotList(size:int):Vector.<ItemSlot>
-		{
-			var slotLst:Vector.<ItemSlot> = new Vector.<ItemSlot>(size, true);
-			for(var i:int=0; i<slotLst.length; ++i){
-				slotLst[i] = new ItemSlot();
-			}
-			return slotLst;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package stdlib.knapsack
+package snjdck.knapsack
 {
 	public interface IItem
 	{

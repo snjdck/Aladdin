@@ -1,6 +1,6 @@
 package snjdck
 {
-	import stdlib.knapsack.Knapsack;
+	import snjdck.knapsack.Knapsack;
 
 	public class BagTest
 	{
@@ -31,7 +31,7 @@ package snjdck
 	}
 }
 
-import stdlib.knapsack.IItem;
+import snjdck.knapsack.IItem;
 
 import string.replace;
 

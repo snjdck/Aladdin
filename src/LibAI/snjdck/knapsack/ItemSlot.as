@@ -1,9 +1,18 @@
-package stdlib.knapsack
+package snjdck.knapsack
 {
 	import string.replace;
 
 	public class ItemSlot
 	{
+		static public function CreateList(size:int):Vector.<ItemSlot>
+		{
+			var slotLst:Vector.<ItemSlot> = new Vector.<ItemSlot>(size, true);
+			for(var i:int=0; i<slotLst.length; ++i){
+				slotLst[i] = new ItemSlot();
+			}
+			return slotLst;
+		}
+		
 		private var _itemList:Array;
 		private var _price:Number;
 		
