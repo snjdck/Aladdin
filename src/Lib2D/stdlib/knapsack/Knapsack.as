@@ -33,7 +33,7 @@ package stdlib.knapsack
 			{
 				var itemSlotNotUse:ItemSlot = m[totalWeight];
 				var itemSlotUse:ItemSlot = m[totalWeight-item.weight];
-				if(itemSlotNotUse.value < itemSlotUse.value + item.price){
+				if(itemSlotNotUse.price < itemSlotUse.price + item.price){
 					itemSlotNotUse.copyFrom(itemSlotUse);
 					itemSlotNotUse.addItem(item);
 				}
@@ -46,7 +46,7 @@ package stdlib.knapsack
 			{
 				var itemSlotNotUse:ItemSlot = m[totalWeight];
 				var itemSlotUse:ItemSlot = m[totalWeight-item.weight];
-				if(itemSlotNotUse.value < itemSlotUse.value + item.price){
+				if(itemSlotNotUse.price < itemSlotUse.price + item.price){
 					itemSlotNotUse.copyFrom(itemSlotUse);
 					itemSlotNotUse.addItem(item);
 				}

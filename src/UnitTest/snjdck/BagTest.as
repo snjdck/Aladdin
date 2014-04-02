@@ -1,5 +1,7 @@
-package stdlib.knapsack
+package snjdck
 {
+	import stdlib.knapsack.Knapsack;
+
 	public class BagTest
 	{
 		static private var itemList:Array = [new Item(3,4),new Item(4,5),new Item(5,6)];
@@ -25,5 +27,36 @@ package stdlib.knapsack
 		public function BagTest()
 		{
 		}
+	}
+}
+
+import stdlib.knapsack.IItem;
+
+import string.replace;
+
+class Item implements IItem
+{
+	private var _weight:uint;
+	private var _price:Number;
+	
+	public function Item(weight:uint, price:Number)
+	{
+		this._weight = weight;
+		this._price = price;
+	}
+	
+	public function get weight():uint
+	{
+		return _weight;
+	}
+	
+	public function get price():Number
+	{
+		return _price;
+	}
+	
+	public function toString():String
+	{
+		return string.replace("[weight:${0},price:${1}]", [_weight, _price]);
 	}
 }

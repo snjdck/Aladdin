@@ -5,34 +5,34 @@ package stdlib.knapsack
 	public class ItemSlot
 	{
 		private var _itemList:Array;
-		private var _value:Number;
+		private var _price:Number;
 		
 		public function ItemSlot()
 		{
 			_itemList = [];
-			_value = 0;
+			_price = 0;
 		}
 		
 		public function addItem(item:IItem):void
 		{
 			_itemList.push(item);
-			_value += item.price;
+			_price += item.price;
 		}
 		
-		public function get value():Number
+		public function get price():Number
 		{
-			return _value;
+			return _price;
 		}
 		
 		public function copyFrom(target:ItemSlot):void
 		{
 			_itemList = target._itemList.slice();
-			_value = target._value;
+			_price = target._price;
 		}
 		
 		public function toString():String
 		{
-			return string.replace("price:${1},itemList:[${0}]", [_itemList, _value]);
+			return string.replace("price:${1},itemList:[${0}]", [_itemList, _price]);
 		}
 	}
 }
