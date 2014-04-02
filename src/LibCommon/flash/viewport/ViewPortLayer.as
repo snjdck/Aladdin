@@ -6,6 +6,7 @@ package flash.viewport
 	{
 		public function ViewPortLayer()
 		{
+			mouseEnabled = false;
 		}
 	}
 }
