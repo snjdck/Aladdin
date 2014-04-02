@@ -4,10 +4,10 @@ package snjdck.g3d.core
 	import flash.events.EventDispatcher;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import flash.support.DataEvent;
 	
 	import matrix44.recompose;
 	
-	import flash.support.DataEvent;
 	import snjdck.g2d.core.IDisplayObject;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.geom.Ray;
@@ -409,6 +409,93 @@ package snjdck.g3d.core
 			return result;
 		}
 		//*/
+		
+		//--------------------------util methods---------------------
+		
+		public function removeAllChildren():void
+		{
+			while(firstChild != null){
+				removeChild(firstChild);
+			}
+		}
+		
+		public function removeChildByName(childName:String):void
+		{
+			removeChild(getChild(childName));
+		}
+		
+		public function traverse(handler:Function, includeSelf:Boolean=true):void
+		{
+			if(includeSelf){
+				handler(this);
+			}
+			for(var child:Object3D=firstChild; child != null; child=child.nextSibling){
+				child.traverse(handler, true);
+			}
+		}
+		
+		public function get numChildren():int
+		{
+			var count:int = 0;
+			for(var child:Object3D=firstChild; child != null; child=child.nextSibling){
+				count++;
+			}
+			return count;
+		}
+		
+		public function createChild(childName:String=null, childTypeName:String=null):Object3D
+		{
+			var child:Object3D = new Object3D(childName, childTypeName);
+			addChild(child);
+			return child;
+		}
+		
+		public function getPosition():Vector3D
+		{
+			return new Vector3D(x, y, z);
+		}
+		
+		public function moveTo(px:Number, py:Number, pz:Number):void
+		{
+			this.x = px;
+			this.y = py;
+			this.z = pz;
+		}
+		
+		public function setPosition(value:Vector3D):void
+		{
+			moveTo(value.x, value.y, value.z);
+		}
+		
+		public function moveForward(distance:Number):void
+		{
+			translateLocal(Vector3D.Z_AXIS, distance);
+		}
+		
+		public function moveBackward(distance:Number):void
+		{
+			moveForward(-distance);
+		}
+		
+		public function moveUp(distance:Number):void
+		{
+			translateLocal(Vector3D.Y_AXIS, distance);
+		}
+		
+		public function moveDown(distance:Number):void
+		{
+			moveUp(-distance);
+		}
+		
+		public function moveLeft(distance:Number):void
+		{
+			moveRight(-distance);
+		}
+		
+		public function moveRight(distance:Number):void
+		{
+			translateLocal(Vector3D.X_AXIS, distance);
+		}
 	}
 }
 

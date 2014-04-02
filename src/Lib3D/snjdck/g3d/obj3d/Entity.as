@@ -1,14 +1,10 @@
 package snjdck.g3d.obj3d
 {
-	import d3d.createChild;
-	import d3d.removeAllChildren;
-	
 	import flash.geom.Matrix3D;
 	import flash.utils.Dictionary;
 	
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.core.BlendMode;
-	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
@@ -113,7 +109,7 @@ package snjdck.g3d.obj3d
 		public function bindEntityToBone(boneName:String, entity:Object3D):void
 		{
 			var boneId:int = checkBoneName(boneName).id;
-			bindDict[boneId] ||= createChild(this, boneName).localMatrix;
+			bindDict[boneId] ||= createChild(boneName).localMatrix;
 			getChild(boneName).addChild(entity);
 		}
 		
@@ -126,7 +122,10 @@ package snjdck.g3d.obj3d
 		public function unbindAllEntitiesFromBone(boneName:String):void
 		{
 			checkBoneName(boneName);
-			removeAllChildren(getChild(boneName));
+			var bone:Object3D = getChild(boneName);
+			if(bone != null){
+				bone.removeAllChildren();
+			}
 		}
 		
 		public function shareSkeletonInstanceWith(entity:Entity):void
