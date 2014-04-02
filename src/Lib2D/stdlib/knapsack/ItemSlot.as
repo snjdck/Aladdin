@@ -13,6 +13,12 @@ package stdlib.knapsack
 			_price = 0;
 		}
 		
+		public function clear():void
+		{
+			_itemList.length = 0;
+			_price = 0;
+		}
+		
 		public function addItem(item:IItem):void
 		{
 			_itemList.push(item);
