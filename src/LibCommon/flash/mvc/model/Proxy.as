@@ -1,15 +1,14 @@
 package flash.mvc.model
 {
-	import flash.utils.Dictionary;
-	
 	import dict.addKey;
 	import dict.deleteKey;
 	
 	import flash.mvc.Module;
+	import flash.mvc.kernel.INotifier;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
 	import flash.mvc.ns_mvc;
-	import flash.mvc.kernel.INotifier;
+	import flash.utils.Dictionary;
 	
 	use namespace ns_mvc;
 

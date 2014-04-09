@@ -6,7 +6,6 @@ package flash.mvc.service
 	import array.pushIfNotHas;
 	
 	import flash.ioc.IInjector;
-	
 	import flash.reflection.getTypeName;
 	
 	import string.replace;
@@ -17,7 +16,7 @@ package flash.mvc.service
 		
 		public function ServiceInitializer()
 		{
-			this.serviceDefList = [];
+			serviceDefList = [];
 		}
 		
 		public function regService(serviceRegInfo:ServiceRegInfo):void

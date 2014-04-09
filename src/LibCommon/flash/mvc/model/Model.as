@@ -1,16 +1,14 @@
 package flash.mvc.model
 {
-	import flash.utils.Dictionary;
-	
 	import dict.deleteKey;
 	import dict.hasKey;
 	
+	import flash.ioc.IInjector;
 	import flash.mvc.Module;
 	import flash.mvc.kernel.IModel;
-	
-	import flash.ioc.IInjector;
+	import flash.utils.Dictionary;
 
-	public class Model implements IModel
+	final public class Model implements IModel
 	{
 		[Inject]
 		public var module:Module;

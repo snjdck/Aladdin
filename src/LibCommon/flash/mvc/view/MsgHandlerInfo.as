@@ -1,8 +1,9 @@
 package flash.mvc.view
 {
-	import stdlib.common.eval;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.view.argType.IArgType;
+	
+	import stdlib.common.eval;
 	
 	internal class MsgHandlerInfo
 	{

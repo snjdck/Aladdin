@@ -4,48 +4,30 @@ package flash.mvc
 	
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
+	import flash.mvc.notification.MsgName;
 	import flash.mvc.service.ServiceInitializer;
 	import flash.mvc.service.ServiceRegInfo;
-	import flash.mvc.kernel.IApplication;
 	import flash.reflection.getTypeName;
-	import flash.mvc.notification.MsgName;
 	
 	use namespace ns_mvc;
 
-	public class Application implements IApplication
+	public class Application
 	{
-		static public const MSG_START_UP:MsgName = new MsgName();
-		static public const MSG_SHUT_DOWM:MsgName = new MsgName();
-		
-		static private var instance:Application;
-		
-		static public function GetInstance():Application
-		{
-			return instance;
-		}
-		
 		private const injector:IInjector = new Injector();
 		private const moduleDict:Object = {};
+		private var serviceInitializer:ServiceInitializer;
 		private var hasStartup:Boolean;
 		
 		public function Application()
 		{
-			checkSingleton();
+			serviceInitializer = new ServiceInitializer();
 			injector.mapValue(Application, this, null, false);
-		}
-		
-		private function checkSingleton():void
-		{
-			if(instance){
-				throw new Error("Application must be singleton!");
-			}else{
-				instance = this;
-			}
+			injector.mapValue(IInjector, injector, null, false);
 		}
 		
 		public function regModule(module:Module):void
 		{
-			module.bindToApplication(this);
+			module.onRegisted(this);
 			injector.injectInto(module);
 			var moduleName:String = getTypeName(module, true);
 			
@@ -64,8 +46,6 @@ package flash.mvc
 			}
 		}
 		
-		private const serviceInitializer:ServiceInitializer = new ServiceInitializer();
-		
 		public function regService(serviceInterface:Class, serviceClass:Class, moduleInjector:IInjector=null):void
 		{
 			var serviceRegInfo:ServiceRegInfo = new ServiceRegInfo(serviceInterface, serviceClass, moduleInjector || injector);
@@ -81,87 +61,33 @@ package flash.mvc
 			return injector;
 		}
 		
-		/*
-		public function notifyAll(msgName:MsgName, msgData:Object):Boolean
-		{
-			var msg:Msg = new Msg(msgName, msgData, null);
-			for each(var module:Module in moduleDict){
-				module.notifyImp(msg);
-				if(msg.isProcessCanceled()){
-					break;
-				}
-			}
-			return !msg.isDefaultPrevented();
-		}
-		*/
 		public function startup():void
 		{
-			if(!hasStartup){
+			if(false == hasStartup){
 				onStartup();
 				hasStartup = true;
-//				notifyAll(MSG_START_UP, null);
-			}
-		}
-		
-		public function shutdown():void
-		{
-			if(hasStartup){
-				hasStartup = false;
-				onShutdown();
-//				notifyAll(MSG_SHUT_DOWM, null);
 			}
 		}
 		
 		private function onStartup():void
 		{
-			initAllModuleModels();
-			initAllModuleServices();
-			initAllModuleViews();
-			initAllModuleControllers();
-		}
-		
-		private function onShutdown():void
-		{
-		}
-		/*
-		public function getModuleByName(moduleName:String):Module
-		{
-			// TODO Auto Generated method stub
-			return null;
-		}
-		
-		public function regModuleByName(moduleName:String, module:Module):void
-		{
-			// TODO Auto Generated method stub
-			
-		}
-		*/
-		public function initAllModuleModels():void
-		{
-			for each(var module:Module in moduleDict){
+			var module:Module;
+			for each(module in moduleDict){
 				module.initAllModels();
 			}
-		}
-		
-		public function initAllModuleServices():void
-		{
-			for each(var module:Module in moduleDict){
+			for each(module in moduleDict){
 				module.initAllServices();
 			}
 			serviceInitializer.initialize(injector);
-		}
-		
-		public function initAllModuleViews():void
-		{
-			for each(var module:Module in moduleDict){
+			for each(module in moduleDict){
 				module.initAllViews();
 			}
-		}
-		
-		public function initAllModuleControllers():void
-		{
-			for each(var module:Module in moduleDict){
+			for each(module in moduleDict){
 				module.initAllControllers();
+			}
+			serviceInitializer = null;
+			for each(module in moduleDict){
+				module.onStartup();
 			}
 		}
 	}

@@ -1,14 +1,12 @@
 package flash.mvc
 {
+	import flash.http.loadMedia;
 	import flash.reflection.getType;
+	import flash.support.Http;
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	
 	import lambda.apply;
-	
-	import flash.http.loadMedia;
-	
-	import flash.support.Http;
 	
 	import string.trim;
 

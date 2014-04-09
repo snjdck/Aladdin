@@ -14,12 +14,11 @@ package flash.mvc.view
 	import flash.reflection.getTypeName;
 	import flash.support.TypeCast;
 	import flash.utils.Dictionary;
-	
 	import flash.viewport.IViewPortLayer;
 	
 	use namespace ns_mvc;
 
-	public class View implements IView
+	final public class View implements IView
 	{
 		[Inject]
 		public var module:Module;
@@ -60,9 +59,8 @@ package flash.mvc.view
 			for each(var mediator:Mediator in mediatorRefs){
 				if(msg.isProcessCanceled()){
 					break;
-				}else{
-					mediator.handleMsg(msg);
 				}
+				mediator.handleMsg(msg);
 			}
 		}
 		

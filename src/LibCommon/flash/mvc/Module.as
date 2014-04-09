@@ -3,25 +3,22 @@ package flash.mvc
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
 	import flash.mvc.controller.Controller;
-	import flash.mvc.kernel.IApplication;
 	import flash.mvc.kernel.IController;
 	import flash.mvc.kernel.IModel;
-	import flash.mvc.kernel.IModule;
 	import flash.mvc.kernel.INotifier;
 	import flash.mvc.kernel.IView;
 	import flash.mvc.model.Model;
-	import flash.mvc.view.Mediator;
-	import flash.mvc.view.View;
-	
-	import flash.viewport.IViewPortLayer;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
+	import flash.mvc.view.Mediator;
+	import flash.mvc.view.View;
+	import flash.viewport.IViewPortLayer;
 	
 	use namespace ns_mvc;
 	
-	public class Module implements IModule, INotifier, IModel, IView, IController
+	public class Module implements INotifier, IModel, IView, IController
 	{
-		private var application:IApplication;
+		private var application:Application;
 		
 		protected const injector:IInjector = new Injector();
 		
@@ -39,6 +36,13 @@ package flash.mvc
 			injector.injectInto(controller);
 		}
 		
+		final ns_mvc function onRegisted(theApplication:Application):void
+		{
+			assert(null == application, "module has been registed yet!");
+			application = theApplication;
+			injector.parent = theApplication.getInjector();
+		}
+		
 		final public function regService(serviceInterface:Class, serviceClass:Class, asLocal:Boolean=false):void
 		{
 			if(asLocal){
@@ -46,12 +50,6 @@ package flash.mvc
 			}else{
 				application.regService(serviceInterface, serviceClass, injector);
 			}
-		}
-		
-		final public function bindToApplication(application:IApplication):void
-		{
-			this.application = application;
-			injector.parent = application.getInjector();
 		}
 		
 		final public function notify(msgName:MsgName, msgData:Object=null):Boolean
@@ -121,6 +119,11 @@ package flash.mvc
 			return controller.hasCmd(msgName, cmdCls);
 		}
 		
+		final public function execCmd(cmdCls:Class):void
+		{
+			controller.execCmd(cmdCls);
+		}
+		
 		final public function mapView(viewCls:Class, mediatorCls:Class, layer:IViewPortLayer):void
 		{
 			view.mapView(viewCls, mediatorCls, layer);
@@ -130,5 +133,6 @@ package flash.mvc
 		virtual public function initAllServices():void		{}
 		virtual public function initAllViews():void			{}
 		virtual public function initAllControllers():void	{}
+		virtual public function onStartup():void			{}
 	}
 }

@@ -1,19 +1,17 @@
 package flash.mvc.controller
 {
-	import flash.utils.Dictionary;
-	
 	import array.del;
 	
 	import dict.hasKey;
 	
+	import flash.ioc.IInjector;
+	import flash.mvc.kernel.IController;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
 	import flash.mvc.ns_mvc;
-	import flash.mvc.kernel.IController;
-	
-	import flash.ioc.IInjector;
+	import flash.utils.Dictionary;
 
-	public class Controller implements IController
+	final public class Controller implements IController
 	{
 		[Inject]
 		public var injector:IInjector;
@@ -66,14 +64,19 @@ package flash.mvc.controller
 			injector.mapValue(Msg, msg, null, false);
 			
 			for each(var cmdCls:Class in list){
-				var cmd:Command = injector.newInstance(cmdCls);
-				cmd.exec();
+				execCmd(cmdCls);
 				if(msg.isProcessCanceled()){
 					break;
 				}
 			}
 			
 			injector.unmap(Msg);
+		}
+		
+		public function execCmd(cmdCls:Class):void
+		{
+			var cmd:Command = injector.newInstance(cmdCls);
+			cmd.exec();
 		}
 	}
 }

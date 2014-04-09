@@ -2,9 +2,9 @@ package flash.mvc.controller
 {
 	import flash.display.DisplayObjectContainer;
 	import flash.mvc.Module;
+	import flash.mvc.kernel.INotifier;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
-	import flash.mvc.kernel.INotifier;
 	import flash.mvc.ns_mvc;
 	
 	use namespace ns_mvc;

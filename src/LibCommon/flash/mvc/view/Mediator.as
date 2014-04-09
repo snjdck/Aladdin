@@ -1,20 +1,19 @@
 package flash.mvc.view
 {
-	import flash.events.IEventDispatcher;
-	import flash.utils.Dictionary;
-	
 	import dict.clear;
 	import dict.deleteKey;
 	import dict.hasKey;
 	
+	import flash.events.IEventDispatcher;
 	import flash.mvc.Module;
+	import flash.mvc.kernel.INotifier;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
 	import flash.mvc.ns_mvc;
-	import flash.mvc.kernel.INotifier;
-	import flash.support.EventManager;
 	import flash.mvc.view.argType.ArgType;
 	import flash.mvc.view.argType.IArgType;
+	import flash.support.EventManager;
+	import flash.utils.Dictionary;
 	
 	use namespace ns_mvc;
 	
