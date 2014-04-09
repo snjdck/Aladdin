@@ -46,13 +46,14 @@ package flash.mvc
 			assert(!isLoading, "is loading module!");
 			isLoading = true;
 			
+			var context:LoaderContext = new LoaderContext(false, ApplicationDomain.currentDomain);
 			var elementList:XMLList = config.children();
 			moduleCount = elementList.length();
 			for each(var element:XML in elementList)
 			{
 				var path:String = element.attribute("path");
 				var entry:String = element.attribute("entry");
-				loadMedia(path, [__onDllLoad, entry.split(","), application, callback], null, new LoaderContext(false, ApplicationDomain.currentDomain));
+				loadMedia(path, [__onDllLoad, entry.split(","), application, callback], null, context);
 			}
 		}
 		
