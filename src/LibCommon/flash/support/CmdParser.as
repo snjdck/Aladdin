@@ -1,4 +1,4 @@
-package snjdck.tesla.util
+package flash.support
 {
 	public class CmdParser
 	{
