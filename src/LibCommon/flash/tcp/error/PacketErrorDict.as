@@ -7,8 +7,8 @@ package flash.tcp.error
 
 	public class PacketErrorDict
 	{
+		static private const requestTimeoutError:PacketError = new PacketError("request timeout!", 0);
 		private const errorDict:Object = new Dictionary();
-		private var requestTimeoutErrorId:int;
 		
 		public function PacketErrorDict()
 		{
@@ -17,9 +17,6 @@ package flash.tcp.error
 		public function register(errorId:int, message:String):void
 		{
 			assert(dict.hasKey(errorDict, errorId) == false, "errorId repeat!");
-			if(dict.isEmpty(errorDict)){
-				requestTimeoutErrorId = errorId;
-			}
 			errorDict[errorId] = new PacketError(message, errorId);
 		}
 		
@@ -31,7 +28,7 @@ package flash.tcp.error
 		
 		public function fetchRequestTimeoutError():PacketError
 		{
-			return fetch(requestTimeoutErrorId);
+			return requestTimeoutError;
 		}
 	}
 }
