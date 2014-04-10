@@ -82,10 +82,9 @@ package flash.mvc.view
 			}
 		}
 		
-		public function mapView(viewCls:Class, mediatorCls:Class, layer:IViewPortLayer):void
+		public function mapView(viewCls:Class, mediatorCls:Class):void
 		{
 			var view:DisplayObject = new viewCls();
-			layer.addChild(view);
 			var mediator:Mediator = new mediatorCls(view);
 			injector.injectInto(mediator);
 			regMediator(mediator);

@@ -124,9 +124,9 @@ package flash.mvc
 			controller.execCmd(cmdCls);
 		}
 		
-		final public function mapView(viewCls:Class, mediatorCls:Class, layer:IViewPortLayer):void
+		final public function mapView(viewCls:Class, mediatorCls:Class):void
 		{
-			view.mapView(viewCls, mediatorCls, layer);
+			view.mapView(viewCls, mediatorCls);
 		}
 		
 		virtual public function initAllModels():void		{}

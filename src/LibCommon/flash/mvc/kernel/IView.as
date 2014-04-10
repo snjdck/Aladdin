@@ -1,7 +1,6 @@
 package flash.mvc.kernel
 {
 	import flash.mvc.view.Mediator;
-	import flash.viewport.IViewPortLayer;
 
 	public interface IView
 	{
@@ -11,6 +10,6 @@ package flash.mvc.kernel
 		function mapViewToMediated(viewClsOrName:Object, mediatorCls:Class):void;
 		function regMediatorByView(viewTarget:Object):void;
 		
-		function mapView(viewCls:Class, mediatorCls:Class, layer:IViewPortLayer):void;
+		function mapView(viewCls:Class, mediatorCls:Class):void;
 	}
 }
