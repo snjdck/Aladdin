@@ -1,5 +1,6 @@
 package flash.mvc
 {
+	import flash.display.DisplayObject;
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
 	import flash.mvc.controller.Controller;
@@ -12,7 +13,6 @@ package flash.mvc
 	import flash.mvc.notification.MsgName;
 	import flash.mvc.view.Mediator;
 	import flash.mvc.view.View;
-	import flash.viewport.IViewPortLayer;
 	
 	use namespace ns_mvc;
 	
@@ -94,16 +94,6 @@ package flash.mvc
 			return view.hasMediator(mediator);
 		}
 		
-		final public function mapViewToMediated(viewClsOrName:Object, mediatorCls:Class):void
-		{
-			view.mapViewToMediated(viewClsOrName, mediatorCls);
-		}
-		
-		final public function regMediatorByView(viewTarget:Object):void
-		{
-			view.regMediatorByView(viewTarget);
-		}
-		
 		final public function regCmd(msgName:MsgName, cmdCls:Class):void
 		{
 			controller.regCmd(msgName, cmdCls);
@@ -124,9 +114,9 @@ package flash.mvc
 			controller.execCmd(cmdCls);
 		}
 		
-		final public function mapView(viewCls:Class, mediatorCls:Class):void
+		final public function mapView(viewComponent:DisplayObject, mediatorCls:Class):void
 		{
-			view.mapView(viewCls, mediatorCls);
+			view.mapView(viewComponent, mediatorCls);
 		}
 		
 		virtual public function initAllModels():void		{}

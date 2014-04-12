@@ -1,13 +1,12 @@
 package flash.mvc
 {
-	import dict.hasKey;
-	
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
-	import flash.mvc.notification.MsgName;
 	import flash.mvc.service.ServiceInitializer;
 	import flash.mvc.service.ServiceRegInfo;
 	import flash.reflection.getTypeName;
+	
+	import dict.hasKey;
 	
 	use namespace ns_mvc;
 

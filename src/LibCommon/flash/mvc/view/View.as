@@ -1,20 +1,15 @@
 package flash.mvc.view
 {
-	import dict.deleteKey;
-	import dict.hasKey;
-	import dict.hasValue;
-	
 	import flash.display.DisplayObject;
-	import flash.display.Sprite;
 	import flash.ioc.IInjector;
 	import flash.mvc.Module;
+	import flash.mvc.ns_mvc;
 	import flash.mvc.kernel.IView;
 	import flash.mvc.notification.Msg;
-	import flash.mvc.ns_mvc;
-	import flash.reflection.getTypeName;
-	import flash.support.TypeCast;
 	import flash.utils.Dictionary;
-	import flash.viewport.IViewPortLayer;
+	
+	import dict.deleteKey;
+	import dict.hasValue;
 	
 	use namespace ns_mvc;
 
@@ -27,7 +22,6 @@ package flash.mvc.view
 		public var injector:IInjector;
 		
 		private const mediatorRefs:Object = new Dictionary();
-		private const viewMapToMediated:Object = {};
 		
 		public function View()
 		{
@@ -64,42 +58,11 @@ package flash.mvc.view
 			}
 		}
 		
-		public function mapViewToMediated(viewClsOrName:Object, mediatorCls:Class):void
+		public function mapView(viewComponent:DisplayObject, mediatorCls:Class):void
 		{
-			var viewTypeName:String = TypeCast.CastClsToStr(viewClsOrName);
-			viewMapToMediated[viewTypeName] = mediatorCls;
-		}
-		
-		public function regMediatorByView(viewTarget:Object):void
-		{
-			const viewTypeName:String = getViewTargetTypeName(viewTarget);
-			if(!hasKey(mediatorRefs, viewTarget) && hasKey(viewMapToMediated, viewTypeName))
-			{
-				var mediatorCls:Class = viewMapToMediated[viewTypeName];
-				var mediator:Mediator = new mediatorCls(viewTarget);
-				injector.injectInto(mediator);
-				regMediator(mediator);
-			}
-		}
-		
-		public function mapView(viewCls:Class, mediatorCls:Class):void
-		{
-			var view:DisplayObject = new viewCls();
-			var mediator:Mediator = new mediatorCls(view);
+			var mediator:Mediator = new mediatorCls(viewComponent);
 			injector.injectInto(mediator);
 			regMediator(mediator);
-		}
-		
-		private function getViewTargetTypeName(viewTarget:Object):String
-		{
-			if(viewTarget is DisplayObject){
-				if(viewTarget is Sprite){
-					return getTypeName(viewTarget);
-				}
-			}else if(viewTarget.hasOwnProperty("typeName")){
-				return viewTarget.typeName;
-			}
-			return null;
 		}
 	}
 }
