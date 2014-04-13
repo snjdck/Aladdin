@@ -46,9 +46,9 @@ package snjdck.g3d.obj3d
 			subMesh.geometry = g;
 		}
 		
-		override public function createEntity(name:String=null, typeName:String=null):Entity
+		override public function createEntity(name:String=null):Entity
 		{
-			return createEntityImp(name, typeName, BillEntity);
+			return createEntityImp(name, BillEntity);
 		}
 	}
 }

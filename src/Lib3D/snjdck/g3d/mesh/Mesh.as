@@ -31,12 +31,12 @@ package snjdck.g3d.mesh
 			return subMesh;
 		}
 		
-		public function createEntity(name:String=null, typeName:String=null):Entity
+		public function createEntity(name:String=null):Entity
 		{
-			return createEntityImp(name, typeName, Entity);
+			return createEntityImp(name, Entity);
 		}
 		
-		protected function createEntityImp(name:String, typeName:String, entityCls:Class):Entity
+		protected function createEntityImp(name:String, entityCls:Class):Entity
 		{
 			var boneDict:Object = null;
 			
@@ -49,7 +49,6 @@ package snjdck.g3d.mesh
 			
 			var entity:Entity = new entityCls(this, boneDict);
 			entity.name = name;
-			entity.typeName = typeName;
 			return entity;
 		}
 		

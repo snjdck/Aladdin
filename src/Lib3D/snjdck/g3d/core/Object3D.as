@@ -9,10 +9,10 @@ package snjdck.g3d.core
 	import matrix44.recompose;
 	
 	import snjdck.g2d.core.IDisplayObject;
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.asset.IGpuContext;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.render.Render3D;
 	
 	use namespace ns_g3d;
@@ -43,15 +43,10 @@ package snjdck.g3d.core
 		public var mouseEnabled:Boolean;
 		public var mouseChildren:Boolean;
 		
-		public var typeName:String;
-		
 		private var _blendMode:BlendMode;
 		
-		public function Object3D(name:String=null, typeName:String=null)
+		public function Object3D()
 		{
-			this.name = name;
-			this.typeName = typeName;
-			
 			visible = true;
 			mouseEnabled = true;
 			mouseChildren = true;
@@ -186,6 +181,21 @@ package snjdck.g3d.core
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.name == childName){
 					return child;
+				}
+			}
+			return null;
+		}
+		
+		public function findChild(childName:String):Object3D
+		{
+			var result:Object3D = getChild(childName);
+			if(result != null){
+				return result;
+			}
+			for(var child:Object3D=firstChild; child; child=child.nextSibling){
+				result = child.findChild(childName);
+				if(result != null){
+					return result;
 				}
 			}
 			return null;
@@ -443,9 +453,10 @@ package snjdck.g3d.core
 			return count;
 		}
 		
-		public function createChild(childName:String=null, childTypeName:String=null):Object3D
+		public function createChild(childName:String=null):Object3D
 		{
-			var child:Object3D = new Object3D(childName, childTypeName);
+			var child:Object3D = new Object3D();
+			child.name = childName;
 			addChild(child);
 			return child;
 		}
