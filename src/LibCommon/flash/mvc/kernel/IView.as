@@ -1,6 +1,5 @@
 package flash.mvc.kernel
 {
-	import flash.display.DisplayObject;
 	import flash.mvc.view.Mediator;
 
 	public interface IView
@@ -9,6 +8,6 @@ package flash.mvc.kernel
 		function delMediator(mediator:Mediator):void;
 		function hasMediator(mediator:Mediator):Boolean;
 		
-		function mapView(viewComponent:DisplayObject, mediatorCls:Class):void;
+		function mapView(viewComponent:Object, mediatorCls:Class):void;
 	}
 }

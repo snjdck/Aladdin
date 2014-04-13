@@ -114,7 +114,7 @@ package flash.mvc
 			controller.execCmd(cmdCls);
 		}
 		
-		final public function mapView(viewComponent:DisplayObject, mediatorCls:Class):void
+		final public function mapView(viewComponent:Object, mediatorCls:Class):void
 		{
 			view.mapView(viewComponent, mediatorCls);
 		}
