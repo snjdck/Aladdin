@@ -10,10 +10,11 @@ package snjdck.g3d.core
 	
 	import snjdck.g2d.core.IDisplayObject;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuContext;
+	import snjdck.gpu.asset.GpuContext;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
-	import snjdck.g3d.render.Render3D;
+	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.gpu.BlendMode;
 	
 	use namespace ns_g3d;
 	
@@ -62,6 +63,18 @@ package snjdck.g3d.core
 			return _firstChild;
 		}
 		
+		private function get lastChild():Object3D
+		{
+			if(null == _firstChild){
+				return null;
+			}
+			var child:Object3D = _firstChild;
+			while(child.nextSibling != null){
+				child = child.nextSibling;
+			}
+			return child;
+		}
+		
 		private function calcTransform():void
 		{
 			recompose(localMatrix, _x, _y, _z, _rotationX, _rotationY, _rotationZ, _scaleX, _scaleY, _scaleZ);
@@ -92,7 +105,7 @@ package snjdck.g3d.core
 			}
 		}
 		
-		virtual public function preDrawRenderTargets(context3d:IGpuContext):void
+		virtual public function preDrawRenderTargets(context3d:GpuContext):void
 		{
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.visible){
@@ -101,24 +114,15 @@ package snjdck.g3d.core
 			}
 		}
 		
-		public function draw(render3d:Render3D, context3d:IGpuContext):void
+		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.visible){
-					child.draw(render3d, context3d);
+					child.collectDrawUnit(collector);
 				}
 			}
 		}
-		/*
-		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera:Camera3D):void
-		{
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.visible){
-					child.collectDrawUnit(collector, camera);
-				}
-			}
-		}
-		*/
+		
 		final public function testRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
 		{
 			if(mouseEnabled){
@@ -152,8 +156,12 @@ package snjdck.g3d.core
 			}
 			
 			child._parent = this;
-			child._nextSibling = firstChild;
-			this._firstChild = child;
+			
+			if(null == _firstChild){
+				_firstChild = child;
+			}else{
+				lastChild._nextSibling = child;
+			}
 		}
 		
 		public function removeChild(child:Object3D):void

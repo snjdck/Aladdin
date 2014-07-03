@@ -1,11 +1,10 @@
-package snjdck.g3d.asset.impl
+package snjdck.gpu.asset
 {
 	import flash.display3D.Context3D;
 	
 	import lambda.apply;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuAsset;
 	
 	use namespace ns_g3d;
 

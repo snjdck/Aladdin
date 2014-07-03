@@ -1,14 +1,15 @@
 package snjdck.g2d.support
 {
+	import flash.display3D.Context3DBufferUsage;
 	import flash.display3D.Context3DVertexBufferFormat;
 	
 	import array.copy;
 	
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.IGpuIndexBuffer;
-	import snjdck.g3d.asset.IGpuTexture;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.GpuIndexBuffer;
+	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.gpu.asset.GpuAssetFactory;
 
 	final public class QuadBatch
 	{
@@ -17,6 +18,10 @@ package snjdck.g2d.support
 		private var vertexBuffer:Vector.<Number>;
 		private var indexBuffer:Vector.<uint>;
 		private var quadCount:int;
+		
+		private var gpuVertexBuffer:GpuVertexBuffer;
+		private var gpuIndexBuffer:GpuIndexBuffer;
+		private var isGpuBufferDirty:Boolean;
 		
 		public function QuadBatch()
 		{
@@ -44,11 +49,7 @@ package snjdck.g2d.support
 			++quadCount;
 		}
 		
-		private var gpuVertexBuffer:IGpuVertexBuffer;
-		private var gpuIndexBuffer:IGpuIndexBuffer;
-		private var isGpuBufferDirty:Boolean;
-		
-		public function draw(context3d:IGpuContext, gpuTexture:IGpuTexture):void
+		public function draw(context3d:GpuContext, gpuTexture:IGpuTexture):void
 		{
 			if(quadCount <= 0){
 				return;
@@ -80,7 +81,7 @@ package snjdck.g2d.support
 			if(gpuVertexBuffer){
 				gpuVertexBuffer.dispose();
 			}
-			gpuVertexBuffer = GpuAssetFactory.CreateGpuVertexBuffer2(maxQuadCount * 4, VertexData.DATA32_PER_VERTEX);
+			gpuVertexBuffer = GpuAssetFactory.CreateGpuVertexBuffer2(maxQuadCount * 4, VertexData.DATA32_PER_VERTEX, Context3DBufferUsage.DYNAMIC_DRAW);
 			
 			if(gpuIndexBuffer){
 				gpuIndexBuffer.dispose();

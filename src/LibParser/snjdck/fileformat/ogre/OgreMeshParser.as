@@ -8,7 +8,7 @@ package snjdck.fileformat.ogre
 	import lambda.call;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;

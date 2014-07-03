@@ -1,4 +1,4 @@
-package snjdck.g3d.asset.impl
+package snjdck.gpu.asset
 {
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DCompareMode;
@@ -8,15 +8,9 @@ package snjdck.g3d.asset.impl
 	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.IGpuIndexBuffer;
-	import snjdck.g3d.asset.IGpuProgram;
-	import snjdck.g3d.asset.IGpuTexture;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
-	import snjdck.g3d.asset.IRenderTarget;
-	import snjdck.g3d.core.BlendMode;
+	import snjdck.gpu.BlendMode;
 
-	final internal class GpuContext implements IGpuContext
+	final public class GpuContext
 	{
 		private var context3d:Context3D;
 		
@@ -130,7 +124,7 @@ package snjdck.g3d.asset.impl
 			}
 		}
 		
-		public function setRenderToTexture(renderTarget:IRenderTarget):void
+		public function setRenderToTexture(renderTarget:GpuRenterTarget):void
 		{
 			renderTarget.setRenderTarget(context3d);
 		}
@@ -165,7 +159,7 @@ package snjdck.g3d.asset.impl
 			context3d.setProgramConstantsFromVector(programType, firstRegister, data, numRegisters);
 		}
 		
-		public function setProgram(program:IGpuProgram):void
+		public function setProgram(program:GpuProgram):void
 		{
 			context3d.setProgram(program.getRawGpuAsset(context3d));
 			
@@ -188,7 +182,7 @@ package snjdck.g3d.asset.impl
 			}
 		}
 		
-		public function setVertexBufferAt(slotIndex:int, buffer:IGpuVertexBuffer, bufferOffset:int, format:String):void
+		public function setVertexBufferAt(slotIndex:int, buffer:GpuVertexBuffer, bufferOffset:int, format:String):void
 		{
 			context3d.setVertexBufferAt(slotIndex, buffer.getRawGpuAsset(context3d), bufferOffset, format);
 		}
@@ -198,7 +192,7 @@ package snjdck.g3d.asset.impl
 			context3d.setTextureAt(slotIndex, texture.getRawGpuAsset(context3d));
 		}
 		
-		public function drawTriangles(indexBuffer:IGpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
+		public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
 		{
 			context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d), firstIndex, numTriangles);
 		}

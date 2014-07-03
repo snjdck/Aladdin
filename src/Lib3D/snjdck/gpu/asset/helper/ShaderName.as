@@ -1,4 +1,4 @@
-package snjdck.g3d.asset.helper
+package snjdck.gpu.asset.helper
 {
 	public class ShaderName
 	{

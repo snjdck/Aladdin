@@ -4,8 +4,8 @@ package snjdck.g3d.mesh
 	import flash.utils.Dictionary;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.g3d.render.DrawUnit3D;
 	
 	use namespace ns_g3d;
@@ -32,7 +32,7 @@ package snjdck.g3d.mesh
 		private var offsetDict:Vector.<int>;
 		private var buffer:Vector.<Number>;
 		
-		private var gpuBoneBuffer:IGpuVertexBuffer;
+		private var gpuBoneBuffer:GpuVertexBuffer;
 		
 		private var maxBoneCountPerVertex:int;
 		private var boneIds:Vector.<int>;

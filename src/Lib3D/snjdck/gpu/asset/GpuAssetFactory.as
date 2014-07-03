@@ -1,35 +1,24 @@
-package snjdck.g3d.asset.impl
+package snjdck.gpu.asset
 {
 	import flash.display.BitmapData;
-	import flash.display3D.Context3D;
 	import flash.utils.IDataInput;
 	
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.IGpuIndexBuffer;
-	import snjdck.g3d.asset.IGpuProgram;
-	import snjdck.g3d.asset.IGpuTexture;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
 
 	final public class GpuAssetFactory
 	{
-		static public function CreateGpuContext(context3d:Context3D):IGpuContext
-		{
-			return new GpuContext(context3d);
-		}
-		
-		static public function CreateGpuVertexBuffer(data:Vector.<Number>, data32PerVertex:int):IGpuVertexBuffer
+		static public function CreateGpuVertexBuffer(data:Vector.<Number>, data32PerVertex:int):GpuVertexBuffer
 		{
 			var result:GpuVertexBuffer = new GpuVertexBuffer(data.length/data32PerVertex, data32PerVertex);
 			result.upload(data);
 			return result;
 		}
 		
-		static public function CreateGpuVertexBuffer2(numVertices:int, data32PerVertex:int):IGpuVertexBuffer
+		static public function CreateGpuVertexBuffer2(numVertices:int, data32PerVertex:int, bufferUsage:String):GpuVertexBuffer
 		{
-			return new GpuVertexBuffer(numVertices, data32PerVertex);
+			return new GpuVertexBuffer(numVertices, data32PerVertex, bufferUsage);
 		}
 		
-		static public function CreateGpuIndexBuffer(data:Vector.<uint>, numIndices:int=-1):IGpuIndexBuffer
+		static public function CreateGpuIndexBuffer(data:Vector.<uint>, numIndices:int=-1):GpuIndexBuffer
 		{
 			var result:GpuIndexBuffer = new GpuIndexBuffer(numIndices > 0 ? numIndices : data.length);
 			result.upload(data);
@@ -51,7 +40,7 @@ package snjdck.g3d.asset.impl
 			return result;
 		}
 		
-		static public function CreateGpuProgram(vertexProgram:Array, fragmentProgram:Array):IGpuProgram
+		static public function CreateGpuProgram(vertexProgram:Array, fragmentProgram:Array):GpuProgram
 		{
 			var result:GpuProgram = new GpuProgram();
 			result.upload(vertexProgram, fragmentProgram);
@@ -74,7 +63,7 @@ package snjdck.g3d.asset.impl
 		
 		static private const quadIndexBuffer:Vector.<uint> = new <uint>[];
 		
-		static public function CreateQuadBuffer(quadCount:int):IGpuIndexBuffer
+		static public function CreateQuadBuffer(quadCount:int):GpuIndexBuffer
 		{
 			for(var i:int=quadIndexBuffer.length/6; i<quadCount; i++){
 				var vertexIndex:int = i * 4;//每个quad包含四个顶点

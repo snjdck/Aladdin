@@ -1,4 +1,4 @@
-package snjdck.g3d.asset
+package snjdck.gpu.asset
 {
 	import flash.display3D.Context3D;
 	import flash.lang.IDisposable;

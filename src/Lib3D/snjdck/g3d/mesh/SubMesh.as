@@ -1,7 +1,7 @@
 package snjdck.g3d.mesh
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.helper.ShaderName;
+	import snjdck.gpu.asset.helper.ShaderName;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.parser.IGeometry;

@@ -1,4 +1,4 @@
-package snjdck.g3d.core
+package snjdck.gpu
 {
 	import flash.display3D.Context3DBlendFactor;
 

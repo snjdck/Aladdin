@@ -5,7 +5,7 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.texture.Texture2D;
-	import snjdck.g3d.asset.IGpuContext;
+	import snjdck.gpu.asset.GpuContext;
 
 	public class Image extends DisplayObject2D
 	{
@@ -39,7 +39,7 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		override public function draw(render2d:Render2D, context3d:IGpuContext):void
+		override public function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(null == texture || false == visible){
 				return;

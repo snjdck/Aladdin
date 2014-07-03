@@ -10,10 +10,10 @@ package snjdck.g2d.render
 	import snjdck.g2d.core.ITexture2D;
 	import snjdck.g2d.support.QuadBatch;
 	import snjdck.g2d.support.VertexData;
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.helper.AssetMgr;
-	import snjdck.g3d.asset.helper.ShaderName;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
 
@@ -34,12 +34,12 @@ package snjdck.g2d.render
 			matrix33.toBuffer(projectionMatrix, projectionMatrixBuffer);
 		}
 		
-		public function uploadProjectionMatrix(context3d:IGpuContext):void
+		public function uploadProjectionMatrix(context3d:GpuContext):void
 		{
 			context3d.setVc(0, projectionMatrixBuffer, 2);
 		}
 		
-		public function drawScreen(context3d:IGpuContext):void
+		public function drawScreen(context3d:GpuContext):void
 		{
 			vertexMatrix.identity();
 			vertexMatrix.scale(2, -2);
@@ -57,7 +57,7 @@ package snjdck.g2d.render
 			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
 		}
 		
-		public function draw(context3d:IGpuContext, target:IDisplayObject2D, texture:ITexture2D):void
+		public function draw(context3d:GpuContext, target:IDisplayObject2D, texture:ITexture2D):void
 		{
 			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
 

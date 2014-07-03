@@ -5,13 +5,9 @@ package snjdck.g3d.geom
 	import array.pushIfNotHas;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuIndexBuffer;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
-	import snjdck.g3d.core.BlendMode;
-	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.render.DrawUnit3D;
-//	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuIndexBuffer;
+	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.IGeometry;
@@ -21,8 +17,8 @@ package snjdck.g3d.geom
 	public class SubWireframe extends Object3D
 	{
 		private var buffer:Vector.<Number> = new Vector.<Number>();
-		private var gpuVertexBuffer:IGpuVertexBuffer;
-		private var gpuIndexBuffer:IGpuIndexBuffer;
+		private var gpuVertexBuffer:GpuVertexBuffer;
+		private var gpuIndexBuffer:GpuIndexBuffer;
 		
 		private var thickness:Number;
 		

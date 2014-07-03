@@ -87,10 +87,8 @@ package snjdck.g3d.core
 			
 			return false;
 		}
+		
+		static private const tempRawData:Vector.<Number> = new Vector.<Number>(16, true);
+		static private const tempPoint:Vector3D = new Vector3D();
 	}
 }
-
-import flash.geom.Vector3D;
-
-const tempRawData:Vector.<Number> = new Vector.<Number>(16, true);
-const tempPoint:Vector3D = new Vector3D();

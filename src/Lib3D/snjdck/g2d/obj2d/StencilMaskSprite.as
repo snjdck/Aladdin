@@ -8,7 +8,7 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
-	import snjdck.g3d.asset.IGpuContext;
+	import snjdck.gpu.asset.GpuContext;
 	
 	public class StencilMaskSprite extends DisplayObjectContainer2D
 	{
@@ -28,7 +28,7 @@ package snjdck.g2d.obj2d
 			maskImage.onUpdate(timeElapsed, worldMatrix, worldAlpha);
 		}
 		
-		override public function draw(render2d:Render2D, context3d:IGpuContext):void
+		override public function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(stencilIndex >= MAX_RECURSIVE_COUNT){
 				throw new Error("stencil mask is too much!");
@@ -52,7 +52,7 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		private function drawMask(render2d:Render2D, context3d:IGpuContext, refValue:uint):void
+		private function drawMask(render2d:Render2D, context3d:GpuContext, refValue:uint):void
 		{
 			context3d.setStencilReferenceValue(refValue, 0xFF, 1 << stencilIndex);
 			context3d.setStencilActions(
@@ -65,7 +65,7 @@ package snjdck.g2d.obj2d
 			maskImage.draw(render2d, context3d);
 		}
 		
-		private function enableClipping(context3d:IGpuContext, readMask:uint):void
+		private function enableClipping(context3d:GpuContext, readMask:uint):void
 		{
 			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL);
 			context3d.setStencilReferenceValue(0xFF, readMask);

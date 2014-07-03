@@ -7,7 +7,7 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.texture.SubTexture2D;
 	import snjdck.g2d.texture.Texture2D;
-	import snjdck.g3d.asset.IGpuContext;
+	import snjdck.gpu.asset.GpuContext;
 	
 	final public class Scale9Image extends DisplayObject2D
 	{
@@ -144,7 +144,7 @@ package snjdck.g2d.obj2d
 			bottomRight.y = bottomY;
 		}
 		
-		override public function draw(render2d:Render2D, context3d:IGpuContext):void
+		override public function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(false == visible){
 				return;

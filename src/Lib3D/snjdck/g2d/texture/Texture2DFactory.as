@@ -8,8 +8,8 @@ package snjdck.g2d.texture
 	import math.isPowerOfTwo;
 	import math.nextPowerOfTwo;
 	
-	import snjdck.g3d.asset.IGpuTexture;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
+	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.g2d.core.ITexture2D;
 
 	public class Texture2DFactory

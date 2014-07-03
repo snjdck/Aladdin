@@ -6,7 +6,7 @@ package snjdck.g2d.texture
 	import matrix33.compose;
 	
 	import snjdck.g2d.support.VertexData;
-	import snjdck.g3d.asset.IGpuTexture;
+	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.g2d.core.ITexture2D;
 
 	public class Texture2D implements ITexture2D

@@ -1,4 +1,4 @@
-package snjdck.g3d.asset.helper
+package snjdck.gpu
 {
 	final public class GpuColor
 	{

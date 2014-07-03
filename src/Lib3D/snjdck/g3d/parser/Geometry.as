@@ -6,15 +6,13 @@ package snjdck.g3d.parser
 	import array.copy;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuIndexBuffer;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
-	import snjdck.g3d.asset.impl.GpuIndexBuffer;
-	import snjdck.g3d.asset.impl.GpuVertexBuffer;
-	import snjdck.g3d.render.DrawUnit3D;
+	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuIndexBuffer;
+	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.g3d.geom.Bound;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.g3d.render.DrawUnit3D;
 	
 	use namespace ns_g3d;
 	
@@ -27,9 +25,9 @@ package snjdck.g3d.parser
 		private var uvData:Vector.<Number>;
 		private var indexData:Vector.<uint>;
 		
-		private var gpuPosBuffer:IGpuVertexBuffer;
-		private var gpuUvBuffer:IGpuVertexBuffer;
-		private var gpuIndexBuffer:IGpuIndexBuffer;
+		private var gpuPosBuffer:GpuVertexBuffer;
+		private var gpuUvBuffer:GpuVertexBuffer;
+		private var gpuIndexBuffer:GpuIndexBuffer;
 		
 		public function Geometry(vertexData:Vector.<Number>, indexData:Vector.<uint>)
 		{

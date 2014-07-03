@@ -1,15 +1,14 @@
-package snjdck.g3d.asset.impl
+package snjdck.gpu.asset
 {
 	import flash.display3D.Context3DProgramType;
 	import flash.utils.ByteArray;
 	
 	import snjdck.agalc.AgalCompiler;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuProgram;
 	
 	use namespace ns_g3d;
 	
-	final internal class GpuProgram extends GpuAsset implements IGpuProgram
+	final public class GpuProgram extends GpuAsset
 	{
 		private var vsData:AgalCompiler;
 		private var fsData:AgalCompiler;

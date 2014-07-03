@@ -3,7 +3,7 @@ package snjdck.g3d.mesh
 	import flash.utils.Dictionary;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.g3d.geom.Bound;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.DynamicGeometry;

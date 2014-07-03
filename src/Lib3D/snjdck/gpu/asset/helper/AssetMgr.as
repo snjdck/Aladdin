@@ -1,28 +1,21 @@
-package snjdck.g3d.asset.helper
+package snjdck.gpu.asset.helper
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.filesystem.File;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
 	import dict.deleteKey;
 	import dict.hasKey;
 	
-	import flash.http.loadMedia;
-	
-	import snjdck.fileformat.image.BmpParser;
-	import snjdck.fileformat.image.TgaParser;
-	import snjdck.g3d.asset.IGpuProgram;
-	import snjdck.g3d.asset.IGpuTexture;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
-	import snjdck.g3d.mesh.Mesh;
 	import snjdck.fileformat.bmd.BmdParser;
 	import snjdck.fileformat.ogre.OgreMeshParser;
 	import snjdck.fileformat.ogre.OgreSkeletonParser;
+	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.skeleton.Skeleton;
-	
-	import flash.filesystem.FileIO2;
+	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuProgram;
 	
 	import string.has;
 	import string.removeComments;
@@ -133,7 +126,7 @@ package snjdck.g3d.asset.helper
 			programDict[shaderName] = GpuAssetFactory.CreateGpuProgram(vertexProgram, fragmentProgram);
 		}
 		
-		public function getProgram(name:String):IGpuProgram
+		public function getProgram(name:String):GpuProgram
 		{
 			return programDict[name];
 		}

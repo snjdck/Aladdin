@@ -1,22 +1,16 @@
 package snjdck.g3d.geom
 {
 	import flash.display3D.Context3DBlendFactor;
-	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import flash.support.Range;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuIndexBuffer;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
-	import snjdck.g3d.asset.impl.GpuIndexBuffer;
-	import snjdck.g3d.asset.impl.GpuVertexBuffer;
-	import snjdck.g3d.core.BlendMode;
-	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.render.DrawUnit3D;
+	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuIndexBuffer;
+	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.BlendMode;
 	import snjdck.g3d.core.Object3D;
-	
-	import flash.support.Range;
 	
 	use namespace ns_g3d;
 
@@ -48,8 +42,8 @@ package snjdck.g3d.geom
 		
 		protected const list:Array = [];
 		
-		private var gpuVertexBuffer:IGpuVertexBuffer;
-		private var gpuIndexBuffer:IGpuIndexBuffer;
+		private var gpuVertexBuffer:GpuVertexBuffer;
+		private var gpuIndexBuffer:GpuIndexBuffer;
 		
 		private var globalTime:Number = 0;
 		

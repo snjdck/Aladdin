@@ -1,26 +1,24 @@
-package snjdck.g3d.core
+package snjdck.gpu
 {
+	import flash.display3D.Context3DTextureFormat;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
-	import flash.lang.IDisposable;
-	
 	import flash.geom.d3.createIsoMatrix;
 	
-	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.IRenderTarget;
-	import snjdck.g3d.geom.ProjectionFactory;
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.render.Render3D;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.GpuRenterTarget;
 	
 	use namespace ns_g3d;
 
-	final public class ViewPort3D implements IDisposable
+	final public class ViewPort3D extends GpuRenterTarget
 	{
 		public const scene3d:Object3D = new Object3D();
 		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
@@ -30,18 +28,11 @@ package snjdck.g3d.core
 		
 		private var isoMatrix:Matrix3D;
 		
-		private var renderTarget:IRenderTarget;
-		
-		public function ViewPort3D(renderTarget:IRenderTarget)
+		public function ViewPort3D(width:int, height:int, antiAlias:int=0)
 		{
-			this.renderTarget = renderTarget;
-			init();
-		}
-		
-		private function init():void
-		{
-			render2d.setScreenSize(renderTarget.width, renderTarget.height);
-			render3d.setScreenSize(renderTarget.width, renderTarget.height);
+			super(width, height, Context3DTextureFormat.BGRA, antiAlias);
+			render2d.setScreenSize(width, height);
+			render3d.setScreenSize(width, height);
 			isoMatrix = createIsoMatrix();
 		}
 		
@@ -51,30 +42,19 @@ package snjdck.g3d.core
 			scene2d.onUpdate(timeElapsed, null, 1);
 		}
 		
-		public function draw(context3d:IGpuContext):void
+		public function draw(context3d:GpuContext):void
 		{
-			renderTarget.onFrameBegin(context3d);
-			
 			scene3d.preDrawRenderTargets(context3d);
 			scene2d.preDrawRenderTargets(context3d);
 			
-			context3d.setRenderToTexture(renderTarget);
-			renderTarget.clear(context3d);
+			context3d.setRenderToTexture(this);
+			clear(context3d);
 			
 			render3d.uploadProjectionMatrix(context3d);
-			scene3d.draw(render3d, context3d);
+			render3d.draw(scene3d, context3d);
 			
 			render2d.uploadProjectionMatrix(context3d);
 			scene2d.draw(render2d, context3d);
-		}
-		
-		public function dispose():void
-		{
-		}
-		
-		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D
-		{
-			return scene2d.pickup(px, py);
 		}
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
@@ -86,8 +66,8 @@ package snjdck.g3d.core
 			);
 			*/
 			var screenPt:Vector3D = new Vector3D(
-				mouseX - 0.5 * renderTarget.width,
-				0.5 * renderTarget.height - mouseY
+				mouseX - 0.5 * width,
+				0.5 * height - mouseY
 			);
 			var ray:Ray = new Ray(screenPt, Vector3D.Z_AXIS);
 			scene3d.testRay(ray, result);

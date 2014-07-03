@@ -7,10 +7,10 @@ package snjdck.g3d.render
 	import array.copy;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.IGpuIndexBuffer;
-	import snjdck.g3d.asset.IGpuVertexBuffer;
-	import snjdck.g3d.core.BlendMode;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.GpuIndexBuffer;
+	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.BlendMode;
 	
 	import string.replace;
 	
@@ -26,7 +26,7 @@ package snjdck.g3d.render
 		private var vcUseInfo:Vector.<Boolean>;
 		private var fcUseInfo:Vector.<Boolean>;
 		
-		private var vaSlot:Vector.<IGpuVertexBuffer>;
+		private var vaSlot:Vector.<GpuVertexBuffer>;
 		private var vcSlot:Vector.<Number>;
 		private var fcSlot:Vector.<Number>;
 		
@@ -38,18 +38,18 @@ package snjdck.g3d.render
 		public var shaderName:String;
 		public var textureName:String;
 		
-		ns_g3d var indexBuffer:IGpuIndexBuffer;
+		ns_g3d var indexBuffer:GpuIndexBuffer;
 		
 		ns_g3d var blendFactor:BlendMode;
 		
-		private var context3d:IGpuContext;
+		private var context3d:GpuContext;
 		
 		public function DrawUnit3D()
 		{
 			vcUseInfo = new Vector.<Boolean>(MAX_VC_COUNT, true);
 			fcUseInfo = new Vector.<Boolean>(MAX_FC_COUNT, true);
 			
-			vaSlot = new Vector.<IGpuVertexBuffer>(MAX_VA_COUNT, true);
+			vaSlot = new Vector.<GpuVertexBuffer>(MAX_VA_COUNT, true);
 			vcSlot = new Vector.<Number>(MAX_VC_COUNT * 4 + 4, true);
 			fcSlot = new Vector.<Number>(MAX_FC_COUNT * 4, true);
 			
@@ -91,14 +91,14 @@ package snjdck.g3d.render
 			setVcM(4, worldMatrix);
 		}
 		*/
-		ns_g3d function setVa(slotIndex:int, buffer:IGpuVertexBuffer, offset:int=-1, format:String=null):void
+		ns_g3d function setVa(slotIndex:int, buffer:GpuVertexBuffer, offset:int=-1, format:String=null):void
 		{
 			vaSlot[slotIndex] = buffer;
 			vaSlotOffset[slotIndex] = offset;
 			vaSlotFormat[slotIndex] = format;
 		}
 		
-		ns_g3d function setVa2(buffer:IGpuVertexBuffer, formats:Array, fromRegIndex:int=0, fromOffset:int=0):void
+		ns_g3d function setVa2(buffer:GpuVertexBuffer, formats:Array, fromRegIndex:int=0, fromOffset:int=0):void
 		{
 			for each(var formatId:int in formats){
 				setVa(fromRegIndex++, buffer, fromOffset, VA_FORMAT[formatId]);
@@ -106,7 +106,7 @@ package snjdck.g3d.render
 			}
 		}
 		
-		public function exec(context3d:IGpuContext):void
+		public function exec(context3d:GpuContext):void
 		{
 			this.context3d = context3d;
 			

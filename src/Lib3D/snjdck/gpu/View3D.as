@@ -1,8 +1,9 @@
-package snjdck.g3d.core
+package snjdck.gpu
 {
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.display.Stage3D;
+	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -11,11 +12,12 @@ package snjdck.g3d.core
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.asset.impl.GpuAssetFactory;
-	import snjdck.g3d.asset.impl.GpuFrameBuffer;
-	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.g2d.obj2d.Image;
+	import snjdck.g2d.texture.Texture2D;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
 	
@@ -23,22 +25,29 @@ package snjdck.g3d.core
 	{
 		private var hasInit:Boolean;
 		
-		private var frameBuffer:GpuFrameBuffer;
 		private var viewPort:ViewPort3D;
 		
 		private var timeScale:Number;
 		private var context3DRenderMode:String;
 		
 		private var stage3d:Stage3D;
-		private var context3d:IGpuContext;
+		private var context3d:GpuContext;
+		
+		private const _backBufferColor:GpuColor = new GpuColor();
+		private var _backBufferWidth:int;
+		private var _backBufferHeight:int;
+		private var _backBufferImage:Image;
 		
 		public function View3D(backBufferWidth:int, backBufferHeight:int, timeScale:Number=1, context3DRenderMode:String=null)
 		{
+			this._backBufferWidth = backBufferWidth;
+			this._backBufferHeight = backBufferHeight;
+			
 			this.timeScale = timeScale;
 			this.context3DRenderMode = context3DRenderMode || Context3DRenderMode.AUTO;
 			
-			frameBuffer = new GpuFrameBuffer(backBufferWidth, backBufferHeight);
-			viewPort = new ViewPort3D(frameBuffer);
+			viewPort = new ViewPort3D(backBufferWidth, backBufferHeight);
+			_backBufferImage = new Image(new Texture2D(viewPort));
 			
 			addEventListener(Event.ADDED_TO_STAGE,		__onAddedToStage);
 			
@@ -56,7 +65,7 @@ package snjdck.g3d.core
 			return viewPort.scene3d;
 		}
 		
-		public function getContext():IGpuContext
+		public function getContext():GpuContext
 		{
 			return context3d;
 		}
@@ -74,7 +83,7 @@ package snjdck.g3d.core
 			
 			stage3d = stage.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
-			stage3d.requestContext3D(context3DRenderMode);
+			stage3d.requestContext3D(context3DRenderMode, Context3DProfile.STANDARD);
 			
 			stage3d.visible = visible;
 			stage3d.x = x;
@@ -92,18 +101,18 @@ package snjdck.g3d.core
 			var g:Graphics = graphics;
 			g.clear();
 			g.beginFill(0xFF0000, 0);
-			g.drawRect(0, 0, frameBuffer.width, frameBuffer.height);
+			g.drawRect(0, 0, _backBufferWidth, _backBufferHeight);
 			g.endFill();
 		}
 		
 		public function set backgroundColor(color:uint):void
 		{
-			frameBuffer.backgroundColor = color;
+			_backBufferColor.value = color;
 		}
 		
 		private function __onDeviceCreate(evt:Event):void
 		{
-			context3d = GpuAssetFactory.CreateGpuContext(stage3d.context3D);
+			context3d = new GpuContext(stage3d.context3D);
 			if(!hasInit){
 				onDeviceInit();
 				hasInit = true;
@@ -122,6 +131,8 @@ package snjdck.g3d.core
 		
 		protected function onDeviceLost():void
 		{
+			context3d.configureBackBuffer(_backBufferWidth, _backBufferHeight, 4, true);
+			
 			var fcData:Vector.<Number> = new Vector.<Number>();
 			
 			fcData.push(0.004, 0, 0, 0.6);//0.6 是阴影的alpha值
@@ -136,12 +147,16 @@ package snjdck.g3d.core
 			
 			viewPort.update(timeElapsed);
 			viewPort.draw(context3d);
+			
+			context3d.setRenderToBackBuffer();
+			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
+			_backBufferImage.draw(viewPort.render2d, context3d);
 			context3d.present();
 		}
 		
 		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D
 		{
-			return viewPort.getObjectUnderPoint(px, py);
+			return viewPort.scene2d.pickup(px, py);
 		}
 		
 		private function __onStageEvent(evt:Event):void
