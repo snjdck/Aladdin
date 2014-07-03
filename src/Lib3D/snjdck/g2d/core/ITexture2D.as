@@ -3,7 +3,7 @@ package snjdck.g2d.core
 	import flash.lang.IDimension;
 	
 	import snjdck.g2d.support.VertexData;
-	import snjdck.g3d.asset.IGpuTexture;
+	import snjdck.gpu.asset.IGpuTexture;
 
 	public interface ITexture2D extends IDimension
 	{

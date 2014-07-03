@@ -1,7 +1,7 @@
 package snjdck.g2d.core
 {
-	import snjdck.g3d.asset.IGpuContext;
-	import snjdck.g3d.core.BlendMode;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.BlendMode;
 
 	public interface IDisplayObject
 	{
@@ -29,7 +29,7 @@ package snjdck.g2d.core
 		function get blendMode():BlendMode;
 		function set blendMode(value:BlendMode):void;
 		
-		function preDrawRenderTargets(context3d:IGpuContext):void;
+		function preDrawRenderTargets(context3d:GpuContext):void;
 		function removeFromParent():void;
 	}
 }
