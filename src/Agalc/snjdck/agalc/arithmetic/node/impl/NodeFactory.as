@@ -33,33 +33,11 @@ package snjdck.agalc.arithmetic.node.impl
 					return new LogicAndNode(nodeType, nodeValue);
 				case NodeType.OP_LOGIC_OR:
 					return new LogicOrNode(nodeType, nodeValue);
-				case NodeType.GET_PROP:
-					return new GetPropNode(nodeType, nodeValue);
-				case NodeType.CALL_METHOD:
-					return new CallMethodNode(nodeType, nodeValue);
-				case NodeType.OP_ASSIGN:
-					return new AssignNode(nodeType, nodeValue);
 				case NodeType.STRING:
 				case NodeType.NUM:
 					return new BaseValueNode(nodeType, nodeValue);
 				case NodeType.VAR_ID:
 					return new VarNode(nodeType, nodeValue);
-				case NodeType.ARRAY:
-					return new ArrayNode(nodeType, nodeValue);
-				case NodeType.OBJECT:
-					return new ObjectNode(nodeType, nodeValue);
-				case NodeType.KEYWORD_WHILE:
-					return new WhileNode(nodeType, nodeValue);
-				case NodeType.KEYWORD_IF:
-					return new IfNode(nodeType, nodeValue);
-				case NodeType.STEMENT_BLOCK:
-					return new StatementBlockNode(nodeType, nodeValue);
-				case NodeType.KEYWORD_VAR:
-					return new DefVarNode(nodeType, nodeValue);
-				case NodeType.KEYWORD_FUNC:
-					return new DefFuncNode(nodeType, nodeValue);
-				case NodeType.KEYWORD_RETURN:
-					return new ReturnNode(nodeType, nodeValue);
 			}
 			return new Node(nodeType, nodeValue);
 		}
