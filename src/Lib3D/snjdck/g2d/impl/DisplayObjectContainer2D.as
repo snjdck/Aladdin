@@ -1,14 +1,14 @@
 package snjdck.g2d.impl
 {
+	import flash.geom.Matrix;
+	
 	import array.delAt;
 	import array.insert;
-	
-	import flash.geom.Matrix;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
-	import snjdck.g3d.asset.IGpuContext;
+	import snjdck.gpu.asset.GpuContext;
 	
 	public class DisplayObjectContainer2D extends DisplayObject2D implements IDisplayObjectContainer2D
 	{
@@ -125,7 +125,7 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		override public function draw(render2d:Render2D, context3d:IGpuContext):void
+		override public function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			for each(var child:DisplayObject2D in _childList){
 				child.draw(render2d, context3d);
@@ -143,7 +143,7 @@ package snjdck.g2d.impl
 			return null;
 		}
 		
-		override public function preDrawRenderTargets(context3d:IGpuContext):void
+		override public function preDrawRenderTargets(context3d:GpuContext):void
 		{
 			for each(var child:DisplayObject2D in _childList){
 				child.preDrawRenderTargets(context3d);
