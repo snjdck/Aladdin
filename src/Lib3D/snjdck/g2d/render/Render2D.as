@@ -51,7 +51,7 @@ package snjdck.g2d.render
 			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D_DRAW_SCREEN));
 			
 			quadBatch.addQuad(vertexData);
-			quadBatch.draw(context3d, null);
+			quadBatch.draw(context3d);
 			quadBatch.clear();
 			
 			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
@@ -64,9 +64,11 @@ package snjdck.g2d.render
 			context3d.setBlendFactor(target.blendMode);
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			
+			context3d.setTextureAt(0, texture.gpuTexture);
+			
 			getVertexData(target, texture);
 			quadBatch.addQuad(vertexData);
-			quadBatch.draw(context3d, texture.gpuTexture);
+			quadBatch.draw(context3d);
 			quadBatch.clear();
 		}
 		

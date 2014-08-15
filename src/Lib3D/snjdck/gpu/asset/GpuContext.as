@@ -196,5 +196,10 @@ package snjdck.gpu.asset
 		{
 			context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d), firstIndex, numTriangles);
 		}
+		
+		public function isVaSlotInUse(slotIndex:int):Boolean
+		{
+			return (vaUseInfo & (1 << slotIndex)) != 0;
+		}
 	}
 }

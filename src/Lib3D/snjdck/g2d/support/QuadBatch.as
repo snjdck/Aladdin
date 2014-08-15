@@ -49,7 +49,7 @@ package snjdck.g2d.support
 			++quadCount;
 		}
 		
-		public function draw(context3d:GpuContext, gpuTexture:IGpuTexture):void
+		public function draw(context3d:GpuContext):void
 		{
 			if(quadCount <= 0){
 				return;
@@ -59,13 +59,16 @@ package snjdck.g2d.support
 			
 			gpuVertexBuffer.upload(vertexBuffer, quadCount * 4);
 			
-			if(null == gpuTexture){
+			if(context3d.isVaSlotInUse(0)){
 				context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-			}else{
-				context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
+			}
+			
+			if(context3d.isVaSlotInUse(1)){
 				context3d.setVertexBufferAt(1, gpuVertexBuffer, 3, Context3DVertexBufferFormat.FLOAT_2);
+			}
+			
+			if(context3d.isVaSlotInUse(2)){
 				context3d.setVertexBufferAt(2, gpuVertexBuffer, 5, Context3DVertexBufferFormat.FLOAT_4);
-				context3d.setTextureAt(0, gpuTexture);
 			}
 			
 			context3d.drawTriangles(gpuIndexBuffer, 0, quadCount * 2);
