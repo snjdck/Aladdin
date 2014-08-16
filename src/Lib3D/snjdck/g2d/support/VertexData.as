@@ -7,6 +7,10 @@ package snjdck.g2d.support
 
 	final public class VertexData
 	{
+		static public const OFFSET_XYZ:int = 0;
+		static public const OFFSET_UV:int = 3;
+		static public const OFFSET_COLOR:int = 5;
+		
 		static public const DATA32_PER_VERTEX:int = 9;
 		static public const DATA32_PER_QUAD:int = 4 * DATA32_PER_VERTEX;
 		
@@ -17,42 +21,42 @@ package snjdck.g2d.support
 			buffer = new Vector.<Number>(DATA32_PER_QUAD, true);
 		}
 		
-		public function reset():void
+		public function reset(x:Number, y:Number, width:Number, height:Number):void
 		{
-			var x:int, y:int, offset:int;
+			var ratioX:int, ratioY:int, offset:int;
 			
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = x + ratioX * width;
+			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = 0;
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = ratioX;
+			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
 			
-			x = 1;
+			ratioX = 1;
 			
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = x + ratioX * width;
+			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = 0;
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = ratioX;
+			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
 			
-			y = 1;
+			ratioY = 1;
 			
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = x + ratioX * width;
+			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = 0;
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = ratioX;
+			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
 			
-			x = 0;
+			ratioX = 0;
 			
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = x + ratioX * width;
+			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = 0;
-			buffer[offset++] = x;
-			buffer[offset++] = y;
+			buffer[offset++] = ratioX;
+			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
 		}
 		

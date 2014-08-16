@@ -5,11 +5,10 @@ package snjdck.g2d.support
 	
 	import array.copy;
 	
+	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
-	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.GpuAssetFactory;
 
 	final public class QuadBatch
 	{
@@ -60,15 +59,15 @@ package snjdck.g2d.support
 			gpuVertexBuffer.upload(vertexBuffer, quadCount * 4);
 			
 			if(context3d.isVaSlotInUse(0)){
-				context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+				context3d.setVertexBufferAt(0, gpuVertexBuffer, VertexData.OFFSET_XYZ, Context3DVertexBufferFormat.FLOAT_2);
 			}
 			
 			if(context3d.isVaSlotInUse(1)){
-				context3d.setVertexBufferAt(1, gpuVertexBuffer, 3, Context3DVertexBufferFormat.FLOAT_2);
+				context3d.setVertexBufferAt(1, gpuVertexBuffer, VertexData.OFFSET_UV, Context3DVertexBufferFormat.FLOAT_2);
 			}
 			
 			if(context3d.isVaSlotInUse(2)){
-				context3d.setVertexBufferAt(2, gpuVertexBuffer, 5, Context3DVertexBufferFormat.FLOAT_4);
+				context3d.setVertexBufferAt(2, gpuVertexBuffer, VertexData.OFFSET_COLOR, Context3DVertexBufferFormat.FLOAT_4);
 			}
 			
 			context3d.drawTriangles(gpuIndexBuffer, 0, quadCount * 2);

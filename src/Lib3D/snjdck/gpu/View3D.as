@@ -150,7 +150,7 @@ package snjdck.gpu
 			
 			context3d.setRenderToBackBuffer();
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			_backBufferImage.draw(viewPort.render2d, context3d);
+			viewPort.render2d.render(_backBufferImage, context3d);
 			context3d.present();
 		}
 		

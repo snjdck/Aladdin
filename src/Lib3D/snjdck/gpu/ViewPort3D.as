@@ -54,7 +54,7 @@ package snjdck.gpu
 			render3d.draw(scene3d, context3d);
 			
 			render2d.uploadProjectionMatrix(context3d);
-			scene2d.draw(render2d, context3d);
+			render2d.render(scene2d, context3d);
 		}
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
