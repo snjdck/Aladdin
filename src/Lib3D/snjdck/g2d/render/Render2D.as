@@ -74,8 +74,13 @@ package snjdck.g2d.render
 		
 		public function draw(context3d:GpuContext, target:IDisplayObject2D, texture:ITexture2D):void
 		{
+			vertexData.reset(0, 0, target.width, target.height);
+			texture.adjustVertexData(vertexData);
+			vertexData.transformPosition(target.worldMatrix);
+			vertexData.color = target.color;
+			vertexData.alpha = target.worldAlpha;
+			
 			context3d.setBlendFactor(target.blendMode);
-			getVertexData(target, texture);
 			
 			if(texture.gpuTexture == currentGpuTexture){
 				quadBatch.addQuad(vertexData);
@@ -89,15 +94,6 @@ package snjdck.g2d.render
 				context3d.setTextureAt(0, currentGpuTexture);
 				quadBatch.addQuad(vertexData);
 			}
-		}
-		
-		static private function getVertexData(target:IDisplayObject2D, texture:ITexture2D):void
-		{
-			vertexData.reset(0, 0, target.width, target.height);
-			vertexData.color = target.color;
-			vertexData.alpha = target.worldAlpha;
-			texture.adjustVertexData(vertexData);
-			vertexData.transformPosition(target.worldMatrix);
 		}
 		
 		static private const vertexData:VertexData = new VertexData();
