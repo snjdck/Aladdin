@@ -4,11 +4,13 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.support.VertexData;
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.gpu.asset.GpuContext;
 
 	public class Image extends DisplayObject2D
 	{
+		static private const _vertexData:VertexData = new VertexData();
 		private var _texture:Texture2D;
 		
 		public function Image(texture:Texture2D)
@@ -49,7 +51,14 @@ package snjdck.g2d.obj2d
 				return;
 			}
 			
-			render2d.draw(context3d, this, texture);
+			_vertexData.reset(0, 0, width, height);
+			_texture.adjustVertexData(_vertexData);
+			_vertexData.transformPosition(worldMatrix);
+			_vertexData.color = color;
+			_vertexData.alpha = worldAlpha;
+			
+			render2d.setBlendMode(context3d, blendMode);
+			render2d.drawTexture(context3d, _vertexData, texture.gpuTexture);
 		}
 	}
 }
