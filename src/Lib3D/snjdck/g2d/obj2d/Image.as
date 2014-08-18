@@ -47,7 +47,7 @@ package snjdck.g2d.obj2d
 				return;
 			}
 			
-			if(false == opaque && 0 == alpha){
+			if(0 == alpha){
 				return;
 			}
 			
@@ -57,7 +57,6 @@ package snjdck.g2d.obj2d
 			_vertexData.color = color;
 			_vertexData.alpha = worldAlpha;
 			
-			render2d.setBlendMode(context3d, blendMode);
 			render2d.drawTexture(context3d, _vertexData, texture.gpuTexture);
 		}
 	}

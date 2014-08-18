@@ -71,7 +71,6 @@ package snjdck.g2d.obj2d
 			bottom.y = y2;
 			bottomRight.y = y2;
 			
-			center.opaque = true;
 		}
 		
 		private function createGridImage(regionX:Number, regionY:Number, regionRight:Number, regionBottom:Number):Image

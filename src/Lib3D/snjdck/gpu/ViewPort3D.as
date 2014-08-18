@@ -1,5 +1,6 @@
 package snjdck.gpu
 {
+	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DTextureFormat;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
@@ -48,10 +49,13 @@ package snjdck.gpu
 			scene2d.preDrawRenderTargets(context3d);
 			
 			context3d.setRenderToTexture(this);
+			
 			clear(context3d);
 			
 			render3d.uploadProjectionMatrix(context3d);
 			render3d.draw(scene3d, context3d);
+			
+			context3d.clearDepthAndStencil();
 			
 			render2d.uploadProjectionMatrix(context3d);
 			render2d.render(scene2d, context3d);

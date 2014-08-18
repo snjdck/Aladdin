@@ -27,7 +27,6 @@ package snjdck.g3d.obj3d
 			viewPort.backgroundColor = 0x8800FF00;
 			viewPort.scene3d.addChild(object3d);
 			var textImage:Image = new Image(new Texture2D(tex));
-			textImage.opaque = true;
 			textImage.x = 100;
 			textImage.y = 100;
 			viewPort.scene2d.addChild(textImage);

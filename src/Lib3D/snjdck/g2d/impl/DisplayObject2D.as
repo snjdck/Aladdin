@@ -25,7 +25,7 @@ package snjdck.g2d.impl
 		private var _alpha:Number;
 		
 		private var _visible:Boolean;
-		private var _blendMode:BlendMode;
+//		private var _blendMode:BlendMode;
 		
 		private var _parent:IDisplayObjectContainer2D;
 		
@@ -49,7 +49,7 @@ package snjdck.g2d.impl
 			_color = 0xFFFFFF;
 			_alpha = 1;
 			_visible = true;
-			_blendMode = BlendMode.ALPHAL;
+//			_blendMode = BlendMode.ALPHAL;
 		}
 		
 		/** 1.缩放, 2.旋转, 3.位移 */
@@ -317,7 +317,7 @@ package snjdck.g2d.impl
 		{
 			_visible = value;
 		}
-		
+		/*
 		public function get opaque():Boolean
 		{
 			return BlendMode.NORMAL == _blendMode;
@@ -337,7 +337,7 @@ package snjdck.g2d.impl
 		{
 			_blendMode = value;
 		}
-		
+		//*/
 		final public function get worldMatrix():Matrix
 		{
 			return _worldMatrix;

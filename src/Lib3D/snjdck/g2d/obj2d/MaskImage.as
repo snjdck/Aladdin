@@ -9,7 +9,8 @@ package snjdck.g2d.obj2d
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.ViewPort3D;
 	
-	public class MaskImage extends Image implements IDisposable
+	[Deprecated]
+	class MaskImage extends Image implements IDisposable
 	{
 		private var viewPort:ViewPort3D;
 		
@@ -20,10 +21,10 @@ package snjdck.g2d.obj2d
 			
 			var originImage:Image = new Image(source);
 			var maskImage:Image = new Image(mask);
-			
+			/*
 			originImage.blendMode = BlendMode.MASK;
 			maskImage.blendMode = BlendMode.NORMAL;
-			
+			*/
 			viewPort.scene2d.addChild(maskImage);
 			viewPort.scene2d.addChild(originImage);
 			

@@ -1,6 +1,7 @@
 package snjdck.gpu.asset
 {
 	import flash.display3D.Context3D;
+	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DStencilAction;
@@ -200,6 +201,11 @@ package snjdck.gpu.asset
 		public function isVaSlotInUse(slotIndex:int):Boolean
 		{
 			return (vaUseInfo & (1 << slotIndex)) != 0;
+		}
+		
+		public function clearDepthAndStencil():void
+		{
+			context3d.clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
 		}
 	}
 }
