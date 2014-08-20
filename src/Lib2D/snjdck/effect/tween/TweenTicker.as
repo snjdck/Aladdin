@@ -1,34 +1,26 @@
 package snjdck.effect.tween
 {
+	import flash.utils.Dictionary;
+	
 	import array.del;
 	import array.has;
 	
 	import dict.hasKey;
 	
-	import flash.display.Shape;
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
-	import flash.utils.Dictionary;
-	import flash.utils.getTimer;
+	import snjdck.clock.Clock;
+	import snjdck.clock.ITicker;
 
-	final internal class TweenTicker
+	final internal class TweenTicker implements ITicker
 	{
-		private const evtSource:IEventDispatcher = new Shape();
 		private const tweenDict:Object = new Dictionary();
-		private var timestamp:int;
 		
 		public function TweenTicker()
 		{
-			evtSource.addEventListener(Event.ENTER_FRAME, __onTick);
-			timestamp = getTimer();
+			Clock.getInstance().add(this);
 		}
 		
-		private function __onTick(evt:Event):void
+		public function onTick(timeElapsed:int):void
 		{
-			var now:int = getTimer();
-			var timeElapsed:int = now - timestamp;
-			timestamp = now;
-			
 			for each(var tweenList:Vector.<Tween> in tweenDict){
 				for each(var tween:Tween in tweenList){
 					tween.update(timeElapsed);

@@ -4,10 +4,10 @@ package snjdck.g2d.obj2d
 	import flash.lang.IDisposable;
 	
 	import snjdck.g2d.texture.Texture2D;
-	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuRenterTarget;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.ViewPort3D;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.GpuRenterTarget;
 	
 	[Deprecated]
 	class MaskImage extends Image implements IDisposable
@@ -16,8 +16,10 @@ package snjdck.g2d.obj2d
 		
 		public function MaskImage(source:Texture2D, mask:Texture2D)
 		{
-			viewPort = new ViewPort3D(source.width, source.height);
-			viewPort.backgroundColor = 0x00000000;
+			var renderTarget:GpuRenterTarget = new GpuRenterTarget(source.width, source.height);
+			renderTarget.backgroundColor = 0x00000000;
+			
+			viewPort = new ViewPort3D(renderTarget);
 			
 			var originImage:Image = new Image(source);
 			var maskImage:Image = new Image(mask);
@@ -28,12 +30,12 @@ package snjdck.g2d.obj2d
 			viewPort.scene2d.addChild(maskImage);
 			viewPort.scene2d.addChild(originImage);
 			
-			super(new Texture2D(viewPort));
+			super(new Texture2D(renderTarget));
 		}
 		
 		public function dispose():void
 		{
-			viewPort.dispose();
+			texture.gpuTexture.dispose();
 		}
 		
 		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void

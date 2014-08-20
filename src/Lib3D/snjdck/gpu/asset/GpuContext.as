@@ -23,6 +23,7 @@ package snjdck.gpu.asset
 		/** readMask, writeMask, refValue */
 		private var stencilRefValue:int;
 		
+		private var currentProgram:GpuProgram;
 		private var vaUseInfo:uint;
 		private var fsUseInfo:uint;
 		
@@ -58,9 +59,9 @@ package snjdck.gpu.asset
 			context3d.dispose();
 		}
 		
-		public function configureBackBuffer(width:int, height:int, antiAlias:int, enableDepthAndStencil:Boolean):void
+		public function configureBackBuffer(width:int, height:int, antiAlias:int):void
 		{
-			context3d.configureBackBuffer(width, height, antiAlias, enableDepthAndStencil);
+			context3d.configureBackBuffer(width, height, antiAlias, true);
 		}
 		
 		public function clear(red:Number=0.0, green:Number=0.0, blue:Number=0.0, alpha:Number=1.0, depth:Number=1.0, stencil:uint=0, mask:uint=0xFFFFFFFF):void
@@ -127,7 +128,10 @@ package snjdck.gpu.asset
 		
 		public function setRenderToTexture(renderTarget:GpuRenterTarget):void
 		{
-			renderTarget.setRenderTarget(context3d);
+			context3d.setRenderToTexture(
+				renderTarget.getRawGpuAsset(context3d), true,
+				renderTarget.antiAlias, 0, 0
+			);
 		}
 		
 		public function setRenderToBackBuffer():void
@@ -138,11 +142,6 @@ package snjdck.gpu.asset
 		public function setVcM(firstRegister:int, matrix:Matrix3D):void
 		{
 			context3d.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, firstRegister, matrix, true);
-		}
-		
-		public function setFcM(firstRegister:int, matrix:Matrix3D):void
-		{
-			context3d.setProgramConstantsFromMatrix(Context3DProgramType.FRAGMENT, firstRegister, matrix, true);
 		}
 		
 		public function setVc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
@@ -162,7 +161,12 @@ package snjdck.gpu.asset
 		
 		public function setProgram(program:GpuProgram):void
 		{
+			if(program == currentProgram){
+				return;
+			}
+			
 			context3d.setProgram(program.getRawGpuAsset(context3d));
+			currentProgram = program;
 			
 			unsetInputs(vaUseInfo & ~program.getVaUseInfo(), "setVertexBufferAt");
 			unsetInputs(fsUseInfo & ~program.getFsUseInfo(), "setTextureAt");

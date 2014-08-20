@@ -4,7 +4,6 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3DTextureFormat;
 	
 	import math.isPowerOfTwo;
-	
 
 	/** cube texture需要上传所有level的mipmap */
 	final internal class GpuTexture extends GpuAsset implements IGpuTexture
@@ -28,6 +27,11 @@ package snjdck.gpu.asset
 		public function get height():int
 		{
 			return initParams[1];
+		}
+		
+		public function get format():String
+		{
+			return initParams[2];
 		}
 	}
 }

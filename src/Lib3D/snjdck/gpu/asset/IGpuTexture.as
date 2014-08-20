@@ -4,5 +4,6 @@ package snjdck.gpu.asset
 
 	public interface IGpuTexture extends IGpuAsset, IDimension
 	{
+		function get format():String;
 	}
 }

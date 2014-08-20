@@ -113,6 +113,15 @@ package snjdck.agalc
 					case "repeat":
 						wrapping = 1;
 						break;
+					case "rgba":
+						textureFormat = 0;
+						break;
+					case "dxt1":
+						textureFormat = 1;
+						break;
+					case "dxt5":
+						textureFormat = 2;
+						break;
 					case "centroid":
 						special |= 1;
 						break;

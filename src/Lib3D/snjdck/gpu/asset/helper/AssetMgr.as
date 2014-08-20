@@ -13,9 +13,9 @@ package snjdck.gpu.asset.helper
 	import snjdck.fileformat.ogre.OgreSkeletonParser;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.skeleton.Skeleton;
-	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuProgram;
+	import snjdck.gpu.asset.IGpuTexture;
 	
 	import string.has;
 	import string.removeComments;
@@ -78,21 +78,24 @@ package snjdck.gpu.asset.helper
 		
 		private function initShaderData(shaderData:String):void
 		{
-			var pattern:RegExp = /@([.\w]+)\s+(.+?)(?=@|$)/gs;
+			var pattern:RegExp = /@(?P<name>[.\w]+)(|<(?P<args>[^\s]+)>)\s+(?P<code>.+?)(?=@|$)/gs;
 			var obj:Array;
 			var shaderName:String;
 			
-			while(true){
+			for(;;){
 				obj = pattern.exec(shaderData);
-				if(obj){
-					shaderName = obj[1];
-					if(shaderName in shaderDict){
-						throw new Error(replace("shader name '${0}' has been used!", [shaderName]));
-					}
-					shaderDict[shaderName] = replace(obj[2], shaderDict);
-				}else{
+				if(null == obj){
 					break;
 				}
+				shaderName = obj.name;
+				if(shaderName in shaderDict){
+					throw new Error(replace("shader name '${0}' has been used!", [shaderName]));
+				}
+				var shaderCode:String = replace(obj.code, shaderDict);
+				if(Boolean(obj.args)){
+					shaderCode = replace(shaderCode, obj.args.split(","));
+				}
+				shaderDict[shaderName] = shaderCode;
 			}
 			
 			for(shaderName in shaderDict){

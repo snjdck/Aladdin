@@ -1,13 +1,12 @@
 package snjdck.gpu.asset
 {
-	import flash.display3D.Context3D;
 	import flash.display3D.Context3DTextureFormat;
 	
 	import math.isPowerOfTwo;
 	
 	import snjdck.gpu.GpuColor;
 
-	public class GpuRenterTarget extends GpuAsset implements IGpuTexture
+	public class GpuRenterTarget extends GpuAsset implements IGpuTexture, IGpuRenderTarget
 	{
 		private const color:GpuColor = new GpuColor();
 		private var _antiAlias:int;
@@ -32,9 +31,19 @@ package snjdck.gpu.asset
 			return initParams[1];
 		}
 		
-		public function setRenderTarget(context3d:Context3D):void
+		public function get format():String
 		{
-			context3d.setRenderToTexture(getRawGpuAsset(context3d), true, _antiAlias, 0, 0);
+			return initParams[2];
+		}
+		
+		public function get antiAlias():int
+		{
+			return _antiAlias;
+		}
+		
+		public function setRenderToSelf(context3d:GpuContext):void
+		{
+			context3d.setRenderToTexture(this);
 		}
 		
 		public function clear(context3d:GpuContext):void

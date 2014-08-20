@@ -1,7 +1,5 @@
 package snjdck.gpu
 {
-	import flash.display3D.Context3DClearMask;
-	import flash.display3D.Context3DTextureFormat;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.geom.d3.createIsoMatrix;
@@ -15,25 +13,26 @@ package snjdck.gpu
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.render.Render3D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuRenterTarget;
+	import snjdck.gpu.asset.IGpuRenderTarget;
 	
 	use namespace ns_g3d;
 
-	final public class ViewPort3D extends GpuRenterTarget
+	final public class ViewPort3D
 	{
 		public const scene3d:Object3D = new Object3D();
 		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
-		public const render3d:Render3D = new Render3D();
-		public const render2d:Render2D = new Render2D();
+		private const render3d:Render3D = new Render3D();
+		private const render2d:Render2D = new Render2D();
 		
+		private var renderTarget:IGpuRenderTarget;
 		private var isoMatrix:Matrix3D;
 		
-		public function ViewPort3D(width:int, height:int, antiAlias:int=0)
+		public function ViewPort3D(renderTarget:IGpuRenderTarget)
 		{
-			super(width, height, Context3DTextureFormat.BGRA, antiAlias);
-			render2d.setScreenSize(width, height);
-			render3d.setScreenSize(width, height);
+			this.renderTarget = renderTarget;
+			render2d.setScreenSize(renderTarget.width, renderTarget.height);
+			render3d.setScreenSize(renderTarget.width, renderTarget.height);
 			isoMatrix = createIsoMatrix();
 		}
 		
@@ -48,9 +47,8 @@ package snjdck.gpu
 			scene3d.preDrawRenderTargets(context3d);
 			scene2d.preDrawRenderTargets(context3d);
 			
-			context3d.setRenderToTexture(this);
-			
-			clear(context3d);
+			renderTarget.setRenderToSelf(context3d);
+			renderTarget.clear(context3d);
 			
 			render3d.uploadProjectionMatrix(context3d);
 			render3d.draw(scene3d, context3d);
@@ -63,15 +61,9 @@ package snjdck.gpu
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
 		{
-			/*
 			var screenPt:Vector3D = new Vector3D(
-				2 * mouseX / renderTarget.width - 1,
-				1 - 2 * mouseY / renderTarget.height
-			);
-			*/
-			var screenPt:Vector3D = new Vector3D(
-				mouseX - 0.5 * width,
-				0.5 * height - mouseY
+				mouseX - 0.5 * renderTarget.width,
+				0.5 * renderTarget.height - mouseY
 			);
 			var ray:Ray = new Ray(screenPt, Vector3D.Z_AXIS);
 			scene3d.testRay(ray, result);

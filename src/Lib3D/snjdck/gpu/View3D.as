@@ -1,58 +1,59 @@
 package snjdck.gpu
 {
-	import flash.display.Graphics;
-	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.system.Capabilities;
-	import flash.utils.getTimer;
 	
+	import snjdck.clock.Clock;
+	import snjdck.clock.ITicker;
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
-	import snjdck.g2d.obj2d.Image;
-	import snjdck.g2d.texture.Texture2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.IGpuRenderTarget;
 	
 	use namespace ns_g3d;
 	
-	public class View3D extends Sprite
+	public class View3D implements IGpuRenderTarget, ITicker
 	{
+		public var timeScale:Number = 1;
+		
 		private var hasInit:Boolean;
 		
 		private var viewPort:ViewPort3D;
 		
-		private var timeScale:Number;
-		private var context3DRenderMode:String;
+		private var _renderMode:String;
+		private var _profile:String;
+		private var _enableErrorChecking:Boolean;
 		
+		private var stage2d:Stage;
 		private var stage3d:Stage3D;
 		private var context3d:GpuContext;
 		
 		private const _backBufferColor:GpuColor = new GpuColor();
-		private var _backBufferWidth:int;
-		private var _backBufferHeight:int;
-		private var _backBufferImage:Image;
+		private var _width:int;
+		private var _height:int;
 		
-		public function View3D(backBufferWidth:int, backBufferHeight:int, timeScale:Number=1, context3DRenderMode:String=null)
+		public function View3D(stage:Stage, renderMode:String=null, profile:String=null)
 		{
-			this._backBufferWidth = backBufferWidth;
-			this._backBufferHeight = backBufferHeight;
+			this._width = stage.stageWidth;
+			this._height = stage.stageHeight;
+			this.stage2d = stage;
 			
-			this.timeScale = timeScale;
-			this.context3DRenderMode = context3DRenderMode || Context3DRenderMode.AUTO;
+			this._renderMode = renderMode || Context3DRenderMode.AUTO;
+			this._profile = profile || Context3DProfile.BASELINE;
 			
-			viewPort = new ViewPort3D(backBufferWidth, backBufferHeight);
-			_backBufferImage = new Image(new Texture2D(viewPort));
-			
-			addEventListener(Event.ADDED_TO_STAGE,		__onAddedToStage);
+			viewPort = new ViewPort3D(this);
 			
 			viewPort.scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
 			viewPort.scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
+			
+			init();
 		}
 		
 		public function get scene2d():IDisplayObjectContainer2D
@@ -65,44 +66,45 @@ package snjdck.gpu
 			return viewPort.scene3d;
 		}
 		
-		public function getContext():GpuContext
-		{
-			return context3d;
-		}
-		
 		private function forwardEvt(evt:Event):void
 		{
-			dispatchEvent(evt);
+			stage2d.dispatchEvent(evt);
 		}
 		
-		private function __onAddedToStage(evt:Event):void
+		private function init():void
 		{
-			if(evt.target != this){
-				return;
-			}
-			
-			stage3d = stage.stage3Ds[0];
+			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
-			stage3d.requestContext3D(context3DRenderMode, Context3DProfile.STANDARD);
+			stage3d.requestContext3D(_renderMode, _profile);
 			
-			stage3d.visible = visible;
-			stage3d.x = x;
-			stage3d.y = y;
-			
-			drawSelf();
-			
-			addEventListener(MouseEvent.CLICK,			__onStageEvent);
-			addEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
-			addEventListener(MouseEvent.MOUSE_UP,		__onStageEvent);
+			stage2d.addEventListener(MouseEvent.CLICK,			__onStageEvent);
+			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
+			stage2d.addEventListener(MouseEvent.MOUSE_UP,		__onStageEvent);
 		}
 		
-		private function drawSelf():void
+		public function get height():int
 		{
-			var g:Graphics = graphics;
-			g.clear();
-			g.beginFill(0xFF0000, 0);
-			g.drawRect(0, 0, _backBufferWidth, _backBufferHeight);
-			g.endFill();
+			return _height;
+		}
+		
+		public function get width():int
+		{
+			return _width;
+		}
+		
+		public function clear(context3d:GpuContext):void
+		{
+			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
+		}
+		
+		public function setRenderToSelf(context3d:GpuContext):void
+		{
+			context3d.setRenderToBackBuffer();
+		}
+		
+		public function get antiAlias():int
+		{
+			return 4;
 		}
 		
 		public function set backgroundColor(color:uint):void
@@ -122,16 +124,15 @@ package snjdck.gpu
 		
 		private function onDeviceInit():void
 		{
-			context3d.enableErrorChecking = Capabilities.isDebugger;
+			context3d.enableErrorChecking = _enableErrorChecking;
 			trace(context3d.driverInfo);
 			
-			addEventListener(Event.ENTER_FRAME,	__onEnterFrame);
-			timestamp = getTimer();
+			Clock.getInstance().add(this);
 		}
 		
 		protected function onDeviceLost():void
 		{
-			context3d.configureBackBuffer(_backBufferWidth, _backBufferHeight, 4, true);
+			context3d.configureBackBuffer(_width, _height, antiAlias);
 			
 			var fcData:Vector.<Number> = new Vector.<Number>();
 			
@@ -139,19 +140,6 @@ package snjdck.gpu
 			
 			var regCount:int = Math.ceil(fcData.length / 4);
 			context3d.setFc(0, fcData, regCount);
-		}
-		
-		private function update(timeElapsed:int):void
-		{
-			timeElapsed *= timeScale;
-			
-			viewPort.update(timeElapsed);
-			viewPort.draw(context3d);
-			
-			context3d.setRenderToBackBuffer();
-			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			viewPort.render2d.render(_backBufferImage, context3d);
-			context3d.present();
 		}
 		
 		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D
@@ -162,46 +150,41 @@ package snjdck.gpu
 		private function __onStageEvent(evt:Event):void
 		{
 			if(viewPort.scene3d.hasMouseEvent(evt.type)){
-				var info:RayTestInfo = viewPort.pickNearestObjectUnderPoint(mouseX, mouseY);
+				var info:RayTestInfo = viewPort.pickNearestObjectUnderPoint(stage2d.mouseX, stage2d.mouseY);
 				if(info){
 					info.target.notifyMouseEvent(evt.type, info);
 				}
 			}
 		}
 		
-		private var timestamp:int;
-		
-		private function __onEnterFrame(evt:Event):void
+		public function onTick(timeElapsed:int):void
 		{
-			var now:int = getTimer();
-			var timeElapsed:int = now - timestamp;
-			timestamp = now;
-			
-			update(timeElapsed);
+			viewPort.update(timeElapsed * timeScale);
+			viewPort.draw(context3d);
+			context3d.present();
 		}
 		
-		override public function set visible(value:Boolean):void
+		public function set visible(value:Boolean):void
 		{
-			super.visible = value;
-			if(stage3d){
-				stage3d.visible = value;
-			}
+			stage3d.visible = value;
 		}
 		
-		override public function set x(value:Number):void
+		public function set x(value:Number):void
 		{
-			super.x = value;
-			if(stage3d){
-				stage3d.x = value;
-			}
+			stage3d.x = value;
 		}
 		
-		override public function set y(value:Number):void
+		public function set y(value:Number):void
 		{
-			super.y = value;
-			if(stage3d){
-				stage3d.y = value;
+			stage3d.y = value;
+		}
+		
+		public function set enableErrorChecking(value:Boolean):void
+		{
+			if(context3d != null){
+				context3d.enableErrorChecking = value;
 			}
+			_enableErrorChecking = value;
 		}
 	}
 }

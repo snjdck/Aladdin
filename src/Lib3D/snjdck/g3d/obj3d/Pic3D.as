@@ -7,12 +7,12 @@ package snjdck.g3d.obj3d
 	import snjdck.g2d.obj2d.Image;
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.g3d.core.Object3D;
+	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenterTarget;
-	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.ViewPort3D;
+	import snjdck.gpu.asset.IGpuTexture;
 	
 	use namespace ns_g3d;
 
@@ -23,19 +23,20 @@ package snjdck.g3d.obj3d
 		public function Pic3D(width:int, height:int, object3d:Object3D)
 		{
 			var tex:IGpuTexture = GpuAssetFactory.CreateGpuTexture2(new BitmapData(100, 100, true, 0xFFFF0000));
-			viewPort = new ViewPort3D(width, height);
-			viewPort.backgroundColor = 0x8800FF00;
+			var renderTarget:GpuRenterTarget = new GpuRenterTarget(width, height);
+			renderTarget.backgroundColor = 0x8800FF00;
+			viewPort = new ViewPort3D(renderTarget);
 			viewPort.scene3d.addChild(object3d);
 			var textImage:Image = new Image(new Texture2D(tex));
 			textImage.x = 100;
 			textImage.y = 100;
 			viewPort.scene2d.addChild(textImage);
-			super(new Texture2D(viewPort));
+			super(new Texture2D(renderTarget));
 		}
 		
 		public function dispose():void
 		{
-			viewPort.dispose();
+			texture.gpuTexture.dispose();
 		}
 		/*
 		public function getCamera():Camera3D
