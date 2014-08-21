@@ -12,7 +12,6 @@ package snjdck.g2d.impl
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.BlendMode;
 
 	public class DisplayObject2D implements IDisplayObject2D
 	{

@@ -2,6 +2,7 @@ package snjdck.gpu.asset
 {
 	import flash.display.BitmapData;
 	import flash.display3D.Context3DTextureFormat;
+	import flash.utils.ByteArray;
 	
 	import math.isPowerOfTwo;
 
@@ -17,6 +18,11 @@ package snjdck.gpu.asset
 		public function upload(data:BitmapData):void
 		{
 			uploadImp("uploadFromBitmapData", data);
+		}
+		
+		public function uploadATF(atfBytes:ByteArray, offset:int=0):void
+		{
+			uploadImp("uploadCompressedTextureFromByteArray", atfBytes, offset);
 		}
 		
 		public function get width():int

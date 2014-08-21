@@ -4,13 +4,13 @@ package snjdck.g3d.render
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix3D;
 	
-	import array.copy;
-	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
-	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.register.ConstRegister;
+	import snjdck.gpu.register.VertexRegister;
 	
 	import string.replace;
 	
@@ -23,15 +23,9 @@ package snjdck.g3d.render
 		static public const MAX_VC_COUNT:uint = 128;
 		static public const MAX_FC_COUNT:uint = 28;
 		
-		private var vcUseInfo:Vector.<Boolean>;
-		private var fcUseInfo:Vector.<Boolean>;
-		
-		private var vaSlot:Vector.<GpuVertexBuffer>;
-		private var vcSlot:Vector.<Number>;
-		private var fcSlot:Vector.<Number>;
-		
-		private var vaSlotOffset:Vector.<int>;
-		private var vaSlotFormat:Vector.<String>;
+		private var vaSlot:VertexRegister;
+		private var vcSlot:ConstRegister;
+		private var fcSlot:ConstRegister;
 		
 		private var worldMatrix:Matrix3D;
 		
@@ -46,15 +40,9 @@ package snjdck.g3d.render
 		
 		public function DrawUnit3D()
 		{
-			vcUseInfo = new Vector.<Boolean>(MAX_VC_COUNT, true);
-			fcUseInfo = new Vector.<Boolean>(MAX_FC_COUNT, true);
-			
-			vaSlot = new Vector.<GpuVertexBuffer>(MAX_VA_COUNT, true);
-			vcSlot = new Vector.<Number>(MAX_VC_COUNT * 4 + 4, true);
-			fcSlot = new Vector.<Number>(MAX_FC_COUNT * 4, true);
-			
-			vaSlotOffset = new Vector.<int>(MAX_VA_COUNT, true);
-			vaSlotFormat = new Vector.<String>(MAX_VA_COUNT, true);
+			vaSlot = new VertexRegister(MAX_VA_COUNT);
+			vcSlot = new ConstRegister(MAX_VC_COUNT);
+			fcSlot = new ConstRegister(MAX_FC_COUNT);
 			
 			worldMatrix = new Matrix3D();
 			
@@ -63,11 +51,9 @@ package snjdck.g3d.render
 		
 		ns_g3d function clear():void
 		{
-			var i:int;
-			
-			for(i=0; i<MAX_VA_COUNT; i++){ vaSlot[i] = null; }
-			for(i=0; i<MAX_VC_COUNT; i++){ vcUseInfo[i] = false; }
-			for(i=0; i<MAX_FC_COUNT; i++){ fcUseInfo[i] = false; }
+			vaSlot.clear();
+			vcSlot.clear();
+			fcSlot.clear();
 			
 			worldMatrix.identity();
 			
@@ -93,9 +79,7 @@ package snjdck.g3d.render
 		*/
 		ns_g3d function setVa(slotIndex:int, buffer:GpuVertexBuffer, offset:int=-1, format:String=null):void
 		{
-			vaSlot[slotIndex] = buffer;
-			vaSlotOffset[slotIndex] = offset;
-			vaSlotFormat[slotIndex] = format;
+			vaSlot.setVa(slotIndex, buffer, offset, format);
 		}
 		
 		ns_g3d function setVa2(buffer:GpuVertexBuffer, formats:Array, fromRegIndex:int=0, fromOffset:int=0):void
@@ -121,113 +105,45 @@ package snjdck.g3d.render
 		
 		private function uploadProgramConst():void
 		{
-			setProgramConstImp(Context3DProgramType.VERTEX, vcSlot, vcUseInfo);
-			setProgramConstImp(Context3DProgramType.FRAGMENT, fcSlot, fcUseInfo);
+			vcSlot.upload(context3d, Context3DProgramType.VERTEX);
+			fcSlot.upload(context3d, Context3DProgramType.FRAGMENT);
 		}
 		
 		private function uploadVa():void
 		{
-			for(var i:int=0, n:int=vaSlot.length; i<n; i++){
-				if(vaSlot[i]){
-					context3d.setVertexBufferAt(i, vaSlot[i], vaSlotOffset[i], vaSlotFormat[i]);
-				}
-			}
-		}
-		
-		private function setProgramConstImp(programType:String, data:Vector.<Number>, useInfo:Vector.<Boolean>):void
-		{
-			var firstRegister:int;
-			var numRegisters:int;
-			var flag:Boolean;
-			
-			for(var i:int=0, n:int=useInfo.length; i<n; i++){
-				var test:Boolean = useInfo[i];
-				if(flag){
-					if(test){
-						++numRegisters;
-					}
-					if(!test || i+1==n){
-						context3d.setProgramConstantsFromVector(programType, firstRegister,
-							array.copy(data, sharedFloatBuffer, numRegisters*4, firstRegister*4),
-							numRegisters
-						);
-						flag = false;
-					}
-				}else if(test){
-					firstRegister = i;
-					numRegisters = 1;
-					flag = true;
-				}
-			}
+			vaSlot.upload(context3d);
 		}
 		
 		ns_g3d function setVcM(firstRegister:int, matrix:Matrix3D):void
 		{
-			setByMatrix(firstRegister, matrix, vcSlot, vcUseInfo);
+			vcSlot.setByMatrix(firstRegister, matrix);
 		}
 		
 		ns_g3d function setVc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
 		{
-			setByVector(firstRegister, data, numRegisters, vcSlot, vcUseInfo);
+			vcSlot.setByVector(firstRegister, data, numRegisters);
 		}
 		
 		ns_g3d function setFcM(firstRegister:int, matrix:Matrix3D):void
 		{
-			setByMatrix(firstRegister, matrix, fcSlot, fcUseInfo);
+			fcSlot.setByMatrix(firstRegister, matrix);
 		}
 		
 		ns_g3d function setFc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
 		{
-			setByVector(firstRegister, data, numRegisters, fcSlot, fcUseInfo);
+			fcSlot.setByVector(firstRegister, data, numRegisters);
 		}
 		
 		ns_g3d function setBoneMatrix(firstRegister:int, matrix:Matrix3D):void
 		{
-			setUseInfo(vcUseInfo, firstRegister, 3);
-			
-			var index:int = firstRegister * 4;
-			var a:Number = vcSlot[index+12], b:Number = vcSlot[index+13], c:Number = vcSlot[index+14], d:Number = vcSlot[index+15];
-			matrix.copyRawDataTo(vcSlot, index, true);
-			vcSlot[index+12] = a; vcSlot[index+13] = b; vcSlot[index+14] = c; vcSlot[index+15] = d;
-		}
-		
-		private function setByVector(firstRegister:int, data:Vector.<Number>, numRegisters:int, output:Vector.<Number>, useInfo:Vector.<Boolean>):void
-		{
-			if(-1 == numRegisters){
-				numRegisters = Math.ceil(data.length / 4);
-			}
-			
-			setUseInfo(useInfo, firstRegister, numRegisters);
-			array.copy(data, output, numRegisters*4, 0, firstRegister*4);
-		}
-		
-		private function setByMatrix(firstRegister:int, matrix:Matrix3D, output:Vector.<Number>, useInfo:Vector.<Boolean>):void
-		{
-			setUseInfo(useInfo, firstRegister, 4);
-			matrix.copyRawDataTo(output, firstRegister * 4, true);
-		}
-		
-		private function setUseInfo(useInfo:Vector.<Boolean>, firstRegister:int, numRegisters:int):void
-		{
-			for(var i:int=0; i<numRegisters; i++){
-				var index:int = firstRegister + i;
-				useInfo[index] = true;
-			}
+			vcSlot.setByBone(firstRegister, matrix);
 		}
 		
 		ns_g3d function copyFrom(other:DrawUnit3D):void
 		{
-			var i:int;
-			
-			for(i=0; i<MAX_VA_COUNT; i++){
-				copyVaInfo(other, i);
-			}
-			
-			array.copy(other.vcUseInfo, this.vcUseInfo, MAX_VC_COUNT);
-			array.copy(other.vcSlot, this.vcSlot, MAX_VC_COUNT * 4);
-			array.copy(other.fcUseInfo, this.fcUseInfo, MAX_FC_COUNT);
-			array.copy(other.fcSlot, this.fcSlot, MAX_FC_COUNT * 4);
-			
+			vaSlot.copyFrom(other.vaSlot);
+			vcSlot.copyFrom(other.vcSlot);
+			fcSlot.copyFrom(other.fcSlot);
 			this.shaderName = other.shaderName;
 			this.textureName = other.textureName;
 			
@@ -236,13 +152,6 @@ package snjdck.g3d.render
 			this.indexBuffer = other.indexBuffer;
 			
 			this.blendFactor = other.blendFactor;
-		}
-
-		private function copyVaInfo(from:DrawUnit3D, slotIndex:int):void
-		{
-			this.vaSlot[slotIndex]			= from.vaSlot[slotIndex];
-			this.vaSlotOffset[slotIndex]	= from.vaSlotOffset[slotIndex];
-			this.vaSlotFormat[slotIndex]	= from.vaSlotFormat[slotIndex];
 		}
 		
 		public function toString():String
@@ -257,6 +166,5 @@ package snjdck.g3d.render
 			Context3DVertexBufferFormat.FLOAT_3,
 			Context3DVertexBufferFormat.FLOAT_4
 		];
-		static private const sharedFloatBuffer:Vector.<Number> = new Vector.<Number>();
 	}
 }
