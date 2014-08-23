@@ -1,18 +1,22 @@
 package snjdck.gpu.register
 {
+	import flash.display3D.Context3D;
 	import flash.geom.Matrix3D;
 	
 	import array.copy;
-	
-	import snjdck.gpu.asset.GpuContext;
 
 	final public class ConstRegister
 	{
+		private var programType:String;
+		private var slotCount:int;
+		
 		private var slotUseInfo:Vector.<Boolean>;
 		private var slotData:Vector.<Number>;
 		
-		public function ConstRegister(slotCount:int)
+		public function ConstRegister(slotCount:int, programType:String)
 		{
+			this.programType = programType;
+			this.slotCount = slotCount;
 			slotUseInfo = new Vector.<Boolean>(slotCount, true);
 			slotData = new Vector.<Number>(slotCount * 4, true);
 		}
@@ -53,19 +57,19 @@ package snjdck.gpu.register
 			slotData[index+11] = rawData[14];
 		}
 		
-		public function upload(context3d:GpuContext, programType:String):void
+		public function upload(context3d:Context3D):void
 		{
 			var firstRegister:int;
 			var numRegisters:int;
 			var flag:Boolean;
 			
-			for(var i:int=0, n:int=slotUseInfo.length; i<n; i++){
+			for(var i:int=0; i<slotCount; i++){
 				var test:Boolean = slotUseInfo[i];
 				if(flag){
 					if(test){
 						++numRegisters;
 					}
-					if(!test || i+1==n){
+					if(!test || i+1==slotCount){
 						context3d.setProgramConstantsFromVector(programType, firstRegister,
 							array.copy(slotData, sharedFloatBuffer, numRegisters*4, firstRegister*4),
 							numRegisters
@@ -80,17 +84,42 @@ package snjdck.gpu.register
 			}
 		}
 		
+		public function merge(other:ConstRegister):void
+		{
+			var otherSlotUseInfo:Vector.<Boolean> = other.slotUseInfo;
+			var otherSlotData:Vector.<Number> = other.slotData;
+			for(var i:int=0; i<slotCount; i++){
+				if(!otherSlotUseInfo[i]){
+					continue;
+				}
+				slotUseInfo[i] = true;
+				var offset:int = 4 * i;
+				for(var j:int=0; j<4; j++){
+					slotData[offset] = otherSlotData[offset];
+					++offset;
+				}
+			}
+		}
+		
 		public function clear():void
 		{
-			for(var i:int=0, n:int=slotUseInfo.length; i<n; i++){
+			for(var i:int=0; i<slotCount; i++){
 				slotUseInfo[i] = false;
 			}
 		}
 		
 		public function copyFrom(other:ConstRegister):void
 		{
-			array.copy(other.slotUseInfo, slotUseInfo, slotUseInfo.length);
-			array.copy(other.slotData, slotData, slotData.length);
+			var otherSlotUseInfo:Vector.<Boolean> = other.slotUseInfo;
+			var otherSlotData:Vector.<Number> = other.slotData;
+			var offset:int = 0;
+			for(var i:int=0; i<slotCount; i++){
+				slotUseInfo[i] = otherSlotUseInfo[i];
+				for(var j:int=0; j<4; j++){
+					slotData[offset] = otherSlotData[offset];
+					++offset;
+				}
+			}
 		}
 		
 		private function setUseInfo(firstRegister:int, numRegisters:int):void
