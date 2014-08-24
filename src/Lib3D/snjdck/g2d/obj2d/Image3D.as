@@ -23,15 +23,14 @@ package snjdck.g2d.obj2d
 	 */	
 	public class Image3D extends DisplayObject2D
 	{
+		private const scissorRect:Rectangle = new Rectangle();
 		private var target:Object3D;
-		private var scissorRect:Rectangle;
 		
 		public function Image3D(obj3d:Object3D, w:int, h:int)
 		{
 			this.target = obj3d;
 			this.width = w;
 			this.height = h;
-			scissorRect = new Rectangle(0, 0, w, h);
 		}
 		
 		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
@@ -43,9 +42,6 @@ package snjdck.g2d.obj2d
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			render.r2d.drawEnd(context3d);
-			
-			scissorRect.x = x;
-			scissorRect.y = y;
 			
 			context3d.clearDepthAndStencil();
 			context3d.setScissorRect(scissorRect);
@@ -61,5 +57,28 @@ package snjdck.g2d.obj2d
 			render.r2d.drawBegin(context3d);
 		}
 		
+		override public function set height(value:Number):void
+		{
+			super.height = value;
+			scissorRect.height = value;
+		}
+		
+		override public function set width(value:Number):void
+		{
+			super.width = value;
+			scissorRect.width = value;
+		}
+		
+		override public function set x(value:Number):void
+		{
+			super.x = value;
+			scissorRect.x = value;
+		}
+		
+		override public function set y(value:Number):void
+		{
+			super.y = value;
+			scissorRect.y = value;
+		}
 	}
 }
