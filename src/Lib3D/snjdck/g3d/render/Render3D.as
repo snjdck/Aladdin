@@ -5,32 +5,39 @@ package snjdck.g3d.render
 	
 	import snjdck.g2d.core.IRender;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.asset.helper.AssetMgr;
-	import snjdck.gpu.asset.GpuContext;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.ProjectionFactory;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.projection.OrthoProjection;
 	
 	use namespace ns_g3d;
 
 	public class Render3D implements IRender
 	{
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
-		private var projectionMatrix:Matrix3D;
+		private const projection:OrthoProjection = new OrthoProjection();
 		
 		public function Render3D()
 		{
+			projection.setDepthCliping(4000, -1000);
 //			shadowMatrix = new Matrix3D();
 //			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
 		}
 		
 		public function setScreenSize(width:int, height:int):void
 		{
-			projectionMatrix = ProjectionFactory.OrthoLH(width, height, -4000, 4000);
+			projection.resize(width, height);
 		}
 		
 		public function uploadProjectionMatrix(context3d:GpuContext):void
 		{
-			context3d.setVcM(0, projectionMatrix);
+			projection.upload(context3d);
+		}
+		
+		public function offset(dx:Number=0, dy:Number=0):void
+		{
+			projection.offset(dx, dy);
 		}
 		
 		public function draw(scene3d:Object3D, context3d:GpuContext):void

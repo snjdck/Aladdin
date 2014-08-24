@@ -6,12 +6,10 @@ package snjdck.gpu
 	
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
-	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
-	import snjdck.g3d.render.Render3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuRenderTarget;
 	
@@ -19,21 +17,19 @@ package snjdck.gpu
 
 	final public class ViewPort3D
 	{
+		static public const isoMatrix:Matrix3D = createIsoMatrix();
+		
 		public const scene3d:Object3D = new Object3D();
 		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
-		private const render3d:Render3D = new Render3D();
-		private const render2d:Render2D = new Render2D();
+		private const render:GpuRender = new GpuRender();
 		
 		private var renderTarget:IGpuRenderTarget;
-		private var isoMatrix:Matrix3D;
 		
 		public function ViewPort3D(renderTarget:IGpuRenderTarget)
 		{
 			this.renderTarget = renderTarget;
-			render2d.setScreenSize(renderTarget.width, renderTarget.height);
-			render3d.setScreenSize(renderTarget.width, renderTarget.height);
-			isoMatrix = createIsoMatrix();
+			render.resize(renderTarget.width, renderTarget.height);
 		}
 		
 		public function update(timeElapsed:int):void
@@ -50,13 +46,8 @@ package snjdck.gpu
 			renderTarget.setRenderToSelf(context3d);
 			renderTarget.clear(context3d);
 			
-			render3d.uploadProjectionMatrix(context3d);
-			render3d.draw(scene3d, context3d);
-			
-			context3d.clearDepthAndStencil();
-			
-			render2d.uploadProjectionMatrix(context3d);
-			render2d.render(scene2d, context3d);
+			render.drawScene3D(scene3d, context3d);
+			render.drawScene2D(scene2d, context3d);
 		}
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void

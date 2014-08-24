@@ -11,6 +11,7 @@ package snjdck.g2d.impl
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 
 	public class DisplayObject2D implements IDisplayObject2D
@@ -89,7 +90,7 @@ package snjdck.g2d.impl
 		*/
 		private const tempPoint:Point = new Point();
 		
-		virtual public function draw(render2d:Render2D, context3d:GpuContext):void
+		virtual public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 		}
 		

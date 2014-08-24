@@ -22,15 +22,15 @@ package snjdck.g3d.obj3d
 		
 		public function Pic3D(width:int, height:int, object3d:Object3D)
 		{
-			var tex:IGpuTexture = GpuAssetFactory.CreateGpuTexture2(new BitmapData(100, 100, true, 0xFFFF0000));
+//			var tex:IGpuTexture = GpuAssetFactory.CreateGpuTexture2(new BitmapData(100, 100, true, 0xFFFF0000));
 			var renderTarget:GpuRenterTarget = new GpuRenterTarget(width, height);
 			renderTarget.backgroundColor = 0x8800FF00;
 			viewPort = new ViewPort3D(renderTarget);
 			viewPort.scene3d.addChild(object3d);
-			var textImage:Image = new Image(new Texture2D(tex));
-			textImage.x = 100;
-			textImage.y = 100;
-			viewPort.scene2d.addChild(textImage);
+//			var textImage:Image = new Image(new Texture2D(tex));
+//			textImage.x = 100;
+//			textImage.y = 100;
+//			viewPort.scene2d.addChild(textImage);
 			super(new Texture2D(renderTarget));
 		}
 		

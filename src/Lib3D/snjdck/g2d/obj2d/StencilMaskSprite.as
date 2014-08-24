@@ -7,7 +7,7 @@ package snjdck.g2d.obj2d
 	import flash.geom.Matrix;
 	
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
-	import snjdck.g2d.render.Render2D;
+	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	
 	public class StencilMaskSprite extends DisplayObjectContainer2D
@@ -28,23 +28,23 @@ package snjdck.g2d.obj2d
 			maskImage.onUpdate(timeElapsed, worldMatrix, worldAlpha);
 		}
 		
-		override public function draw(render2d:Render2D, context3d:GpuContext):void
+		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			if(stencilIndex >= MAX_RECURSIVE_COUNT){
 				throw new Error("stencil mask is too much!");
 			}
 			
-			drawMask(render2d, context3d, 0xFF);
+			drawMask(render, context3d, 0xFF);
 			enableClipping(context3d, (2 << stencilIndex) - 1);
 			
 			++stencilIndex;
 			
-			super.draw(render2d, context3d);
+			super.draw(render, context3d);
 			
 			--stencilIndex;
 			
 			if(stencilIndex > 0){
-				drawMask(render2d, context3d, 0x00);
+				drawMask(render, context3d, 0x00);
 				enableClipping(context3d, (1 << stencilIndex) - 1);
 			}else{//重置回默认状态
 				context3d.clear(0, 0, 0, 1, 1, 0, Context3DClearMask.STENCIL);
@@ -52,7 +52,7 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		private function drawMask(render2d:Render2D, context3d:GpuContext, refValue:uint):void
+		private function drawMask(render:GpuRender, context3d:GpuContext, refValue:uint):void
 		{
 			context3d.setStencilReferenceValue(refValue, 0xFF, 1 << stencilIndex);
 			context3d.setStencilActions(
@@ -62,7 +62,7 @@ package snjdck.g2d.obj2d
 				Context3DStencilAction.KEEP,
 				Context3DStencilAction.SET
 			);
-			maskImage.draw(render2d, context3d);
+			maskImage.draw(render, context3d);
 		}
 		
 		private function enableClipping(context3d:GpuContext, readMask:uint):void

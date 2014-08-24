@@ -6,13 +6,20 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
-	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.register.ConstRegister;
+	import snjdck.gpu.register.FragmentRegister;
+	import snjdck.gpu.register.VertexRegister;
 
 	final public class GpuContext
 	{
+		static public const MAX_VA_COUNT:uint = 8;
+		static public const MAX_FS_COUNT:uint = 8;
+		static public const MAX_VC_COUNT:uint = 128;
+		static public const MAX_FC_COUNT:uint = 28;
+		
 		private var context3d:Context3D;
 		
 		private var blendMode:BlendMode;
@@ -27,6 +34,11 @@ package snjdck.gpu.asset
 		private var vaUseInfo:uint;
 		private var fsUseInfo:uint;
 		
+		private var vaReg:VertexRegister;
+		private var fsReg:FragmentRegister;
+		private var vcReg:ConstRegister;
+		private var fcReg:ConstRegister;
+		
 		public function GpuContext(context3d:Context3D)
 		{
 			this.context3d = context3d;
@@ -37,6 +49,11 @@ package snjdck.gpu.asset
 			depthPassCompareMode = Context3DCompareMode.LESS_EQUAL;
 			
 			stencilRefValue = 0xFFFF00;
+			
+			vcReg = new ConstRegister(MAX_VC_COUNT, Context3DProgramType.VERTEX);
+			fcReg = new ConstRegister(MAX_FC_COUNT, Context3DProgramType.FRAGMENT);
+			vaReg = new VertexRegister(MAX_VA_COUNT);
+			fsReg = new FragmentRegister(MAX_FS_COUNT);
 		}
 		
 		public function get driverInfo():String
@@ -139,24 +156,29 @@ package snjdck.gpu.asset
 			context3d.setRenderToBackBuffer();
 		}
 		
-		public function setVcM(firstRegister:int, matrix:Matrix3D):void
-		{
-			context3d.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, firstRegister, matrix, true);
-		}
-		
 		public function setVc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
 		{
-			context3d.setProgramConstantsFromVector(Context3DProgramType.VERTEX, firstRegister, data, numRegisters);
+			vcReg.setByVector(firstRegister, data, numRegisters);
 		}
 		
 		public function setFc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
 		{
-			context3d.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, firstRegister, data, numRegisters);
+			fcReg.setByVector(firstRegister, data, numRegisters);
 		}
 		
-		public function setProgramConstantsFromVector(programType:String, firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
+		public function setVcReg(constReg:ConstRegister):void
 		{
-			context3d.setProgramConstantsFromVector(programType, firstRegister, data, numRegisters);
+			vcReg.merge(constReg);
+		}
+		
+		public function setFcReg(constReg:ConstRegister):void
+		{
+			fcReg.merge(constReg);
+		}
+		
+		public function setVaReg(reg:VertexRegister):void
+		{
+			vaReg.merge(reg);
 		}
 		
 		public function setProgram(program:GpuProgram):void
@@ -189,16 +211,20 @@ package snjdck.gpu.asset
 		
 		public function setVertexBufferAt(slotIndex:int, buffer:GpuVertexBuffer, bufferOffset:int, format:String):void
 		{
-			context3d.setVertexBufferAt(slotIndex, buffer.getRawGpuAsset(context3d), bufferOffset, format);
+			vaReg.setVa(slotIndex, buffer, bufferOffset, format);
 		}
 		
 		public function setTextureAt(slotIndex:int, texture:IGpuTexture):void
 		{
-			context3d.setTextureAt(slotIndex, texture.getRawGpuAsset(context3d));
+			fsReg.setFs(slotIndex, texture);
 		}
 		
 		public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
 		{
+			vcReg.upload(context3d);vcReg.clear();
+			fcReg.upload(context3d);fcReg.clear();
+			vaReg.upload(context3d);vaReg.clear();
+			fsReg.upload(context3d);fsReg.clear();
 			context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d), firstIndex, numTriangles);
 		}
 		

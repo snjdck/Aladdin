@@ -18,11 +18,6 @@ package snjdck.g3d.render
 
 	final public class DrawUnit3D
 	{
-		static public const MAX_VA_COUNT:uint = 8;
-		static public const MAX_FS_COUNT:uint = 8;
-		static public const MAX_VC_COUNT:uint = 128;
-		static public const MAX_FC_COUNT:uint = 28;
-		
 		private var vaSlot:VertexRegister;
 		private var vcSlot:ConstRegister;
 		private var fcSlot:ConstRegister;
@@ -36,13 +31,11 @@ package snjdck.g3d.render
 		
 		ns_g3d var blendFactor:BlendMode;
 		
-		private var context3d:GpuContext;
-		
 		public function DrawUnit3D()
 		{
-			vaSlot = new VertexRegister(MAX_VA_COUNT);
-			vcSlot = new ConstRegister(MAX_VC_COUNT);
-			fcSlot = new ConstRegister(MAX_FC_COUNT);
+			vaSlot = new VertexRegister(GpuContext.MAX_VA_COUNT);
+			vcSlot = new ConstRegister(GpuContext.MAX_VC_COUNT, Context3DProgramType.VERTEX);
+			fcSlot = new ConstRegister(GpuContext.MAX_FC_COUNT, Context3DProgramType.FRAGMENT);
 			
 			worldMatrix = new Matrix3D();
 			
@@ -92,26 +85,13 @@ package snjdck.g3d.render
 		
 		public function exec(context3d:GpuContext):void
 		{
-			this.context3d = context3d;
-			
 			context3d.setBlendFactor(blendFactor);
-			uploadVa();
-			uploadProgramConst();
+			
+			context3d.setVcReg(vcSlot);
+			context3d.setFcReg(fcSlot);
+			context3d.setVaReg(vaSlot);
 			
 			context3d.drawTriangles(indexBuffer);
-			
-			this.context3d = null;
-		}
-		
-		private function uploadProgramConst():void
-		{
-			vcSlot.upload(context3d, Context3DProgramType.VERTEX);
-			fcSlot.upload(context3d, Context3DProgramType.FRAGMENT);
-		}
-		
-		private function uploadVa():void
-		{
-			vaSlot.upload(context3d);
 		}
 		
 		ns_g3d function setVcM(firstRegister:int, matrix:Matrix3D):void

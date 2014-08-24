@@ -7,6 +7,7 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.texture.SubTexture2D;
 	import snjdck.g2d.texture.Texture2D;
+	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	
 	final public class Scale9Image extends DisplayObject2D
@@ -143,23 +144,23 @@ package snjdck.g2d.obj2d
 			bottomRight.y = bottomY;
 		}
 		
-		override public function draw(render2d:Render2D, context3d:GpuContext):void
+		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			if(false == visible){
 				return;
 			}
 			
-			topLeft.draw(render2d, context3d);
-			top.draw(render2d, context3d);
-			topRight.draw(render2d, context3d);
+			topLeft.draw(render, context3d);
+			top.draw(render, context3d);
+			topRight.draw(render, context3d);
 			
-			left.draw(render2d, context3d);
-			center.draw(render2d, context3d);
-			right.draw(render2d, context3d);
+			left.draw(render, context3d);
+			center.draw(render, context3d);
+			right.draw(render, context3d);
 			
-			bottomLeft.draw(render2d, context3d);
-			bottom.draw(render2d, context3d);
-			bottomRight.draw(render2d, context3d);
+			bottomLeft.draw(render, context3d);
+			bottom.draw(render, context3d);
+			bottomRight.draw(render, context3d);
 		}
 		/*
 		override public function collectDrawUnits(collector:Collector2D):void

@@ -6,6 +6,7 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.support.VertexData;
 	import snjdck.g2d.texture.Texture2D;
+	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 
 	public class Image extends DisplayObject2D
@@ -41,7 +42,7 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		override public function draw(render2d:Render2D, context3d:GpuContext):void
+		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			if(null == texture || false == visible){
 				return;
@@ -57,7 +58,8 @@ package snjdck.g2d.obj2d
 			_vertexData.color = color;
 			_vertexData.alpha = worldAlpha;
 			
-			render2d.drawTexture(context3d, _vertexData, texture.gpuTexture);
+			
+			render.r2d.drawTexture(context3d, _vertexData, texture.gpuTexture);
 		}
 	}
 }

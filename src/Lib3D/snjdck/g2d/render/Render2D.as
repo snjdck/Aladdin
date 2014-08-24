@@ -39,13 +39,6 @@ package snjdck.g2d.render
 			context3d.setVc(0, projectionMatrix, 2);
 		}
 		
-		public function render(scene2d:IDisplayObject2D, context3d:GpuContext):void
-		{
-			drawBegin(context3d);
-			scene2d.draw(this, context3d);
-			drawEnd(context3d);
-		}
-		
 		public function drawBegin(context3d:GpuContext):void
 		{
 			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
