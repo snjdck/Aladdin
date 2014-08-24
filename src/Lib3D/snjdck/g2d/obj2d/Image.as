@@ -3,7 +3,6 @@ package snjdck.g2d.obj2d
 	import flash.geom.Rectangle;
 	
 	import snjdck.g2d.impl.DisplayObject2D;
-	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.support.VertexData;
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.gpu.GpuRender;
