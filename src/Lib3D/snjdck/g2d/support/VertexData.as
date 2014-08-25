@@ -2,6 +2,7 @@ package snjdck.g2d.support
 {
 	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	
 	import matrix33.transformCoords;
 
@@ -123,6 +124,26 @@ package snjdck.g2d.support
 				buffer[offset] = value;
 				offset += DATA32_PER_VERTEX;
 			}
+		}
+		
+		public function getBounds(transform:Matrix, result:Rectangle):void
+		{
+			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;
+			var minY:Number = Number.MAX_VALUE, maxY:Number = Number.MIN_VALUE;
+			
+			var offset:int = 0;
+			for(var i:int=0; i<4; i++)
+			{
+				transformCoords(transform, buffer[offset], buffer[offset+1], tempPt);
+				offset += DATA32_PER_VERTEX;
+				
+				if(tempPt.x < minX){ minX = tempPt.x; }
+				if(tempPt.y < minY){ minY = tempPt.y; }
+				if(tempPt.x > maxX){ maxX = tempPt.x; }
+				if(tempPt.y > maxY){ maxY = tempPt.y; }
+			}
+			
+			result.setTo(minX, minY, maxX-minX, maxY-minY);
 		}
 		
 		static private const tempPt:Point = new Point();

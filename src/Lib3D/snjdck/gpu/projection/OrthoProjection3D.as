@@ -5,11 +5,11 @@ package snjdck.gpu.projection
 	/**
 	 * 平行投影,left hand
 	 */	
-	final public class OrthoProjection
+	final public class OrthoProjection3D
 	{
 		private const transform:Vector.<Number> = new Vector.<Number>(16, true);
 		
-		public function OrthoProjection()
+		public function OrthoProjection3D()
 		{
 			transform[0] = 1;
 			transform[5] = 1;
@@ -29,15 +29,15 @@ package snjdck.gpu.projection
 			transform[11] = zNear / (zNear - zFar);
 		}
 		
-		public function upload(context3d:GpuContext):void
-		{
-			context3d.setVc(0, transform, 4);
-		}
-		
 		public function offset(dx:Number, dy:Number):void
 		{
 			transform[3] = transform[0] * dx;
 			transform[7] = transform[5] * dy;
+		}
+		
+		public function upload(context3d:GpuContext):void
+		{
+			context3d.setVc(0, transform, 4);
 		}
 	}
 }

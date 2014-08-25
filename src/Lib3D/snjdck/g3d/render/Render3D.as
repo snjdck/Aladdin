@@ -1,22 +1,20 @@
 package snjdck.g3d.render
 {
 	import flash.display3D.Context3DCompareMode;
-	import flash.geom.Matrix3D;
 	
 	import snjdck.g2d.core.IRender;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.geom.ProjectionFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.helper.AssetMgr;
-	import snjdck.gpu.projection.OrthoProjection;
+	import snjdck.gpu.projection.OrthoProjection3D;
 	
 	use namespace ns_g3d;
 
 	public class Render3D implements IRender
 	{
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
-		private const projection:OrthoProjection = new OrthoProjection();
+		private const projection:OrthoProjection3D = new OrthoProjection3D();
 		
 		public function Render3D()
 		{

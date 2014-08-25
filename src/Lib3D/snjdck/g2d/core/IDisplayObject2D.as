@@ -17,7 +17,6 @@ package snjdck.g2d.core
 		function draw(render:GpuRender, context3d:GpuContext):void;
 		function pickup(px:Number, py:Number):IDisplayObject2D;
 		
-		function getRect(targetCoordinateSpace:IDisplayObject2D):Rectangle;
 		
 		function globalToLocal(point:Point):Point;
 		function localToGlobal(point:Point):Point;
@@ -47,5 +46,12 @@ package snjdck.g2d.core
 		
 		function get worldMatrix():Matrix;
 		function get worldAlpha():Number;
+		
+		function get filter():Boolean;
+		function set filter(value:Boolean):void;
+		
+		function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void;
+		function calcSpaceTransform(targetSpace:IDisplayObject2D, result:Matrix):void;
+		function calcWorldMatrix(result:Matrix):void;
 	}
 }

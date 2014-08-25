@@ -2,7 +2,6 @@ package snjdck.g2d.render
 {
 	import flash.display3D.Context3DCompareMode;
 	
-	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IRender;
 	import snjdck.g2d.support.QuadBatch;
 	import snjdck.g2d.support.VertexData;
@@ -12,31 +11,54 @@ package snjdck.g2d.render
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.gpu.projection.Projection2D;
 	
 	use namespace ns_g3d;
 
 	final public class Render2D implements IRender
 	{
-		private const projectionMatrix:Vector.<Number> = new Vector.<Number>(8, true);
+		private const projectionStack:Vector.<Projection2D> = new <Projection2D>[new Projection2D()];
+		private var projectionIndex:int;
+		
 		private const quadBatch:QuadBatch = new QuadBatch();
 		
 		private var currentGpuTexture:IGpuTexture;
 		
 		public function Render2D()
 		{
-			projectionMatrix[3] = -1.0;
-			projectionMatrix[7] =  1.0;
+		}
+		
+		private function get projection():Projection2D
+		{
+			return projectionStack[projectionIndex];
 		}
 		
 		public function setScreenSize(width:int, height:int):void
 		{
-			projectionMatrix[0] =  2.0 / width;
-			projectionMatrix[5] = -2.0 / height;
+			projection.resize(width, height);
+		}
+		
+		public function offset(dx:Number=0, dy:Number=0):void
+		{
+			projection.offset(dx, dy);
 		}
 		
 		public function uploadProjectionMatrix(context3d:GpuContext):void
 		{
-			context3d.setVc(0, projectionMatrix, 2);
+			projection.upload(context3d);
+		}
+		
+		public function pushScreen():void
+		{
+			++projectionIndex;
+			if(projectionStack.length <= projectionIndex){
+				projectionStack.push(new Projection2D());
+			}
+		}
+		
+		public function popScreen():void
+		{
+			--projectionIndex;
 		}
 		
 		public function drawBegin(context3d:GpuContext):void

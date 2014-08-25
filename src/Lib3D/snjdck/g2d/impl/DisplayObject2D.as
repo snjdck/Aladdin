@@ -10,7 +10,7 @@ package snjdck.g2d.impl
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
-	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.support.VertexData;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 
@@ -26,6 +26,7 @@ package snjdck.g2d.impl
 		
 		private var _visible:Boolean;
 //		private var _blendMode:BlendMode;
+		private var _filter:Boolean;
 		
 		private var _parent:IDisplayObjectContainer2D;
 		
@@ -148,11 +149,6 @@ package snjdck.g2d.impl
 			if(parent){
 				parent.removeChild(this);
 			}
-		}
-		
-		public function getRect(targetCoordinateSpace:IDisplayObject2D):Rectangle
-		{
-			return null;
 		}
 		
 		public function globalToLocal(point:Point):Point
@@ -347,5 +343,56 @@ package snjdck.g2d.impl
 		{
 			return _worldAlpha;
 		}
+		
+		public function get filter():Boolean
+		{
+			return _filter;
+		}
+		
+		public function set filter(value:Boolean):void
+		{
+			_filter = value;
+		}
+		
+		public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
+		{
+			vertexData.reset(0, 0, width, height);
+			calcSpaceTransform(targetSpace, tempMatrix1);
+			vertexData.getBounds(tempMatrix1, result);
+		}
+		
+		public function calcSpaceTransform(targetSpace:IDisplayObject2D, result:Matrix):void
+		{
+			if(parent == targetSpace){
+				result.copyFrom(transform);
+				return;
+			}
+			result.identity();
+			var target:IDisplayObject2D = this;
+			while(target != null){
+				if(target == targetSpace){
+					return;
+				}
+				result.concat(target.transform);
+				target = target.parent;
+			}
+			targetSpace.calcWorldMatrix(tempMatrix2);
+			tempMatrix2.invert();
+			result.concat(tempMatrix2);
+		}
+		
+		public function calcWorldMatrix(result:Matrix):void
+		{
+			result.identity();
+			var target:IDisplayObject2D = this;
+			while(target != null){
+				result.concat(target.transform);
+				target = target.parent;
+			}
+		}
+		
+		static private const vertexData:VertexData = new VertexData();
+		static private const tempMatrix1:Matrix = new Matrix();
+		static private const tempMatrix2:Matrix = new Matrix();
 	}
 }
