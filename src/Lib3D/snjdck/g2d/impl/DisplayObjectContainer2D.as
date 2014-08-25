@@ -1,13 +1,13 @@
 package snjdck.g2d.impl
 {
 	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
 	
 	import array.delAt;
 	import array.insert;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
-	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -158,6 +158,25 @@ package snjdck.g2d.impl
 			for each(var child:DisplayObject2D in _childList){
 				child.onUpdate(timeElapsed, worldMatrix, worldAlpha);
 			}
+		}
+		
+		override public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
+		{
+			super.getBounds(targetSpace, result);
+			var minX:Number = result.x, maxX:Number = result.x + result.width;
+			var minY:Number = result.y, maxY:Number = result.y + result.height;
+			for each(var child:DisplayObject2D in _childList){
+				child.getBounds(targetSpace, result);
+				var left:Number = result.x;
+				var top:Number = result.y;
+				var right:Number = left + result.width;
+				var bottom:Number = top + result.height;
+				if(left < minX){ minX = left; }
+				if(top < minY){ minY = top; }
+				if(right > maxX){ maxX = right; }
+				if(bottom > maxY){ maxY = bottom; }
+			}
+			result.setTo(minX, minY, maxX-minX, maxY-minY);
 		}
 	}
 }
