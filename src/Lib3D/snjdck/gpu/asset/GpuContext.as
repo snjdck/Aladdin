@@ -34,6 +34,10 @@ package snjdck.gpu.asset
 		private var vaUseInfo:uint;
 		private var fsUseInfo:uint;
 		
+		private var currentRenderTarget:GpuRenderTarget;
+		private var backBufferWidth:int;
+		private var backBufferHeight:int;
+		
 		private var vaReg:VertexRegister;
 		private var fsReg:FragmentRegister;
 		private var vcReg:ConstRegister;
@@ -79,6 +83,8 @@ package snjdck.gpu.asset
 		public function configureBackBuffer(width:int, height:int, antiAlias:int):void
 		{
 			context3d.configureBackBuffer(width, height, antiAlias, true);
+			backBufferWidth = width;
+			backBufferHeight = height;
 		}
 		
 		public function clear(red:Number=0.0, green:Number=0.0, blue:Number=0.0, alpha:Number=1.0, depth:Number=1.0, stencil:uint=0, mask:uint=0xFFFFFFFF):void
@@ -236,6 +242,22 @@ package snjdck.gpu.asset
 		public function clearDepthAndStencil():void
 		{
 			context3d.clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
+		}
+		
+		public function get bufferWidth():int
+		{
+			if(null == currentRenderTarget){
+				return backBufferWidth;
+			}
+			return currentRenderTarget.width;
+		}
+		
+		public function get bufferHeight():int
+		{
+			if(null == currentRenderTarget){
+				return backBufferHeight;
+			}
+			return currentRenderTarget.height;
 		}
 	}
 }
