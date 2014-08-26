@@ -28,7 +28,7 @@ package snjdck.gpu.asset
 		static public function CreateGpuTexture(width:int, height:int, optimizeForRenderTarget:Boolean=false):IGpuTexture
 		{
 			if(optimizeForRenderTarget){
-				return new GpuRenterTarget(width, height);
+				return new GpuRenderTarget(width, height);
 			}
 			return new GpuTexture(width, height);
 		}

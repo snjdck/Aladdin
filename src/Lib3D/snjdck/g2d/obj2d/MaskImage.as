@@ -7,7 +7,7 @@ package snjdck.g2d.obj2d
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuRenterTarget;
+	import snjdck.gpu.asset.GpuRenderTarget;
 	
 	[Deprecated]
 	class MaskImage extends Image implements IDisposable
@@ -16,7 +16,7 @@ package snjdck.g2d.obj2d
 		
 		public function MaskImage(source:Texture2D, mask:Texture2D)
 		{
-			var renderTarget:GpuRenterTarget = new GpuRenterTarget(source.width, source.height);
+			var renderTarget:GpuRenderTarget = new GpuRenderTarget(source.width, source.height);
 			renderTarget.backgroundColor = 0x00000000;
 			
 			viewPort = new ViewPort3D(renderTarget);

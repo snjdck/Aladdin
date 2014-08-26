@@ -7,7 +7,7 @@ package snjdck.gpu
 		public var green:Number;
 		public var blue:Number;
 		
-		public function GpuColor(color:uint=0xFF000000)
+		public function GpuColor(color:uint=0x00000000)
 		{
 			value = color;
 		}

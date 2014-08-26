@@ -7,7 +7,8 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuRenterTarget;
+	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.gpu.filter.BlurFilter;
 
 	public class Image extends DisplayObject2D
 	{
@@ -42,6 +43,8 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
+		private var blur:BlurFilter = new BlurFilter();
+		
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			if(null == texture || false == visible){
@@ -62,8 +65,7 @@ package snjdck.g2d.obj2d
 				render.r2d.uploadProjectionMatrix(context3d);
 				render.r2d.popScreen();
 				
-				var rt:GpuRenterTarget = new GpuRenterTarget(bounds.width, bounds.height);
-				rt.backgroundColor = 0x0;
+				var rt:GpuRenderTarget = new GpuRenderTarget(bounds.width, bounds.height);
 				
 				context3d.setRenderToTexture(rt);
 				rt.clear(context3d);
@@ -71,14 +73,12 @@ package snjdck.g2d.obj2d
 				drawImpl(render, context3d);
 				render.r2d.drawEnd(context3d);
 				
-				_vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
+				blur.drawBegin(rt, render, context3d);
 				
 				context3d.setRenderToBackBuffer();
 				render.r2d.uploadProjectionMatrix(context3d);
-				render.r2d.drawTexture(context3d, _vertexData, rt);
-				render.r2d.drawEnd(context3d);
 				
-				rt.dispose();
+				blur.drawEnd(bounds, render, context3d);
 			}else{
 				drawImpl(render, context3d);
 			}

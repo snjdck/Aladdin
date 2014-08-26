@@ -143,7 +143,7 @@ package snjdck.gpu.asset
 			}
 		}
 		
-		public function setRenderToTexture(renderTarget:GpuRenterTarget):void
+		public function setRenderToTexture(renderTarget:GpuRenderTarget):void
 		{
 			context3d.setRenderToTexture(
 				renderTarget.getRawGpuAsset(context3d), true,

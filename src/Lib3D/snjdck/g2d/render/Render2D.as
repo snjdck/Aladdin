@@ -58,6 +58,7 @@ package snjdck.g2d.render
 		
 		public function popScreen():void
 		{
+			projection.offset(0, 0);
 			--projectionIndex;
 		}
 		

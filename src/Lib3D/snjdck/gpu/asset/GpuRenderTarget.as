@@ -6,7 +6,7 @@ package snjdck.gpu.asset
 	
 	import snjdck.gpu.GpuColor;
 
-	public class GpuRenterTarget extends GpuAsset implements IGpuTexture, IGpuRenderTarget
+	public class GpuRenderTarget extends GpuAsset implements IGpuTexture, IGpuRenderTarget
 	{
 		private const color:GpuColor = new GpuColor();
 		private var _antiAlias:int;
@@ -14,7 +14,7 @@ package snjdck.gpu.asset
 		/**
 		 * @param antiAlias(0=none,1=low,2=middle,3=high,4=very_high)
 		 */		
-		public function GpuRenterTarget(width:int, height:int, textureFormat:String=Context3DTextureFormat.BGRA, antiAlias:int=0)
+		public function GpuRenderTarget(width:int, height:int, textureFormat:String=Context3DTextureFormat.BGRA, antiAlias:int=0)
 		{
 			var initName:String = isPowerOfTwo(width) && isPowerOfTwo(height) ? "createTexture" : "createRectangleTexture";
 			super(initName, [width, height, textureFormat, true]);

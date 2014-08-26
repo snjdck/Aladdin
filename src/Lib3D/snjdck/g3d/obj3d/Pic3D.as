@@ -11,7 +11,7 @@ package snjdck.g3d.obj3d
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuRenterTarget;
+	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
 	
 	use namespace ns_g3d;
@@ -23,7 +23,7 @@ package snjdck.g3d.obj3d
 		public function Pic3D(width:int, height:int, object3d:Object3D)
 		{
 //			var tex:IGpuTexture = GpuAssetFactory.CreateGpuTexture2(new BitmapData(100, 100, true, 0xFFFF0000));
-			var renderTarget:GpuRenterTarget = new GpuRenterTarget(width, height);
+			var renderTarget:GpuRenderTarget = new GpuRenderTarget(width, height);
 			renderTarget.backgroundColor = 0x8800FF00;
 			viewPort = new ViewPort3D(renderTarget);
 			viewPort.scene3d.addChild(object3d);
