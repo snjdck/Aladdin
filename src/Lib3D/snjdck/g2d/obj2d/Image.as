@@ -67,7 +67,7 @@ package snjdck.g2d.obj2d
 				
 				var rt:GpuRenderTarget = new GpuRenderTarget(bounds.width, bounds.height);
 				
-				context3d.setRenderToTexture(rt);
+				context3d.pushRenderTarget(rt);
 				rt.clear(context3d);
 				
 				drawImpl(render, context3d);
@@ -75,7 +75,7 @@ package snjdck.g2d.obj2d
 				
 				blur.drawBegin(rt, render, context3d);
 				
-				context3d.setRenderToBackBuffer();
+				context3d.popRenderTarget();
 				render.r2d.uploadProjectionMatrix(context3d);
 				
 				blur.drawEnd(bounds, render, context3d);

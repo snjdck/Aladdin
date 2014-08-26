@@ -259,5 +259,25 @@ package snjdck.gpu.asset
 			}
 			return currentRenderTarget.height;
 		}
+		
+		private const renderTargetStack:Vector.<GpuRenderTarget> = new Vector.<GpuRenderTarget>(1);
+		
+		public function pushRenderTarget(renderTarget:GpuRenderTarget):void
+		{
+			renderTargetStack.push(renderTarget);
+			setRenderToTexture(renderTarget);
+		}
+		
+		public function popRenderTarget():void
+		{
+			renderTargetStack.pop();
+			var lastIndex:int = renderTargetStack.length - 1;
+			var lastRenderTarget:GpuRenderTarget = renderTargetStack[lastIndex];
+			if(null == lastRenderTarget){
+				setRenderToBackBuffer();
+			}else{
+				setRenderToTexture(lastRenderTarget);
+			}
+		}
 	}
 }
