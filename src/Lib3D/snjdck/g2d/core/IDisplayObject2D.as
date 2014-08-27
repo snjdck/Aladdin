@@ -6,6 +6,7 @@ package snjdck.g2d.core
 	
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.filter.FragmentFilter;
 
 	public interface IDisplayObject2D extends IDisplayObject
 	{
@@ -47,8 +48,10 @@ package snjdck.g2d.core
 		function get worldMatrix():Matrix;
 		function get worldAlpha():Number;
 		
-		function get filter():Boolean;
-		function set filter(value:Boolean):void;
+		function hasVisibleArea():Boolean;
+		
+		function get filter():FragmentFilter;
+		function set filter(value:FragmentFilter):void;
 		
 		function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void;
 		function calcSpaceTransform(targetSpace:IDisplayObject2D, result:Matrix):void;

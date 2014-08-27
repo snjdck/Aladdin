@@ -129,7 +129,16 @@ package snjdck.g2d.impl
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			for each(var child:DisplayObject2D in _childList){
-				child.draw(render, context3d);
+				if(!child.hasVisibleArea()){
+					continue;
+				}
+				if(child.filter != null){
+					render.r2d.drawEnd(context3d);
+					child.filter.draw(child, render, context3d);
+					render.r2d.drawBegin(context3d);
+				}else{
+					child.draw(render, context3d);
+				}
 			}
 		}
 		

@@ -13,6 +13,7 @@ package snjdck.g2d.impl
 	import snjdck.g2d.support.VertexData;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.filter.FragmentFilter;
 
 	public class DisplayObject2D implements IDisplayObject2D
 	{
@@ -26,7 +27,7 @@ package snjdck.g2d.impl
 		
 		private var _visible:Boolean;
 //		private var _blendMode:BlendMode;
-		private var _filter:Boolean;
+		private var _filter:FragmentFilter;
 		
 		private var _parent:IDisplayObjectContainer2D;
 		
@@ -344,14 +345,19 @@ package snjdck.g2d.impl
 			return _worldAlpha;
 		}
 		
-		public function get filter():Boolean
+		public function get filter():FragmentFilter
 		{
 			return _filter;
 		}
 		
-		public function set filter(value:Boolean):void
+		public function set filter(value:FragmentFilter):void
 		{
 			_filter = value;
+		}
+		
+		public function hasVisibleArea():Boolean
+		{
+			return visible && (alpha > 0) && (scaleX != 0) && (scaleY != 0);
 		}
 		
 		public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
@@ -391,8 +397,8 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		static private const vertexData:VertexData = new VertexData();
-		static private const tempMatrix1:Matrix = new Matrix();
-		static private const tempMatrix2:Matrix = new Matrix();
+		static protected const vertexData:VertexData = new VertexData();
+		static protected const tempMatrix1:Matrix = new Matrix();
+		static protected const tempMatrix2:Matrix = new Matrix();
 	}
 }

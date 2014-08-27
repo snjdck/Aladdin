@@ -34,7 +34,7 @@ package snjdck.gpu.asset
 		private var vaUseInfo:uint;
 		private var fsUseInfo:uint;
 		
-		private var currentRenderTarget:GpuRenderTarget;
+		private var _currentRenderTarget:GpuRenderTarget;
 		private var backBufferWidth:int;
 		private var backBufferHeight:int;
 		
@@ -151,15 +151,32 @@ package snjdck.gpu.asset
 		
 		public function setRenderToTexture(renderTarget:GpuRenderTarget):void
 		{
+			if(_currentRenderTarget == renderTarget){
+				return;
+			}
+			_currentRenderTarget = renderTarget;
+			if(null == renderTarget){
+				context3d.setRenderToBackBuffer();
+				return;
+			}
 			context3d.setRenderToTexture(
 				renderTarget.getRawGpuAsset(context3d), true,
 				renderTarget.antiAlias, 0, 0
 			);
 		}
 		
+		public function get currentRenderTarget():GpuRenderTarget
+		{
+			return _currentRenderTarget;
+		}
+		
 		public function setRenderToBackBuffer():void
 		{
+			if(null == _currentRenderTarget){
+				return;
+			}
 			context3d.setRenderToBackBuffer();
+			_currentRenderTarget = null;
 		}
 		
 		public function setVc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
@@ -246,38 +263,18 @@ package snjdck.gpu.asset
 		
 		public function get bufferWidth():int
 		{
-			if(null == currentRenderTarget){
+			if(null == _currentRenderTarget){
 				return backBufferWidth;
 			}
-			return currentRenderTarget.width;
+			return _currentRenderTarget.width;
 		}
 		
 		public function get bufferHeight():int
 		{
-			if(null == currentRenderTarget){
+			if(null == _currentRenderTarget){
 				return backBufferHeight;
 			}
-			return currentRenderTarget.height;
-		}
-		
-		private const renderTargetStack:Vector.<GpuRenderTarget> = new Vector.<GpuRenderTarget>(1);
-		
-		public function pushRenderTarget(renderTarget:GpuRenderTarget):void
-		{
-			renderTargetStack.push(renderTarget);
-			setRenderToTexture(renderTarget);
-		}
-		
-		public function popRenderTarget():void
-		{
-			renderTargetStack.pop();
-			var lastIndex:int = renderTargetStack.length - 1;
-			var lastRenderTarget:GpuRenderTarget = renderTargetStack[lastIndex];
-			if(null == lastRenderTarget){
-				setRenderToBackBuffer();
-			}else{
-				setRenderToTexture(lastRenderTarget);
-			}
+			return _currentRenderTarget.height;
 		}
 	}
 }

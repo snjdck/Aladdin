@@ -2,13 +2,12 @@ package snjdck.g2d.obj2d
 {
 	import flash.geom.Rectangle;
 	
+	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.support.VertexData;
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuRenderTarget;
-	import snjdck.gpu.filter.BlurFilter;
 
 	public class Image extends DisplayObject2D
 	{
@@ -43,50 +42,12 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		private var blur:BlurFilter = new BlurFilter();
-		
-		override public function draw(render:GpuRender, context3d:GpuContext):void
+		override public function hasVisibleArea():Boolean
 		{
-			if(null == texture || false == visible){
-				return;
-			}
-			
-			if(0 == alpha){
-				return;
-			}
-			
-			if(filter){
-				render.r2d.drawEnd(context3d);
-				getBounds(parent, bounds);
-				
-				render.r2d.pushScreen();
-				render.r2d.setScreenSize(bounds.width, bounds.height);
-				render.r2d.offset(-bounds.x, -bounds.y);
-				render.r2d.uploadProjectionMatrix(context3d);
-				render.r2d.popScreen();
-				
-				var rt:GpuRenderTarget = new GpuRenderTarget(bounds.width, bounds.height);
-				
-				context3d.pushRenderTarget(rt);
-				rt.clear(context3d);
-				
-				drawImpl(render, context3d);
-				render.r2d.drawEnd(context3d);
-				
-				blur.drawBegin(rt, render, context3d);
-				
-				context3d.popRenderTarget();
-				render.r2d.uploadProjectionMatrix(context3d);
-				
-				blur.drawEnd(bounds, render, context3d);
-			}else{
-				drawImpl(render, context3d);
-			}
+			return super.hasVisibleArea() && (texture != null);
 		}
 		
-		private const bounds:Rectangle = new Rectangle();
-		
-		private function drawImpl(render:GpuRender, context3d:GpuContext):void
+		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			_vertexData.reset(0, 0, width, height);
 			_texture.adjustVertexData(_vertexData);
@@ -95,6 +56,14 @@ package snjdck.g2d.obj2d
 			_vertexData.alpha = worldAlpha;
 			
 			render.r2d.drawTexture(context3d, _vertexData, texture.gpuTexture);
+		}
+		
+		override public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
+		{
+			vertexData.reset(0, 0, width, height);
+			_texture.adjustVertexData(_vertexData);
+			calcSpaceTransform(targetSpace, tempMatrix1);
+			vertexData.getBounds(tempMatrix1, result);
 		}
 	}
 }
