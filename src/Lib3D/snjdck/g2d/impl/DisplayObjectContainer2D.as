@@ -133,9 +133,7 @@ package snjdck.g2d.impl
 					continue;
 				}
 				if(child.filter != null){
-					render.r2d.drawEnd(context3d);
 					child.filter.draw(child, render, context3d);
-					render.r2d.drawBegin(context3d);
 				}else{
 					child.draw(render, context3d);
 				}

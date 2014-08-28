@@ -1,98 +1,79 @@
 package snjdck.gpu.filter
 {
-	import flash.geom.Rectangle;
+	import flash.display3D.Context3DBlendFactor;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
-	import snjdck.g2d.impl.DisplayObject2D;
-	import snjdck.g2d.support.VertexData;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 
 	public class BlurFilter extends FragmentFilter
 	{
-		static private const _vertexData:VertexData = new VertexData();
+		static public function createGlowFilter(blurX:Number, blurY:Number, color:uint, alpha:Number):FragmentFilter
+		{
+			var filter:BlurFilter = new BlurFilter();
+			filter.mode = FragmentFilterMode.BELOW;
+			filter.glowColor = new <Number>[1,1,0,1];
+			return filter;
+		}
+		
+		static private const blendMode:BlendMode = new BlendMode(
+			Context3DBlendFactor.ONE,
+			Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA
+		);
 		
 		public var blurX:Number = 4;
 		public var blurY:Number = 4;
 		
 		private var frontBuffer:GpuRenderTarget;
 		private var backBuffer:GpuRenderTarget;
-		
-		private var bounds:Rectangle = new Rectangle();
+		private var numPasses:int;
+		private var glowColor:Vector.<Number> = new Vector.<Number>(4, true);
 		
 		public function BlurFilter()
 		{
-			mode = FragmentFilterMode.BELOW;
 		}
 		
-		public function calcBounds(target:IDisplayObject2D):void
+		override protected function onDrawBegin(target:IDisplayObject2D):void
 		{
-			target.getBounds(target.parent, bounds);
-			bounds.inflate(
-				Math.ceil(blurX) * 0.5 + 2,
-				Math.ceil(blurY) * 0.5 + 2
-			);
-		}
-		
-		public function swapBuffer():void
-		{
-			var temp:GpuRenderTarget = frontBuffer;
-			frontBuffer = backBuffer;
-			backBuffer = temp;
-		}
-		
-		override public function draw(target:DisplayObject2D, render:GpuRender, context3d:GpuContext):void
-		{
-			if(FragmentFilterMode.ABOVE == mode){
-				target.draw(render, context3d);
-				render.r2d.drawEnd(context3d);
-			}
+			numPasses = Math.ceil(blurX) + Math.ceil(blurY);
 			
-			calcBounds(target);
+			target.getBounds(target.parent, bounds);
+			bounds.inflate(Math.ceil(blurX)+4, Math.ceil(blurY)+4);
 			
 			frontBuffer = new GpuRenderTarget(bounds.width, bounds.height);
-			backBuffer = new GpuRenderTarget(bounds.width, bounds.height);
+			image = frontBuffer;
 			
-			render.r2d.pushScreen();
-			render.r2d.setScreenSize(bounds.width, bounds.height);
-			render.r2d.offset(-bounds.x, -bounds.y);
-			render.r2d.uploadProjectionMatrix(context3d);
-			render.r2d.popScreen();
-			
-			var lastRenderTarget:GpuRenderTarget = context3d.currentRenderTarget;
-			
-			context3d.setRenderToTexture(frontBuffer);
-			frontBuffer.clear(context3d);
-			
-			target.draw(render, context3d);
-			render.r2d.drawEnd(context3d);
-			
-			prepare(render, context3d);
-			
-			context3d.setRenderToTexture(lastRenderTarget);
-			render.r2d.uploadProjectionMatrix(context3d);
-			
-			render.r2d.drawBegin(context3d);
-			_vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
-			render.r2d.drawTexture(context3d, _vertexData, frontBuffer);
-			render.r2d.drawEnd(context3d);
-			
-			if(FragmentFilterMode.BELOW == mode){
-				target.draw(render, context3d);
-				render.r2d.drawEnd(context3d);
+			if(numPasses < 2){
+				return;
 			}
 			
-			frontBuffer.dispose();
-			backBuffer.dispose();
+			backBuffer = new GpuRenderTarget(bounds.width, bounds.height);
+			
+			if(mode == FragmentFilterMode.BELOW && numPasses > 2){
+				image = new GpuRenderTarget(bounds.width, bounds.height);
+			}
 		}
 		
-		public function prepare(render:GpuRender, context3d:GpuContext):void
+		override protected function onDrawEnd():void
 		{
-			_vertexData.reset(0, 0, bounds.width, bounds.height);
+			if(frontBuffer != null){
+				frontBuffer.dispose();
+				frontBuffer = null;
+			}
 			
+			backBuffer.dispose();
+			backBuffer = null;
+			
+			image.dispose();
+			image = null;
+		}
+		
+		override protected function drawFilter(prevRenderTarget:GpuRenderTarget, render:GpuRender, context3d:GpuContext):void
+		{
 			render.r2d.pushScreen();
 			render.r2d.setScreenSize(bounds.width, bounds.height);
 			render.r2d.uploadProjectionMatrix(context3d);
@@ -101,38 +82,50 @@ package snjdck.gpu.filter
 			context3d.setProgram(AssetMgr.Instance.getProgram("blur"));
 			context3d.setBlendFactor(BlendMode.NORMAL);
 			
-			var numPasses:int = Math.ceil(blurX) + Math.ceil(blurY);
+			vertexData.reset(0, 0, bounds.width, bounds.height);
 			
 			for(var i:int=0; i<numPasses; i++)
 			{
-				updateParameters(i, bounds.width, bounds.height);
+				updateParameters(i);
 				
 				context3d.setVc(4, mOffsets, 1);
 				context3d.setFc(1, mWeights, 1);
 				
 				swapBuffer();
 				
-				context3d.setRenderToTexture(frontBuffer);
-				frontBuffer.clear(context3d);
+				const isLastPass:Boolean = (i + 1 == numPasses);
 				
-				if(i == numPasses - 1){
+				if(isLastPass){
 					context3d.setProgram(AssetMgr.Instance.getProgram("blur_tint"));
-					context3d.setFc(2, mColor, 1);
+					context3d.setBlendFactor(blendMode);
+					context3d.setFc(2, glowColor, 1);
+					vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
+					render.r2d.uploadProjectionMatrix(context3d);
+					context3d.setRenderToTexture(prevRenderTarget);
+				}else{
+					context3d.setRenderToTexture(frontBuffer);
+					frontBuffer.clear(context3d);
 				}
 				
-				render.r2d.drawTexture(context3d, _vertexData, backBuffer);
+				var texture:IGpuTexture = (0 == i ? image : backBuffer);
+				render.r2d.drawTexture(context3d, vertexData, texture);
 				render.r2d.drawEnd(context3d);
 			}
 		}
 		
-		private static const MAX_SIGMA:Number = 2.0;
-		private var sTmpWeights:Vector.<Number> = new Vector.<Number>(5, true);
+		private function swapBuffer():void
+		{
+			var temp:GpuRenderTarget = frontBuffer;
+			frontBuffer = backBuffer;
+			backBuffer = temp;
+		}
 		
-		private var mOffsets:Vector.<Number> = new <Number>[0, 0, 0, 0];
-		private var mWeights:Vector.<Number> = new <Number>[0, 0, 0, 0];
-		private var mColor:Vector.<Number>   = new <Number>[1, 1, 1, 1];
+		static private const MAX_SIGMA:Number = 2.0;
+		static private const sTmpWeights:Vector.<Number> = new Vector.<Number>(5, true);
+		static private const mOffsets:Vector.<Number> = new Vector.<Number>(4, true);
+		static private const mWeights:Vector.<Number> = new Vector.<Number>(4, true);
 		
-		private function updateParameters(pass:int, textureWidth:int, textureHeight:int):void
+		private function updateParameters(pass:int):void
 		{
 			// algorithm described here: 
 			// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
@@ -140,6 +133,9 @@ package snjdck.gpu.filter
 			// To run in constrained mode, we can only make 5 texture lookups in the fragment
 			// shader. By making use of linear texture sampling, we can produce similar output
 			// to what would be 9 lookups.
+			
+			const textureWidth:int = bounds.width;
+			const textureHeight:int = bounds.height;
 			
 			var sigma:Number;
 			var horizontal:Boolean = pass < blurX;
