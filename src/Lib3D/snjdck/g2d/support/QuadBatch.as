@@ -70,11 +70,7 @@ package snjdck.g2d.support
 			}
 			
 			if(context3d.isVaSlotInUse(1)){
-				context3d.setVertexBufferAt(1, gpuVertexBuffer, VertexData.OFFSET_UV, Context3DVertexBufferFormat.FLOAT_2);
-			}
-			
-			if(context3d.isVaSlotInUse(2)){
-				context3d.setVertexBufferAt(2, gpuVertexBuffer, VertexData.OFFSET_COLOR, Context3DVertexBufferFormat.FLOAT_4);
+				context3d.setVertexBufferAt(1, gpuVertexBuffer, VertexData.OFFSET_UV, Context3DVertexBufferFormat.FLOAT_3);
 			}
 			
 			renderStateBatch.draw(context3d, gpuIndexBuffer);

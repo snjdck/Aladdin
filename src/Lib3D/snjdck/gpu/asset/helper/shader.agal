@@ -11,9 +11,8 @@ op = vt0
 @g2d.raw
 ${g2d.vs}
 v0 = va1
-v1 = va2
 ft0 = tex: v0, fs0<clamp,${0}>
-ft0 = mul: ft0, v1
+ft0.w *= v0.z
 ft1.x = ft0.w - fc0.x
 kil:ft1.x
 oc = ft0

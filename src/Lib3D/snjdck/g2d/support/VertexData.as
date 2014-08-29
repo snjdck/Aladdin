@@ -12,7 +12,7 @@ package snjdck.g2d.support
 		static public const OFFSET_UV:int = 2;
 		static public const OFFSET_COLOR:int = 4;
 		
-		static public const DATA32_PER_VERTEX:int = 8;
+		static public const DATA32_PER_VERTEX:int = 5;
 		static public const DATA32_PER_QUAD:int = 4 * DATA32_PER_VERTEX;
 		
 		private var buffer:Vector.<Number>;
@@ -30,7 +30,7 @@ package snjdck.g2d.support
 			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
-			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
+			buffer[offset++] = 1;
 			
 			ratioX = 1;
 			
@@ -38,7 +38,7 @@ package snjdck.g2d.support
 			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
-			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
+			buffer[offset++] = 1;
 			
 			ratioY = 1;
 			
@@ -46,7 +46,7 @@ package snjdck.g2d.support
 			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
-			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
+			buffer[offset++] = 1;
 			
 			ratioX = 0;
 			
@@ -54,7 +54,7 @@ package snjdck.g2d.support
 			buffer[offset++] = y + ratioY * height;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
-			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
+			buffer[offset++] = 1;
 		}
 		
 		public function getRawData():Vector.<Number>
@@ -85,7 +85,7 @@ package snjdck.g2d.support
 				offset += DATA32_PER_VERTEX;
 			}
 		}
-		
+		/*
 		public function set color(value:uint):void
 		{
 			var red:Number = 	((value >> 16) & 0xFF) / 0xFF;
@@ -101,10 +101,10 @@ package snjdck.g2d.support
 				offset += DATA32_PER_VERTEX;
 			}
 		}
-		
+		//*/
 		public function set alpha(value:Number):void
 		{
-			var offset:int = OFFSET_COLOR + 3;
+			var offset:int = OFFSET_COLOR;
 			for(var i:int=0; i<4; i++)
 			{
 				buffer[offset] = value;

@@ -52,7 +52,6 @@ package snjdck.g2d.obj2d
 			_vertexData.reset(0, 0, width, height);
 			_texture.adjustVertexData(_vertexData);
 			_vertexData.transformPosition(worldMatrix);
-			_vertexData.color = color;
 			_vertexData.alpha = worldAlpha;
 			
 			render.r2d.drawTexture(context3d, _vertexData, texture.gpuTexture);
