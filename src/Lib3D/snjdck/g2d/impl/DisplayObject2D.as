@@ -26,7 +26,6 @@ package snjdck.g2d.impl
 		private var _alpha:Number;
 		
 		private var _visible:Boolean;
-//		private var _blendMode:BlendMode;
 		private var _filter:FragmentFilter;
 		
 		private var _parent:IDisplayObjectContainer2D;
@@ -79,9 +78,6 @@ package snjdck.g2d.impl
 				_worldMatrix.concat(parentWorldMatrix);
 			}
 			
-			_worldMatrixInvert.copyFrom(_worldMatrix);
-			_worldMatrixInvert.invert();
-			
 			_worldAlpha = alpha * parentWorldAlpha;
 		}
 		/*
@@ -102,6 +98,8 @@ package snjdck.g2d.impl
 				return null;
 			}
 			
+			_worldMatrixInvert.copyFrom(_worldMatrix);
+			_worldMatrixInvert.invert();
 			transformCoords(_worldMatrixInvert, px, py, tempPoint);
 			
 			if(tempPoint.x >= 0

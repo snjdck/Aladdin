@@ -169,9 +169,12 @@ package snjdck.g2d.impl
 		
 		override public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
 		{
-			super.getBounds(targetSpace, result);
-			var minX:Number = result.x, maxX:Number = result.x + result.width;
-			var minY:Number = result.y, maxY:Number = result.y + result.height;
+			if(_childList.length <= 0){
+				super.getBounds(targetSpace, result);
+				return;
+			}
+			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;
+			var minY:Number = Number.MAX_VALUE, maxY:Number = Number.MIN_VALUE;
 			for each(var child:DisplayObject2D in _childList){
 				child.getBounds(targetSpace, result);
 				var left:Number = result.x;
