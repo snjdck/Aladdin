@@ -43,6 +43,16 @@ package snjdck.g2d.render
 			projection.offset(dx, dy);
 		}
 		
+		public function get offsetX():Number
+		{
+			return projection.offsetX;
+		}
+		
+		public function get offsetY():Number
+		{
+			return projection.offsetY;
+		}
+		
 		public function uploadProjectionMatrix(context3d:GpuContext):void
 		{
 			projection.upload(context3d);

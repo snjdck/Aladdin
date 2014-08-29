@@ -12,7 +12,7 @@ package snjdck.gpu.filter
 	public class FragmentFilter
 	{
 		static protected const vertexData:VertexData = new VertexData();
-		static protected const bounds:Rectangle = new Rectangle();
+		protected const bounds:Rectangle = new Rectangle();
 		
 		protected var image:GpuRenderTarget;
 		public var mode:String;
@@ -25,13 +25,14 @@ package snjdck.gpu.filter
 			render.r2d.setScreenSize(bounds.width, bounds.height);
 			render.r2d.offset(-bounds.x, -bounds.y);
 			render.r2d.uploadProjectionMatrix(context3d);
-			render.r2d.popScreen();
 			
 			context3d.setRenderToTexture(image);
 			image.clear(context3d);
 			
 			target.draw(render, context3d);
 			render.r2d.drawEnd(context3d);
+			
+			render.r2d.popScreen();
 		}
 		
 		final public function draw(target:DisplayObject2D, render:GpuRender, context3d:GpuContext):void
@@ -41,6 +42,10 @@ package snjdck.gpu.filter
 			
 			onDrawBegin(target);
 			drawTarget(target, render, context3d);
+			
+			bounds.x += render.r2d.offsetX;
+			bounds.y += render.r2d.offsetY;
+			render.r2d.offset(0, 0);
 			
 			if(FragmentFilterMode.ABOVE == mode){
 				render.r2d.uploadProjectionMatrix(context3d);
