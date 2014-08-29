@@ -9,6 +9,7 @@ package snjdck.g2d.support
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.asset.IGpuTexture;
 
 	final public class QuadBatch
 	{
@@ -22,19 +23,25 @@ package snjdck.g2d.support
 		private var gpuIndexBuffer:GpuIndexBuffer;
 		private var isGpuBufferDirty:Boolean;
 		
+		private var renderStateBatch:RenderStateBatch;
+		
 		public function QuadBatch()
 		{
 			vertexBuffer = new Vector.<Number>();
 			indexBuffer = new Vector.<uint>();
+			renderStateBatch = new RenderStateBatch();
 		}
 		
 		public function clear():void
 		{
+			renderStateBatch.clear();
 			quadCount = 0;
 		}
 		
-		public function addQuad(quad:VertexData):void
+		public function addQuad(quad:VertexData, texture:IGpuTexture):void
 		{
+			renderStateBatch.add(texture);
+			
 			if(maxQuadCount <= quadCount)
 			{
 				var offset:int = 4 * maxQuadCount;
@@ -70,7 +77,7 @@ package snjdck.g2d.support
 				context3d.setVertexBufferAt(2, gpuVertexBuffer, VertexData.OFFSET_COLOR, Context3DVertexBufferFormat.FLOAT_4);
 			}
 			
-			context3d.drawTriangles(gpuIndexBuffer, 0, quadCount * 2);
+			renderStateBatch.draw(context3d, gpuIndexBuffer);
 		}
 		
 		private function updateGpuBuffer():void

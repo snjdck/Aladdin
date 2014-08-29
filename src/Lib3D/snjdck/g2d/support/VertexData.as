@@ -9,10 +9,10 @@ package snjdck.g2d.support
 	final public class VertexData
 	{
 		static public const OFFSET_XYZ:int = 0;
-		static public const OFFSET_UV:int = 3;
-		static public const OFFSET_COLOR:int = 5;
+		static public const OFFSET_UV:int = 2;
+		static public const OFFSET_COLOR:int = 4;
 		
-		static public const DATA32_PER_VERTEX:int = 9;
+		static public const DATA32_PER_VERTEX:int = 8;
 		static public const DATA32_PER_QUAD:int = 4 * DATA32_PER_VERTEX;
 		
 		private var buffer:Vector.<Number>;
@@ -28,7 +28,6 @@ package snjdck.g2d.support
 			
 			buffer[offset++] = x + ratioX * width;
 			buffer[offset++] = y + ratioY * height;
-			buffer[offset++] = 0;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
@@ -37,7 +36,6 @@ package snjdck.g2d.support
 			
 			buffer[offset++] = x + ratioX * width;
 			buffer[offset++] = y + ratioY * height;
-			buffer[offset++] = 0;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
@@ -46,7 +44,6 @@ package snjdck.g2d.support
 			
 			buffer[offset++] = x + ratioX * width;
 			buffer[offset++] = y + ratioY * height;
-			buffer[offset++] = 0;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
@@ -55,7 +52,6 @@ package snjdck.g2d.support
 			
 			buffer[offset++] = x + ratioX * width;
 			buffer[offset++] = y + ratioY * height;
-			buffer[offset++] = 0;
 			buffer[offset++] = ratioX;
 			buffer[offset++] = ratioY;
 			buffer[offset++] = buffer[offset++] = buffer[offset++] = buffer[offset++] = 1;
@@ -68,7 +64,7 @@ package snjdck.g2d.support
 		
 		public function transformPosition(matrix:Matrix):void
 		{
-			var offset:int = 0;
+			var offset:int = OFFSET_XYZ;
 			for(var i:int=0; i<4; i++)
 			{
 				transformCoords(matrix, buffer[offset], buffer[offset+1], tempPt);
@@ -80,22 +76,12 @@ package snjdck.g2d.support
 		
 		public function transformUV(matrix:Matrix):void
 		{
-			var offset:int = 3;
+			var offset:int = OFFSET_UV;
 			for(var i:int=0; i<4; i++)
 			{
 				transformCoords(matrix, buffer[offset], buffer[offset+1], tempPt);
 				buffer[offset] = tempPt.x;
 				buffer[offset+1] = tempPt.y;
-				offset += DATA32_PER_VERTEX;
-			}
-		}
-		
-		public function set z(value:Number):void
-		{
-			var offset:int = 2;
-			for(var i:int=0; i<4; i++)
-			{
-				buffer[offset] = value;
 				offset += DATA32_PER_VERTEX;
 			}
 		}
@@ -106,7 +92,7 @@ package snjdck.g2d.support
 			var green:Number =	((value >> 8) & 0xFF) / 0xFF;
 			var blue:Number =	(value & 0xFF) / 0xFF;
 			
-			var offset:int = 5;
+			var offset:int = OFFSET_COLOR;
 			for(var i:int=0; i<4; i++)
 			{
 				buffer[offset] = red;
@@ -118,7 +104,7 @@ package snjdck.g2d.support
 		
 		public function set alpha(value:Number):void
 		{
-			var offset:int = 8;
+			var offset:int = OFFSET_COLOR + 3;
 			for(var i:int=0; i<4; i++)
 			{
 				buffer[offset] = value;
@@ -131,7 +117,7 @@ package snjdck.g2d.support
 			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;
 			var minY:Number = Number.MAX_VALUE, maxY:Number = Number.MIN_VALUE;
 			
-			var offset:int = 0;
+			var offset:int = OFFSET_XYZ;
 			for(var i:int=0; i<4; i++)
 			{
 				transformCoords(transform, buffer[offset], buffer[offset+1], tempPt);

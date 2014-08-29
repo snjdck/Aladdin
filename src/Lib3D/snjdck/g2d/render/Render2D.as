@@ -22,8 +22,6 @@ package snjdck.g2d.render
 		
 		private const quadBatch:QuadBatch = new QuadBatch();
 		
-		private var currentGpuTexture:IGpuTexture;
-		
 		public function Render2D()
 		{
 		}
@@ -83,18 +81,11 @@ package snjdck.g2d.render
 		{
 			quadBatch.draw(context3d);
 			quadBatch.clear();
-			
-			currentGpuTexture = null;
 		}
 		
 		public function drawTexture(context3d:GpuContext, vertexData:VertexData, gpuTexture:IGpuTexture):void
 		{
-			if(gpuTexture != currentGpuTexture){
-				drawEnd(context3d);
-				context3d.setTextureAt(0, gpuTexture);
-				currentGpuTexture = gpuTexture;
-			}
-			quadBatch.addQuad(vertexData);
+			quadBatch.addQuad(vertexData, gpuTexture);
 		}
 	}
 }
