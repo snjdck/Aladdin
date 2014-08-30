@@ -1,21 +1,11 @@
 package snjdck.gpu.projection
 {
-	import snjdck.gpu.asset.GpuContext;
-
 	/**
 	 * 平行投影,left hand
 	 */	
-	final public class OrthoProjection3D
+	final public class OrthoProjection3D extends Projection
 	{
-		private const transform:Vector.<Number> = new Vector.<Number>(16, true);
-		
-		public function OrthoProjection3D()
-		{
-			transform[0] = 1;
-			transform[5] = 1;
-			transform[10] = 1;
-			transform[15] = 1;
-		}
+		public function OrthoProjection3D(){}
 		
 		public function resize(w:Number, h:Number):void
 		{
@@ -33,11 +23,6 @@ package snjdck.gpu.projection
 		{
 			transform[3] = transform[0] * dx;
 			transform[7] = transform[5] * dy;
-		}
-		
-		public function upload(context3d:GpuContext):void
-		{
-			context3d.setVc(0, transform, 4);
 		}
 	}
 }

@@ -1,10 +1,13 @@
 #========================
 
-@g2d.vs
+@g2d.vs_old
 vt0 = va0
 vt0.x = dp4: va0, vc0
 vt0.y = dp4: va0, vc1
 op = vt0
+
+@g2d.vs
+op = m44: va0, vc0
 
 ﻿#========================
 

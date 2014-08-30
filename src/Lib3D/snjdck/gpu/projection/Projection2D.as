@@ -1,10 +1,7 @@
 package snjdck.gpu.projection
 {
-	import snjdck.gpu.asset.GpuContext;
-
-	final public class Projection2D
+	final public class Projection2D extends Projection
 	{
-		private const transform:Vector.<Number> = new Vector.<Number>(8, true);
 		private var _offsetX:Number;
 		private var _offsetY:Number;
 		
@@ -25,11 +22,6 @@ package snjdck.gpu.projection
 			_offsetY = dy;
 			transform[3] = transform[0] * dx - 1.0;
 			transform[7] = transform[5] * dy + 1.0;
-		}
-		
-		public function upload(context3d:GpuContext):void
-		{
-			context3d.setVc(0, transform, 2);
 		}
 		
 		public function get offsetX():Number
