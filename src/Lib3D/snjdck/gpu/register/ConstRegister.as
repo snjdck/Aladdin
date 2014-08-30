@@ -13,12 +13,16 @@ package snjdck.gpu.register
 		private var slotUseInfo:Vector.<Boolean>;
 		private var slotData:Vector.<Number>;
 		
+		private var beginIndex:int;
+		private var endIndex:int;
+		
 		public function ConstRegister(slotCount:int, programType:String)
 		{
 			this.programType = programType;
 			this.slotCount = slotCount;
 			slotUseInfo = new Vector.<Boolean>(slotCount, true);
 			slotData = new Vector.<Number>(slotCount * 4, true);
+			clear();
 		}
 		
 		public function setByVector(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
@@ -56,7 +60,7 @@ package snjdck.gpu.register
 			slotData[index+10] = rawData[10];
 			slotData[index+11] = rawData[14];
 		}
-		
+		/*
 		public function upload(context3d:Context3D):void
 		{
 			var firstRegister:int;
@@ -83,12 +87,29 @@ package snjdck.gpu.register
 				}
 			}
 		}
+		//*/
+		public function upload(context3d:Context3D):void
+		{
+			if(beginIndex >= endIndex){
+				return;
+			}
+			var numRegisters:int = endIndex - beginIndex;
+			var uploadData:Vector.<Number>;
+			if(beginIndex > 0){
+				uploadData = sharedFloatBuffer;
+				array.copy(slotData, sharedFloatBuffer, numRegisters*4, beginIndex*4);
+			}else{
+				uploadData = slotData;
+			}
+			context3d.setProgramConstantsFromVector(programType, beginIndex, uploadData, numRegisters);
+			trace(beginIndex, endIndex, numRegisters);
+		}
 		
 		public function merge(other:ConstRegister):void
 		{
 			var otherSlotUseInfo:Vector.<Boolean> = other.slotUseInfo;
 			var otherSlotData:Vector.<Number> = other.slotData;
-			for(var i:int=0; i<slotCount; i++){
+			for(var i:int=other.beginIndex; i<other.endIndex; i++){
 				if(!otherSlotUseInfo[i]){
 					continue;
 				}
@@ -99,12 +120,11 @@ package snjdck.gpu.register
 					++offset;
 				}
 			}
-		}
-		
-		public function clear():void
-		{
-			for(var i:int=0; i<slotCount; i++){
-				slotUseInfo[i] = false;
+			if(other.beginIndex < beginIndex){
+				beginIndex = other.beginIndex;
+			}
+			if(other.endIndex > endIndex){
+				endIndex = other.endIndex;
 			}
 		}
 		
@@ -120,13 +140,30 @@ package snjdck.gpu.register
 					++offset;
 				}
 			}
+			beginIndex = other.beginIndex;
+			endIndex = other.endIndex;
+		}
+		
+		public function clear():void
+		{
+			for(var i:int=beginIndex; i<endIndex; i++){
+				slotUseInfo[i] = false;
+			}
+			beginIndex = slotCount;
+			endIndex = 0;
 		}
 		
 		private function setUseInfo(firstRegister:int, numRegisters:int):void
 		{
-			for(var i:int=0; i<numRegisters; i++){
-				var index:int = firstRegister + i;
-				slotUseInfo[index] = true;
+			var lastRegister:int = firstRegister + numRegisters;
+			for(var i:int=firstRegister; i<lastRegister; i++){
+				slotUseInfo[i] = true;
+			}
+			if(firstRegister < beginIndex){
+				beginIndex = firstRegister;
+			}
+			if(lastRegister > endIndex){
+				endIndex = lastRegister;
 			}
 		}
 		
