@@ -34,7 +34,7 @@ package snjdck.gpu.asset
 		private var vaUseInfo:uint;
 		private var fsUseInfo:uint;
 		
-		private var _currentRenderTarget:GpuRenderTarget;
+		private var _renderTarget:GpuRenderTarget;
 		private var backBufferWidth:int;
 		private var backBufferHeight:int;
 		
@@ -149,34 +149,39 @@ package snjdck.gpu.asset
 			}
 		}
 		
-		public function setRenderToTexture(renderTarget:GpuRenderTarget):void
+		public function get renderTarget():GpuRenderTarget
 		{
-			if(_currentRenderTarget == renderTarget){
+			return _renderTarget;
+		}
+		
+		public function set renderTarget(value:GpuRenderTarget):void
+		{
+			setRenderToTexture(value, 0);
+		}
+		
+		public function setRenderToTexture(texture:GpuRenderTarget, colorOutputIndex:int):void
+		{
+			if(_renderTarget == texture){
 				return;
 			}
-			_currentRenderTarget = renderTarget;
-			if(null == renderTarget){
+			_renderTarget = texture;
+			if(null == _renderTarget){
 				context3d.setRenderToBackBuffer();
 				return;
 			}
 			context3d.setRenderToTexture(
-				renderTarget.getRawGpuAsset(context3d), true,
-				renderTarget.antiAlias, 0, 0
+				_renderTarget.getRawGpuAsset(context3d), true,
+				_renderTarget.antiAlias, 0, colorOutputIndex
 			);
-		}
-		
-		public function get currentRenderTarget():GpuRenderTarget
-		{
-			return _currentRenderTarget;
 		}
 		
 		public function setRenderToBackBuffer():void
 		{
-			if(null == _currentRenderTarget){
+			if(null == _renderTarget){
 				return;
 			}
 			context3d.setRenderToBackBuffer();
-			_currentRenderTarget = null;
+			_renderTarget = null;
 		}
 		
 		public function setVc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
@@ -263,18 +268,18 @@ package snjdck.gpu.asset
 		
 		public function get bufferWidth():int
 		{
-			if(null == _currentRenderTarget){
+			if(null == _renderTarget){
 				return backBufferWidth;
 			}
-			return _currentRenderTarget.width;
+			return _renderTarget.width;
 		}
 		
 		public function get bufferHeight():int
 		{
-			if(null == _currentRenderTarget){
+			if(null == _renderTarget){
 				return backBufferHeight;
 			}
-			return _currentRenderTarget.height;
+			return _renderTarget.height;
 		}
 	}
 }

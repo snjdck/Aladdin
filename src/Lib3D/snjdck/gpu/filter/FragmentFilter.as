@@ -26,7 +26,7 @@ package snjdck.gpu.filter
 			render.r2d.offset(-bounds.x, -bounds.y);
 			render.r2d.uploadProjectionMatrix(context3d);
 			
-			context3d.setRenderToTexture(image);
+			context3d.renderTarget = image;
 			image.clear(context3d);
 			
 			target.draw(render, context3d);
@@ -38,7 +38,7 @@ package snjdck.gpu.filter
 		final public function draw(target:DisplayObject2D, render:GpuRender, context3d:GpuContext):void
 		{
 			render.r2d.drawEnd(context3d);
-			const prevRenderTarget:GpuRenderTarget = context3d.currentRenderTarget;
+			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			
 			onDrawBegin(target);
 			drawTarget(target, render, context3d);
@@ -50,7 +50,7 @@ package snjdck.gpu.filter
 			if(FragmentFilterMode.ABOVE == mode){
 				render.r2d.uploadProjectionMatrix(context3d);
 				vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
-				context3d.setRenderToTexture(prevRenderTarget);
+				context3d.renderTarget = prevRenderTarget;
 				render.r2d.drawTexture(context3d, vertexData, image);
 				render.r2d.drawEnd(context3d);
 			}

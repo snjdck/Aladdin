@@ -101,9 +101,9 @@ package snjdck.gpu.filter
 					context3d.setFc(2, glowColor, 1);
 					vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
 					render.r2d.uploadProjectionMatrix(context3d);
-					context3d.setRenderToTexture(prevRenderTarget);
+					context3d.renderTarget = prevRenderTarget;
 				}else{
-					context3d.setRenderToTexture(frontBuffer);
+					context3d.renderTarget = frontBuffer;
 					frontBuffer.clear(context3d);
 				}
 				

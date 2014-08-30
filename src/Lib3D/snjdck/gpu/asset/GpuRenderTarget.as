@@ -43,7 +43,7 @@ package snjdck.gpu.asset
 		
 		public function setRenderToSelf(context3d:GpuContext):void
 		{
-			context3d.setRenderToTexture(this);
+			context3d.renderTarget = this;
 		}
 		
 		public function clear(context3d:GpuContext):void
