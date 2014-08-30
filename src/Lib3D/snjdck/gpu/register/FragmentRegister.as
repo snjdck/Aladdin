@@ -1,7 +1,6 @@
 package snjdck.gpu.register
 {
-	import flash.display3D.Context3D;
-	
+	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
 
 	final public class FragmentRegister
@@ -24,12 +23,11 @@ package snjdck.gpu.register
 			slotData[slotIndex] = texture;
 		}
 		
-		public function upload(context3d:Context3D):void
+		public function upload(context3d:GpuContext):void
 		{
 			for(var i:int=0; i<slotCount; i++){
 				if(slotUseInfo[i]){
-					var texture:IGpuTexture = slotData[i];
-					context3d.setTextureAt(i, texture.getRawGpuAsset(context3d));
+					context3d.setTextureAt(i, slotData[i]);
 				}
 			}
 		}

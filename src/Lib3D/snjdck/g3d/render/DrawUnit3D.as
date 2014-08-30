@@ -89,7 +89,7 @@ package snjdck.g3d.render
 			
 			context3d.setVcReg(vcSlot);
 			context3d.setFcReg(fcSlot);
-			context3d.setVaReg(vaSlot);
+			vaSlot.upload(context3d);
 			
 			context3d.drawTriangles(indexBuffer);
 		}

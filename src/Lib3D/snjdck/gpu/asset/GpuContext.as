@@ -10,8 +10,6 @@ package snjdck.gpu.asset
 	
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.register.ConstRegister;
-	import snjdck.gpu.register.FragmentRegister;
-	import snjdck.gpu.register.VertexRegister;
 
 	final public class GpuContext
 	{
@@ -38,8 +36,6 @@ package snjdck.gpu.asset
 		private var backBufferWidth:int;
 		private var backBufferHeight:int;
 		
-		private var vaReg:VertexRegister;
-		private var fsReg:FragmentRegister;
 		private var vcReg:ConstRegister;
 		private var fcReg:ConstRegister;
 		
@@ -56,8 +52,6 @@ package snjdck.gpu.asset
 			
 			vcReg = new ConstRegister(MAX_VC_COUNT, Context3DProgramType.VERTEX);
 			fcReg = new ConstRegister(MAX_FC_COUNT, Context3DProgramType.FRAGMENT);
-			vaReg = new VertexRegister(MAX_VA_COUNT);
-			fsReg = new FragmentRegister(MAX_FS_COUNT);
 		}
 		
 		public function get driverInfo():String
@@ -204,11 +198,6 @@ package snjdck.gpu.asset
 			fcReg.merge(constReg);
 		}
 		
-		public function setVaReg(reg:VertexRegister):void
-		{
-			vaReg.merge(reg);
-		}
-		
 		public function setProgram(program:GpuProgram):void
 		{
 			if(program == currentProgram){
@@ -239,20 +228,18 @@ package snjdck.gpu.asset
 		
 		public function setVertexBufferAt(slotIndex:int, buffer:GpuVertexBuffer, bufferOffset:int, format:String):void
 		{
-			vaReg.setVa(slotIndex, buffer, bufferOffset, format);
+			context3d.setVertexBufferAt(slotIndex, buffer.getRawGpuAsset(context3d), bufferOffset, format);
 		}
 		
 		public function setTextureAt(slotIndex:int, texture:IGpuTexture):void
 		{
-			fsReg.setFs(slotIndex, texture);
+			context3d.setTextureAt(slotIndex, texture.getRawGpuAsset(context3d));
 		}
 		
 		public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
 		{
 			vcReg.upload(context3d);vcReg.clear();
 			fcReg.upload(context3d);fcReg.clear();
-			vaReg.upload(context3d);vaReg.clear();
-			fsReg.upload(context3d);fsReg.clear();
 			context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d), firstIndex, numTriangles);
 		}
 		

@@ -1,7 +1,6 @@
 package snjdck.gpu.register
 {
-	import flash.display3D.Context3D;
-	
+	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 
 	final public class VertexRegister
@@ -30,12 +29,11 @@ package snjdck.gpu.register
 			slotFormat[slotIndex] = format;
 		}
 		
-		public function upload(context3d:Context3D):void
+		public function upload(context3d:GpuContext):void
 		{
 			for(var i:int=0; i<slotCount; i++){
 				if(slotUseInfo[i]){
-					var buffer:GpuVertexBuffer = slotData[i];
-					context3d.setVertexBufferAt(i, buffer.getRawGpuAsset(context3d), slotOffset[i], slotFormat[i]);
+					context3d.setVertexBufferAt(i, slotData[i], slotOffset[i], slotFormat[i]);
 				}
 			}
 		}
