@@ -22,14 +22,11 @@ package snjdck.gpu
 		public const scene3d:Object3D = new Object3D();
 		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
-		private const render:GpuRender = new GpuRender();
-		
 		private var renderTarget:IGpuRenderTarget;
 		
 		public function ViewPort3D(renderTarget:IGpuRenderTarget)
 		{
 			this.renderTarget = renderTarget;
-			render.resize(renderTarget.width, renderTarget.height);
 		}
 		
 		public function update(timeElapsed:int):void
@@ -38,13 +35,15 @@ package snjdck.gpu
 			scene2d.onUpdate(timeElapsed, null, 1);
 		}
 		
-		public function draw(context3d:GpuContext):void
+		public function draw(context3d:GpuContext, render:GpuRender):void
 		{
-			scene3d.preDrawRenderTargets(context3d);
-			scene2d.preDrawRenderTargets(context3d);
+			scene3d.preDrawRenderTargets(context3d, render);
+			scene2d.preDrawRenderTargets(context3d, render);
 			
 			renderTarget.setRenderToSelf(context3d);
 			renderTarget.clear(context3d);
+			
+			render.resize(renderTarget.width, renderTarget.height);
 			
 			render.drawScene3D(scene3d, context3d);
 			render.drawScene2D(scene2d, context3d);

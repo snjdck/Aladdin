@@ -8,6 +8,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
@@ -50,10 +51,19 @@ package snjdck.g3d.obj3d
 			viewPort.update(timeElapsed);
 		}
 		
-		override public function preDrawRenderTargets(context3d:GpuContext):void
+		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
-			super.preDrawRenderTargets(context3d);
-			viewPort.draw(context3d);
+//			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
+//			viewPort.draw(context3d, render);
+//			context3d.renderTarget = prevRenderTarget;
+//			render.r2d.uploadProjectionMatrix(context3d);
+			super.draw(render, context3d);
+		}
+		
+		override public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
+		{
+			super.preDrawRenderTargets(context3d, render);
+			viewPort.draw(context3d, render);
 		}
 	}
 }

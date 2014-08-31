@@ -10,11 +10,12 @@ package snjdck.g3d.core
 	
 	import snjdck.g2d.core.IDisplayObject;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.asset.GpuContext;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
 	
@@ -105,11 +106,11 @@ package snjdck.g3d.core
 			}
 		}
 		
-		virtual public function preDrawRenderTargets(context3d:GpuContext):void
+		virtual public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
 		{
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.visible){
-					child.preDrawRenderTargets(context3d);
+					child.preDrawRenderTargets(context3d, render);
 				}
 			}
 		}

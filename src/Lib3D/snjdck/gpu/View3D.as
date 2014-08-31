@@ -27,6 +27,7 @@ package snjdck.gpu
 		private var hasInit:Boolean;
 		
 		private var viewPort:ViewPort3D;
+		private const render:GpuRender = new GpuRender();
 		
 		private var _renderMode:String;
 		private var _profile:String;
@@ -155,7 +156,7 @@ package snjdck.gpu
 		public function onTick(timeElapsed:int):void
 		{
 			viewPort.update(timeElapsed * timeScale);
-			viewPort.draw(context3d);
+			viewPort.draw(context3d, render);
 			context3d.present();
 		}
 		

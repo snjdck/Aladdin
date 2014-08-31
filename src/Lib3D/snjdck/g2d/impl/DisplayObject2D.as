@@ -138,7 +138,7 @@ package snjdck.g2d.impl
 			}
 		}
 		*/
-		virtual public function preDrawRenderTargets(context3d:GpuContext):void
+		virtual public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
 		{
 		}
 		

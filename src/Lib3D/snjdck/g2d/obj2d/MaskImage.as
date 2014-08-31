@@ -5,6 +5,7 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
@@ -44,10 +45,10 @@ package snjdck.g2d.obj2d
 			viewPort.update(timeElapsed);
 		}
 		
-		override public function preDrawRenderTargets(context3d:GpuContext):void
+		override public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
 		{
-			super.preDrawRenderTargets(context3d);
-			viewPort.draw(context3d);
+			super.preDrawRenderTargets(context3d, render);
+			viewPort.draw(context3d, render);
 		}
 	}
 }

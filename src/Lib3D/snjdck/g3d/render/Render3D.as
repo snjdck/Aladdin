@@ -14,13 +14,32 @@ package snjdck.g3d.render
 	public class Render3D implements IRender
 	{
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
-		private const projection:OrthoProjection3D = new OrthoProjection3D();
+		private const projectionStack:Vector.<OrthoProjection3D> = new <OrthoProjection3D>[new OrthoProjection3D()];
+		private var projectionIndex:int;
 		
 		public function Render3D()
 		{
-			projection.setDepthCliping(4000, -1000);
 //			shadowMatrix = new Matrix3D();
 //			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
+		}
+		
+		private function get projection():OrthoProjection3D
+		{
+			return projectionStack[projectionIndex];
+		}
+		
+		public function pushScreen():void
+		{
+			++projectionIndex;
+			if(projectionStack.length <= projectionIndex){
+				projectionStack.push(new OrthoProjection3D());
+			}
+		}
+		
+		public function popScreen():void
+		{
+			projection.offset(0, 0);
+			--projectionIndex;
 		}
 		
 		public function setScreenSize(width:int, height:int):void

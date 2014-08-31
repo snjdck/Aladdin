@@ -5,7 +5,10 @@ package snjdck.gpu.projection
 	 */	
 	final public class OrthoProjection3D extends Projection
 	{
-		public function OrthoProjection3D(){}
+		public function OrthoProjection3D()
+		{
+			setDepthCliping(4000, -1000);
+		}
 		
 		public function resize(w:Number, h:Number):void
 		{

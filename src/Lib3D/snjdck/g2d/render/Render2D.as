@@ -22,9 +22,7 @@ package snjdck.g2d.render
 		
 		private const quadBatch:QuadBatch = new QuadBatch();
 		
-		public function Render2D()
-		{
-		}
+		public function Render2D(){}
 		
 		private function get projection():Projection2D
 		{
