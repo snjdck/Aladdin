@@ -89,7 +89,7 @@ package snjdck.gpu.filter
 				updateParameters(i);
 				
 				context3d.setVc(4, mOffsets, 1);
-				context3d.setFc(1, mWeights, 1);
+				context3d.setFc(0, mWeights, 1);
 				
 				swapBuffer();
 				
@@ -98,7 +98,7 @@ package snjdck.gpu.filter
 				if(isLastPass){
 					context3d.setProgram(AssetMgr.Instance.getProgram("blur_tint"));
 					context3d.setBlendFactor(blendMode);
-					context3d.setFc(2, glowColor, 1);
+					context3d.setFc(1, glowColor, 1);
 					vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
 					render.r2d.uploadProjectionMatrix(context3d);
 					context3d.renderTarget = prevRenderTarget;

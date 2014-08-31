@@ -1,6 +1,5 @@
 package snjdck.g3d.render
 {
-	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix3D;
 	
@@ -18,6 +17,9 @@ package snjdck.g3d.render
 
 	final public class DrawUnit3D
 	{
+		static private const MAX_VA_COUNT:uint = 8;
+		static private const MAX_FS_COUNT:uint = 8;
+		
 		private var vaSlot:VertexRegister;
 		private var vcSlot:ConstRegister;
 		private var fcSlot:ConstRegister;
@@ -33,9 +35,9 @@ package snjdck.g3d.render
 		
 		public function DrawUnit3D()
 		{
-			vaSlot = new VertexRegister(GpuContext.MAX_VA_COUNT);
-			vcSlot = new ConstRegister(GpuContext.MAX_VC_COUNT, Context3DProgramType.VERTEX);
-			fcSlot = new ConstRegister(GpuContext.MAX_FC_COUNT, Context3DProgramType.FRAGMENT);
+			vaSlot = new VertexRegister(MAX_VA_COUNT);
+			vcSlot = ConstRegister.NewVertexConstRegister();
+			fcSlot = ConstRegister.NewFragmentConstRegister();
 			
 			worldMatrix = new Matrix3D();
 			

@@ -3,7 +3,6 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
-	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
 	import flash.geom.Rectangle;
@@ -13,11 +12,6 @@ package snjdck.gpu.asset
 
 	final public class GpuContext
 	{
-		static public const MAX_VA_COUNT:uint = 8;
-		static public const MAX_FS_COUNT:uint = 8;
-		static public const MAX_VC_COUNT:uint = 128;
-		static public const MAX_FC_COUNT:uint = 28;
-		
 		private var context3d:Context3D;
 		
 		private var blendMode:BlendMode;
@@ -50,8 +44,8 @@ package snjdck.gpu.asset
 			
 			stencilRefValue = 0xFFFF00;
 			
-			vcReg = new ConstRegister(MAX_VC_COUNT, Context3DProgramType.VERTEX);
-			fcReg = new ConstRegister(MAX_FC_COUNT, Context3DProgramType.FRAGMENT);
+			vcReg = ConstRegister.NewVertexConstRegister();
+			fcReg = ConstRegister.NewFragmentConstRegister();
 		}
 		
 		public function get driverInfo():String

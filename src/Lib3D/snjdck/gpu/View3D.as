@@ -16,6 +16,7 @@ package snjdck.gpu
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuRenderTarget;
+	import snjdck.gpu.register.ConstRegister;
 	
 	use namespace ns_g3d;
 	
@@ -133,13 +134,7 @@ package snjdck.gpu
 		protected function onDeviceLost():void
 		{
 			context3d.configureBackBuffer(_width, _height, antiAlias);
-			
-			var fcData:Vector.<Number> = new Vector.<Number>();
-			
-			fcData.push(0.004, 0, 0, 0.6);//0.6 是阴影的alpha值
-			
-			var regCount:int = Math.ceil(fcData.length / 4);
-			context3d.setFc(0, fcData, regCount);
+			ConstRegister.InitReserved(stage3d.context3D);
 		}
 		
 		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D

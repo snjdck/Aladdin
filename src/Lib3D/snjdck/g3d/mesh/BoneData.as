@@ -6,8 +6,8 @@ package snjdck.g3d.mesh
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.gpu.asset.GpuAssetFactory;
-	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.register.ConstRegister;
 	
 	use namespace ns_g3d;
 	
@@ -25,7 +25,7 @@ package snjdck.g3d.mesh
 		
 		static private const BONE_REG_OFFSET:int = 8;
 		
-		static private const MAX_BONE_COUNT_PER_GEOMETRY:int = BoneIndexToBoneId(GpuContext.MAX_VC_COUNT);
+		static private const MAX_BONE_COUNT_PER_GEOMETRY:int = BoneIndexToBoneId(ConstRegister.USED_VC_COUNT);
 		/** 每个顶点绑定的骨骼数量最大为12根 */
 		static private const MAX_BONE_COUNT_PER_VERTEX:int = 12;
 		static private const data32PerVertex:int = MAX_BONE_COUNT_PER_VERTEX * 2;

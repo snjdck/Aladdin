@@ -1,12 +1,37 @@
 package snjdck.gpu.register
 {
 	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProgramType;
 	import flash.geom.Matrix3D;
 	
 	import array.copy;
 
 	final public class ConstRegister
 	{
+		static private const MAX_VC_COUNT:uint = 128;
+		static private const MAX_FC_COUNT:uint = 28;
+		
+		static private const RESERVED_FC_DATA:Vector.<Number> = new <Number>[0.004, 0, 0, 0.6];
+		static private const RESERVED_FC_COUNT:uint = Math.ceil(RESERVED_FC_DATA.length / 4);
+		
+		static public const USED_VC_COUNT:uint = MAX_VC_COUNT;
+		static public const USED_FC_COUNT:uint = MAX_FC_COUNT - RESERVED_FC_COUNT;
+		
+		static public function InitReserved(context3d:Context3D):void
+		{
+			context3d.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, USED_FC_COUNT, RESERVED_FC_DATA, RESERVED_FC_COUNT);
+		}
+		
+		static public function NewVertexConstRegister():ConstRegister
+		{
+			return new ConstRegister(USED_VC_COUNT, Context3DProgramType.VERTEX);
+		}
+		
+		static public function NewFragmentConstRegister():ConstRegister
+		{
+			return new ConstRegister(USED_FC_COUNT, Context3DProgramType.FRAGMENT);
+		}
+		
 		private var programType:String;
 		private var slotCount:int;
 		
@@ -60,49 +85,13 @@ package snjdck.gpu.register
 			slotData[index+10] = rawData[10];
 			slotData[index+11] = rawData[14];
 		}
-		/*
-		public function upload(context3d:Context3D):void
-		{
-			var firstRegister:int;
-			var numRegisters:int;
-			var flag:Boolean;
-			
-			for(var i:int=0; i<slotCount; i++){
-				var test:Boolean = slotUseInfo[i];
-				if(flag){
-					if(test){
-						++numRegisters;
-					}
-					if(!test || i+1==slotCount){
-						context3d.setProgramConstantsFromVector(programType, firstRegister,
-							array.copy(slotData, sharedFloatBuffer, numRegisters*4, firstRegister*4),
-							numRegisters
-						);
-						flag = false;
-					}
-				}else if(test){
-					firstRegister = i;
-					numRegisters = 1;
-					flag = true;
-				}
-			}
-		}
-		//*/
+		
 		public function upload(context3d:Context3D):void
 		{
 			if(beginIndex >= endIndex){
 				return;
 			}
-			var numRegisters:int = endIndex - beginIndex;
-			var uploadData:Vector.<Number>;
-			if(beginIndex > 0){
-				uploadData = sharedFloatBuffer;
-				array.copy(slotData, sharedFloatBuffer, numRegisters*4, beginIndex*4);
-			}else{
-				uploadData = slotData;
-			}
-			context3d.setProgramConstantsFromVector(programType, beginIndex, uploadData, numRegisters);
-			trace(beginIndex, endIndex, numRegisters);
+			context3d.setProgramConstantsFromVector(programType, 0, slotData, endIndex);
 		}
 		
 		public function merge(other:ConstRegister):void
@@ -166,7 +155,5 @@ package snjdck.gpu.register
 				endIndex = lastRegister;
 			}
 		}
-		
-		static private const sharedFloatBuffer:Vector.<Number> = new Vector.<Number>();
 	}
 }

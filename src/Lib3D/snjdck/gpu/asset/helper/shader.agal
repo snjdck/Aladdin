@@ -1,14 +1,6 @@
 #========================
-
-@g2d.vs_old
-vt0 = va0
-vt0.x = dp4: va0, vc0
-vt0.y = dp4: va0, vc1
-op = vt0
-
 @g2d.vs
 op = m44: va0, vc0
-
 ﻿#========================
 
 @g2d.raw
@@ -16,7 +8,7 @@ ${g2d.vs}
 v0 = va1
 ft0 = tex: v0, fs0<clamp,${0}>
 ft0.w *= v0.z
-ft1.x = ft0.w - fc0.x
+ft1.x = ft0.w - fc27.x
 kil:ft1.x
 oc = ft0
 
@@ -35,26 +27,27 @@ v4 = va1 + vc4.zw
 
 @blur.fs
 ft0 = tex: v0, fs0<clamp,linear>
-ft1 = ft0 * fc1.x
+ft1 = ft0 * fc0.x
 ft0 = tex: v1, fs0<clamp,linear>
-ft1 += ft0 * fc1.z
+ft1 += ft0 * fc0.z
 ft0 = tex: v2, fs0<clamp,linear>
-ft1 += ft0 * fc1.y
+ft1 += ft0 * fc0.y
 ft0 = tex: v3, fs0<clamp,linear>
-ft1 += ft0 * fc1.y
+ft1 += ft0 * fc0.y
 ft0 = tex: v4, fs0<clamp,linear>
-ft1 += ft0 * fc1.z
+ft0 *= fc0.z
 
 @blur
 ${blur.vs}
 ${blur.fs}
-oc = ft1
+oc = ft1 + ft0
 
 @blur_tint
 ${blur.vs}
 ${blur.fs}
-ft1.xyz = fc2 * ft1.w
-oc = ft1 * fc2.w
+ft1 += ft0
+ft1.xyz = fc1 * ft1.w
+oc = ft1 * fc1.w
 #========================
 
 @g2d_preDrawDepth
@@ -178,14 +171,14 @@ op = m44: vt1, vc0		#相机投影矩阵
 v0 = va1				#uv
 
 ft0 = tex: v0, fs0<>
-ft1.x = ft0.w - fc0.x
+ft1.x = ft0.w - fc27.x
 kil:ft1.x
 oc = ft0
 
 
 @shadowImp.agal
 op = m44: vt1, vc0		#相机投影矩阵
-oc = fc0.zzzw
+oc = fc27.zzzw
 
 
 @wireframeImp.agal
