@@ -380,6 +380,9 @@ package snjdck.g2d.impl
 				result.concat(target.transform);
 				target = target.parent;
 			}
+			if(null == targetSpace){
+				return;
+			}
 			targetSpace.calcWorldMatrix(tempMatrix2);
 			tempMatrix2.invert();
 			result.concat(tempMatrix2);

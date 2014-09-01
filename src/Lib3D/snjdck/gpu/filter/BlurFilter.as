@@ -41,7 +41,7 @@ package snjdck.gpu.filter
 		{
 			numPasses = Math.ceil(blurX) + Math.ceil(blurY);
 			
-			target.getBounds(target.parent, bounds);
+			target.getBounds(null, bounds);
 			bounds.inflate(Math.ceil(blurX)+4, Math.ceil(blurY)+4);
 			
 			frontBuffer = new GpuRenderTarget(bounds.width, bounds.height);
@@ -96,12 +96,8 @@ package snjdck.gpu.filter
 				const isLastPass:Boolean = (i + 1 == numPasses);
 				
 				if(isLastPass){
-					context3d.setProgram(AssetMgr.Instance.getProgram("blur_tint"));
-					context3d.setBlendFactor(blendMode);
-					context3d.setFc(1, glowColor, 1);
-					vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
-					render.r2d.uploadProjectionMatrix(context3d);
 					context3d.renderTarget = prevRenderTarget;
+					drawLastPass(render, context3d);
 				}else{
 					context3d.renderTarget = frontBuffer;
 					frontBuffer.clear(context3d);
@@ -111,6 +107,15 @@ package snjdck.gpu.filter
 				render.r2d.drawTexture(context3d, vertexData, texture);
 				render.r2d.drawEnd(context3d);
 			}
+		}
+		
+		private function drawLastPass(render:GpuRender, context3d:GpuContext):void
+		{
+			context3d.setProgram(AssetMgr.Instance.getProgram("blur_tint"));
+			context3d.setBlendFactor(blendMode);
+			context3d.setFc(1, glowColor, 1);
+			vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
+			render.r2d.uploadProjectionMatrix(context3d);
 		}
 		
 		private function swapBuffer():void
