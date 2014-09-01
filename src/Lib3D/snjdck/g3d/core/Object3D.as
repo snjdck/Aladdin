@@ -103,15 +103,6 @@ package snjdck.g3d.core
 			}
 		}
 		
-		virtual public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
-		{
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.visible){
-					child.preDrawRenderTargets(context3d, render);
-				}
-			}
-		}
-		
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){

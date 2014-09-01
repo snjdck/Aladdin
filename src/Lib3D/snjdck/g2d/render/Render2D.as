@@ -5,15 +5,12 @@ package snjdck.g2d.render
 	import snjdck.g2d.core.IRender;
 	import snjdck.g2d.support.QuadBatch;
 	import snjdck.g2d.support.VertexData;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
 	import snjdck.gpu.projection.Projection2D;
-	
-	use namespace ns_g3d;
 
 	final public class Render2D implements IRender
 	{

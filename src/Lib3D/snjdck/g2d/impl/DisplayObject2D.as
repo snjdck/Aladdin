@@ -137,10 +137,10 @@ package snjdck.g2d.impl
 				collector.addDrawUnit(pickUnit);
 			}
 		}
-		*/
 		virtual public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
 		{
 		}
+		*/
 		
 		[Inline]
 		final public function removeFromParent():void

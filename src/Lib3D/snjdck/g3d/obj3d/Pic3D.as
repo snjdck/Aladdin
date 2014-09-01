@@ -1,6 +1,5 @@
 package snjdck.g3d.obj3d
 {
-	import flash.display.BitmapData;
 	import flash.geom.Matrix;
 	import flash.lang.IDisposable;
 	
@@ -10,10 +9,8 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.ViewPort3D;
-	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
-	import snjdck.gpu.asset.IGpuTexture;
 	
 	use namespace ns_g3d;
 
@@ -53,17 +50,11 @@ package snjdck.g3d.obj3d
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
-//			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
-//			viewPort.draw(context3d, render);
-//			context3d.renderTarget = prevRenderTarget;
-//			render.r2d.uploadProjectionMatrix(context3d);
-			super.draw(render, context3d);
-		}
-		
-		override public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
-		{
-			super.preDrawRenderTargets(context3d, render);
+			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			viewPort.draw(context3d, render);
+			context3d.renderTarget = prevRenderTarget;
+			render.r2d.uploadProjectionMatrix(context3d);
+			super.draw(render, context3d);
 		}
 	}
 }

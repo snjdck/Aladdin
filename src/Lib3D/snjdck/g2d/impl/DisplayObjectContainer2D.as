@@ -151,13 +151,6 @@ package snjdck.g2d.impl
 			return null;
 		}
 		
-		override public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
-		{
-			for each(var child:DisplayObject2D in _childList){
-				child.preDrawRenderTargets(context3d, render);
-			}
-		}
-		
 		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
 		{
 			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);

@@ -37,16 +37,16 @@ package snjdck.gpu
 		
 		public function draw(context3d:GpuContext, render:GpuRender):void
 		{
-			scene3d.preDrawRenderTargets(context3d, render);
-			scene2d.preDrawRenderTargets(context3d, render);
-			
 			renderTarget.setRenderToSelf(context3d);
 			renderTarget.clear(context3d);
 			
+			render.pushScreen();
 			render.resize(renderTarget.width, renderTarget.height);
 			
 			render.drawScene3D(scene3d, context3d);
 			render.drawScene2D(scene2d, context3d);
+			
+			render.popScreen();
 		}
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void

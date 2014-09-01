@@ -14,10 +14,8 @@ package snjdck.gpu
 		private var _screentWidth:int;
 		private var _screentHeight:int;
 		
-		public function GpuRender()
-		{
-		}
-		/*
+		public function GpuRender(){}
+		
 		public function pushScreen():void
 		{
 			r3d.pushScreen();
@@ -29,7 +27,7 @@ package snjdck.gpu
 			r3d.popScreen();
 			r2d.popScreen();
 		}
-		//*/
+		
 		public function get screenWidth():int
 		{
 			return _screentWidth;

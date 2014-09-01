@@ -45,10 +45,13 @@ package snjdck.g2d.obj2d
 			viewPort.update(timeElapsed);
 		}
 		
-		override public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
+		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
-			super.preDrawRenderTargets(context3d, render);
+			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			viewPort.draw(context3d, render);
+			context3d.renderTarget = prevRenderTarget;
+			render.r2d.uploadProjectionMatrix(context3d);
+			super.draw(render, context3d);
 		}
 	}
 }

@@ -28,8 +28,8 @@ package snjdck.g2d.core
 		function set opaque(value:Boolean):void;
 		function get blendMode():BlendMode;
 		function set blendMode(value:BlendMode):void;
-		//*/
 		function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void;
+		//*/
 		function removeFromParent():void;
 	}
 }
