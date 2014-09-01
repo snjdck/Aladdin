@@ -9,20 +9,32 @@ package snjdck.gpu.asset
 	/** cube texture需要上传所有level的mipmap */
 	final internal class GpuTexture extends GpuAsset implements IGpuTexture
 	{
+		private const uploadParams:Array = [];
+		
 		public function GpuTexture(width:int, height:int, textureFormat:String=Context3DTextureFormat.BGRA)
 		{
 			var initName:String = isPowerOfTwo(width) && isPowerOfTwo(height) ? "createTexture" : "createRectangleTexture";
 			super(initName, [width, height, textureFormat, false]);
 		}
 		
+		override public function dispose():void
+		{
+			super.dispose();
+			uploadParams.splice(0);
+		}
+		
 		public function upload(data:BitmapData):void
 		{
-			uploadImp("uploadFromBitmapData", data);
+			uploadParams[0] = data;
+			uploadParams.splice(1);
+			uploadImp("uploadFromBitmapData", uploadParams);
 		}
 		
 		public function uploadATF(atfBytes:ByteArray, offset:int=0):void
 		{
-			uploadImp("uploadCompressedTextureFromByteArray", atfBytes, offset);
+			uploadParams[0] = atfBytes;
+			uploadParams[1] = offset;
+			uploadImp("uploadCompressedTextureFromByteArray", uploadParams);
 		}
 		
 		public function get width():int

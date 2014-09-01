@@ -43,7 +43,7 @@ package snjdck.gpu.asset
 		
 		public function uploadBin(vertexProgram:ByteArray, fragmentProgram:ByteArray):void
 		{
-			uploadImp("upload", vertexProgram, fragmentProgram);
+			uploadImp("upload", [vertexProgram, fragmentProgram]);
 		}
 		
 		public function getVaUseInfo():uint

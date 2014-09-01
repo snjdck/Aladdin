@@ -4,10 +4,6 @@ package snjdck.gpu.asset
 	
 	import lambda.apply;
 	
-	import snjdck.g3d.ns_g3d;
-	
-	use namespace ns_g3d;
-
 	internal class GpuAsset implements IGpuAsset
 	{
 		private var prevContext3d:Context3D;
@@ -35,7 +31,7 @@ package snjdck.gpu.asset
 			}
 		}
 		
-		final public function dispose():void
+		public function dispose():void
 		{
 			prevContext3d = null;
 			
@@ -48,7 +44,7 @@ package snjdck.gpu.asset
 			uploadParams = null;
 		}
 		
-		final protected function uploadImp(funcName:String, ...funcParams):void
+		final protected function uploadImp(funcName:String, funcParams:Array):void
 		{
 			uploadName = funcName;
 			uploadParams = funcParams;

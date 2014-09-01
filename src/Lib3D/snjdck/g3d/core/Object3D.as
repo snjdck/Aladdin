@@ -94,13 +94,10 @@ package snjdck.g3d.core
 		
 		ns_g3d function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix3D):void
 		{
-			dispatchEvent(new Event(Event.ENTER_FRAME));
-			
 			worldMatrix.copyFrom(transform);
 			if(parentWorldMatrix){
 				worldMatrix.append(parentWorldMatrix);
 			}
-			
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				child.onUpdate(timeElapsed, worldMatrix);
 			}
