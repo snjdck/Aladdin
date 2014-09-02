@@ -1,8 +1,5 @@
 package snjdck.g2d.core
 {
-	import snjdck.gpu.GpuRender;
-	import snjdck.gpu.asset.GpuContext;
-
 	public interface IDisplayObject
 	{
 		function get x():Number;

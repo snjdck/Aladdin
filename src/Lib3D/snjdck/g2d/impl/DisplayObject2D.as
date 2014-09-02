@@ -10,10 +10,11 @@ package snjdck.g2d.impl
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
+	import snjdck.g2d.core.IFilter2D;
+	import snjdck.g2d.filter.FragmentFilter;
 	import snjdck.g2d.support.VertexData;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.filter.FragmentFilter;
 
 	public class DisplayObject2D implements IDisplayObject2D
 	{
@@ -26,7 +27,7 @@ package snjdck.g2d.impl
 		private var _alpha:Number;
 		
 		private var _visible:Boolean;
-		private var _filter:FragmentFilter;
+		private var _filter:IFilter2D;
 		
 		private var _parent:IDisplayObjectContainer2D;
 		
@@ -343,12 +344,12 @@ package snjdck.g2d.impl
 			return _worldAlpha;
 		}
 		
-		public function get filter():FragmentFilter
+		public function get filter():IFilter2D
 		{
 			return _filter;
 		}
 		
-		public function set filter(value:FragmentFilter):void
+		public function set filter(value:IFilter2D):void
 		{
 			_filter = value;
 		}
