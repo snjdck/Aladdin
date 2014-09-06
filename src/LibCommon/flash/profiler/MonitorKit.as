@@ -3,6 +3,7 @@ package flash.profiler
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.factory.newShape;
 	import flash.system.System;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
@@ -11,8 +12,6 @@ package flash.profiler
 	import flash.utils.getTimer;
 	
 	import stdlib.constant.Unit;
-	
-	import flash.factory.newShape;
 
 	public class MonitorKit extends Sprite
 	{
@@ -92,7 +91,6 @@ package flash.profiler
 				numFrame = 0;
 				last = now;
 			}
-			
 			updateUI();
 		}
 		
@@ -109,9 +107,9 @@ package flash.profiler
 		
 		private function updateUI():void
 		{
-			if(FpsRecord.push(fps) > NUM_RECORD)				FpsRecord.shift();
-			if(UsedMemRecord.push(usedMem) > NUM_RECORD)		UsedMemRecord.shift();
-			if(UnusedMemRecord.push(unusedMem) > NUM_RECORD)	UnusedMemRecord.shift();
+			if(FpsRecord.push(100*(1-fps/stage.frameRate)) > NUM_RECORD)				FpsRecord.shift();
+			if(UsedMemRecord.push(100*(1-usedMem/maxUsedMem)) > NUM_RECORD)		UsedMemRecord.shift();
+			if(UnusedMemRecord.push(100*(1-unusedMem/maxUnusedMem)) > NUM_RECORD)	UnusedMemRecord.shift();
 			
 			var i:int, n:int;
 			
@@ -120,19 +118,19 @@ package flash.profiler
 			//绘制cpu曲线
 			g.lineStyle(LINE_THICKNESS, 0xFFFFFF);
 			for(i=0, n=FpsRecord.length; i<n; i++){
-				draw(i, 100 * FpsRecord[i] / stage.frameRate);
+				draw(i, FpsRecord[i]);
 			}
 			
 			//绘制内存使用曲线
 			g.lineStyle(LINE_THICKNESS, MEMORY_USED_COLOR);
 			for(i=0, n=UsedMemRecord.length; i<n; i++){
-				draw(i, 100 * (1 - UsedMemRecord[i] / maxUsedMem));
+				draw(i, UsedMemRecord[i]);
 			}
 			
 			//绘制空闲内存曲线
 			g.lineStyle(LINE_THICKNESS, MEMORY_UNUSED_COLOR);
 			for(i=0, n=UnusedMemRecord.length; i<n; i++){
-				draw(i, 100 * (1 - UnusedMemRecord[i] / maxUnusedMem));
+				draw(i, UnusedMemRecord[i]);
 			}
 		}
 		
