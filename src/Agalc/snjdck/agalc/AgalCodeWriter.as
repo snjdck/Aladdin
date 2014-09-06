@@ -84,7 +84,7 @@ package snjdck.agalc
 			const flags:String = test[2];
 			
 			var dimension:uint = 0;		//0=2D, 1=Cube, 2=3D
-			var filter:uint = 1;		//0=nearest, 1=linear
+			var filter:uint = 0;		//0=nearest, 1=linear
 			var mipmap:uint = 0;		//0=disable, 1=nearest, 2=linear
 			var wrapping:uint = 1;		//0=clamp, 1=repeat
 			var textureFormat:uint = 0;	//0=rgba, 1=dxt1, 2=dxt5, 3=video
@@ -92,14 +92,20 @@ package snjdck.agalc
 			
 			for each(var flag:String in (flags && flags.split(","))){
 				switch(flag.toLowerCase()){
-					case "3d":
-						dimension = 2;
+					case "2d":
+						dimension = 0;
 						break;
 					case "cube":
 						dimension = 1;
 						break;
+					case "3d":
+						dimension = 2;
+						break;
 					case "nearest":
 						filter = 0;
+						break;
+					case "linear":
+						filter = 1;
 						break;
 					case "mipnearest":
 						mipmap = 1;
