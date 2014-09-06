@@ -11,10 +11,10 @@ package snjdck.g2d.impl
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.core.IFilter2D;
-	import snjdck.g2d.filter.FragmentFilter;
-	import snjdck.g2d.support.VertexData;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
+	
+	import stdlib.constant.Unit;
 
 	public class DisplayObject2D implements IDisplayObject2D
 	{
@@ -57,7 +57,7 @@ package snjdck.g2d.impl
 		/** 1.缩放, 2.旋转, 3.位移 */
 		private function calcTransform():void
 		{
-			compose(_localMatrix, _scaleX, _scaleY, _rotation, _x, _y);
+			compose(_localMatrix, _scaleX, _scaleY, _rotation * Unit.RADIAN, _x, _y);
 			if(0 == _pivotX && 0 == _pivotY) return;
 			prependTranslation(_localMatrix, -_pivotX, -_pivotY);
 		}
@@ -361,9 +361,33 @@ package snjdck.g2d.impl
 		
 		public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
 		{
-			vertexData.reset(0, 0, width, height);
 			calcSpaceTransform(targetSpace, tempMatrix1);
-			vertexData.getBounds(tempMatrix1, result);
+			
+			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;
+			var minY:Number = Number.MAX_VALUE, maxY:Number = Number.MIN_VALUE;
+			
+			transformCoords(tempMatrix1, 0, 0, tempPt);
+			if(tempPt.x < minX){ minX = tempPt.x; }
+			if(tempPt.y < minY){ minY = tempPt.y; }
+			if(tempPt.x > maxX){ maxX = tempPt.x; }
+			if(tempPt.y > maxY){ maxY = tempPt.y; }
+			transformCoords(tempMatrix1, width, 0, tempPt);
+			if(tempPt.x < minX){ minX = tempPt.x; }
+			if(tempPt.y < minY){ minY = tempPt.y; }
+			if(tempPt.x > maxX){ maxX = tempPt.x; }
+			if(tempPt.y > maxY){ maxY = tempPt.y; }
+			transformCoords(tempMatrix1, width, height, tempPt);
+			if(tempPt.x < minX){ minX = tempPt.x; }
+			if(tempPt.y < minY){ minY = tempPt.y; }
+			if(tempPt.x > maxX){ maxX = tempPt.x; }
+			if(tempPt.y > maxY){ maxY = tempPt.y; }
+			transformCoords(tempMatrix1, 0, height, tempPt);
+			if(tempPt.x < minX){ minX = tempPt.x; }
+			if(tempPt.y < minY){ minY = tempPt.y; }
+			if(tempPt.x > maxX){ maxX = tempPt.x; }
+			if(tempPt.y > maxY){ maxY = tempPt.y; }
+			
+			result.setTo(minX, minY, maxX-minX, maxY-minY);
 		}
 		
 		public function calcSpaceTransform(targetSpace:IDisplayObject2D, result:Matrix):void
@@ -399,8 +423,8 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		static protected const vertexData:VertexData = new VertexData();
 		static protected const tempMatrix1:Matrix = new Matrix();
 		static protected const tempMatrix2:Matrix = new Matrix();
+		static private const tempPt:Point = new Point();
 	}
 }

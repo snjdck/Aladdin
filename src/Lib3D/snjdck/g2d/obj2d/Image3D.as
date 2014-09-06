@@ -41,8 +41,6 @@ package snjdck.g2d.obj2d
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
-			render.r2d.drawEnd(context3d);
-			
 			context3d.clearDepthAndStencil();
 			context3d.setScissorRect(scissorRect);
 			render.r3d.offset(

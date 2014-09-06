@@ -3,14 +3,12 @@ package snjdck.g2d.texture
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	import snjdck.g2d.support.VertexData;
 	import snjdck.g2d.core.ITexture2D;
 
 	public class SubTexture2D extends Texture2D
 	{
-		private const _uvMatrix:Matrix = new Matrix();
-		
 		private var _parent:ITexture2D;
+		protected var _frame:Rectangle;
 		private var _region:Rectangle;
 		
 		public function SubTexture2D(parent:ITexture2D, region:Rectangle=null)
@@ -18,6 +16,12 @@ package snjdck.g2d.texture
 			super(parent ? parent.gpuTexture : null);
 			this._parent = parent;
 			this._region = region;
+			
+			var matrix:Matrix = getUvMatrix();
+			
+			if(_parent is SubTexture2D){
+				matrix.concat((_parent as SubTexture2D).getUvMatrix());
+			}
 		}
 		
 		public function set parent(value:Texture2D):void
@@ -42,27 +46,40 @@ package snjdck.g2d.texture
 			return _uvMatrix;
 		}
 		
-		override public function adjustVertexData(vertexData:VertexData):void
-		{
-			super.adjustVertexData(vertexData);
-			
-			var matrix:Matrix = getUvMatrix();
-			
-			if(_parent is SubTexture2D){
-				matrix.concat((_parent as SubTexture2D).getUvMatrix());
-			}
-			
-			vertexData.transformUV(matrix);
-		}
-		
 		override public function get width():int
 		{
+			if(_frame != null){
+				return _frame.width;
+			}
 			return _region ? _region.width : _parent.width;
 		}
 		
 		override public function get height():int
 		{
+			if(_frame != null){
+				return _frame.height;
+			}
 			return _region ? _region.height : _parent.height;
+		}
+		
+		public function get frame():Rectangle
+		{
+			return _frame;
+		}
+		
+		public function set frame(val:Rectangle):void
+		{
+			_frame = val;
+			
+			if(null == _frame){
+				_frameMatrix.identity();
+				return;
+			}
+			
+			_frameMatrix.a = region.width / _frame.width;
+			_frameMatrix.d = region.height / _frame.height;
+			_frameMatrix.tx = -frame.x;
+			_frameMatrix.ty = -frame.y;
 		}
 	}
 }

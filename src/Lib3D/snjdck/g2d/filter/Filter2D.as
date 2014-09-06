@@ -4,20 +4,17 @@ package snjdck.g2d.filter
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IFilter2D;
-	import snjdck.g2d.support.VertexData;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.gpu.asset.IGpuTexture;
 
-	public class FragmentFilter implements IFilter2D
+	public class Filter2D implements IFilter2D
 	{
-		static protected const vertexData:VertexData = new VertexData();
 		protected const bounds:Rectangle = new Rectangle();
-		
 		protected var image:GpuRenderTarget;
-		public var mode:String;
 		
-		public function FragmentFilter(){}
+		public function Filter2D(){}
 		
 		private function drawTarget(target:IDisplayObject2D, render:GpuRender, context3d:GpuContext):void
 		{
@@ -30,7 +27,6 @@ package snjdck.g2d.filter
 			image.clear(context3d);
 			
 			target.draw(render, context3d);
-			render.r2d.drawEnd(context3d);
 			
 			render.r2d.popScreen();
 		}
@@ -40,7 +36,6 @@ package snjdck.g2d.filter
 			target.getBounds(null, bounds);
 			adjustBounds();
 			
-			render.r2d.drawEnd(context3d);
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			
 			onDrawBegin();
@@ -50,22 +45,22 @@ package snjdck.g2d.filter
 			bounds.y += render.r2d.offsetY;
 			render.r2d.offset(0, 0);
 			
-			if(FragmentFilterMode.ABOVE == mode){
-				render.r2d.uploadProjectionMatrix(context3d);
-				vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
-				context3d.renderTarget = prevRenderTarget;
-				render.r2d.drawTexture(context3d, vertexData, image);
-				render.r2d.drawEnd(context3d);
-			}
+//			if(FragmentFilterMode.ABOVE == mode){
+//				render.r2d.uploadProjectionMatrix(context3d);
+//				vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
+//				context3d.renderTarget = prevRenderTarget;
+//				render.r2d.drawTexture(context3d, vertexData, image);
+//				render.r2d.drawEnd(context3d);
+//			}
 			
 			drawFilter(prevRenderTarget, render, context3d);
 			
 			render.r2d.drawBegin(context3d);
 			
-			if(FragmentFilterMode.BELOW == mode){
-				render.r2d.drawTexture(context3d, vertexData, image);
-				render.r2d.drawEnd(context3d);
-			}
+//			if(FragmentFilterMode.BELOW == mode){
+//				render.r2d.drawTexture(context3d, vertexData, image);
+//				render.r2d.drawEnd(context3d);
+//			}
 			
 			onDrawEnd();
 		}
@@ -74,5 +69,19 @@ package snjdck.g2d.filter
 		protected function onDrawBegin():void{}
 		protected function onDrawEnd():void{}
 		protected function drawFilter(prevRenderTarget:GpuRenderTarget, render:GpuRender, context3d:GpuContext):void{}
+		
+		public function get marginX():int
+		{
+			return 0;
+		}
+		
+		public function get marginY():int
+		{
+			return 0;
+		}
+		
+		public function render(texture:IGpuTexture, render:GpuRender, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
+		{
+		}
 	}
 }

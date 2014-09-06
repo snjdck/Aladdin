@@ -2,7 +2,6 @@ package snjdck.g2d.filter
 {
 	import flash.display3D.Context3DBlendFactor;
 	
-	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
@@ -10,12 +9,12 @@ package snjdck.g2d.filter
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 
-	public class BlurFilter extends FragmentFilter
+	public class BlurFilter extends Filter2D
 	{
-		static public function createGlowFilter(blurX:Number, blurY:Number, color:uint, alpha:Number):FragmentFilter
+		static public function createGlowFilter(blurX:Number, blurY:Number, color:uint, alpha:Number):Filter2D
 		{
 			var filter:BlurFilter = new BlurFilter();
-			filter.mode = FragmentFilterMode.BELOW;
+//			filter.mode = FragmentFilterMode.BELOW;
 			filter.glowColor = new <Number>[1,1,0,1];
 			return filter;
 		}
@@ -55,9 +54,9 @@ package snjdck.g2d.filter
 			
 			backBuffer = new GpuRenderTarget(bounds.width, bounds.height);
 			
-			if(mode == FragmentFilterMode.BELOW && numPasses > 2){
+//			if(mode == FragmentFilterMode.BELOW && numPasses > 2){
 				image = new GpuRenderTarget(bounds.width, bounds.height);
-			}
+//			}
 		}
 		
 		override protected function onDrawEnd():void
@@ -84,7 +83,7 @@ package snjdck.g2d.filter
 			context3d.setProgram(AssetMgr.Instance.getProgram("blur"));
 			context3d.setBlendFactor(BlendMode.NORMAL);
 			
-			vertexData.reset(0, 0, bounds.width, bounds.height);
+//			vertexData.reset(0, 0, bounds.width, bounds.height);
 			
 			for(var i:int=0; i<numPasses; i++)
 			{
@@ -106,8 +105,8 @@ package snjdck.g2d.filter
 				}
 				
 				var texture:IGpuTexture = (0 == i ? image : backBuffer);
-				render.r2d.drawTexture(context3d, vertexData, texture);
-				render.r2d.drawEnd(context3d);
+//				render.r2d.drawTexture(context3d, vertexData, texture);
+//				render.r2d.drawEnd(context3d);
 			}
 		}
 		
@@ -116,7 +115,7 @@ package snjdck.g2d.filter
 			context3d.setProgram(AssetMgr.Instance.getProgram("blur_tint"));
 			context3d.setBlendFactor(blendMode);
 			context3d.setFc(1, glowColor, 1);
-			vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
+//			vertexData.reset(bounds.x, bounds.y, bounds.width, bounds.height);
 			render.r2d.uploadProjectionMatrix(context3d);
 		}
 		

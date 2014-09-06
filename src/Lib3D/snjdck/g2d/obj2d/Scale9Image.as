@@ -88,14 +88,8 @@ package snjdck.g2d.obj2d
 			_texture = value;
 			
 			if(texture){
-				var frame:Rectangle = texture.frame;
-				if(frame){
-					_width = frame.width;
-					_height = frame.height;
-				}else{
-					_width = texture.width;
-					_height = texture.height;
-				}
+				_width = texture.width;
+				_height = texture.height;
 			}else{
 				_width = _height = 0;
 			}

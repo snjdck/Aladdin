@@ -3,17 +3,14 @@ package snjdck.g2d.texture
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	import matrix33.compose;
-	
-	import snjdck.g2d.support.VertexData;
-	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.g2d.core.ITexture2D;
+	import snjdck.gpu.asset.IGpuTexture;
 
 	public class Texture2D implements ITexture2D
 	{
 		private var _gpuTexture:IGpuTexture;
-		private var _frame:Rectangle;
-		private var _frameMatrix:Matrix;
+		protected const _frameMatrix:Matrix = new Matrix();
+		protected const _uvMatrix:Matrix = new Matrix();
 		
 		public function Texture2D(gpuTexture:IGpuTexture=null)
 		{
@@ -30,31 +27,14 @@ package snjdck.g2d.texture
 			return _gpuTexture.height;
 		}
 		
-		public function get frame():Rectangle
+		public function get frameMatrix():Matrix
 		{
-			return _frame;
+			return _frameMatrix;
 		}
 		
-		public function set frame(val:Rectangle):void
+		public function get uvMatrix():Matrix
 		{
-			_frame = val;
-			
-			if(null == _frame){
-				return;
-			}
-			
-			if(null == _frameMatrix){
-				_frameMatrix = new Matrix();
-			}
-			
-			compose(_frameMatrix, width/_frame.width, height/_frame.height, 0, -_frame.x, -_frame.y);
-		}
-		
-		public function adjustVertexData(vertexData:VertexData):void
-		{
-			if(_frameMatrix != null){
-				vertexData.transformPosition(_frameMatrix);
-			}
+			return _uvMatrix;
 		}
 		
 		public function get gpuTexture():IGpuTexture

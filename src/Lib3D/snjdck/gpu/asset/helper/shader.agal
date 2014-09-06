@@ -1,15 +1,35 @@
 #========================
 @g2d.vs
-op = m44: va0, vc0
-﻿#========================
 
+vt0 = va0
+vt0.xy *= vc1.xy
+vt0.xy += vc1.zw
+vt0.xy *= vc0.xy
+vt0.xy += vc0.zw
+op = vt0
+v0 = va0
+
+#========================
 @g2d.raw
-${g2d.vs}
-v0 = va1
-ft0 = tex: v0, fs0<clamp,${0}>
-ft0.w *= v0.z
+
+vt0 = va0
+vt0.x *= vc1.z				#width
+vt0.y *= vc2.z				#height
+vt0.xy *= vc3.xy			#frame
+vt0.xy += vc3.zw
+vt1.x = dp4: vt0, vc1		#world matrix
+vt1.y = dp4: vt0, vc2
+vt0.xy = vt1.xy * vc0.xy	#screen matrix
+vt0.xy += vc0.zw
+op = vt0
+
+vt0.xy = va0 * vc4.xy			#uv matrix
+vt0.xy += vc4.zw
+v0 = vt0
+
+ft0 = tex: v0, fs0<2d,nearest,clamp,${0}>
 ft1.x = ft0.w - fc27.x
-kil:ft1.x
+kil: ft1.x
 oc = ft0
 
 #========================
@@ -19,11 +39,10 @@ oc = ft0
 ﻿#========================
 @blur.vs
 ${g2d.vs}
-v0 = va1
-v1 = va1 - vc4.zw
-v2 = va1 - vc4.xy
-v3 = va1 + vc4.xy
-v4 = va1 + vc4.zw
+v1 = va0 - vc4.zw
+v2 = va0 - vc4.xy
+v3 = va0 + vc4.xy
+v4 = va0 + vc4.zw
 
 @blur.fs
 ft0 = tex: v0, fs0<clamp,linear>
@@ -48,11 +67,6 @@ ${blur.fs}
 ft1 += ft0
 ft1.xyz = fc1 * ft1.w
 oc = ft1 * fc1.w
-#========================
-
-@g2d_preDrawDepth
-${g2d.vs}
-oc = fc0
 
 #========================
 
