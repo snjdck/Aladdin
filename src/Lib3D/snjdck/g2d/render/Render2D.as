@@ -64,7 +64,7 @@ package snjdck.g2d.render
 		
 		public function drawBegin(context3d:GpuContext):void
 		{
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.G2D);
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
 			context3d.blendMode = BlendMode.ALPHAL;
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			initGpuBuffer(context3d);
