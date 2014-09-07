@@ -2,12 +2,12 @@ package snjdck.g3d.render
 {
 	import flash.display3D.Context3DCompareMode;
 	
-	import snjdck.g2d.core.IRender;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.projection.OrthoProjection3D;
+	import snjdck.gpu.render.IRender;
 	
 	use namespace ns_g3d;
 
@@ -28,23 +28,19 @@ package snjdck.g3d.render
 			return projectionStack[projectionIndex];
 		}
 		
-		public function pushScreen():void
+		public function pushScreen(width:int, height:int):void
 		{
 			++projectionIndex;
 			if(projectionStack.length <= projectionIndex){
 				projectionStack.push(new OrthoProjection3D());
 			}
+			projection.resize(width, height);
 		}
 		
 		public function popScreen():void
 		{
 			projection.offset(0, 0);
 			--projectionIndex;
-		}
-		
-		public function setScreenSize(width:int, height:int):void
-		{
-			projection.resize(width, height);
 		}
 		
 		public function uploadProjectionMatrix(context3d:GpuContext):void

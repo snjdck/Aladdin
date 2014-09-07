@@ -14,7 +14,7 @@ package snjdck.g3d.core
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
