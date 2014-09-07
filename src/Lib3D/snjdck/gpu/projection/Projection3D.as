@@ -2,11 +2,11 @@ package snjdck.gpu.projection
 {
 	import snjdck.gpu.asset.GpuContext;
 
-	internal class Projection
+	internal class Projection3D
 	{
 		protected const transform:Vector.<Number> = new Vector.<Number>(16, true);
 		
-		public function Projection()
+		public function Projection3D()
 		{
 			transform[0] = 1;
 			transform[5] = 1;

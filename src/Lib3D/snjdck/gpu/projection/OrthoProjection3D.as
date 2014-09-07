@@ -3,7 +3,7 @@ package snjdck.gpu.projection
 	/**
 	 * 平行投影,left hand
 	 */	
-	final public class OrthoProjection3D extends Projection
+	final public class OrthoProjection3D extends Projection3D
 	{
 		public function OrthoProjection3D()
 		{

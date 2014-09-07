@@ -53,7 +53,6 @@ package snjdck.g3d.obj3d
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			viewPort.draw(context3d, render);
 			context3d.renderTarget = prevRenderTarget;
-			render.r2d.uploadProjectionMatrix(context3d);
 			super.draw(render, context3d);
 		}
 	}
