@@ -1,12 +1,11 @@
 package snjdck.agalc
 {
 	import flash.display3D.Context3DProgramType;
+	import flash.factory.newBuffer;
 	import flash.utils.ByteArray;
 	
 	import array.has;
 	import array.unique;
-	
-	import flash.factory.newBuffer;
 	
 	import lambda.apply;
 	
@@ -103,6 +102,7 @@ package snjdck.agalc
 		
 		private var usedVts:Array = [];
 		private var unusedVts:Array = [];
+		private var tempRegFactory:TempRegFactory;
 		
 		public var usedinputs:Array = [];
 		public var shaderData:ByteArray;
@@ -150,6 +150,7 @@ package snjdck.agalc
 				}
 			}
 			usedinputs = usedinputs.map(__array_mapToIndex);
+			tempRegFactory = new TempRegFactory(unusedVts);
 		}
 		
 		private function __array_mapToIndex(register:String, index:int, array:Array):int
@@ -183,8 +184,9 @@ package snjdck.agalc
 			}
 			
 			if(execRegExp(/[+\-*\/^<>=]/, rest)){//运算符
+				tempRegFactory.reset();
 				if(extraOp){
-					var tempReg:String = unusedVts[0];
+					var tempReg:String = tempRegFactory.retrieveTempReg();
 					writeArithmetic3(tempReg, rest);
 					writeArithmetic(extraOp, dest, dest, tempReg);
 				}else{
@@ -208,7 +210,7 @@ package snjdck.agalc
 		private function writeArithmetic3(dest:String, input:String):void
 		{
 			var codeList:Array = [];
-			arith.parse(input).visit(codeList, new TempRegFactory(unusedVts));
+			arith.parse(input).visit(codeList, tempRegFactory);
 			codeList[codeList.length-1][1] = dest;
 			for each(var code:Array in codeList){
 				lambda.apply(writeArithmetic, code);

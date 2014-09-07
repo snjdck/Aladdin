@@ -10,6 +10,11 @@ package snjdck.agalc.arithmetic
 		public function TempRegFactory(tempRegs:Array)
 		{
 			allRegs = tempRegs;
+			reset();
+		}
+		
+		public function reset():void
+		{
 			validRegs = allRegs.slice();
 		}
 		
