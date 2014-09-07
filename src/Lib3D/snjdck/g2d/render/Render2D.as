@@ -73,9 +73,9 @@ package snjdck.g2d.render
 		
 		public function drawBegin(context3d:GpuContext):void
 		{
-			context3d.setProgram(AssetMgr.Instance.getProgram(ShaderName.G2D));
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.G2D);
+			context3d.blendMode = BlendMode.ALPHAL;
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
-			context3d.setBlendFactor(BlendMode.ALPHAL);
 			initGpuBuffer(context3d);
 			context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 		}
@@ -108,7 +108,7 @@ package snjdck.g2d.render
 			
 			context3d.setVc(1, constData, 4);
 			context3d.setTextureAt(0, texture.gpuTexture);
-			context3d.drawTriangles(gpuIndexBuffer, 0, 2);
+			context3d.drawTriangles(gpuIndexBuffer);
 		}
 		
 		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
@@ -120,7 +120,7 @@ package snjdck.g2d.render
 			
 			context3d.setVc(1, constData, 1);
 			context3d.setTextureAt(0, texture);
-			context3d.drawTriangles(gpuIndexBuffer, 0, 2);
+			context3d.drawTriangles(gpuIndexBuffer);
 		}
 		
 		private function initGpuBuffer(context3d:GpuContext):void
