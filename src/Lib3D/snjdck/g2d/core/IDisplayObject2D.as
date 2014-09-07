@@ -4,7 +4,7 @@ package snjdck.g2d.core
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 
 	public interface IDisplayObject2D extends IDisplayObject

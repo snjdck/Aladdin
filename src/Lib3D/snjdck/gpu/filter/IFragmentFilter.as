@@ -1,6 +1,6 @@
 package snjdck.gpu.filter
 {
-	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;

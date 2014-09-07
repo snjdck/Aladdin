@@ -3,17 +3,17 @@ package snjdck.gpu.projection
 	/**
 	 * 平行投影,left hand
 	 */	
-	final public class OrthoProjection3D extends Projection3D
+	final public class OrthoProjection3D extends Projection3D implements IProjection
 	{
 		public function OrthoProjection3D()
 		{
 			setDepthCliping(4000, -1000);
 		}
 		
-		public function resize(w:Number, h:Number):void
+		public function resize(width:int, height:int):void
 		{
-			transform[0] = 2.0 / w;
-			transform[5] = 2.0 / h;
+			transform[0] = 2.0 / width;
+			transform[5] = 2.0 / height;
 		}
 		
 		public function setDepthCliping(zFar:Number, zNear:Number):void

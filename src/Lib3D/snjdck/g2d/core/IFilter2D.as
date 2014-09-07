@@ -1,6 +1,6 @@
 package snjdck.g2d.core
 {
-	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.filter.IFragmentFilter;
 
