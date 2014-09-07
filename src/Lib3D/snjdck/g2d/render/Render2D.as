@@ -5,7 +5,6 @@ package snjdck.g2d.render
 	import flash.geom.Matrix;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
-	import snjdck.g2d.core.IRender;
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
@@ -15,10 +14,11 @@ package snjdck.g2d.render
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
 	import snjdck.gpu.projection.Projection2D;
+	import snjdck.gpu.render.IRender;
 
 	final public class Render2D implements IRender
 	{
-		private const projectionStack:Vector.<Projection2D> = new <Projection2D>[new Projection2D()];
+		private const projectionStack:Vector.<Projection2D> = new Vector.<Projection2D>();
 		private var projectionIndex:int;
 		
 		private var gpuVertexBuffer:GpuVertexBuffer;
@@ -30,11 +30,6 @@ package snjdck.g2d.render
 		private function get projection():Projection2D
 		{
 			return projectionStack[projectionIndex];
-		}
-		
-		public function setScreenSize(width:int, height:int):void
-		{
-			projection.resize(width, height);
 		}
 		
 		public function offset(dx:Number=0, dy:Number=0):void
@@ -52,17 +47,13 @@ package snjdck.g2d.render
 			return projection.offsetY;
 		}
 		
-		public function uploadProjectionMatrix(context3d:GpuContext):void
-		{
-			projection.upload(context3d);
-		}
-		
-		public function pushScreen():void
+		public function pushScreen(width:int, height:int):void
 		{
 			++projectionIndex;
-			if(projectionStack.length <= projectionIndex){
+			while(projectionStack.length <= projectionIndex){
 				projectionStack.push(new Projection2D());
 			}
+			projection.resize(width, height);
 		}
 		
 		public function popScreen():void
@@ -86,39 +77,43 @@ package snjdck.g2d.render
 			var frameMatrix:Matrix = texture.frameMatrix;
 			var uvMatrix:Matrix = texture.uvMatrix;
 			
-			constData[0] = worldMatrix.a;
-			constData[1] = worldMatrix.c;
-			constData[2] = target.width;
-			constData[3] = worldMatrix.tx;
+			constData[4] = worldMatrix.a;
+			constData[5] = worldMatrix.c;
+			constData[6] = target.width;
+			constData[7] = worldMatrix.tx;
 			
-			constData[4] = worldMatrix.b;
-			constData[5] = worldMatrix.d;
-			constData[6] = target.height;
-			constData[7] = worldMatrix.ty;
+			constData[8] = worldMatrix.b;
+			constData[9] = worldMatrix.d;
+			constData[10] = target.height;
+			constData[11] = worldMatrix.ty;
 			
-			constData[8] = frameMatrix.a;
-			constData[9] = frameMatrix.d;
-			constData[10] = frameMatrix.tx;
-			constData[11] = frameMatrix.ty;
+			constData[12] = frameMatrix.a;
+			constData[13] = frameMatrix.d;
+			constData[14] = frameMatrix.tx;
+			constData[15] = frameMatrix.ty;
 			
-			constData[12] = uvMatrix.a;
-			constData[13] = uvMatrix.d;
-			constData[14] = uvMatrix.tx;
-			constData[15] = uvMatrix.ty;
+			constData[16] = uvMatrix.a;
+			constData[17] = uvMatrix.d;
+			constData[18] = uvMatrix.tx;
+			constData[19] = uvMatrix.ty;
 			
-			context3d.setVc(1, constData, 4);
+			projection.upload(constData);
+			
+			context3d.setVc(0, constData, 5);
 			context3d.setTextureAt(0, texture.gpuTexture);
 			context3d.drawTriangles(gpuIndexBuffer);
 		}
 		
 		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
 		{
-			constData[0] = texture.width;
-			constData[1] = texture.height;
-			constData[2] = textureX;
-			constData[3] = textureY;
+			constData[4] = texture.width;
+			constData[5] = texture.height;
+			constData[6] = textureX;
+			constData[7] = textureY;
 			
-			context3d.setVc(1, constData, 1);
+			projection.upload(constData);
+			
+			context3d.setVc(0, constData, 2);
 			context3d.setTextureAt(0, texture);
 			context3d.drawTriangles(gpuIndexBuffer);
 		}
@@ -137,6 +132,6 @@ package snjdck.g2d.render
 			gpuIndexBuffer.upload(new <uint>[0,1,2,0,2,3]);
 		}
 		
-		private const constData:Vector.<Number> = new Vector.<Number>(16, true);
+		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
 	}
 }

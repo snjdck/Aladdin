@@ -7,7 +7,7 @@ package snjdck.g2d.obj2d
 	import flash.geom.Matrix;
 	
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
-	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
 	
 	public class StencilMaskSprite extends DisplayObjectContainer2D

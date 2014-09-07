@@ -6,7 +6,7 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -51,7 +51,7 @@ package snjdck.g2d.obj2d
 			render.r3d.offset();
 			context3d.setScissorRect(null);
 			
-			render.r2d.uploadProjectionMatrix(context3d);
+//			render.r2d.uploadProjectionMatrix(context3d);
 			render.r2d.drawBegin(context3d);
 		}
 		

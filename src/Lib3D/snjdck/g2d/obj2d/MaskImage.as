@@ -5,7 +5,7 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g2d.texture.Texture2D;
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.GpuRender;
+	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
@@ -50,7 +50,7 @@ package snjdck.g2d.obj2d
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			viewPort.draw(context3d, render);
 			context3d.renderTarget = prevRenderTarget;
-			render.r2d.uploadProjectionMatrix(context3d);
+//			render.r2d.uploadProjectionMatrix(context3d);
 			super.draw(render, context3d);
 		}
 	}
