@@ -1,16 +1,5 @@
 #========================
-@g2d.vs
-
-vt0 = va0
-vt0.xy *= vc1.xy
-vt0.xy += vc1.zw
-vt0.xy *= vc0.xy
-vt0.xy += vc0.zw
-op = vt0
-v0 = va0
-
-#========================
-@g2d.raw
+@image.raw
 
 vt0 = va0
 vt0.x *= vc1.z				#width
@@ -33,18 +22,32 @@ kil: ft1.x
 oc = ft0
 
 #========================
-@g2d<rgba>			${g2d.raw}
-@g2d_dxt5<dxt5>		${g2d.raw}
+@image<rgba>			${image.raw}
+@image_dxt5<dxt5>		${image.raw}
 
 ﻿#========================
-@blur.vs
-${g2d.vs}
-v1 = va0 - vc4.zw
-v2 = va0 - vc4.xy
-v3 = va0 + vc4.xy
-v4 = va0 + vc4.zw
+@texture.vs
 
-@blur.fs
+vt0 = va0
+vt0.xy *= vc1.xy
+vt0.xy += vc1.zw
+vt0.xy *= vc0.xy
+vt0.xy += vc0.zw
+op = vt0
+v0 = va0
+
+@texture
+${texture.vs}
+oc = tex: v0, fs0<clamp,nearest>
+#========================
+@blur
+
+${texture.vs}
+v1 = va0 - vc2.zw
+v2 = va0 - vc2.xy
+v3 = va0 + vc2.xy
+v4 = va0 + vc2.zw
+
 ft0 = tex: v0, fs0<clamp,linear>
 ft1 = ft0 * fc0.x
 ft0 = tex: v1, fs0<clamp,linear>
@@ -54,20 +57,15 @@ ft1 += ft0 * fc0.y
 ft0 = tex: v3, fs0<clamp,linear>
 ft1 += ft0 * fc0.y
 ft0 = tex: v4, fs0<clamp,linear>
-ft0 *= fc0.z
+oc = ft1 + ft0 * fc0.z
 
-@blur
-${blur.vs}
-${blur.fs}
-oc = ft1 + ft0
+#========================
+@color_matrix
 
-@blur_tint
-${blur.vs}
-${blur.fs}
-ft1 += ft0
-ft1.xyz = fc1 * ft1.w
-oc = ft1 * fc1.w
-
+${texture.vs}
+ft0 = tex: v0, fs0<clamp,linear>
+ft0 = m44: ft0, fc0
+oc = ft0 + fc4
 #========================
 
 @g3d_preDrawDepth
