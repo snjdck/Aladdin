@@ -85,7 +85,7 @@ package snjdck.g3d.render
 			for each(var drawUnit:DrawUnit3D in drawUnitList){
 				if(drawUnit.shaderName != currentShaderName){
 					currentShaderName = drawUnit.shaderName;
-					context3d.setProgram(AssetMgr.Instance.getProgram(currentShaderName));
+					context3d.program = AssetMgr.Instance.getProgram(currentShaderName);
 				}
 				if(drawUnit.textureName && drawUnit.textureName != currentTextureName){
 					currentTextureName = drawUnit.textureName;

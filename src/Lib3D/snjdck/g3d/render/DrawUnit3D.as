@@ -31,7 +31,7 @@ package snjdck.g3d.render
 		
 		ns_g3d var indexBuffer:GpuIndexBuffer;
 		
-		ns_g3d var blendFactor:BlendMode;
+		ns_g3d var blendMode:BlendMode;
 		
 		public function DrawUnit3D()
 		{
@@ -57,7 +57,7 @@ package snjdck.g3d.render
 			
 			indexBuffer = null;
 			
-			blendFactor = BlendMode.NORMAL;
+			blendMode = BlendMode.NORMAL;
 		}
 		
 		public function setWorldMatrix(matrix:Matrix3D):void
@@ -87,7 +87,7 @@ package snjdck.g3d.render
 		
 		public function exec(context3d:GpuContext):void
 		{
-			context3d.setBlendFactor(blendFactor);
+			context3d.blendMode = blendMode;
 			
 			context3d.setVcReg(vcSlot);
 			context3d.setFcReg(fcSlot);
@@ -133,7 +133,7 @@ package snjdck.g3d.render
 			
 			this.indexBuffer = other.indexBuffer;
 			
-			this.blendFactor = other.blendFactor;
+			this.blendMode = other.blendMode;
 		}
 		
 		public function toString():String

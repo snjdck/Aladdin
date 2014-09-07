@@ -41,7 +41,7 @@ package snjdck.g3d.render
 		
 		public function addDrawUnit(drawUnit:DrawUnit3D):void
 		{
-			if(drawUnit.blendFactor.equals(BlendMode.NORMAL)){
+			if(drawUnit.blendMode.equals(BlendMode.NORMAL)){
 				opaqueList.push(drawUnit);
 			}else{
 				blendList.push(drawUnit);
