@@ -14,7 +14,7 @@ package snjdck.gpu.asset
 	{
 		private var context3d:Context3D;
 		
-		private var blendMode:BlendMode;
+		private var _blendMode:BlendMode;
 		
 		private var depthWriteMask:Boolean;
 		private var depthPassCompareMode:String;
@@ -22,7 +22,7 @@ package snjdck.gpu.asset
 		/** readMask, writeMask, refValue */
 		private var stencilRefValue:int;
 		
-		private var currentProgram:GpuProgram;
+		private var _program:GpuProgram;
 		private var vaUseInfo:uint;
 		private var fsUseInfo:uint;
 		
@@ -37,7 +37,7 @@ package snjdck.gpu.asset
 		{
 			this.context3d = context3d;
 			
-			blendMode = BlendMode.NORMAL;
+			_blendMode = BlendMode.NORMAL;
 			
 			depthWriteMask = true;
 			depthPassCompareMode = Context3DCompareMode.LESS_EQUAL;
@@ -95,12 +95,18 @@ package snjdck.gpu.asset
 			context3d.setCulling(triangleFaceToCull);
 		}
 		
-		public function setBlendFactor(value:BlendMode):void
+		public function get blendMode():BlendMode
 		{
-			if(!blendMode.equals(value)){
-				blendMode = value;
-				context3d.setBlendFactors(blendMode.sourceFactor, blendMode.destinationFactor);
+			return _blendMode;
+		}
+		
+		public function set blendMode(value:BlendMode):void
+		{
+			if(_blendMode.equals(value)){
+				return;
 			}
+			_blendMode = value;
+			_blendMode.apply(context3d);
 		}
 		
 		public function setScissorRect(rect:Rectangle):void
@@ -192,20 +198,25 @@ package snjdck.gpu.asset
 			fcReg.merge(constReg);
 		}
 		
-		public function setProgram(program:GpuProgram):void
+		public function get program():GpuProgram
 		{
-			if(program == currentProgram){
+			return _program;
+		}
+		
+		public function set program(value:GpuProgram):void
+		{
+			if(value == _program){
 				return;
 			}
 			
-			context3d.setProgram(program.getRawGpuAsset(context3d));
-			currentProgram = program;
+			_program = value;
+			context3d.setProgram(_program.getRawGpuAsset(context3d));
 			
-			unsetInputs(vaUseInfo & ~program.getVaUseInfo(), "setVertexBufferAt");
-			unsetInputs(fsUseInfo & ~program.getFsUseInfo(), "setTextureAt");
+			unsetInputs(vaUseInfo & ~_program.getVaUseInfo(), "setVertexBufferAt");
+			unsetInputs(fsUseInfo & ~_program.getFsUseInfo(), "setTextureAt");
 			
-			vaUseInfo = program.getVaUseInfo();
-			fsUseInfo = program.getFsUseInfo();
+			vaUseInfo = _program.getVaUseInfo();
+			fsUseInfo = _program.getFsUseInfo();
 		}
 		
 		private function unsetInputs(useInfo:uint, methodName:String):void

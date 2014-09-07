@@ -7,7 +7,7 @@ package snjdck.gpu.filter
 
 	public interface IFragmentFilter
 	{
-		function render(texture:IGpuTexture, render:GpuRender, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void;
+		function renderFilter(texture:IGpuTexture, render:GpuRender, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void;
 		function get marginX():int;
 		function get marginY():int;
 	}
