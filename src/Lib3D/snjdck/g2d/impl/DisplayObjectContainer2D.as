@@ -128,6 +128,10 @@ package snjdck.g2d.impl
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
+			if(_childList.length <= 0){
+				return;
+			}
+			render.r2d.pushMatrix(transform);
 			for each(var child:DisplayObject2D in _childList){
 				if(!child.hasVisibleArea()){
 					continue;
@@ -138,6 +142,7 @@ package snjdck.g2d.impl
 					child.draw(render, context3d);
 				}
 			}
+			render.r2d.popMatrix();
 		}
 		
 		override public function pickup(px:Number, py:Number):IDisplayObject2D
@@ -153,8 +158,6 @@ package snjdck.g2d.impl
 		
 		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
-			
 			for each(var child:DisplayObject2D in _childList){
 				child.onUpdate(timeElapsed, worldMatrix, worldAlpha);
 			}

@@ -73,13 +73,14 @@ package snjdck.g2d.impl
 		
 		public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
 		{
-			_worldMatrix.copyFrom(transform);
+//			_worldMatrix.copyFrom(parentWorldMatrix);
+//			_worldMatrix.copyFrom(transform);
+//			
+//			if(parentWorldMatrix){
+//				_worldMatrix.concat(parentWorldMatrix);
+//			}
 			
-			if(parentWorldMatrix){
-				_worldMatrix.concat(parentWorldMatrix);
-			}
-			
-			_worldAlpha = alpha * parentWorldAlpha;
+//			_worldAlpha = alpha * parentWorldAlpha;
 		}
 		/*
 		private const topLeft		:Point = new Point();

@@ -15,11 +15,16 @@ package snjdck.g2d.render
 	import snjdck.gpu.asset.helper.ShaderName;
 	import snjdck.gpu.projection.Projection2D;
 	import snjdck.gpu.render.IRender;
+	
+	import stdlib.constant.Unit;
 
 	final public class Render2D implements IRender
 	{
 		private const projectionStack:Vector.<Projection2D> = new Vector.<Projection2D>();
 		private var projectionIndex:int;
+		
+		private const matrixStack:Vector.<Matrix> = new Vector.<Matrix>();
+		private var matrixIndex:int;
 		
 		private var gpuVertexBuffer:GpuVertexBuffer;
 		private var gpuIndexBuffer:GpuIndexBuffer;
@@ -62,6 +67,26 @@ package snjdck.g2d.render
 			--projectionIndex;
 		}
 		
+		public function pushMatrix(matrix:Matrix):void
+		{
+			++matrixIndex;
+			while(matrixStack.length <= matrixIndex){
+				matrixStack.push(new Matrix());
+			}
+			worldMatrix.copyFrom(matrix);
+			worldMatrix.concat(matrixStack[matrixIndex-1]);
+		}
+		
+		public function popMatrix():void
+		{
+			--matrixIndex;
+		}
+		
+		private function get worldMatrix():Matrix
+		{
+			return matrixStack[matrixIndex];
+		}
+		
 		public function drawBegin(context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
@@ -73,7 +98,6 @@ package snjdck.g2d.render
 		
 		public function drawImage(context3d:GpuContext, target:IDisplayObject2D, texture:Texture2D):void
 		{
-			var worldMatrix:Matrix = target.worldMatrix;
 			var frameMatrix:Matrix = texture.frameMatrix;
 			var uvMatrix:Matrix = texture.uvMatrix;
 			
@@ -97,9 +121,19 @@ package snjdck.g2d.render
 			constData[18] = uvMatrix.tx;
 			constData[19] = uvMatrix.ty;
 			
+			constData[20] = target.scaleX;
+			constData[21] = target.scaleY;
+			constData[22] = target.x;
+			constData[23] = target.y;
+			
+			constData[24] = target.rotation * Unit.RADIAN;
+//			constData[25] = 0;
+//			constData[26] = 0;
+//			constData[27] = 0;
+			
 			projection.upload(constData);
 			
-			context3d.setVc(0, constData, 5);
+			context3d.setVc(0, constData, 7);
 			context3d.setTextureAt(0, texture.gpuTexture);
 			context3d.drawTriangles(gpuIndexBuffer);
 		}
@@ -132,6 +166,6 @@ package snjdck.g2d.render
 			gpuIndexBuffer.upload(new <uint>[0,1,2,0,2,3]);
 		}
 		
-		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
+		private const constData:Vector.<Number> = new Vector.<Number>(28, true);
 	}
 }
