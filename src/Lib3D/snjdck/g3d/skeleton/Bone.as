@@ -4,7 +4,6 @@ package snjdck.g3d.skeleton
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
-	
 	import snjdck.g3d.geom.Quaternion;
 	
 	use namespace ns_g3d;
@@ -13,6 +12,7 @@ package snjdck.g3d.skeleton
 	{
 		public var name:String;
 		public var id:int;
+		public var parentId:int = -1;
 		
 		ns_g3d var transform:Transform;
 		private var keyFrame:Transform;

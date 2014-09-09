@@ -3,8 +3,6 @@ package snjdck.g3d.skeleton
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import array.unique;
-	
 	import dict.getNumKeys;
 	
 	import snjdck.g3d.ns_g3d;
@@ -29,39 +27,24 @@ package snjdck.g3d.skeleton
 			boneList[bone.id] = bone;
 		}
 		
-		private var parentBoneList:Array = [];
-		private var childBoneList:Array = [];
-		
 		ns_g3d function setBoneParent(boneId:int, boneParentId:int):void
 		{
-			var parent:Bone = getBoneById(boneParentId);
-			var child:Bone = getBoneById(boneId);
-			
-			if(parent){
-				parent.addChild(child);
-				childBoneList.push(child);
-				parentBoneList.push(parent);
-			}else{
-				parentBoneList.push(child);
-			}
+			getBoneById(boneId).parentId = boneParentId;
 		}
 		
 		ns_g3d function onInit():void
 		{
-			for each(var bone:Bone in array.unique(parentBoneList)){
-				if(!array.has(childBoneList, bone)){
-					if(rootBone){
-						rootBone.addSibling(bone);
-					}else{
-						rootBone = bone;
-					}
+			for each(var bone:Bone in boneList){
+				var boneParent:Bone = getBoneById(bone.parentId);
+				if(boneParent){
+					boneParent.addChild(bone);
+				}else if(rootBone){
+					rootBone.addSibling(bone);
+				}else{
+					rootBone = bone;
 				}
 			}
-			
 			rootBone.onInit(Quaternion.Null, NullVector);
-			
-			parentBoneList = null;
-			childBoneList = null;
 		}
 		
 		public function get numBones():int
