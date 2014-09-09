@@ -12,6 +12,7 @@ package snjdck.gpu
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuRenderTarget;
+	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
 
@@ -39,9 +40,12 @@ package snjdck.gpu
 		{
 			renderTarget.setRenderToSelf(context3d);
 			renderTarget.clear(context3d);
-			
-			render.pushScreen();
-			render.resize(renderTarget.width, renderTarget.height);
+			drawTo(context3d, render, renderTarget);
+		}
+		
+		private function drawTo(context3d:GpuContext, render:GpuRender, renderTarget:IGpuRenderTarget):void
+		{
+			render.pushScreen(renderTarget.width, renderTarget.height);
 			
 			render.drawScene3D(scene3d, context3d);
 			render.drawScene2D(scene2d, context3d);
