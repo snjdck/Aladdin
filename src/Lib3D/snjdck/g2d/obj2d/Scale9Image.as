@@ -4,10 +4,9 @@ package snjdck.g2d.obj2d
 	import flash.geom.Rectangle;
 	
 	import snjdck.g2d.impl.DisplayObject2D;
-	import snjdck.g2d.texture.SubTexture2D;
-	import snjdck.g2d.texture.Texture2D;
-	import snjdck.gpu.render.GpuRender;
+	import snjdck.g2d.impl.Texture2D;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.GpuRender;
 	
 	final public class Scale9Image extends DisplayObject2D
 	{
@@ -75,7 +74,8 @@ package snjdck.g2d.obj2d
 		
 		private function createGridImage(regionX:Number, regionY:Number, regionRight:Number, regionBottom:Number):Image
 		{
-			return new Image(new SubTexture2D(texture, new Rectangle(regionX, regionY, regionRight-regionX, regionBottom-regionY)));
+			return null;
+//			return new Image(new SubTexture2D(texture, new Rectangle(regionX, regionY, regionRight-regionX, regionBottom-regionY)));
 		}
 		
 		public function get texture():Texture2D

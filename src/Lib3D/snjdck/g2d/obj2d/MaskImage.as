@@ -3,7 +3,7 @@ package snjdck.g2d.obj2d
 	import flash.geom.Matrix;
 	import flash.lang.IDisposable;
 	
-	import snjdck.g2d.texture.Texture2D;
+	import snjdck.g2d.impl.Texture2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.ViewPort3D;

@@ -2,17 +2,17 @@ package snjdck.g2d.util
 {
 	import flash.geom.Rectangle;
 	
-	import snjdck.g2d.texture.SubTexture2D;
-	import snjdck.g2d.texture.Texture2D;
+	import snjdck.g2d.impl.Texture2D;
+	import snjdck.gpu.asset.IGpuTexture;
 	
 	import string.beginWith;
 
 	final public class TextureAtlas
 	{
-		private var _texture:Texture2D;
+		private var _texture:IGpuTexture;
 		private var _subTextureDict:Object;
 		
-		public function TextureAtlas(texture:Texture2D, atlasXml:XML)
+		public function TextureAtlas(texture:IGpuTexture, atlasXml:XML)
 		{
 			_texture = texture;
 			_subTextureDict = {};
@@ -43,7 +43,8 @@ package snjdck.g2d.util
 		public function getTexture(name:String):Texture2D
 		{
 			var info:Array = _subTextureDict[name];
-			var subTexture:SubTexture2D = _texture.createSubTexture(info[0]);
+			var subTexture:Texture2D = new Texture2D(_texture);
+			subTexture.region = info[0];
 			subTexture.frame = info[1];
 			return subTexture;
 		}

@@ -5,7 +5,7 @@ package snjdck.g2d.render
 	import flash.geom.Matrix;
 	
 	import snjdck.g2d.core.IDisplayObject2D;
-	import snjdck.g2d.texture.Texture2D;
+	import snjdck.g2d.core.ITexture2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
@@ -96,7 +96,7 @@ package snjdck.g2d.render
 			context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 		}
 		
-		public function drawImage(context3d:GpuContext, target:IDisplayObject2D, texture:Texture2D):void
+		public function drawImage(context3d:GpuContext, target:IDisplayObject2D, texture:ITexture2D):void
 		{
 			var frameMatrix:Matrix = texture.frameMatrix;
 			var uvMatrix:Matrix = texture.uvMatrix;

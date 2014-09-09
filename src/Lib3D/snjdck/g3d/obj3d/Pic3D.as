@@ -3,14 +3,14 @@ package snjdck.g3d.obj3d
 	import flash.geom.Matrix;
 	import flash.lang.IDisposable;
 	
+	import snjdck.g2d.impl.Texture2D;
 	import snjdck.g2d.obj2d.Image;
-	import snjdck.g2d.texture.Texture2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
 
