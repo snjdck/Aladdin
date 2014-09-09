@@ -53,7 +53,10 @@ package snjdck.gpu.asset.helper
 	public class AssetMgr
 	{
 		[Embed(source="shader.agal", mimeType="application/octet-stream")]
-		static private const CLS_SHADER_DATA:Class;
+		static private const CLS_SHADER_DATA_3D:Class;
+		
+		[Embed(source="shader2d.agal", mimeType="application/octet-stream")]
+		static private const CLS_SHADER_DATA_2D:Class;
 		
 		static public const Instance:AssetMgr = new AssetMgr();
 		
@@ -73,7 +76,8 @@ package snjdck.gpu.asset.helper
 			programDict = {};
 			textureDict = new Dictionary();
 			
-			initShaderData(new CLS_SHADER_DATA().toString());
+			initShaderData(new CLS_SHADER_DATA_2D().toString());
+			initShaderData(new CLS_SHADER_DATA_3D().toString());
 		}
 		
 		private function initShaderData(shaderData:String):void
