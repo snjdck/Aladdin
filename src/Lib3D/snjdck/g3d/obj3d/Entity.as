@@ -62,7 +62,8 @@ package snjdck.g3d.obj3d
 			{
 				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
 				drawUnit.blendMode = blendMode;
-				drawUnit.setWorldMatrix(worldMatrix);
+				drawUnit.setBoneMatrix(2, worldMatrix);
+				drawUnit.setBoneMatrix(5, transform);
 				subMesh.getDrawUnit(drawUnit, boneDict);
 				collector.addDrawUnit(drawUnit);
 			}

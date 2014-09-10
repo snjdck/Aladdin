@@ -43,11 +43,6 @@ package snjdck.g3d.render
 			--projectionIndex;
 		}
 		
-		public function uploadProjectionMatrix(context3d:GpuContext):void
-		{
-			projection.upload(context3d);
-		}
-		
 		public function offset(dx:Number=0, dy:Number=0):void
 		{
 			projection.offset(dx, dy);
@@ -87,6 +82,7 @@ package snjdck.g3d.render
 					currentTextureName = drawUnit.textureName;
 					context3d.setTextureAt(0, AssetMgr.Instance.getTexture(currentTextureName));
 				}
+				projection.upload(context3d);
 				drawUnit.exec(context3d);
 			}
 		}

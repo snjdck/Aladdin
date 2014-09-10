@@ -44,7 +44,6 @@ package snjdck.gpu.render
 		
 		public function drawScene3D(scene3d:Object3D, context3d:GpuContext):void
 		{
-			r3d.uploadProjectionMatrix(context3d);
 			r3d.draw(scene3d, context3d);
 		}
 		

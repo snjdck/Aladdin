@@ -24,8 +24,6 @@ package snjdck.g3d.render
 		private var vcSlot:ConstRegister;
 		private var fcSlot:ConstRegister;
 		
-		private var worldMatrix:Matrix3D;
-		
 		public var shaderName:String;
 		public var textureName:String;
 		
@@ -39,8 +37,6 @@ package snjdck.g3d.render
 			vcSlot = ConstRegister.NewVertexConstRegister();
 			fcSlot = ConstRegister.NewFragmentConstRegister();
 			
-			worldMatrix = new Matrix3D();
-			
 			clear();
 		}
 		
@@ -50,8 +46,6 @@ package snjdck.g3d.render
 			vcSlot.clear();
 			fcSlot.clear();
 			
-			worldMatrix.identity();
-			
 			shaderName = null;
 			textureName = null;
 			
@@ -60,18 +54,6 @@ package snjdck.g3d.render
 			blendMode = BlendMode.NORMAL;
 		}
 		
-		public function setWorldMatrix(matrix:Matrix3D):void
-		{
-			worldMatrix.copyFrom(matrix);
-			setVcM(4, worldMatrix);
-		}
-		/*
-		public function appendTransformAfterWorldMatrix(matrix:Matrix3D):void
-		{
-			worldMatrix.append(matrix);
-			setVcM(4, worldMatrix);
-		}
-		*/
 		ns_g3d function setVa(slotIndex:int, buffer:GpuVertexBuffer, offset:int=-1, format:String=null):void
 		{
 			vaSlot.setVa(slotIndex, buffer, offset, format);
@@ -129,7 +111,7 @@ package snjdck.g3d.render
 			this.shaderName = other.shaderName;
 			this.textureName = other.textureName;
 			
-			worldMatrix.copyFrom(other.worldMatrix);
+//			worldMatrix.copyFrom(other.worldMatrix);
 			
 			this.indexBuffer = other.indexBuffer;
 			

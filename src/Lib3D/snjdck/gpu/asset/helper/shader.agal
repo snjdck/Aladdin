@@ -110,7 +110,12 @@ vt2 += vt0.xyz * va7.w
 #===============================================================
 
 @objectImp.agal
-op = m44: vt1, vc0		#相机投影矩阵
+vt1.xyz = m34: vt1, vc5	#本地矩阵
+vt1.xyz = m34: vt1, vc2	#世界矩阵
+vt1.z = dp4: vt1, vc1
+vt1.xy += vc0.xy
+vt1.xy *= vc0.zw
+op = vt1
 v0 = va1				#uv
 
 ft0 = tex: v0, fs0<>
@@ -139,11 +144,10 @@ oc = fc1
 
 @bone_ani
 ${bone_ani_pos.vs}
-vt1 = m44: vt1, vc4	#世界矩阵
 ${objectImp.agal}
 
 @object
-vt1 = m44: va0, vc4	#世界矩阵
+vt1 = va0
 ${objectImp.agal}
 
 @bone_ani_shadow

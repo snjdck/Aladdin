@@ -126,10 +126,10 @@ package snjdck.g2d.render
 			constData[22] = target.x;
 			constData[23] = target.y;
 			
-			constData[24] = target.rotation * Unit.RADIAN;
-//			constData[25] = 0;
-//			constData[26] = 0;
-//			constData[27] = 0;
+			constData[24] = target.pivotX;
+			constData[25] = target.pivotY;
+			constData[26] = target.rotation * Unit.RADIAN;;
+			constData[27] = target.worldAlpha;
 			
 			projection.upload(constData);
 			

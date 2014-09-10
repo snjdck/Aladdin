@@ -40,12 +40,12 @@ package snjdck.gpu
 		{
 			renderTarget.setRenderToSelf(context3d);
 			renderTarget.clear(context3d);
-			drawTo(context3d, render, renderTarget);
+			drawTo(context3d, render);
 		}
 		
-		private function drawTo(context3d:GpuContext, render:GpuRender, renderTarget:IGpuRenderTarget):void
+		private function drawTo(context3d:GpuContext, render:GpuRender):void
 		{
-			render.pushScreen(renderTarget.width, renderTarget.height);
+			render.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			
 			render.drawScene3D(scene3d, context3d);
 			render.drawScene2D(scene2d, context3d);
