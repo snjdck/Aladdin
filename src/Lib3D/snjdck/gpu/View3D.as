@@ -17,6 +17,7 @@ package snjdck.gpu
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuRenderTarget;
 	import snjdck.gpu.register.ConstRegister;
+	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
 	
@@ -156,7 +157,10 @@ package snjdck.gpu
 		public function onTick(timeElapsed:int):void
 		{
 			viewPort.update(timeElapsed * timeScale);
-			viewPort.draw(context3d, render);
+			
+			context3d.setRenderToBackBuffer();
+			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
+			viewPort.drawTo(context3d, render);
 			context3d.present();
 		}
 		

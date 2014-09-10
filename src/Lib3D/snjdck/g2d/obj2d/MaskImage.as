@@ -13,11 +13,12 @@ package snjdck.g2d.obj2d
 	[Deprecated]
 	class MaskImage extends Image implements IDisposable
 	{
+		private var renderTarget:GpuRenderTarget
 		private var viewPort:ViewPort3D;
 		
 		public function MaskImage(source:Texture2D, mask:Texture2D)
 		{
-			var renderTarget:GpuRenderTarget = new GpuRenderTarget(source.width, source.height);
+			renderTarget = new GpuRenderTarget(source.width, source.height);
 			renderTarget.backgroundColor = 0x00000000;
 			
 			viewPort = new ViewPort3D(renderTarget);
@@ -48,9 +49,12 @@ package snjdck.g2d.obj2d
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
-			viewPort.draw(context3d, render);
+			
+			context3d.renderTarget = renderTarget;
+			renderTarget.clear(context3d);
+			viewPort.drawTo(context3d, render);
+			
 			context3d.renderTarget = prevRenderTarget;
-//			render.r2d.uploadProjectionMatrix(context3d);
 			super.draw(render, context3d);
 		}
 	}

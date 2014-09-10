@@ -43,7 +43,7 @@ package snjdck.gpu
 			drawTo(context3d, render);
 		}
 		
-		private function drawTo(context3d:GpuContext, render:GpuRender):void
+		public function drawTo(context3d:GpuContext, render:GpuRender):void
 		{
 			render.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			

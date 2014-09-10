@@ -16,12 +16,13 @@ package snjdck.g3d.obj3d
 
 	public class Pic3D extends Image implements IDisposable
 	{
+		private var renderTarget:GpuRenderTarget;
 		private var viewPort:ViewPort3D;
 		
 		public function Pic3D(width:int, height:int, object3d:Object3D)
 		{
 //			var tex:IGpuTexture = GpuAssetFactory.CreateGpuTexture2(new BitmapData(100, 100, true, 0xFFFF0000));
-			var renderTarget:GpuRenderTarget = new GpuRenderTarget(width, height);
+			renderTarget = new GpuRenderTarget(width, height);
 			renderTarget.backgroundColor = 0x8800FF00;
 			viewPort = new ViewPort3D(renderTarget);
 			viewPort.scene3d.addChild(object3d);
@@ -51,7 +52,11 @@ package snjdck.g3d.obj3d
 		override public function draw(render:GpuRender, context3d:GpuContext):void
 		{
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
-			viewPort.draw(context3d, render);
+			
+			context3d.renderTarget = renderTarget;
+			renderTarget.clear(context3d);
+			viewPort.drawTo(context3d, render);
+			
 			context3d.renderTarget = prevRenderTarget;
 			super.draw(render, context3d);
 		}
