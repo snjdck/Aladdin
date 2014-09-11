@@ -38,13 +38,6 @@ package snjdck.gpu
 		
 		public function draw(context3d:GpuContext, render:GpuRender):void
 		{
-			renderTarget.setRenderToSelf(context3d);
-			renderTarget.clear(context3d);
-			drawTo(context3d, render);
-		}
-		
-		public function drawTo(context3d:GpuContext, render:GpuRender):void
-		{
 			render.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			
 			render.drawScene3D(scene3d, context3d);

@@ -80,8 +80,7 @@ package snjdck.g2d.filter
 				backBuffer = swapTemp;
 				const filter:IFilter2D = _filterList[i];
 				if(i + 1 < filterCount){
-					context3d.renderTarget = frontBuffer;
-					frontBuffer.clear(context3d);
+					frontBuffer.setRenderToSelfAndClear(context3d);
 					const gpuTexture:IGpuTexture = (i == 0 ? texture : backBuffer);
 					filter.renderFilter(gpuTexture, render, context3d, frontBuffer, 0, 0);
 				}else{

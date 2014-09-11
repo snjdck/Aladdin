@@ -55,8 +55,7 @@ package snjdck.g2d.filter
 				
 				var gpuTexture:IGpuTexture = (0 == i ? texture : backBuffer);
 				if(i + 1 < numPasses){
-					context3d.renderTarget = frontBuffer;
-					frontBuffer.clear(context3d);
+					frontBuffer.setRenderToSelfAndClear(context3d);
 					render.r2d.drawTexture(context3d, gpuTexture);
 				}else{
 					render.r2d.popScreen();

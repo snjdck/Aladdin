@@ -52,18 +52,18 @@ package snjdck.g2d.render
 			return projection.offsetY;
 		}
 		
-		public function pushScreen(width:int, height:int):void
+		public function pushScreen(width:int, height:int, offsetX:Number=0, offsetY:Number=0):void
 		{
 			++projectionIndex;
 			while(projectionStack.length <= projectionIndex){
 				projectionStack.push(new Projection2D());
 			}
 			projection.resize(width, height);
+			projection.offset(offsetX, offsetY);
 		}
 		
 		public function popScreen():void
 		{
-			projection.offset(0, 0);
 			--projectionIndex;
 		}
 		

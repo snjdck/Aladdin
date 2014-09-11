@@ -53,9 +53,8 @@ package snjdck.g3d.obj3d
 		{
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			
-			context3d.renderTarget = renderTarget;
-			renderTarget.clear(context3d);
-			viewPort.drawTo(context3d, render);
+			renderTarget.setRenderToSelfAndClear(context3d);
+			viewPort.draw(context3d, render);
 			
 			context3d.renderTarget = prevRenderTarget;
 			super.draw(render, context3d);

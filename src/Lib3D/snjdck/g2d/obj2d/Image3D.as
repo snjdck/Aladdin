@@ -6,9 +6,9 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.ViewPort3D;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.GpuRender;
 	
 	/**
 	 * 
@@ -44,14 +44,13 @@ package snjdck.g2d.obj2d
 			context3d.clearDepthAndStencil();
 			context3d.setScissorRect(scissorRect);
 			render.r3d.offset(
-				x - 0.5 * (render.screenWidth - width),
-				0.5 * (render.screenHeight - height) - y
+				x - 0.5 * (context3d.bufferWidth - width),
+				0.5 * (context3d.bufferHeight - height) - y
 			);
 			render.drawScene3D(target, context3d);
 			render.r3d.offset();
 			context3d.setScissorRect(null);
 			
-//			render.r2d.uploadProjectionMatrix(context3d);
 			render.r2d.drawBegin(context3d);
 		}
 		

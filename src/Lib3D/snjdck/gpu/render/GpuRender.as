@@ -13,33 +13,18 @@ package snjdck.gpu.render
 		public const r3d:Render3D = new Render3D();
 		public const r2d:Render2D = new Render2D();
 		
-		private var _screentWidth:int;
-		private var _screentHeight:int;
-		
 		public function GpuRender(){}
 		
-		public function pushScreen(width:int, height:int):void
+		public function pushScreen(width:int, height:int, offsetX:Number=0, offsetY:Number=0):void
 		{
-			_screentWidth = width;
-			_screentHeight = height;
-			r3d.pushScreen(width, height);
-			r2d.pushScreen(width, height);
+			r3d.pushScreen(width, height, offsetX, offsetY);
+			r2d.pushScreen(width, height, offsetX, offsetY);
 		}
 		
 		public function popScreen():void
 		{
 			r3d.popScreen();
 			r2d.popScreen();
-		}
-		
-		public function get screenWidth():int
-		{
-			return _screentWidth;
-		}
-		
-		public function get screenHeight():int
-		{
-			return _screentHeight;
 		}
 		
 		public function drawScene3D(scene3d:Object3D, context3d:GpuContext):void

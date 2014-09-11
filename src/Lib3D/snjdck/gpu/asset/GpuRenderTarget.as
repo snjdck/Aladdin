@@ -55,5 +55,11 @@ package snjdck.gpu.asset
 		{
 			color.value = value;
 		}
+		
+		public function setRenderToSelfAndClear(context3d:GpuContext):void
+		{
+			context3d.renderTarget = this;
+			context3d.clear(color.red, color.green, color.blue, color.alpha);
+		}
 	}
 }
