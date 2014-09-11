@@ -362,6 +362,14 @@ package snjdck.g2d.impl
 		
 		public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
 		{
+			getRect(targetSpace, result);
+			if(filter != null){
+				result.inflate(filter.marginX, filter.marginY);
+			}
+		}
+		
+		public function getRect(targetSpace:IDisplayObject2D, result:Rectangle):void
+		{
 			calcSpaceTransform(targetSpace, tempMatrix1);
 			
 			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;

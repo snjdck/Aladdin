@@ -163,6 +163,28 @@ package snjdck.g2d.impl
 			}
 		}
 		
+		override public function getRect(targetSpace:IDisplayObject2D, result:Rectangle):void
+		{
+			if(_childList.length <= 0){
+				super.getRect(targetSpace, result);
+				return;
+			}
+			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;
+			var minY:Number = Number.MAX_VALUE, maxY:Number = Number.MIN_VALUE;
+			for each(var child:DisplayObject2D in _childList){
+				child.getRect(targetSpace, result);
+				var left:Number = result.x;
+				var top:Number = result.y;
+				var right:Number = left + result.width;
+				var bottom:Number = top + result.height;
+				if(left < minX){ minX = left; }
+				if(top < minY){ minY = top; }
+				if(right > maxX){ maxX = right; }
+				if(bottom > maxY){ maxY = bottom; }
+			}
+			result.setTo(minX, minY, maxX-minX, maxY-minY);
+		}
+		
 		override public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
 		{
 			if(_childList.length <= 0){

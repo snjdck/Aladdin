@@ -52,6 +52,7 @@ package snjdck.g2d.core
 		function get filter():IFilter2D;
 		function set filter(value:IFilter2D):void;
 		
+		function getRect(targetSpace:IDisplayObject2D, result:Rectangle):void;
 		function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void;
 		function calcSpaceTransform(targetSpace:IDisplayObject2D, result:Matrix):void;
 		function calcWorldMatrix(result:Matrix):void;
