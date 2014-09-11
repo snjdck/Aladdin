@@ -254,6 +254,16 @@ package snjdck.gpu.asset
 			context3d.clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
 		}
 		
+		public function get backBufferWidth():int
+		{
+			return context3d.backBufferWidth;
+		}
+		
+		public function get backBufferHeight():int
+		{
+			return context3d.backBufferHeight;
+		}
+		
 		public function get bufferWidth():int
 		{
 			if(null == _renderTarget){

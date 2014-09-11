@@ -25,6 +25,7 @@ package snjdck.g2d.filter
 			target.getBounds(null, bounds);
 			var boundsX:Number = bounds.x;
 			var boundsY:Number = bounds.y;
+			
 			imageBuffer = new GpuRenderTarget(bounds.width, bounds.height);
 			imageBuffer.setRenderToSelfAndClear(context3d);
 			

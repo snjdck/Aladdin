@@ -21,7 +21,7 @@ package snjdck.g2d.obj2d
 			renderTarget = new GpuRenderTarget(source.width, source.height);
 			renderTarget.backgroundColor = 0x00000000;
 			
-			viewPort = new ViewPort3D(renderTarget);
+			viewPort = new ViewPort3D();
 			
 			var originImage:Image = new Image(source);
 			var maskImage:Image = new Image(mask);

@@ -6,7 +6,7 @@ package snjdck.gpu.asset
 	
 	import snjdck.gpu.GpuColor;
 
-	public class GpuRenderTarget extends GpuAsset implements IGpuTexture, IGpuRenderTarget
+	public class GpuRenderTarget extends GpuAsset implements IGpuTexture
 	{
 		private const color:GpuColor = new GpuColor();
 		private var _antiAlias:int;
@@ -39,11 +39,6 @@ package snjdck.gpu.asset
 		public function get antiAlias():int
 		{
 			return _antiAlias;
-		}
-		
-		public function setRenderToSelf(context3d:GpuContext):void
-		{
-			context3d.renderTarget = this;
 		}
 		
 		public function clear(context3d:GpuContext):void

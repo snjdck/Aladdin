@@ -24,7 +24,7 @@ package snjdck.g3d.obj3d
 //			var tex:IGpuTexture = GpuAssetFactory.CreateGpuTexture2(new BitmapData(100, 100, true, 0xFFFF0000));
 			renderTarget = new GpuRenderTarget(width, height);
 			renderTarget.backgroundColor = 0x8800FF00;
-			viewPort = new ViewPort3D(renderTarget);
+			viewPort = new ViewPort3D();
 			viewPort.scene3d.addChild(object3d);
 //			var textImage:Image = new Image(new Texture2D(tex));
 //			textImage.x = 100;

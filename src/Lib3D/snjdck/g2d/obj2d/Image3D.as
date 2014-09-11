@@ -43,12 +43,10 @@ package snjdck.g2d.obj2d
 		{
 			context3d.clearDepthAndStencil();
 			context3d.setScissorRect(scissorRect);
-			render.r3d.offset(
+			render.drawScene3D(target, context3d,
 				x - 0.5 * (context3d.bufferWidth - width),
 				0.5 * (context3d.bufferHeight - height) - y
 			);
-			render.drawScene3D(target, context3d);
-			render.r3d.offset();
 			context3d.setScissorRect(null);
 			
 			render.r2d.drawBegin(context3d);

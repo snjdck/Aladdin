@@ -6,6 +6,7 @@ package snjdck.gpu
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Vector3D;
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
@@ -13,15 +14,15 @@ package snjdck.gpu
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.IGpuRenderTarget;
 	import snjdck.gpu.register.ConstRegister;
 	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
 	
-	public class View3D implements IGpuRenderTarget, ITicker
+	public class View3D implements ITicker
 	{
 		public var timeScale:Number = 1;
 		
@@ -51,7 +52,7 @@ package snjdck.gpu
 			this._renderMode = renderMode || Context3DRenderMode.AUTO;
 			this._profile = profile || Context3DProfile.BASELINE;
 			
-			viewPort = new ViewPort3D(this);
+			viewPort = new ViewPort3D();
 			
 			viewPort.scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
 			viewPort.scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
@@ -95,21 +96,6 @@ package snjdck.gpu
 			return _width;
 		}
 		
-		public function clear(context3d:GpuContext):void
-		{
-			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-		}
-		
-		public function setRenderToSelf(context3d:GpuContext):void
-		{
-			context3d.setRenderToBackBuffer();
-		}
-		
-		public function get antiAlias():int
-		{
-			return 4;
-		}
-		
 		public function set backgroundColor(color:uint):void
 		{
 			_backBufferColor.value = color;
@@ -135,7 +121,7 @@ package snjdck.gpu
 		
 		protected function onDeviceLost():void
 		{
-			context3d.configureBackBuffer(_width, _height, antiAlias);
+			context3d.configureBackBuffer(_width, _height, 4);
 			ConstRegister.InitReserved(stage3d.context3D);
 		}
 		
@@ -147,7 +133,7 @@ package snjdck.gpu
 		private function __onStageEvent(evt:Event):void
 		{
 			if(viewPort.scene3d.hasMouseEvent(evt.type)){
-				var info:RayTestInfo = viewPort.pickNearestObjectUnderPoint(stage2d.mouseX, stage2d.mouseY);
+				var info:RayTestInfo = pickNearestObjectUnderPoint(stage2d.mouseX, stage2d.mouseY);
 				if(info){
 					info.target.notifyMouseEvent(evt.type, info);
 				}
@@ -185,6 +171,37 @@ package snjdck.gpu
 				context3d.enableErrorChecking = value;
 			}
 			_enableErrorChecking = value;
+		}
+		
+		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
+		{
+			var screenPt:Vector3D = new Vector3D(
+				mouseX - 0.5 * context3d.backBufferWidth,
+				0.5 * context3d.backBufferHeight - mouseY
+			);
+			var ray:Ray = new Ray(screenPt, Vector3D.Z_AXIS);
+			scene3d.testRay(ray, result);
+		}
+		
+		public function pickNearestObjectUnderPoint(mouseX:Number, mouseY:Number):RayTestInfo
+		{
+			var result:Vector.<RayTestInfo> = new Vector.<RayTestInfo>();
+			
+			pickObjectsUnderPoint(mouseX, mouseY, result);
+			
+			if(result.length < 1){
+				return null;
+			}
+			
+			result.sort(__sort);
+			return result[0];
+		}
+		
+		static private function __sort(a:RayTestInfo, b:RayTestInfo):int
+		{
+			var pa:Vector3D = a.globalPos;
+			var pb:Vector3D = b.globalPos;
+			return pa.z < pb.z ? -1 : 1;
 		}
 	}
 }
