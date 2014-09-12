@@ -144,7 +144,6 @@ package snjdck.gpu
 		{
 			viewPort.update(timeElapsed * timeScale);
 			
-			context3d.setRenderToBackBuffer();
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
 			viewPort.draw(context3d, render);
 			context3d.present();

@@ -160,15 +160,6 @@ package snjdck.gpu.asset
 			);
 		}
 		
-		public function setRenderToBackBuffer():void
-		{
-			if(null == _renderTarget){
-				return;
-			}
-			context3d.setRenderToBackBuffer();
-			_renderTarget = null;
-		}
-		
 		public function setVc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
 		{
 			context3d.setProgramConstantsFromVector(Context3DProgramType.VERTEX, firstRegister, data, numRegisters);
