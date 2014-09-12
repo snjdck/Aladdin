@@ -3,12 +3,13 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
+	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
+	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.register.ConstRegister;
 
 	final public class GpuContext
 	{
@@ -28,9 +29,6 @@ package snjdck.gpu.asset
 		
 		private var _renderTarget:GpuRenderTarget;
 		
-		private var vcReg:ConstRegister;
-		private var fcReg:ConstRegister;
-		
 		public function GpuContext(context3d:Context3D)
 		{
 			this.context3d = context3d;
@@ -41,9 +39,6 @@ package snjdck.gpu.asset
 			depthPassCompareMode = Context3DCompareMode.LESS_EQUAL;
 			
 			stencilRefValue = 0xFFFF00;
-			
-			vcReg = ConstRegister.NewVertexConstRegister();
-			fcReg = ConstRegister.NewFragmentConstRegister();
 		}
 		
 		public function get driverInfo():String
@@ -176,22 +171,22 @@ package snjdck.gpu.asset
 		
 		public function setVc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
 		{
-			vcReg.setByVector(firstRegister, data, numRegisters);
+			context3d.setProgramConstantsFromVector(Context3DProgramType.VERTEX, firstRegister, data, numRegisters);
+		}
+		
+		public function setVcM(firstRegister:int, matrix:Matrix3D):void
+		{
+			context3d.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, firstRegister, matrix, true);
 		}
 		
 		public function setFc(firstRegister:int, data:Vector.<Number>, numRegisters:int=-1):void
 		{
-			fcReg.setByVector(firstRegister, data, numRegisters);
+			context3d.setProgramConstantsFromVector(Context3DProgramType.FRAGMENT, firstRegister, data, numRegisters);
 		}
 		
-		public function setVcReg(constReg:ConstRegister):void
+		public function setFcM(firstRegister:int, matrix:Matrix3D):void
 		{
-			vcReg.merge(constReg);
-		}
-		
-		public function setFcReg(constReg:ConstRegister):void
-		{
-			fcReg.merge(constReg);
+			context3d.setProgramConstantsFromMatrix(Context3DProgramType.FRAGMENT, firstRegister, matrix, true);
 		}
 		
 		public function get program():GpuProgram
@@ -239,8 +234,6 @@ package snjdck.gpu.asset
 		
 		public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
 		{
-			vcReg.upload(context3d);vcReg.clear();
-			fcReg.upload(context3d);fcReg.clear();
 			context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d), firstIndex, numTriangles);
 		}
 		

@@ -1,5 +1,6 @@
 package snjdck.g3d.mesh
 {
+	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix3D;
 	import flash.utils.Dictionary;
 	
@@ -103,9 +104,14 @@ package snjdck.g3d.mesh
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);
 			}
-			drawUnit.setVa2(gpuBoneBuffer, [4, 4, 4, 4, 4, 4], 2);
+			drawUnit.setVa(2, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
+			drawUnit.setVa(3, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
+			drawUnit.setVa(4, gpuBoneBuffer, 8, Context3DVertexBufferFormat.FLOAT_4);
+			drawUnit.setVa(5, gpuBoneBuffer, 12, Context3DVertexBufferFormat.FLOAT_4);
+			drawUnit.setVa(6, gpuBoneBuffer, 16, Context3DVertexBufferFormat.FLOAT_4);
+			drawUnit.setVa(7, gpuBoneBuffer, 20, Context3DVertexBufferFormat.FLOAT_4);
 			for(var i:int=0, n:int=boneIds.length; i<n; i++){
-				drawUnit.setBoneMatrix(BoneIdToBoneIndex(i), boneDict[boneIds[i]]);
+				drawUnit.addBone(boneDict[boneIds[i]]);
 			}
 		}
 		
