@@ -6,12 +6,15 @@ package snjdck.gpu
 	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
+	import flash.geom.d3.createIsoMatrix;
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
+	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Ray;
@@ -24,15 +27,17 @@ package snjdck.gpu
 	
 	public class View3D implements ITicker
 	{
+		static public const isoMatrix:Matrix3D = createIsoMatrix();
+		
+		public const scene3d:Object3D = new Object3D();
+		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
+		
 		public var timeScale:Number = 1;
 		
 		private var hasInit:Boolean;
 		
-		private var viewPort:ViewPort3D;
 		private const render:GpuRender = new GpuRender();
 		
-		private var _renderMode:String;
-		private var _profile:String;
 		private var _enableErrorChecking:Boolean;
 		
 		private var stage2d:Stage;
@@ -43,31 +48,16 @@ package snjdck.gpu
 		private var _width:int;
 		private var _height:int;
 		
-		public function View3D(stage:Stage, renderMode:String=null, profile:String=null)
+		public function View3D(stage:Stage)
 		{
 			this._width = stage.stageWidth;
 			this._height = stage.stageHeight;
 			this.stage2d = stage;
 			
-			this._renderMode = renderMode || Context3DRenderMode.AUTO;
-			this._profile = profile || Context3DProfile.BASELINE;
-			
-			viewPort = new ViewPort3D();
-			
-			viewPort.scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
-			viewPort.scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
+			scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
+			scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
 			
 			init();
-		}
-		
-		public function get scene2d():IDisplayObjectContainer2D
-		{
-			return viewPort.scene2d;
-		}
-		
-		public function get scene3d():Object3D
-		{
-			return viewPort.scene3d;
 		}
 		
 		private function forwardEvt(evt:Event):void
@@ -79,7 +69,8 @@ package snjdck.gpu
 		{
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
-			stage3d.requestContext3D(_renderMode, _profile);
+//			stage3d.requestContext3D(Context3DRenderMode.SOFTWARE, Context3DProfile.BASELINE);
+			stage3d.requestContext3DMatchingProfiles(new <String>[Context3DProfile.STANDARD, Context3DProfile.BASELINE]);
 			
 			stage2d.addEventListener(MouseEvent.CLICK,			__onStageEvent);
 			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
@@ -113,9 +104,8 @@ package snjdck.gpu
 		
 		private function onDeviceInit():void
 		{
-			context3d.enableErrorChecking = _enableErrorChecking;
 			trace(context3d.driverInfo);
-			
+			context3d.enableErrorChecking = _enableErrorChecking;
 			Clock.getInstance().add(this);
 		}
 		
@@ -127,12 +117,12 @@ package snjdck.gpu
 		
 		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D
 		{
-			return viewPort.scene2d.pickup(px, py);
+			return scene2d.pickup(px, py);
 		}
 		
 		private function __onStageEvent(evt:Event):void
 		{
-			if(viewPort.scene3d.hasMouseEvent(evt.type)){
+			if(scene3d.hasMouseEvent(evt.type)){
 				var info:RayTestInfo = pickNearestObjectUnderPoint(stage2d.mouseX, stage2d.mouseY);
 				if(info){
 					info.target.notifyMouseEvent(evt.type, info);
@@ -142,10 +132,12 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			viewPort.update(timeElapsed * timeScale);
+			scene3d.onUpdate(timeElapsed, isoMatrix);
+			scene2d.onUpdate(timeElapsed, null, 1);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			viewPort.draw(context3d, render);
+			render.drawScene3D(scene3d, context3d);
+			render.drawScene2D(scene2d, context3d);
 			context3d.present();
 		}
 		

@@ -7,7 +7,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g2d.obj2d.Image;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.ViewPort3D;
+	import snjdck.gpu.View3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.render.GpuRender;
@@ -17,15 +17,14 @@ package snjdck.g3d.obj3d
 	public class Pic3D extends Image implements IDisposable
 	{
 		private var renderTarget:GpuRenderTarget;
-		private var viewPort:ViewPort3D;
+		private var object3d:Object3D;
 		
 		public function Pic3D(width:int, height:int, object3d:Object3D)
 		{
 //			var tex:IGpuTexture = GpuAssetFactory.CreateGpuTexture2(new BitmapData(100, 100, true, 0xFFFF0000));
 			renderTarget = new GpuRenderTarget(width, height);
 			renderTarget.backgroundColor = 0x8800FF00;
-			viewPort = new ViewPort3D();
-			viewPort.scene3d.addChild(object3d);
+			this.object3d = object3d;
 //			var textImage:Image = new Image(new Texture2D(tex));
 //			textImage.x = 100;
 //			textImage.y = 100;
@@ -46,7 +45,7 @@ package snjdck.g3d.obj3d
 		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
 		{
 			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
-			viewPort.update(timeElapsed);
+			object3d.onUpdate(timeElapsed, View3D.isoMatrix);
 		}
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void
@@ -54,9 +53,11 @@ package snjdck.g3d.obj3d
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			
 			renderTarget.setRenderToSelfAndClear(context3d);
-			viewPort.draw(context3d, render);
+			render.drawScene3D(object3d, context3d);
 			
 			context3d.renderTarget = prevRenderTarget;
+			
+			render.r2d.drawBegin(context3d);
 			super.draw(render, context3d);
 		}
 	}

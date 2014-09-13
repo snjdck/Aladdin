@@ -6,7 +6,7 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.ViewPort3D;
+	import snjdck.gpu.View3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.GpuRender;
 	
@@ -36,7 +36,7 @@ package snjdck.g2d.obj2d
 		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
 		{
 			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
-			target.ns_g3d::onUpdate(timeElapsed, ViewPort3D.isoMatrix);
+			target.ns_g3d::onUpdate(timeElapsed, View3D.isoMatrix);
 		}
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void
