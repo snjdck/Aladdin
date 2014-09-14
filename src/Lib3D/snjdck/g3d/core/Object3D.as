@@ -14,8 +14,8 @@ package snjdck.g3d.core
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
 	
@@ -35,7 +35,6 @@ package snjdck.g3d.core
 		
 		private var isLocalMatrixDirty:Boolean;
 		ns_g3d const localMatrix:Matrix3D = new Matrix3D();
-		ns_g3d const worldMatrix:Matrix3D = new Matrix3D();
 		
 		public var width:Number, height:Number, length:Number;
 		private var _alpha:Number = 0;
@@ -92,31 +91,22 @@ package snjdck.g3d.core
 			return localMatrix;
 		}
 		
-		ns_g3d function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix3D):void
+		public function onUpdate(timeElapsed:int):void
 		{
-			if(firstChild){
-				worldMatrix.copyFrom(transform);
-				if(parentWorldMatrix){
-					worldMatrix.append(parentWorldMatrix);
-				}
-				for(var child:Object3D=firstChild; child; child=child.nextSibling){
-					child.onUpdate(timeElapsed, worldMatrix);
-				}
-			}
-			if(parentWorldMatrix){
-				worldMatrix.copyFrom(parentWorldMatrix);
-			}else{
-				worldMatrix.identity();
+			for(var child:Object3D=firstChild; child; child=child.nextSibling){
+				child.onUpdate(timeElapsed);
 			}
 		}
 		
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
+			collector.pushMatrix(transform);
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.visible){
 					child.collectDrawUnit(collector);
 				}
 			}
+			collector.popMatrix();
 		}
 		
 		final public function testRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
@@ -136,10 +126,10 @@ package snjdck.g3d.core
 		
 		protected function onTestRay(ray:Ray, result:Vector.<RayTestInfo>):void	{}
 		
-		ns_g3d function getLocalRay(globalRay:Ray):Ray
-		{
-			return globalRay.transformToLocal(worldMatrix);
-		}
+//		ns_g3d function getLocalRay(globalRay:Ray):Ray
+//		{
+//			return globalRay.transformToLocal(worldMatrix);
+//		}
 		
 		public function addChild(child:Object3D):void
 		{
@@ -378,6 +368,20 @@ package snjdck.g3d.core
 			this._z = tempPoint.z;
 		}
 		
+		private const _worldMatrix:Matrix3D = new Matrix3D();
+		
+		public function get worldMatrix():Matrix3D
+		{
+//			_worldMatrix.copyFrom(transform);
+			_worldMatrix.identity();
+			var target:Object3D = this.parent;
+			while(target != null){
+				_worldMatrix.append(target.transform);
+				target = target.parent;
+			}
+			return _worldMatrix;
+		}
+		/*
 		public function localToGlobal(pt:Vector3D):Vector3D
 		{
 			return worldMatrix.transformVector(pt);
@@ -389,7 +393,7 @@ package snjdck.g3d.core
 			tempMatrix.invert();
 			return tempMatrix.transformVector(pt);
 		}
-		
+		//*/
 		ns_g3d function hasMouseEvent(evtType:String):Boolean
 		{
 			if(hasEventListener(evtType)){

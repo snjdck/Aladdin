@@ -101,9 +101,9 @@ package snjdck.g3d.geom
 			gpuIndexBuffer = GpuAssetFactory.CreateQuadBuffer(maxParticles);
 		}
 		
-		override ns_g3d function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix3D):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix);
+			super.onUpdate(timeElapsed);
 			globalTime += timeElapsed * 0.001;
 		}
 		/*

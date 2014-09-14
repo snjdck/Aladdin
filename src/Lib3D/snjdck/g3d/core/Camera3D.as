@@ -79,10 +79,10 @@ package snjdck.g3d.core
 			camera.x = px - py;
 			camera.y = (px + py) * 0.5;
 		}
-		*/
-		override ns_g3d function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix3D):void
+		
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix);
+			super.onUpdate(timeElapsed);
 			
 			mvp.copyFrom(worldMatrix);
 			mvp.appendTranslation(origin.x, origin.y, origin.z);
@@ -96,7 +96,7 @@ package snjdck.g3d.core
 		{
 			return globalRay.transformToLocal(mvp);
 		}
-		/*
+		
 		static private const CONST_A:Number = 0.5 * Math.sqrt(6);
 		static private const CONST_B:Number = 0.5 * Math.sqrt(3);
 		

@@ -10,14 +10,8 @@ package snjdck.g2d.core
 
 	public interface IDisplayObject2D extends IDisplayObject
 	{
-		function onUpdate(timeElapsed:int):void;
-		/*
-		function collectDrawUnits(collector:Collector2D):void;
-		function collectPickUnits(collector:Collector2D, px:Number, py:Number):void;
-		*/
 		function draw(render:GpuRender, context3d:GpuContext):void;
 		function pickup(px:Number, py:Number):IDisplayObject2D;
-		
 		
 		function globalToLocal(point:Point):Point;
 		function localToGlobal(point:Point):Point;

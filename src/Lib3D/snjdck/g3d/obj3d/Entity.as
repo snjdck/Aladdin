@@ -57,12 +57,11 @@ package snjdck.g3d.obj3d
 				return;
 			}
 			*/
-			
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
 				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
 				drawUnit.blendMode = blendMode;
-				drawUnit.parentWorldMatrix = worldMatrix;
+				drawUnit.parentWorldMatrix = collector.worldMatrix;
 				drawUnit.localMatrix = transform;
 				subMesh.getDrawUnit(drawUnit, boneDict);
 				collector.addDrawUnit(drawUnit);
@@ -71,7 +70,8 @@ package snjdck.g3d.obj3d
 		
 		override protected function onTestRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
 		{
-			var ray:Ray = getLocalRay(globalRay);
+//			var ray:Ray = getLocalRay(globalRay);
+			var ray:Ray = globalRay.transformToLocal(worldMatrix);
 			
 			var rayTestInfo:RayTestInfo = new RayTestInfo();
 			rayTestInfo.target = this;
@@ -122,9 +122,9 @@ package snjdck.g3d.obj3d
 			boneDict = entity.boneDict;
 		}
 		
-		override ns_g3d function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix3D):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix);
+			super.onUpdate(timeElapsed);
 			
 			if(null == boneDict || null == skeleton){
 				return;

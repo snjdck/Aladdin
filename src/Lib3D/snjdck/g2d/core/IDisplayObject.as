@@ -20,6 +20,8 @@ package snjdck.g2d.core
 		function get visible():Boolean;
 		function set visible(value:Boolean):void;
 		
+		function onUpdate(timeElapsed:int):void;
+		
 		/*
 		function get opaque():Boolean;
 		function set opaque(value:Boolean):void;

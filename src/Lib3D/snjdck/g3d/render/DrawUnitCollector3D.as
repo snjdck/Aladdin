@@ -1,9 +1,11 @@
 package snjdck.g3d.render
 {
+	import flash.geom.Matrix3D;
 	import flash.support.ObjectPool;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.matrixstack.MatrixStack3D;
 	
 	use namespace ns_g3d;
 
@@ -13,6 +15,8 @@ package snjdck.g3d.render
 		
 		ns_g3d const opaqueList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
 		ns_g3d const blendList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
+		
+		private const matrixStack:MatrixStack3D = new MatrixStack3D();
 		
 		public function DrawUnitCollector3D()
 		{
@@ -46,6 +50,21 @@ package snjdck.g3d.render
 			}else{
 				blendList.push(drawUnit);
 			}
+		}
+		
+		public function pushMatrix(matrix:Matrix3D):void
+		{
+			matrixStack.pushMatrix(matrix);
+		}
+		
+		public function popMatrix():void
+		{
+			matrixStack.popMatrix();
+		}
+		
+		public function get worldMatrix():Matrix3D
+		{
+			return matrixStack.worldMatrix;
 		}
 	}
 }

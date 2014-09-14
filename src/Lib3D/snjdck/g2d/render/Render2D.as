@@ -13,18 +13,18 @@ package snjdck.g2d.render
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
-	import snjdck.gpu.projection.Projection2D;
+	import snjdck.gpu.matrixstack.MatrixStack2D;
+	import snjdck.gpu.projectionstack.IProjectionStack;
+	import snjdck.gpu.projectionstack.Projection2DStack;
 	import snjdck.gpu.render.IRender;
 	
 	import stdlib.constant.Unit;
 
-	final public class Render2D implements IRender
+	final public class Render2D implements IRender, IProjectionStack
 	{
-		private const projectionStack:Vector.<Projection2D> = new Vector.<Projection2D>();
-		private var projectionIndex:int;
+		private const projectionStack:Projection2DStack = new Projection2DStack();
 		
-		private const matrixStack:Vector.<Matrix> = new Vector.<Matrix>();
-		private var matrixIndex:int;
+		private const matrixStack:MatrixStack2D = new MatrixStack2D();
 		
 		private var gpuVertexBuffer:GpuVertexBuffer;
 		private var gpuIndexBuffer:GpuIndexBuffer;
@@ -32,59 +32,39 @@ package snjdck.g2d.render
 		
 		public function Render2D(){}
 		
-		private function get projection():Projection2D
-		{
-			return projectionStack[projectionIndex];
-		}
-		
 		public function offset(dx:Number=0, dy:Number=0):void
 		{
-			projection.offset(dx, dy);
+			projectionStack.projection.offset(dx, dy);
 		}
 		
 		public function get offsetX():Number
 		{
-			return projection.offsetX;
+			return projectionStack.projection.offsetX;
 		}
 		
 		public function get offsetY():Number
 		{
-			return projection.offsetY;
+			return projectionStack.projection.offsetY;
 		}
 		
 		public function pushScreen(width:int, height:int, offsetX:Number=0, offsetY:Number=0):void
 		{
-			++projectionIndex;
-			while(projectionStack.length <= projectionIndex){
-				projectionStack.push(new Projection2D());
-			}
-			projection.resize(width, height);
-			projection.offset(offsetX, offsetY);
+			projectionStack.pushScreen(width, height, offsetX, offsetY);
 		}
 		
 		public function popScreen():void
 		{
-			--projectionIndex;
+			projectionStack.popScreen();
 		}
 		
 		public function pushMatrix(matrix:Matrix):void
 		{
-			++matrixIndex;
-			while(matrixStack.length <= matrixIndex){
-				matrixStack.push(new Matrix());
-			}
-			worldMatrix.copyFrom(matrix);
-			worldMatrix.concat(matrixStack[matrixIndex-1]);
+			matrixStack.pushMatrix(matrix);
 		}
 		
 		public function popMatrix():void
 		{
-			--matrixIndex;
-		}
-		
-		private function get worldMatrix():Matrix
-		{
-			return matrixStack[matrixIndex];
+			matrixStack.popMatrix();
 		}
 		
 		public function drawBegin(context3d:GpuContext):void
@@ -98,6 +78,7 @@ package snjdck.g2d.render
 		
 		public function drawImage(context3d:GpuContext, target:IDisplayObject2D, texture:ITexture2D):void
 		{
+			var worldMatrix:Matrix = matrixStack.worldMatrix;
 			var frameMatrix:Matrix = texture.frameMatrix;
 			var uvMatrix:Matrix = texture.uvMatrix;
 			
@@ -131,7 +112,7 @@ package snjdck.g2d.render
 			constData[26] = target.rotation * Unit.RADIAN;;
 			constData[27] = target.worldAlpha;
 			
-			projection.upload(constData);
+			projectionStack.projection.upload(constData);
 			
 			context3d.setVc(0, constData, 7);
 			
@@ -157,7 +138,7 @@ package snjdck.g2d.render
 			constData[6] = textureX;
 			constData[7] = textureY;
 			
-			projection.upload(constData);
+			projectionStack.projection.upload(constData);
 			
 			context3d.setVc(0, constData, 2);
 			context3d.setTextureAt(0, texture);

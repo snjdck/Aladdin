@@ -27,8 +27,6 @@ package snjdck.gpu
 	
 	public class View3D implements ITicker
 	{
-		static public const isoMatrix:Matrix3D = createIsoMatrix();
-		
 		public const scene3d:Object3D = new Object3D();
 		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
@@ -132,7 +130,7 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			scene3d.onUpdate(timeElapsed * timeScale, isoMatrix);
+			scene3d.onUpdate(timeElapsed * timeScale);
 			scene2d.onUpdate(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
@@ -170,6 +168,10 @@ package snjdck.gpu
 				mouseX - 0.5 * context3d.backBufferWidth,
 				0.5 * context3d.backBufferHeight - mouseY
 			);
+			//todo 优化
+			var m:Matrix3D = createIsoMatrix();
+			m.invert();
+			screenPt = m.transformVector(screenPt);
 			var ray:Ray = new Ray(screenPt, Vector3D.Z_AXIS);
 			scene3d.testRay(ray, result);
 		}

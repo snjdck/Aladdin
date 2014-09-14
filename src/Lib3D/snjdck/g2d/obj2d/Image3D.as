@@ -36,7 +36,7 @@ package snjdck.g2d.obj2d
 		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
-			target.ns_g3d::onUpdate(timeElapsed, View3D.isoMatrix);
+			target.onUpdate(timeElapsed);
 		}
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void
