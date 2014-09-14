@@ -156,10 +156,10 @@ package snjdck.g2d.impl
 			return null;
 		}
 		
-		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
+		override public function onUpdate(timeElapsed:int):void
 		{
 			for each(var child:DisplayObject2D in _childList){
-				child.onUpdate(timeElapsed, worldMatrix, worldAlpha);
+				child.onUpdate(timeElapsed);
 			}
 		}
 		

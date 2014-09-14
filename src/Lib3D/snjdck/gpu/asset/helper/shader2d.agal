@@ -32,6 +32,8 @@ vt0.xy += vc4.zw
 v0 = vt0
 
 ft0 = tex: v0, fs0<2d,nearest,clamp,${0}>
+ft0 *= fc0
+ft0 += fc1
 ft1.x = ft0.w - fc27.x
 kil: ft1.x
 oc = ft0

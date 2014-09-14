@@ -22,10 +22,10 @@ package snjdck.g2d.obj2d
 			this.maskImage = maskImage;
 		}
 		
-		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
-			maskImage.onUpdate(timeElapsed, worldMatrix, worldAlpha);
+			super.onUpdate(timeElapsed);
+			maskImage.onUpdate(timeElapsed);
 		}
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void

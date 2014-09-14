@@ -132,8 +132,8 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			scene3d.onUpdate(timeElapsed, isoMatrix);
-			scene2d.onUpdate(timeElapsed, null, 1);
+			scene3d.onUpdate(timeElapsed * timeScale, isoMatrix);
+			scene2d.onUpdate(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
 			render.drawScene3D(scene3d, context3d);

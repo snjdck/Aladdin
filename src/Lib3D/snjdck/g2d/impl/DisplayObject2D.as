@@ -1,5 +1,6 @@
 package snjdck.g2d.impl
 {
+	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -11,8 +12,8 @@ package snjdck.g2d.impl
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.core.IFilter2D;
-	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.GpuRender;
 	
 	import stdlib.constant.Unit;
 
@@ -25,6 +26,7 @@ package snjdck.g2d.impl
 		
 		private var _color:uint;
 		private var _alpha:Number;
+		private var _colorTransform:ColorTransform;
 		
 		private var _visible:Boolean;
 		private var _filter:IFilter2D;
@@ -34,8 +36,6 @@ package snjdck.g2d.impl
 		private var isLocalMatrixDirty:Boolean;
 		private const _localMatrix:Matrix = new Matrix();
 		
-		private const _worldMatrix:Matrix = new Matrix();
-		private const _worldMatrixInvert:Matrix = new Matrix();
 		private var _worldAlpha:Number = 1;
 		
 		/** 防止递归操作 */
@@ -51,7 +51,7 @@ package snjdck.g2d.impl
 			_color = 0xFFFFFF;
 			_alpha = 1;
 			_visible = true;
-//			_blendMode = BlendMode.ALPHAL;
+			_colorTransform = new ColorTransform();
 		}
 		
 		/** 1.缩放, 2.旋转, 3.位移 */
@@ -71,28 +71,8 @@ package snjdck.g2d.impl
 			return _localMatrix;
 		}
 		
-		public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
-		{
-//			_worldMatrix.copyFrom(parentWorldMatrix);
-//			_worldMatrix.copyFrom(transform);
-//			
-//			if(parentWorldMatrix){
-//				_worldMatrix.concat(parentWorldMatrix);
-//			}
-			
-//			_worldAlpha = alpha * parentWorldAlpha;
-		}
-		/*
-		private const topLeft		:Point = new Point();
-		private const topRight		:Point = new Point();
-		private const bottomLeft	:Point = new Point();
-		private const bottomRight	:Point = new Point();
-		*/
-		private const tempPoint:Point = new Point();
-		
-		virtual public function draw(render:GpuRender, context3d:GpuContext):void
-		{
-		}
+		virtual public function onUpdate(timeElapsed:int):void{}
+		virtual public function draw(render:GpuRender, context3d:GpuContext):void{}
 		
 		virtual public function pickup(px:Number, py:Number):IDisplayObject2D
 		{
@@ -100,51 +80,14 @@ package snjdck.g2d.impl
 				return null;
 			}
 			
-			_worldMatrixInvert.copyFrom(_worldMatrix);
-			_worldMatrixInvert.invert();
-			transformCoords(_worldMatrixInvert, px, py, tempPoint);
-			
-			if(tempPoint.x >= 0
-				&& tempPoint.y >= 0
-				&& tempPoint.x < width
-				&& tempPoint.y < height
-			){
+			getRect(this, tempRect);
+			if(tempRect.contains(px, py)){
 				return this;
 			}
 			
 			return null;
 		}
 		
-		
-		/*
-		virtual public function collectDrawUnits(collector:Collector2D):void
-		{
-		}
-		
-		virtual public function collectPickUnits(collector:Collector2D, px:Number, py:Number):void
-		{
-			if(false == visible){
-				return;
-			}
-			
-			transformCoords(_worldMatrixInvert, px, py, tempPoint);
-			
-			if(tempPoint.x >= 0
-			&& tempPoint.y >= 0
-			&& tempPoint.x < width
-			&& tempPoint.y < height
-			){
-				var pickUnit:DrawUnit2D = collector.getFreeDrawUnit();
-				pickUnit.target = this;
-				collector.addDrawUnit(pickUnit);
-			}
-		}
-		virtual public function preDrawRenderTargets(context3d:GpuContext, render:GpuRender):void
-		{
-		}
-		*/
-		
-		[Inline]
 		final public function removeFromParent():void
 		{
 			if(parent){
@@ -314,31 +257,6 @@ package snjdck.g2d.impl
 		{
 			_visible = value;
 		}
-		/*
-		public function get opaque():Boolean
-		{
-			return BlendMode.NORMAL == _blendMode;
-		}
-		
-		public function set opaque(value:Boolean):void
-		{
-			_blendMode = value ? BlendMode.NORMAL : BlendMode.ALPHAL;
-		}
-		
-		public function get blendMode():BlendMode
-		{
-			return _blendMode;
-		}
-		
-		public function set blendMode(value:BlendMode):void
-		{
-			_blendMode = value;
-		}
-		//*/
-		final public function get worldMatrix():Matrix
-		{
-			return _worldMatrix;
-		}
 		
 		final public function get worldAlpha():Number
 		{
@@ -353,6 +271,11 @@ package snjdck.g2d.impl
 		public function set filter(value:IFilter2D):void
 		{
 			_filter = value;
+		}
+		
+		public function get colorTransform():ColorTransform
+		{
+			return _colorTransform;
 		}
 		
 		public function hasVisibleArea():Boolean
@@ -432,8 +355,9 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		static protected const tempMatrix1:Matrix = new Matrix();
-		static protected const tempMatrix2:Matrix = new Matrix();
+		static private const tempMatrix1:Matrix = new Matrix();
+		static private const tempMatrix2:Matrix = new Matrix();
 		static private const tempPt:Point = new Point();
+		static private const tempRect:Rectangle = new Rectangle();
 	}
 }

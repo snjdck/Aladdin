@@ -134,6 +134,18 @@ package snjdck.g2d.render
 			projection.upload(constData);
 			
 			context3d.setVc(0, constData, 7);
+			
+			constData[0] = target.colorTransform.redMultiplier;
+			constData[1] = target.colorTransform.greenMultiplier;
+			constData[2] = target.colorTransform.blueMultiplier;
+			constData[3] = target.colorTransform.alphaMultiplier;
+			constData[4] = target.colorTransform.redOffset;
+			constData[5] = target.colorTransform.greenOffset;
+			constData[6] = target.colorTransform.blueOffset;
+			constData[7] = target.colorTransform.alphaOffset;
+			
+			context3d.setFc(0, constData, 2);
+			
 			context3d.setTextureAt(0, texture.gpuTexture);
 			context3d.drawTriangles(gpuIndexBuffer);
 		}

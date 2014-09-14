@@ -39,10 +39,10 @@ package snjdck.g2d.obj2d
 			texture.gpuTexture.dispose();
 		}
 		
-		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
-			scene2d.onUpdate(timeElapsed, null, 1);
+			super.onUpdate(timeElapsed);
+			scene2d.onUpdate(timeElapsed);
 		}
 		
 		override public function draw(render:GpuRender, context3d:GpuContext):void

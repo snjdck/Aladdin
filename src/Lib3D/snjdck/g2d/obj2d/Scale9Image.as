@@ -175,21 +175,21 @@ package snjdck.g2d.obj2d
 			bottomRight.collectDrawUnits(collector);
 		}
 		*/
-		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
+			super.onUpdate(timeElapsed);
 			
-			topLeft.onUpdate(timeElapsed, worldMatrix, worldAlpha);
-			top.onUpdate(timeElapsed, worldMatrix, worldAlpha);
-			topRight.onUpdate(timeElapsed, worldMatrix, worldAlpha);
+			topLeft.onUpdate(timeElapsed);
+			top.onUpdate(timeElapsed);
+			topRight.onUpdate(timeElapsed);
 			
-			left.onUpdate(timeElapsed, worldMatrix, worldAlpha);
-			center.onUpdate(timeElapsed, worldMatrix, worldAlpha);
-			right.onUpdate(timeElapsed, worldMatrix, worldAlpha);
+			left.onUpdate(timeElapsed);
+			center.onUpdate(timeElapsed);
+			right.onUpdate(timeElapsed);
 			
-			bottomLeft.onUpdate(timeElapsed, worldMatrix, worldAlpha);
-			bottom.onUpdate(timeElapsed, worldMatrix, worldAlpha);
-			bottomRight.onUpdate(timeElapsed, worldMatrix, worldAlpha);
+			bottomLeft.onUpdate(timeElapsed);
+			bottom.onUpdate(timeElapsed);
+			bottomRight.onUpdate(timeElapsed);
 		}
 	}
 }

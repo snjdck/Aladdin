@@ -42,9 +42,9 @@ package snjdck.g3d.obj3d
 			return viewPort.camera;
 		}
 		*/
-		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
+			super.onUpdate(timeElapsed);
 			object3d.onUpdate(timeElapsed, View3D.isoMatrix);
 		}
 		

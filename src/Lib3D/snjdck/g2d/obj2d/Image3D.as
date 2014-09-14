@@ -33,9 +33,9 @@ package snjdck.g2d.obj2d
 			this.height = h;
 		}
 		
-		override public function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed, parentWorldMatrix, parentWorldAlpha);
+			super.onUpdate(timeElapsed);
 			target.ns_g3d::onUpdate(timeElapsed, View3D.isoMatrix);
 		}
 		

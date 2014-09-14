@@ -1,15 +1,16 @@
 package snjdck.g2d.core
 {
+	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.GpuRender;
 
 	public interface IDisplayObject2D extends IDisplayObject
 	{
-		function onUpdate(timeElapsed:int, parentWorldMatrix:Matrix, parentWorldAlpha:Number):void;
+		function onUpdate(timeElapsed:int):void;
 		/*
 		function collectDrawUnits(collector:Collector2D):void;
 		function collectPickUnits(collector:Collector2D, px:Number, py:Number):void;
@@ -21,6 +22,7 @@ package snjdck.g2d.core
 		function globalToLocal(point:Point):Point;
 		function localToGlobal(point:Point):Point;
 		
+		function get colorTransform():ColorTransform;
 		function get transform():Matrix;
 		
 		function get parent():IDisplayObjectContainer2D;
@@ -44,7 +46,7 @@ package snjdck.g2d.core
 		function get color():uint;
 		function set color(value:uint):void;
 		
-		function get worldMatrix():Matrix;
+//		function get worldMatrix():Matrix;
 		function get worldAlpha():Number;
 		
 		function hasVisibleArea():Boolean;
