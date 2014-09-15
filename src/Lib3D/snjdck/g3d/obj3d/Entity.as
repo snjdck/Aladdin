@@ -1,10 +1,6 @@
 package snjdck.g3d.obj3d
 {
-	import flash.geom.Matrix3D;
-	import flash.utils.Dictionary;
-	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.BlendMode;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
@@ -13,9 +9,10 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.skeleton.Bone;
+	import snjdck.g3d.skeleton.BoneAttachmentGroup;
+	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
-	
-	import stdlib.common.inheritProps;
+	import snjdck.gpu.BlendMode;
 	
 	use namespace ns_g3d;
 
@@ -24,24 +21,19 @@ package snjdck.g3d.obj3d
 		ns_g3d var mesh:Mesh;
 		ns_g3d var skeleton:Skeleton;
 		
-		public var castShadow:Boolean;
-		
-		private var boneDict:Object;
-		private var bindDict:Object;
-		
 		public var aniName:String;
 		private var aniTime:int;
 		public var timeScale:Number = 1;
 		
-		public function Entity(mesh:Mesh, boneDict:Object)
+		private var boneStateGroup:BoneStateGroup = new BoneStateGroup();
+		private const boneAttachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup();
+		
+		public function Entity(mesh:Mesh)
 		{
 			this.mesh = mesh;
 			blendMode = BlendMode.NORMAL;
 			
-			this.boneDict = boneDict;
-			
-			if(boneDict){
-				bindDict = new Dictionary();
+			if(mesh.skeleton){
 				skeleton = mesh.skeleton;
 				aniName = skeleton.getAnimationNames()[0];
 			}
@@ -50,6 +42,16 @@ package snjdck.g3d.obj3d
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			super.collectDrawUnit(collector);
+//			skeleton.onUpdate(aniName, aniTime * 0.001, boneStateGroup);
+			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
+			
+			if(mesh.subMeshes.length <= 0){
+				return;
+			}
+			if(skeleton){
+				boneStateGroup.prependBoneTransform(skeleton);
+			}
+//			super.collectDrawUnit(collector);
 			/*
 			if(!camera.viewFrustum.isBoundVisible(mesh.bound, worldMatrix)){
 				++collector.numCulledEntities;
@@ -63,11 +65,11 @@ package snjdck.g3d.obj3d
 				drawUnit.blendMode = blendMode;
 				drawUnit.parentWorldMatrix = collector.worldMatrix;
 				drawUnit.localMatrix = transform;
-				subMesh.getDrawUnit(drawUnit, boneDict);
+				subMesh.getDrawUnit(drawUnit, boneStateGroup);
 				collector.addDrawUnit(drawUnit);
 			}
 		}
-		
+		//*
 		override protected function onTestRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
 		{
 //			var ray:Ray = getLocalRay(globalRay);
@@ -77,13 +79,13 @@ package snjdck.g3d.obj3d
 			rayTestInfo.target = this;
 			
 			for each(var subMesh:SubMesh in mesh.subMeshes){
-				if(subMesh.testRay(ray, boneDict, rayTestInfo)){
+				if(subMesh.testRay(ray, boneStateGroup, rayTestInfo)){
 					result.push(rayTestInfo);
 					return;
 				}
 			}
 		}
-		
+		//*/
 		private function checkBoneName(boneName:String):Bone
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);
@@ -96,37 +98,34 @@ package snjdck.g3d.obj3d
 		public function bindEntityToBone(boneName:String, entity:Object3D):void
 		{
 			var boneId:int = checkBoneName(boneName).id;
-			bindDict[boneId] ||= createChild(boneName).localMatrix;
-			getChild(boneName).addChild(entity);
+			boneAttachmentGroup.addAttachment(boneId, entity);
 		}
 		
 		public function unbindEntityFromBone(boneName:String, entity:Entity):void
 		{
 			checkBoneName(boneName);
-			getChild(boneName).removeChild(entity);
+			var boneId:int = checkBoneName(boneName).id;
+			boneAttachmentGroup.removeAttachment(boneId, entity);
 		}
 		
 		public function unbindAllEntitiesFromBone(boneName:String):void
 		{
 			checkBoneName(boneName);
-			var bone:Object3D = getChild(boneName);
-			if(bone != null){
-				bone.removeAllChildren();
-			}
+			var boneId:int = checkBoneName(boneName).id;
+			boneAttachmentGroup.removeAttachmentsOnBone(boneId);
 		}
 		
 		public function shareSkeletonInstanceWith(entity:Entity):void
 		{
 			skeleton = null;
-			inheritProps(entity.boneDict, boneDict);
-			boneDict = entity.boneDict;
+			boneStateGroup = entity.boneStateGroup;
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
-			
-			if(null == boneDict || null == skeleton){
+			boneAttachmentGroup.onUpdate(timeElapsed);
+			if(null == skeleton){
 				return;
 			}
 			
@@ -135,18 +134,7 @@ package snjdck.g3d.obj3d
 			if(aniTime > len){
 				aniTime -= len;
 			}
-			
-			skeleton.onUpdate(aniName, aniTime * 0.001);
-			
-			var boneId:*;
-			
-			for(boneId in boneDict){
-				skeleton.copyBoneMatrix(boneId, boneDict[boneId]);
-			}
-			
-			for(boneId in bindDict){
-				skeleton.copyBindMatrix(boneId, bindDict[boneId]);
-			}
+			skeleton.onUpdate(aniName, aniTime * 0.001, boneStateGroup);
 		}
 	}
 }

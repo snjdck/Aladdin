@@ -10,9 +10,9 @@ package snjdck.g3d.obj3d
 	
 	public class BillEntity extends Entity
 	{
-		public function BillEntity(mesh:Mesh, boneDict:Object)
+		public function BillEntity(mesh:Mesh)
 		{
-			super(mesh, boneDict);
+			super(mesh);
 		}
 		/*
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera:Camera3D):void
