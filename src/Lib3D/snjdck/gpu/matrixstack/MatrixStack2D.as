@@ -10,17 +10,19 @@ package snjdck.gpu.matrixstack
 		public function MatrixStack2D()
 		{
 			matrixStack = new Vector.<Matrix>();
-			matrixIndex = 0;
+			matrixIndex = -1;
 		}
 		
 		public function pushMatrix(matrix:Matrix):void
 		{
 			++matrixIndex;
-			while(matrixStack.length <= matrixIndex){
+			if(matrixStack.length <= matrixIndex){
 				matrixStack.push(new Matrix());
 			}
 			worldMatrix.copyFrom(matrix);
-			worldMatrix.concat(matrixStack[matrixIndex-1]);
+			if(matrixIndex > 0){
+				worldMatrix.concat(matrixStack[matrixIndex-1]);
+			}
 		}
 		
 		public function popMatrix():void

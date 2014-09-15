@@ -25,6 +25,7 @@ package snjdck.g3d.render
 		
 		public function Render3D()
 		{
+			collector.pushMatrix(isoMatrix);
 //			shadowMatrix = new Matrix3D();
 //			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
 		}
@@ -46,9 +47,7 @@ package snjdck.g3d.render
 		
 		public function draw(scene3d:Object3D, context3d:GpuContext):void
 		{
-			collector.pushMatrix(isoMatrix);
 			scene3d.collectDrawUnit(collector);
-			collector.popMatrix();
 			
 			const hasOpaqueDrawUnits:Boolean = collector.opaqueList.length > 0;
 			const hasBlendDrawUnits:Boolean = collector.blendList.length > 0;

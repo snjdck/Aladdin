@@ -100,6 +100,9 @@ package snjdck.g3d.core
 		
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
+			if(null == firstChild){
+				return;
+			}
 			collector.pushMatrix(transform);
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.visible){
