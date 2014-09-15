@@ -6,13 +6,15 @@ package snjdck.g3d.parser
 	import array.copy;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.asset.GpuAssetFactory;
-	import snjdck.gpu.asset.GpuIndexBuffer;
-	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.g3d.geom.Bound;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.render.DrawUnit3D;
+	import snjdck.g3d.skeleton.BoneStateGroup;
+	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuIndexBuffer;
+	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.asset.helper.ShaderName;
 	
 	use namespace ns_g3d;
 	
@@ -104,8 +106,9 @@ package snjdck.g3d.parser
 			uvData[offset+1] = v;
 		}
 		*/
-		public function getDrawUnit(drawUnit:DrawUnit3D, boneDict:Object):void
+		public function getDrawUnit(drawUnit:DrawUnit3D, boneStateGroup:BoneStateGroup):void
 		{
+			drawUnit.shaderName = ShaderName.OBJECT;
 			if(null == gpuPosBuffer){
 				gpuPosBuffer = GpuAssetFactory.CreateGpuVertexBuffer(posData, 3);
 			}
@@ -139,7 +142,7 @@ package snjdck.g3d.parser
 			return false;
 		}
 		
-		public function testRay(ray:Ray, result:RayTestInfo, boneDict:Object):Boolean
+		public function testRay(ray:Ray, result:RayTestInfo, boneStateGroup:BoneStateGroup):Boolean
 		{
 			return testRayImp(ray, result, posData);
 		}

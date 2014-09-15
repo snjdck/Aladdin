@@ -1,11 +1,12 @@
 package snjdck.g3d.parser
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.asset.helper.ShaderName;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.render.DrawUnit3D;
+	import snjdck.g3d.skeleton.BoneStateGroup;
+	import snjdck.gpu.asset.helper.ShaderName;
 	
 	use namespace ns_g3d;
 
@@ -32,37 +33,37 @@ package snjdck.g3d.parser
 		{
 			return boneData.numBones;
 		}
-		
+		/*
 		ns_g3d function createBoneDict(boneDict:Object):void
 		{
 			boneData.createBoneDict(boneDict);
 		}
-		
-		override public function getDrawUnit(drawUnit:DrawUnit3D, boneDict:Object):void
+		*/
+		override public function getDrawUnit(drawUnit:DrawUnit3D, boneStateGroup:BoneStateGroup):void
 		{
-			super.getDrawUnit(drawUnit, boneDict);
-			
+			super.getDrawUnit(drawUnit, null);
 			if(boneData.canRenderByGPU()){
-				boneData.getDrawUnit(drawUnit, boneDict);
+				drawUnit.shaderName = ShaderName.BONE_ANI;
+				boneData.getDrawUnit(drawUnit, boneStateGroup);
 			}else{
 				drawUnit.shaderName = ShaderName.OBJECT;
-				syncTempVertexData(boneDict);
+				syncTempVertexData(boneStateGroup);
 				uploadVertexData(tempVertexData);
 			}
 		}
 		
-		override public function testRay(ray:Ray, result:RayTestInfo, boneDict:Object):Boolean
+		override public function testRay(ray:Ray, result:RayTestInfo, boneStateGroup:BoneStateGroup):Boolean
 		{
-			syncTempVertexData(boneDict);
+			syncTempVertexData(boneStateGroup);
 			return testRayImp(ray, result, tempVertexData);
 		}
 		
-		private function syncTempVertexData(boneDict:Object):void
+		private function syncTempVertexData(boneStateGroup:BoneStateGroup):void
 		{
 			if(null == tempVertexData){
 				tempVertexData = new Vector.<Number>(getPosData().length, true);
 			}
-			boneData.transformVertex(getPosData(), tempVertexData, boneDict);
+			boneData.transformVertex(getPosData(), tempVertexData, boneStateGroup);
 		}
 	}
 }
