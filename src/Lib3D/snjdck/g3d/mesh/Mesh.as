@@ -1,13 +1,10 @@
 package snjdck.g3d.mesh
 {
-	import flash.utils.Dictionary;
-	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.g3d.geom.Bound;
 	import snjdck.g3d.obj3d.Entity;
-	import snjdck.g3d.parser.DynamicGeometry;
 	import snjdck.g3d.skeleton.Skeleton;
+	import snjdck.gpu.asset.helper.AssetMgr;
 	
 	use namespace ns_g3d;
 	
@@ -38,29 +35,15 @@ package snjdck.g3d.mesh
 		
 		protected function createEntityImp(name:String, entityCls:Class):Entity
 		{
-			var boneDict:Object = null;
-			
 			if(skeletonLink || skeleton){
 				if(null == skeleton){
 					skeleton = AssetMgr.Instance.getSkeleton(skeletonLink);
 				}
-				boneDict = createBoneDict();
 			}
 			
-			var entity:Entity = new entityCls(this, boneDict);
+			var entity:Entity = new entityCls(this);
 			entity.name = name;
 			return entity;
-		}
-		
-		private function createBoneDict():Object
-		{
-			var boneDict:Object = new Dictionary();
-			
-			for each(var subMesh:SubMesh in subMeshes){
-				(subMesh.geometry as DynamicGeometry).createBoneDict(boneDict);
-			}
-			
-			return boneDict;
 		}
 	}
 }

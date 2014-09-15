@@ -6,6 +6,7 @@ package snjdck.g3d.mesh
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.render.DrawUnit3D;
+	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.register.ConstRegister;
@@ -99,7 +100,7 @@ package snjdck.g3d.mesh
 			vertexDict[boneId].push(vertexIndex*3, index+1);//顶点数据的起始偏移,权重数据的偏移
 		}
 		
-		public function getDrawUnit(drawUnit:DrawUnit3D, boneDict:Object):void
+		public function getDrawUnit(drawUnit:DrawUnit3D, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);
@@ -111,17 +112,7 @@ package snjdck.g3d.mesh
 			drawUnit.setVa(6, gpuBoneBuffer, 16, Context3DVertexBufferFormat.FLOAT_4);
 			drawUnit.setVa(7, gpuBoneBuffer, 20, Context3DVertexBufferFormat.FLOAT_4);
 			for(var i:int=0, n:int=boneIds.length; i<n; i++){
-				drawUnit.addBone(boneDict[boneIds[i]]);
-			}
-		}
-		
-		ns_g3d function createBoneDict(boneDict:Object):void
-		{
-			for(var i:int=0, n:int=boneIds.length; i<n; i++){
-				var boneId:int = boneIds[i];
-				if(!(boneId in boneDict)){
-					boneDict[boneId] = new Matrix3D();
-				}
+				drawUnit.addBone(boneStateGroup.getBoneMatrix(boneIds[i]));
 			}
 		}
 		
@@ -149,7 +140,7 @@ package snjdck.g3d.mesh
 			}
 		}
 		
-		public function transformVertex(input:Vector.<Number>, output:Vector.<Number>, boneDict:Object):void
+		public function transformVertex(input:Vector.<Number>, output:Vector.<Number>, boneStateGroup:BoneStateGroup):void
 		{
 			for(var i:int=0, n:int=input.length; i<n; i++){
 				output[i] = 0;
@@ -158,7 +149,7 @@ package snjdck.g3d.mesh
 			for(var boneId:* in vertexDict)
 			{
 				var vertexInfoList:Array = vertexDict[boneId];
-				var boneMatrix:Matrix3D = boneDict[boneId];
+				var boneMatrix:Matrix3D = boneStateGroup.getBoneMatrix(boneId);
 				
 				var globalOffset:int, localOffset:int = 0;
 				

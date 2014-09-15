@@ -1,6 +1,5 @@
 package snjdck.g3d.core
 {
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.Terrain;
 
@@ -8,7 +7,7 @@ package snjdck.g3d.core
 	{
 		public function Quad(name:String=null, typeName:String=null)
 		{
-			super(new Terrain(2, 2, 128, 128, "shaokai"), null);
+			super(new Terrain(2, 2, 128, 128, "shaokai"));
 		}
 	}
 }
