@@ -1,6 +1,5 @@
 package snjdck.g3d.skeleton
 {
-	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import dict.getNumKeys;
@@ -52,7 +51,7 @@ package snjdck.g3d.skeleton
 			return boneList.length;
 		}
 		
-		private function getBoneById(id:int):Bone
+		public function getBoneById(id:int):Bone
 		{
 			return boneList[id];
 		}
@@ -103,20 +102,10 @@ package snjdck.g3d.skeleton
 			return dict.getKeys(animationDict);
 		}
 		
-		ns_g3d function onUpdate(aniName:String, time:Number):void
+		ns_g3d function onUpdate(aniName:String, time:Number, boneStateGroup:BoneStateGroup):void
 		{
 			rootBone.calculateKeyFrame(getAnimationByName(aniName), time);
-			rootBone.updateMatrix(Quaternion.Null, NullVector);
-		}
-		
-		ns_g3d function copyBoneMatrix(boneId:int, output:Matrix3D):void
-		{
-			getBoneById(boneId).copyBoneMatrix(output);
-		}
-		
-		ns_g3d function copyBindMatrix(boneId:int, output:Matrix3D):void
-		{
-			getBoneById(boneId).copyBindMatrix(output);
+			rootBone.updateMatrix(Quaternion.Null, NullVector, boneStateGroup);
 		}
 		
 		static private const NullVector:Vector3D = new Vector3D();
