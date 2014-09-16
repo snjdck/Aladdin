@@ -3,7 +3,6 @@ package snjdck.gpu
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.display3D.Context3DProfile;
-	import flash.display3D.Context3DRenderMode;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix3D;
@@ -19,8 +18,9 @@ package snjdck.gpu
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.g3d.mesh.BoneData;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.register.ConstRegister;
+	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
@@ -105,12 +105,16 @@ package snjdck.gpu
 			trace(context3d.driverInfo);
 			context3d.enableErrorChecking = _enableErrorChecking;
 			Clock.getInstance().add(this);
+			if(context3d.isStandardProfile()){
+				BoneData.MAX_BONE_COUNT_PER_GEOMETRY = 80;
+				GpuProgram.AgalVersion = 2;
+			}
 		}
 		
 		protected function onDeviceLost():void
 		{
 			context3d.configureBackBuffer(_width, _height, 4);
-			ConstRegister.InitReserved(stage3d.context3D);
+			context3d.setFc(27, new <Number>[0.004, 0, 0, 0.6]);
 		}
 		
 		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D

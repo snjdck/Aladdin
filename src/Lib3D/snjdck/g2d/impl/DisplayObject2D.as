@@ -24,6 +24,8 @@ package snjdck.g2d.impl
 		private var _rotation:Number;
 		protected var _width:Number, _height:Number;
 		
+		private var _mouseEnabled:Boolean;
+		
 		private var _color:uint;
 		private var _alpha:Number;
 		private var _colorTransform:ColorTransform;
@@ -271,6 +273,16 @@ package snjdck.g2d.impl
 		public function set filter(value:IFilter2D):void
 		{
 			_filter = value;
+		}
+		
+		public function get mouseEnabled():Boolean
+		{
+			return _mouseEnabled;
+		}
+		
+		public function set mouseEnabled(value:Boolean):void
+		{
+			_mouseEnabled = value;
 		}
 		
 		public function get colorTransform():ColorTransform

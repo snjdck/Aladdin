@@ -33,12 +33,7 @@ package snjdck.g3d.parser
 		{
 			return boneData.numBones;
 		}
-		/*
-		ns_g3d function createBoneDict(boneDict:Object):void
-		{
-			boneData.createBoneDict(boneDict);
-		}
-		*/
+		
 		override public function getDrawUnit(drawUnit:DrawUnit3D, boneStateGroup:BoneStateGroup):void
 		{
 			super.getDrawUnit(drawUnit, null);
@@ -46,6 +41,7 @@ package snjdck.g3d.parser
 				drawUnit.shaderName = ShaderName.BONE_ANI;
 				boneData.getDrawUnit(drawUnit, boneStateGroup);
 			}else{
+				trace("render by cpu!");
 				drawUnit.shaderName = ShaderName.OBJECT;
 				syncTempVertexData(boneStateGroup);
 				uploadVertexData(tempVertexData);

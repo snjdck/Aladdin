@@ -1,7 +1,5 @@
 package snjdck.gpu.render
 {
-	import flash.utils.getTimer;
-	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.core.Object3D;
@@ -26,9 +24,7 @@ package snjdck.gpu.render
 		{
 			r2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			r2d.drawBegin(context3d);
-			var t:int = getTimer();
 			scene2d.draw(this, context3d);
-			trace("scene2d render",getTimer()-t);
 			r2d.popScreen();
 		}
 	}

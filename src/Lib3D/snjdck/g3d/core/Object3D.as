@@ -3,10 +3,9 @@ package snjdck.g3d.core
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Matrix3D;
+	import flash.geom.Orientation3D;
 	import flash.geom.Vector3D;
 	import flash.support.DataEvent;
-	
-	import matrix44.recompose;
 	
 	import snjdck.g2d.core.IDisplayObject;
 	import snjdck.g3d.ns_g3d;
@@ -29,9 +28,14 @@ package snjdck.g3d.core
 		private var _firstChild:Object3D;
 		
 		private var pivotX:Number=0, pivotY:Number=0, pivotZ:Number=0;
-		private var _x:Number=0, _scaleX:Number=1, _rotationX:Number=0;
-		private var _y:Number=0, _scaleY:Number=1, _rotationY:Number=0;
-		private var _z:Number=0, _scaleZ:Number=1, _rotationZ:Number=0;
+//		private var _x:Number=0, _scaleX:Number=1, _rotationX:Number=0;
+//		private var _y:Number=0, _scaleY:Number=1, _rotationY:Number=0;
+//		private var _z:Number=0, _scaleZ:Number=1, _rotationZ:Number=0;
+		
+		private const _position:Vector3D = new Vector3D();
+		private const _rotation:Vector3D = new Vector3D();
+		private const _scale:Vector3D = new Vector3D(1, 1, 1);
+		private const matrixComponents:Vector.<Vector3D> = new <Vector3D>[_position,_rotation,_scale];
 		
 		private var isLocalMatrixDirty:Boolean;
 		ns_g3d const localMatrix:Matrix3D = new Matrix3D();
@@ -77,7 +81,7 @@ package snjdck.g3d.core
 		
 		private function calcTransform():void
 		{
-			recompose(localMatrix, _x, _y, _z, _rotationX, _rotationY, _rotationZ, _scaleX, _scaleY, _scaleZ);
+			localMatrix.recompose(matrixComponents, Orientation3D.EULER_ANGLES);
 			if(0 == pivotX && 0 == pivotY && 0 == pivotZ) return;
 			localMatrix.prependTranslation(-pivotX, -pivotY, -pivotZ);
 		}
@@ -210,7 +214,7 @@ package snjdck.g3d.core
 		
 		public function set scale(val:Number):void
 		{
-			_scaleX = _scaleY = _scaleZ = val;
+			_scale.x = _scale.y = _scale.z = val;
 			isLocalMatrixDirty = true;
 		}
 
@@ -226,100 +230,100 @@ package snjdck.g3d.core
 
 		public function get x():Number
 		{
-			return _x;
+			return _position.x;
 		}
 
 		public function set x(value:Number):void
 		{
-			_x = value;
+			_position.x = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get y():Number
 		{
-			return _y;
+			return _position.y;
 		}
 
 		public function set y(value:Number):void
 		{
-			_y = value;
+			_position.y = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get z():Number
 		{
-			return _z;
+			return _position.z;
 		}
 
 		public function set z(value:Number):void
 		{
-			_z = value;
+			_position.z = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get scaleX():Number
 		{
-			return _scaleX;
+			return _scale.x;
 		}
 
 		public function set scaleX(value:Number):void
 		{
-			_scaleX = value;
+			_scale.x = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get scaleY():Number
 		{
-			return _scaleY;
+			return _scale.y;
 		}
 
 		public function set scaleY(value:Number):void
 		{
-			_scaleY = value;
+			_scale.y = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get scaleZ():Number
 		{
-			return _scaleZ;
+			return _scale.z;
 		}
 
 		public function set scaleZ(value:Number):void
 		{
-			_scaleZ = value;
+			_scale.z = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get rotationX():Number
 		{
-			return _rotationX;
+			return _rotation.x;
 		}
 
 		public function set rotationX(value:Number):void
 		{
-			_rotationX = value;
+			_rotation.x = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get rotationY():Number
 		{
-			return _rotationY;
+			return _rotation.y;
 		}
 
 		public function set rotationY(value:Number):void
 		{
-			_rotationY = value;
+			_rotation.y = value;
 			isLocalMatrixDirty = true;
 		}
 
 		public function get rotationZ():Number
 		{
-			return _rotationZ;
+			return _rotation.z;
 		}
 
 		public function set rotationZ(value:Number):void
 		{
-			_rotationZ = value;
+			_rotation.z = value;
 			isLocalMatrixDirty = true;
 		}
 		
@@ -366,9 +370,9 @@ package snjdck.g3d.core
 			
 			transform.prependTranslation(axis.x * size, axis.y * size, axis.z * size);
 			transform.copyColumnTo(3, tempPoint);
-			this._x = tempPoint.x;
-			this._y = tempPoint.y;
-			this._z = tempPoint.z;
+			_position.x = tempPoint.x;
+			_position.y = tempPoint.y;
+			_position.z = tempPoint.z;
 		}
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();

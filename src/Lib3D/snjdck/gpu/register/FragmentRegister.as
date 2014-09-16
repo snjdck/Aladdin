@@ -3,7 +3,7 @@ package snjdck.gpu.register
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
 
-	final public class FragmentRegister
+	final internal class FragmentRegister
 	{
 		private var slotCount:int;
 		

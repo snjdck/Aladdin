@@ -4,6 +4,9 @@ package snjdck.g2d.core
 	{
 		function get numChildren():int;
 		
+		function get mouseChildren():Boolean;
+		function set mouseChildren(value:Boolean):void;
+		
 		function addChild(child:IDisplayObject2D):void;
 		function addChildAt(child:IDisplayObject2D, index:int):void;
 		

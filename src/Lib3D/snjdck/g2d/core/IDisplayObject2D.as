@@ -13,6 +13,9 @@ package snjdck.g2d.core
 		function draw(render:GpuRender, context3d:GpuContext):void;
 		function pickup(px:Number, py:Number):IDisplayObject2D;
 		
+		function get mouseEnabled():Boolean;
+		function set mouseEnabled(value:Boolean):void;
+		
 		function globalToLocal(point:Point):Point;
 		function localToGlobal(point:Point):Point;
 		

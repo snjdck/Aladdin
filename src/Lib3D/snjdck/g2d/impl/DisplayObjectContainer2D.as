@@ -1,6 +1,5 @@
 package snjdck.g2d.impl
 {
-	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
 	import array.delAt;
@@ -8,12 +7,13 @@ package snjdck.g2d.impl
 	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
-	import snjdck.gpu.render.GpuRender;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.GpuRender;
 	
 	public class DisplayObjectContainer2D extends DisplayObject2D implements IDisplayObjectContainer2D
 	{
 		private var _childList:Vector.<IDisplayObject2D>;
+		private var _mouseChildren:Boolean;
 		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
@@ -21,11 +21,22 @@ package snjdck.g2d.impl
 		public function DisplayObjectContainer2D()
 		{
 			_childList = new <IDisplayObject2D>[];
+			_mouseChildren = true;
 		}
 		
 		public function get numChildren():int
 		{
 			return _childList.length;
+		}
+		
+		public function get mouseChildren():Boolean
+		{
+			return _mouseChildren;
+		}
+		
+		public function set mouseChildren(value:Boolean):void
+		{
+			_mouseChildren = value;
 		}
 		
 		private function isIndexValid(index:int):Boolean

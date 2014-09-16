@@ -41,7 +41,7 @@ package snjdck.g2d.filter
 			const prevBlendMode:BlendMode = context3d.blendMode;
 			
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.BLUR);
-			context3d.blendMode = BlendMode.FILTER;
+			context3d.blendMode = BlendMode.NORMAL;
 			
 			onDrawBegin(texture.width, texture.height);
 			for(var i:int=0; i<numPasses; i++)
@@ -55,7 +55,10 @@ package snjdck.g2d.filter
 				
 				var gpuTexture:IGpuTexture = (0 == i ? texture : backBuffer);
 				if(i + 1 < numPasses){
-					frontBuffer.setRenderToSelfAndClear(context3d);
+					context3d.renderTarget = frontBuffer;
+					if(!frontBuffer.hasCleared()){
+						context3d.clearStencil();
+					}
 					render.r2d.drawTexture(context3d, gpuTexture);
 				}else{
 					render.r2d.popScreen();

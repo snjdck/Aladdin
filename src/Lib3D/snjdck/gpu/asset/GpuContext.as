@@ -3,6 +3,7 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
+	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
@@ -56,6 +57,11 @@ package snjdck.gpu.asset
 			context3d.enableErrorChecking = value;
 		}
 		
+		public function isStandardProfile():Boolean
+		{
+			return Context3DProfile.STANDARD == context3d.profile;
+		}
+		
 		public function dispose():void
 		{
 			context3d.dispose();
@@ -65,10 +71,15 @@ package snjdck.gpu.asset
 		{
 			context3d.configureBackBuffer(width, height, antiAlias, true);
 		}
-		
+		[Inline]
 		public function clear(red:Number=0.0, green:Number=0.0, blue:Number=0.0, alpha:Number=1.0, depth:Number=1.0, stencil:uint=0, mask:uint=0xFFFFFFFF):void
 		{
-			context3d.clear(red, green, blue, alpha, depth, stencil, mask);
+			if(mask > 0){
+				context3d.clear(red, green, blue, alpha, depth, stencil, mask);
+				if(_renderTarget != null){
+					_renderTarget._hasCleared = true;
+				}
+			}
 		}
 		
 		public function present():void
@@ -155,7 +166,8 @@ package snjdck.gpu.asset
 				return;
 			}
 			context3d.setRenderToTexture(
-				_renderTarget.getRawGpuAsset(context3d), true,
+				_renderTarget.getRawGpuAsset(context3d),
+				_renderTarget.enableDepthAndStencil,
 				_renderTarget.antiAlias, 0, colorOutputIndex
 			);
 		}
@@ -232,10 +244,15 @@ package snjdck.gpu.asset
 		{
 			return (vaUseInfo & (1 << slotIndex)) != 0;
 		}
-		
+		[Inline]
 		public function clearDepthAndStencil():void
 		{
-			context3d.clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
+			clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
+		}
+		[Inline]
+		public function clearStencil():void
+		{
+			clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.STENCIL);
 		}
 		
 		public function get backBufferWidth():int

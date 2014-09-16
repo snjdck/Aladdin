@@ -27,7 +27,7 @@ package snjdck.g3d.mesh
 		
 		static private const BONE_REG_OFFSET:int = 8;
 		
-		static private const MAX_BONE_COUNT_PER_GEOMETRY:int = BoneIndexToBoneId(ConstRegister.USED_VC_COUNT);
+		static public var MAX_BONE_COUNT_PER_GEOMETRY:int = 40;
 		/** 每个顶点绑定的骨骼数量最大为12根 */
 		static private const MAX_BONE_COUNT_PER_VERTEX:int = 12;
 		static private const data32PerVertex:int = MAX_BONE_COUNT_PER_VERTEX * 2;

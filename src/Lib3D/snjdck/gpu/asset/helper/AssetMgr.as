@@ -73,11 +73,7 @@ package snjdck.gpu.asset.helper
 			
 			shaderDict = {};
 			fileDict = new Dictionary();
-			programDict = {};
 			textureDict = new Dictionary();
-			
-			initShaderData(new CLS_SHADER_DATA_2D().toString());
-			initShaderData(new CLS_SHADER_DATA_3D().toString());
 		}
 		
 		private function initShaderData(shaderData:String):void
@@ -135,6 +131,11 @@ package snjdck.gpu.asset.helper
 		
 		public function getProgram(name:String):GpuProgram
 		{
+			if(null == programDict){
+				programDict = {};
+				initShaderData(new CLS_SHADER_DATA_2D().toString());
+				initShaderData(new CLS_SHADER_DATA_3D().toString());
+			}
 			return programDict[name];
 		}
 		

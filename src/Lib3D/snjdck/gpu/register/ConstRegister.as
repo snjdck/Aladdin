@@ -6,7 +6,7 @@ package snjdck.gpu.register
 	
 	import array.copy;
 
-	final public class ConstRegister
+	final internal class ConstRegister
 	{
 		static private const MAX_VC_COUNT:uint = 128;
 		static private const MAX_FC_COUNT:uint = 28;

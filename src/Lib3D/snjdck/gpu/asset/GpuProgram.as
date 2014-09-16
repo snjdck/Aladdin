@@ -10,6 +10,8 @@ package snjdck.gpu.asset
 	
 	final public class GpuProgram extends GpuAsset
 	{
+		static public var AgalVersion:int = 1;
+		
 		private var vsData:AgalCompiler;
 		private var fsData:AgalCompiler;
 		
@@ -25,8 +27,8 @@ package snjdck.gpu.asset
 		
 		public function upload(vertexProgram:Array, fragmentProgram:Array):void
 		{
-			vsData.compile(vertexProgram);
-			fsData.compile(fragmentProgram);
+			vsData.compile(vertexProgram, AgalVersion);
+			fsData.compile(fragmentProgram, AgalVersion);
 			
 			vaUseInfo = fsUseInfo = 0;
 			
