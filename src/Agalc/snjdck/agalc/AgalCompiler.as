@@ -126,11 +126,11 @@ package snjdck.agalc
 			shaderData.clear();
 		}
 		
-		public function compile(tokenList:Array):void
+		public function compile(tokenList:Array, version:int):void
 		{
 			reset();
 			
-			writer.writeHeader(isFragmentProgram?1:0, 1);
+			writer.writeHeader(isFragmentProgram?1:0, version);
 			
 			tokenList = tokenList.map(__array_removeSpace);
 			usedVts = array.unique(usedVts);
