@@ -15,11 +15,10 @@
 		}
 		
 		private var parent:QuadTree;
-		private const nodeList:Vector.<QuadTree> = new Vector.<QuadTree>(4, true);
+		private var nodeList:Vector.<QuadTree>;
 		private const objectList:Array = [];
 		
 		private var bounds:Rectangle;
-		private var hasChildren:Boolean;
 		private var centerX:int;
 		private var centerY:int;
 		
@@ -37,15 +36,15 @@
 			var subWidth:int = bounds.width >> 1;
 			var subHeight:int = bounds.height >> 1;
 			
-			hasChildren = level < maxLevel;
 			centerX = x + subWidth;
 			centerY = y + subHeight;
 			
-			if(hasChildren == false){
+			if(level >= maxLevel){
 				return;
 			}
 			
 			var nextLevel:int = level + 1;
+			nodeList = new Vector.<QuadTree>(4, true);
 			nodeList[0] = new QuadTree(this, new Rectangle(x, 		y, 		 subWidth, subHeight), nextLevel, maxLevel);
 			nodeList[1] = new QuadTree(this, new Rectangle(centerX,	y, 		 subWidth, subHeight), nextLevel, maxLevel);
 			nodeList[2] = new QuadTree(this, new Rectangle(x, 		centerY, subWidth, subHeight), nextLevel, maxLevel);
@@ -55,9 +54,6 @@
 		public function clear():void
 		{
 			objectList.length = 0;
-			if(hasChildren == false){
-				return;
-			}
 			for each(var node:QuadTree in nodeList){
 				node.clear();
 			}
@@ -94,7 +90,7 @@
 			var testTree:QuadTree = null;
 			
 			while(true){
-				if(false == targetTree.hasChildren){
+				if(null == targetTree.nodeList){
 					break;
 				}
 				testTree = targetTree.classifyNode(node);
@@ -196,9 +192,6 @@
 			g.moveTo(bounds.x, centerY);
 			g.lineTo(bounds.right, centerY);
 			
-			if(hasChildren == false){
-				return;
-			}
 			for each(var node:QuadTree in nodeList){
 				node.drawGrid(g);
 			}

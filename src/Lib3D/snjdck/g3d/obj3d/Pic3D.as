@@ -6,6 +6,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g2d.impl.Texture2D;
 	import snjdck.g2d.obj2d.Image;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.View3D;
 	import snjdck.gpu.asset.GpuContext;
@@ -16,6 +17,7 @@ package snjdck.g3d.obj3d
 
 	public class Pic3D extends Image implements IDisposable
 	{
+		static private const camera3d:Camera3D = new Camera3D();
 		private var renderTarget:GpuRenderTarget;
 		private var object3d:Object3D;
 		
@@ -53,7 +55,7 @@ package snjdck.g3d.obj3d
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			
 			renderTarget.setRenderToSelfAndClear(context3d);
-			render.drawScene3D(object3d, context3d);
+			render.drawScene3D(object3d, camera3d, context3d);
 			
 			context3d.renderTarget = prevRenderTarget;
 			

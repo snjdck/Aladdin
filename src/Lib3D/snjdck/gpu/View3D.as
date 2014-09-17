@@ -15,6 +15,7 @@ package snjdck.gpu
 	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
@@ -29,6 +30,8 @@ package snjdck.gpu
 	{
 		public const scene3d:Object3D = new Object3D();
 		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
+		
+		public const camera3d:Camera3D = new Camera3D();
 		
 		public var timeScale:Number = 1;
 		
@@ -138,7 +141,7 @@ package snjdck.gpu
 			scene2d.onUpdate(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			render.drawScene3D(scene3d, context3d);
+			render.drawScene3D(scene3d, camera3d, context3d);
 			render.drawScene2D(scene2d, context3d);
 			context3d.present();
 		}

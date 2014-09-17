@@ -22,8 +22,7 @@ package snjdck.g3d.render
 		
 		private var vaSlot:VertexRegister;
 		
-		private const _parentWorldMatrix:Matrix3D = new Matrix3D();
-		private const _localMatrix:Matrix3D = new Matrix3D();
+		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _boneList:Vector.<Matrix3D> = new Vector.<Matrix3D>();
 		
 		public var shaderName:String;
@@ -52,14 +51,9 @@ package snjdck.g3d.render
 			blendMode = BlendMode.NORMAL;
 		}
 		
-		ns_g3d function set parentWorldMatrix(matrix:Matrix3D):void
+		ns_g3d function set worldMatrix(matrix:Matrix3D):void
 		{
-			_parentWorldMatrix.copyFrom(matrix);
-		}
-		
-		ns_g3d function set localMatrix(matrix:Matrix3D):void
-		{
-			_localMatrix.copyFrom(matrix);
+			_worldMatrix.copyFrom(matrix);
 		}
 		
 		ns_g3d function addBone(bone:Matrix3D):void
@@ -86,19 +80,17 @@ package snjdck.g3d.render
 		{
 			const boneCount:int = _boneList.length;
 			if(boneCount <= 0){
-				context3d.setVcM(2, _parentWorldMatrix);
-				context3d.setVcM(5, _localMatrix);
+				context3d.setVcM(5, _worldMatrix);
 				return;
 			}
-			_parentWorldMatrix.copyRawDataTo(floatBuffer, 0, true);
-			_localMatrix.copyRawDataTo(floatBuffer, 12, true);
-			var offset:int = 24;
+			_worldMatrix.copyRawDataTo(floatBuffer, 0, true);
+			var offset:int = 12;
 			for(var i:int=0; i<boneCount; ++i){
 				var bone:Matrix3D = _boneList[i];
 				bone.copyRawDataTo(floatBuffer, offset, true);
 				offset += 12;
 			}
-			context3d.setVc(2, floatBuffer, 6+3*boneCount);
+			context3d.setVc(5, floatBuffer, 6+3*boneCount);
 		}
 		
 		public function toString():String

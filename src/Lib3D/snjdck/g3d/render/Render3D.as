@@ -5,11 +5,10 @@ package snjdck.g3d.render
 	import flash.geom.d3.createIsoMatrix;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.View3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.helper.AssetMgr;
-	import snjdck.gpu.projection.OrthoProjection3D;
 	import snjdck.gpu.projectionstack.IProjectionStack;
 	import snjdck.gpu.projectionstack.OrthoProjection3DStack;
 	import snjdck.gpu.render.IRender;
@@ -25,7 +24,7 @@ package snjdck.g3d.render
 		
 		public function Render3D()
 		{
-			collector.pushMatrix(isoMatrix);
+//			collector.pushMatrix(isoMatrix);
 //			shadowMatrix = new Matrix3D();
 //			calcPlaneShadowMatrix(new Vector3D(1,0,1), new Vector3D(0,0,1,-0.04), shadowMatrix);
 		}
@@ -45,12 +44,19 @@ package snjdck.g3d.render
 			projectionStack.projection.offset(dx, dy);
 		}
 		
-		public function draw(scene3d:Object3D, context3d:GpuContext):void
+		public function draw(scene3d:Object3D, camera3d:Camera3D, context3d:GpuContext):void
 		{
 			scene3d.collectDrawUnit(collector);
 			
 			const hasOpaqueDrawUnits:Boolean = collector.opaqueList.length > 0;
 			const hasBlendDrawUnits:Boolean = collector.blendList.length > 0;
+			
+			if(!(hasOpaqueDrawUnits || hasBlendDrawUnits)){
+				return;
+			}
+			
+			projectionStack.projection.upload(context3d);
+			camera3d.uploadMatrix(context3d);
 			
 			if(hasOpaqueDrawUnits){
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
@@ -79,7 +85,6 @@ package snjdck.g3d.render
 					currentTextureName = drawUnit.textureName;
 					context3d.setTextureAt(0, AssetMgr.Instance.getTexture(currentTextureName));
 				}
-				projectionStack.projection.upload(context3d);
 				drawUnit.exec(context3d);
 			}
 		}

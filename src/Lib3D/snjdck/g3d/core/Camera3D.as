@@ -3,37 +3,56 @@ package snjdck.g3d.core
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.geom.Ray;
+	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.gpu.asset.GpuContext;
+	
+	import stdlib.constant.Unit;
 	
 	use namespace ns_g3d;
 
-	[Deprecated]
-	internal class Camera3D extends Object3D
+	public class Camera3D extends Object3D
 	{
-		private var origin:Vector3D;
+//		private var origin:Vector3D;
 		
-		private var mvp:Matrix3D;
-		public var lens:Matrix3D;
+//		private var mvp:Matrix3D;
+//		public var lens:Matrix3D;
 		
 		public var viewFrustum:ViewFrustum;
 		
+		private const _worldMatrix:Matrix3D = new Matrix3D();
+		
 		public function Camera3D()
 		{
-			/** 等角投影矩阵 */
-			localMatrix.appendScale(Math.SQRT2, Math.SQRT2, Math.SQRT2);
-			localMatrix.appendRotation(45, new Vector3D(0, 0, 1));//绕z轴逆时针旋转45度
-			localMatrix.appendRotation(-120, new Vector3D(1, 0, 0));//绕x轴顺时针旋转120度
-			localMatrix.invert();
+			rotationX = 120 * Unit.RADIAN;
+			rotationZ = -45 * Unit.RADIAN;
+			scale = Math.SQRT1_2;
 			
-			origin = new Vector3D();
+//			origin = new Vector3D();
 //			camera = new Vector3D();
 			
-			mvp = new Matrix3D();
+//			mvp = new Matrix3D();
+			_worldMatrix.copyFrom(transform);
+			_worldMatrix.invert();
 			
 			viewFrustum = new ViewFrustum();
 		}
 		
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		{
+			collector.pushMatrix(transform);
+			_worldMatrix.copyFrom(collector.worldMatrix);
+			_worldMatrix.invert();
+			collector.popMatrix();
+		}
+		
+		public function uploadMatrix(context3d:GpuContext):void
+		{
+			context3d.setVcM(2, _worldMatrix);
+		}
+		
+		/*
 		public function setLens(val:Matrix3D):void
 		{
 			this.lens = val;
@@ -55,7 +74,7 @@ package snjdck.g3d.core
 			origin.y = obj3d.y;
 			origin.z = obj3d.z;
 		}
-		
+		*/
 		/*
 		public function moveCameraBy(dx:Number, dy:Number):void
 		{

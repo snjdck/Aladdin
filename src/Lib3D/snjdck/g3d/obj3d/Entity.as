@@ -59,15 +59,16 @@ package snjdck.g3d.obj3d
 				return;
 			}
 			*/
+			collector.pushMatrix(transform);
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
 				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
 				drawUnit.blendMode = blendMode;
-				drawUnit.parentWorldMatrix = collector.worldMatrix;
-				drawUnit.localMatrix = transform;
+				drawUnit.worldMatrix = collector.worldMatrix;
 				subMesh.getDrawUnit(drawUnit, boneStateGroup);
 				collector.addDrawUnit(drawUnit);
 			}
+			collector.popMatrix();
 		}
 		//*
 		override protected function onTestRay(globalRay:Ray, result:Vector.<RayTestInfo>):void

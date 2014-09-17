@@ -5,6 +5,7 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.View3D;
 	import snjdck.gpu.asset.GpuContext;
@@ -23,6 +24,7 @@ package snjdck.g2d.obj2d
 	 */	
 	public class Image3D extends DisplayObject2D
 	{
+		static private const camera3d:Camera3D = new Camera3D();
 		private const scissorRect:Rectangle = new Rectangle();
 		private var target:Object3D;
 		
@@ -43,7 +45,7 @@ package snjdck.g2d.obj2d
 		{
 			context3d.clearDepthAndStencil();
 			context3d.setScissorRect(scissorRect);
-			render.drawScene3D(target, context3d,
+			render.drawScene3D(target, camera3d, context3d,
 				x - 0.5 * (context3d.bufferWidth - width),
 				0.5 * (context3d.bufferHeight - height) - y
 			);
