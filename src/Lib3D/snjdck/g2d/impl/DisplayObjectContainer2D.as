@@ -194,6 +194,9 @@ package snjdck.g2d.impl
 				if(bottom > maxY){ maxY = bottom; }
 			}
 			result.setTo(minX, minY, maxX-minX, maxY-minY);
+			if(filter != null){
+				result.inflate(filter.marginX, filter.marginY);
+			}
 		}
 		
 		override public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void

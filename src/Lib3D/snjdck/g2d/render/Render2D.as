@@ -84,16 +84,14 @@ package snjdck.g2d.render
 			
 			constData[4] = worldMatrix.a;
 			constData[5] = worldMatrix.c;
-			constData[6] = target.width;
 			constData[7] = worldMatrix.tx;
 			
 			constData[8] = worldMatrix.b;
 			constData[9] = worldMatrix.d;
-			constData[10] = target.height;
 			constData[11] = worldMatrix.ty;
 			
-			constData[12] = frameMatrix.a;
-			constData[13] = frameMatrix.d;
+			constData[12] = frameMatrix.a * target.width;
+			constData[13] = frameMatrix.d * target.height;
 			constData[14] = frameMatrix.tx;
 			constData[15] = frameMatrix.ty;
 			
@@ -102,19 +100,9 @@ package snjdck.g2d.render
 			constData[18] = uvMatrix.tx;
 			constData[19] = uvMatrix.ty;
 			
-			constData[20] = target.scaleX;
-			constData[21] = target.scaleY;
-			constData[22] = target.x;
-			constData[23] = target.y;
-			
-			constData[24] = target.pivotX;
-			constData[25] = target.pivotY;
-			constData[26] = target.rotation * Unit.RADIAN;;
-			constData[27] = target.worldAlpha;
-			
 			projectionStack.projection.upload(constData);
 			
-			context3d.setVc(0, constData, 7);
+			context3d.setVc(0, constData, 5);
 			
 			constData[0] = target.colorTransform.redMultiplier;
 			constData[1] = target.colorTransform.greenMultiplier;
@@ -159,6 +147,6 @@ package snjdck.g2d.render
 			gpuIndexBuffer.upload(new <uint>[0,1,2,0,2,3]);
 		}
 		
-		private const constData:Vector.<Number> = new Vector.<Number>(28, true);
+		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
 	}
 }

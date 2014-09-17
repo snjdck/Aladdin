@@ -2,23 +2,8 @@
 @image.raw
 
 vt0 = va0
-vt0.x *= vc1.z				#width
-vt0.y *= vc2.z				#height
-
 vt0.xy *= vc3.xy			#frame
 vt0.xy += vc3.zw
-
-vt0.xy -= vc6.xy			#pivot
-
-vt1.xy = vc6.zz				#local matrix
-vt1.x = sin: vt1.x
-vt1.y = cos: vt1.y
-vt2.xy = vc5.xy * vt1.xy
-vt1.x = neg: vt1.x
-vt1.xy = vc5.xy * vt1.yx
-vt1.x = dp3: vt0, vt1.xy	#scale & rotation
-vt1.y = dp3: vt0, vt2.xy
-vt0.xy = vt1.xy + vc5.zw	#xy
 
 vt1.x = dp4: vt0, vc1		#world matrix
 vt1.y = dp4: vt0, vc2
