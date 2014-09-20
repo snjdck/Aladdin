@@ -230,6 +230,11 @@ package snjdck.gpu.asset
 			context3d.setVertexBufferAt(slotIndex, buffer.getRawGpuAsset(context3d), bufferOffset, format);
 		}
 		
+		public function set texture(value:IGpuTexture):void
+		{
+			setTextureAt(0, value);
+		}
+		
 		public function setTextureAt(slotIndex:int, texture:IGpuTexture):void
 		{
 			context3d.setTextureAt(slotIndex, texture.getRawGpuAsset(context3d));

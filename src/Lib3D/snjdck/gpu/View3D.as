@@ -45,7 +45,7 @@ package snjdck.gpu
 		private var stage3d:Stage3D;
 		private var context3d:GpuContext;
 		
-		private const _backBufferColor:GpuColor = new GpuColor();
+		private const _backBufferColor:GpuColor = new GpuColor(0xFF000000);
 		private var _width:int;
 		private var _height:int;
 		

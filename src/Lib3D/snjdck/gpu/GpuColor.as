@@ -29,5 +29,13 @@ package snjdck.gpu
 			green = ((color >>> 8) & 0xFF) / 0xFF;
 			blue = (color & 0xFF) / 0xFF;
 		}
+		
+		public function copyTo(list:Vector.<Number>, offset:int=0):void
+		{
+			list[offset  ] = red;
+			list[offset+1] = green;
+			list[offset+2] = blue;
+			list[offset+3] = alpha;
+		}
 	}
 }

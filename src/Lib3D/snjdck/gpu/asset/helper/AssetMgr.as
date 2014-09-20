@@ -58,6 +58,9 @@ package snjdck.gpu.asset.helper
 		[Embed(source="shader2d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_2D:Class;
 		
+		[Embed(source="particle.agal", mimeType="application/octet-stream")]
+		static private const CLS_SHADER_DATA_PARTICLE:Class;
+		
 		static public const Instance:AssetMgr = new AssetMgr();
 		
 		private var searchPathList:Array;
@@ -135,6 +138,7 @@ package snjdck.gpu.asset.helper
 				programDict = {};
 				initShaderData(new CLS_SHADER_DATA_2D().toString());
 				initShaderData(new CLS_SHADER_DATA_3D().toString());
+				initShaderData(new CLS_SHADER_DATA_PARTICLE().toString());
 			}
 			return programDict[name];
 		}

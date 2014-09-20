@@ -10,6 +10,8 @@ package snjdck.gpu.asset.helper
 		static public const TEXTURE:String = "texture";
 		static public const BLUR:String = "blur";
 		static public const COLOR_MATRIX:String = "color_matrix";
+		
+		static public const PARTICLE_2D:String = "particle2d";
 //		static public const G2D_DRAW_SCREEN:String = "g2d_drawScreen";
 //		static public const G2D:String = "g2d";
 //		static public const G2D_PRE_DRAW_DEPTH:String = "g2d_preDrawDepth";

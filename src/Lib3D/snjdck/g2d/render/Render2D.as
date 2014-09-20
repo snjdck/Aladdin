@@ -4,9 +4,12 @@ package snjdck.g2d.render
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix;
 	
+	import matrix33.toBuffer;
+	
 	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.ITexture2D;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
@@ -17,8 +20,6 @@ package snjdck.g2d.render
 	import snjdck.gpu.projectionstack.IProjectionStack;
 	import snjdck.gpu.projectionstack.Projection2DStack;
 	import snjdck.gpu.render.IRender;
-	
-	import stdlib.constant.Unit;
 
 	final public class Render2D implements IRender, IProjectionStack
 	{
@@ -74,6 +75,7 @@ package snjdck.g2d.render
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			initGpuBuffer(context3d);
 			context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			context3d.setVc(127, VcConst, 1);
 		}
 		
 		public function drawImage(context3d:GpuContext, target:IDisplayObject2D, texture:ITexture2D):void
@@ -82,13 +84,7 @@ package snjdck.g2d.render
 			var frameMatrix:Matrix = texture.frameMatrix;
 			var uvMatrix:Matrix = texture.uvMatrix;
 			
-			constData[4] = worldMatrix.a;
-			constData[5] = worldMatrix.c;
-			constData[7] = worldMatrix.tx;
-			
-			constData[8] = worldMatrix.b;
-			constData[9] = worldMatrix.d;
-			constData[11] = worldMatrix.ty;
+			matrix33.toBuffer(worldMatrix, constData, 4);
 			
 			constData[12] = frameMatrix.a * target.width;
 			constData[13] = frameMatrix.d * target.height;
@@ -115,7 +111,7 @@ package snjdck.g2d.render
 			
 			context3d.setFc(0, constData, 2);
 			
-			context3d.setTextureAt(0, texture.gpuTexture);
+			context3d.texture = texture.gpuTexture;
 			context3d.drawTriangles(gpuIndexBuffer);
 		}
 		
@@ -129,7 +125,28 @@ package snjdck.g2d.render
 			projectionStack.projection.upload(constData);
 			
 			context3d.setVc(0, constData, 2);
-			context3d.setTextureAt(0, texture);
+			context3d.texture = texture;
+			context3d.drawTriangles(gpuIndexBuffer);
+		}
+		
+		public function drawParticleBegin(context3d:GpuContext, texture:IGpuTexture, blendMode:BlendMode):void
+		{
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.PARTICLE_2D);
+			context3d.blendMode = blendMode;
+			
+			projectionStack.projection.upload(constData);
+			matrix33.toBuffer(matrixStack.worldMatrix, constData, 4);
+			
+			context3d.setVc(0, constData, 3);
+			context3d.texture = texture;
+		}
+		
+		public function drawParticle(context3d:GpuContext, localMatrix:Matrix, color:GpuColor):void
+		{
+			matrix33.toBuffer(localMatrix, constData);
+			context3d.setVc(3, constData, 2);
+			color.copyTo(constData);
+			context3d.setFc(0, constData, 1);
 			context3d.drawTriangles(gpuIndexBuffer);
 		}
 		
@@ -148,5 +165,7 @@ package snjdck.g2d.render
 		}
 		
 		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
+		
+		static private const VcConst:Vector.<Number> = new <Number>[0.5, 0, 0, 0];
 	}
 }
