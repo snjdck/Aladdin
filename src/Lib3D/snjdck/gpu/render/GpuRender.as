@@ -1,6 +1,6 @@
 package snjdck.gpu.render
 {
-	import snjdck.g2d.core.IDisplayObject2D;
+	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
@@ -21,7 +21,7 @@ package snjdck.gpu.render
 			r3d.popScreen();
 		}
 		
-		public function drawScene2D(scene2d:IDisplayObject2D, context3d:GpuContext):void
+		public function drawScene2D(scene2d:DisplayObject2D, context3d:GpuContext):void
 		{
 			r2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			r2d.drawBegin(context3d);

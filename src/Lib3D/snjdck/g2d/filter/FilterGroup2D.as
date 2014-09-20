@@ -1,7 +1,7 @@
 package snjdck.g2d.filter
 {
-	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.IFilter2D;
+	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
@@ -27,7 +27,7 @@ package snjdck.g2d.filter
 			_marginX = Math.max(_marginY, filter.marginY);
 		}
 		
-		override public function draw(target:IDisplayObject2D, render:GpuRender, context3d:GpuContext):void
+		override public function draw(target:DisplayObject2D, render:GpuRender, context3d:GpuContext):void
 		{
 			switch(_filterList.length)
 			{

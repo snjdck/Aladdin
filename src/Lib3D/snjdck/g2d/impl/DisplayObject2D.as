@@ -9,36 +9,31 @@ package snjdck.g2d.impl
 	import matrix33.prependTranslation;
 	import matrix33.transformCoords;
 	
-	import snjdck.g2d.core.IDisplayObject2D;
-	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.GpuRender;
 	
 	import stdlib.constant.Unit;
 
-	public class DisplayObject2D implements IDisplayObject2D
+	public class DisplayObject2D
 	{
 		private var _x:Number, _scaleX:Number, _pivotX:Number;
 		private var _y:Number, _scaleY:Number, _pivotY:Number;
 		private var _rotation:Number;
 		protected var _width:Number, _height:Number;
 		
-		private var _mouseEnabled:Boolean;
+		public var mouseEnabled:Boolean;
 		
-		private var _color:uint;
-		private var _alpha:Number;
+		public var alpha:Number = 1;
 		private var _colorTransform:ColorTransform;
 		
-		private var _visible:Boolean;
-		private var _filter:IFilter2D;
+		public var visible:Boolean = true;
+		public var filter:IFilter2D;
 		
-		private var _parent:IDisplayObjectContainer2D;
+		private var _parent:DisplayObjectContainer2D;
 		
 		private var isLocalMatrixDirty:Boolean;
 		private const _localMatrix:Matrix = new Matrix();
-		
-		private var _worldAlpha:Number = 1;
 		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
@@ -50,9 +45,6 @@ package snjdck.g2d.impl
 			_scaleX = _scaleY = 1;
 			_rotation = 0;
 			_width = _height = 0;
-			_color = 0xFFFFFF;
-			_alpha = 1;
-			_visible = true;
 			_colorTransform = new ColorTransform();
 		}
 		
@@ -76,7 +68,7 @@ package snjdck.g2d.impl
 		virtual public function onUpdate(timeElapsed:int):void{}
 		virtual public function draw(render:GpuRender, context3d:GpuContext):void{}
 		
-		virtual public function pickup(px:Number, py:Number):IDisplayObject2D
+		virtual public function pickup(px:Number, py:Number):DisplayObject2D
 		{
 			if(false == visible){
 				return null;
@@ -107,12 +99,12 @@ package snjdck.g2d.impl
 			return null;
 		}
 		
-		final public function get parent():IDisplayObjectContainer2D
+		final public function get parent():DisplayObjectContainer2D
 		{
 			return _parent;
 		}
 		
-		public function set parent(value:IDisplayObjectContainer2D):void
+		public function set parent(value:DisplayObjectContainer2D):void
 		{
 			if(isLocked || parent == value){
 				return;
@@ -230,61 +222,6 @@ package snjdck.g2d.impl
 			_height = value;
 		}
 		
-		public function get color():uint
-		{
-			return _color;
-		}
-		
-		public function set color(value:uint):void
-		{
-			_color = value;
-		}
-		
-		public function get alpha():Number
-		{
-			return _alpha;
-		}
-		
-		public function set alpha(value:Number):void
-		{
-			_alpha = value;
-		}
-		
-		public function get visible():Boolean
-		{
-			return _visible;
-		}
-		
-		public function set visible(value:Boolean):void
-		{
-			_visible = value;
-		}
-		
-		final public function get worldAlpha():Number
-		{
-			return _worldAlpha;
-		}
-		
-		public function get filter():IFilter2D
-		{
-			return _filter;
-		}
-		
-		public function set filter(value:IFilter2D):void
-		{
-			_filter = value;
-		}
-		
-		public function get mouseEnabled():Boolean
-		{
-			return _mouseEnabled;
-		}
-		
-		public function set mouseEnabled(value:Boolean):void
-		{
-			_mouseEnabled = value;
-		}
-		
 		public function get colorTransform():ColorTransform
 		{
 			return _colorTransform;
@@ -295,7 +232,7 @@ package snjdck.g2d.impl
 			return visible && (alpha > 0) && (scaleX != 0) && (scaleY != 0);
 		}
 		
-		public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
+		public function getBounds(targetSpace:DisplayObject2D, result:Rectangle):void
 		{
 			getRect(targetSpace, result);
 			if(filter != null){
@@ -303,7 +240,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		public function getRect(targetSpace:IDisplayObject2D, result:Rectangle):void
+		public function getRect(targetSpace:DisplayObject2D, result:Rectangle):void
 		{
 			calcSpaceTransform(targetSpace, tempMatrix1);
 			
@@ -334,14 +271,14 @@ package snjdck.g2d.impl
 			result.setTo(minX, minY, maxX-minX, maxY-minY);
 		}
 		
-		public function calcSpaceTransform(targetSpace:IDisplayObject2D, result:Matrix):void
+		public function calcSpaceTransform(targetSpace:DisplayObject2D, result:Matrix):void
 		{
 			if(parent == targetSpace){
 				result.copyFrom(transform);
 				return;
 			}
 			result.identity();
-			var target:IDisplayObject2D = this;
+			var target:DisplayObject2D = this;
 			while(target != null){
 				if(target == targetSpace){
 					return;
@@ -360,7 +297,7 @@ package snjdck.g2d.impl
 		public function calcWorldMatrix(result:Matrix):void
 		{
 			result.identity();
-			var target:IDisplayObject2D = this;
+			var target:DisplayObject2D = this;
 			while(target != null){
 				result.concat(target.transform);
 				target = target.parent;

@@ -5,14 +5,12 @@ package snjdck.g2d.impl
 	import array.delAt;
 	import array.insert;
 	
-	import snjdck.g2d.core.IDisplayObject2D;
-	import snjdck.g2d.core.IDisplayObjectContainer2D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.GpuRender;
 	
-	public class DisplayObjectContainer2D extends DisplayObject2D implements IDisplayObjectContainer2D
+	public class DisplayObjectContainer2D extends DisplayObject2D
 	{
-		private var _childList:Vector.<IDisplayObject2D>;
+		private var _childList:Vector.<DisplayObject2D>;
 		private var _mouseChildren:Boolean;
 		
 		/** 防止递归操作 */
@@ -20,7 +18,7 @@ package snjdck.g2d.impl
 		
 		public function DisplayObjectContainer2D()
 		{
-			_childList = new <IDisplayObject2D>[];
+			_childList = new <DisplayObject2D>[];
 			_mouseChildren = true;
 		}
 		
@@ -44,12 +42,12 @@ package snjdck.g2d.impl
 			return index >= 0 && index < numChildren;
 		}
 		
-		public function addChild(child:IDisplayObject2D):void
+		public function addChild(child:DisplayObject2D):void
 		{
 			addChildAt(child, numChildren);
 		}
 		
-		public function addChildAt(child:IDisplayObject2D, index:int):void
+		public function addChildAt(child:DisplayObject2D, index:int):void
 		{
 			if(isLocked || index < 0 || numChildren < index){
 				return;
@@ -65,12 +63,12 @@ package snjdck.g2d.impl
 			isLocked = false;
 		}
 		
-		public function removeChild(child:IDisplayObject2D):void
+		public function removeChild(child:DisplayObject2D):void
 		{
 			removeChildAt(getChildIndex(child));
 		}
 		
-		public function removeChildAt(index:int):IDisplayObject2D
+		public function removeChildAt(index:int):DisplayObject2D
 		{
 			if(isLocked || isIndexValid(index) == false){
 				return null;
@@ -78,7 +76,7 @@ package snjdck.g2d.impl
 			
 			isLocked = true;
 			
-			var child:IDisplayObject2D = array.delAt(_childList, index);
+			var child:DisplayObject2D = array.delAt(_childList, index);
 			child.parent = null;
 			
 			isLocked = false;
@@ -86,17 +84,17 @@ package snjdck.g2d.impl
 			return child;
 		}
 		
-		public function getChildAt(index:int):IDisplayObject2D
+		public function getChildAt(index:int):DisplayObject2D
 		{
 			return isIndexValid(index) ? _childList[index] : null;
 		}
 		
-		public function getChildIndex(child:IDisplayObject2D):int
+		public function getChildIndex(child:DisplayObject2D):int
 		{
 			return _childList.indexOf(child);
 		}
 		
-		public function setChildIndex(child:IDisplayObject2D, index:int):void
+		public function setChildIndex(child:DisplayObject2D, index:int):void
 		{
 			var oldIndex:int = getChildIndex(child);
 			if(-1 != oldIndex){
@@ -105,7 +103,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		public function swapChildren(child1:IDisplayObject2D, child2:IDisplayObject2D):void
+		public function swapChildren(child1:DisplayObject2D, child2:DisplayObject2D):void
 		{
 			swapChildrenAt(getChildIndex(child1), getChildIndex(child2));
 		}
@@ -116,8 +114,8 @@ package snjdck.g2d.impl
 				return;
 			}
 			
-			var child1:IDisplayObject2D = getChildAt(index1);
-			var child2:IDisplayObject2D = getChildAt(index2);
+			var child1:DisplayObject2D = getChildAt(index1);
+			var child2:DisplayObject2D = getChildAt(index2);
 			
 			if(child1 && child2){
 				_childList[index1] = child2;
@@ -125,7 +123,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		public function contains(child:IDisplayObject2D):Boolean
+		public function contains(child:DisplayObject2D):Boolean
 		{
 			while(child){
 				if(child == this){
@@ -156,10 +154,10 @@ package snjdck.g2d.impl
 			render.r2d.popMatrix();
 		}
 		
-		override public function pickup(px:Number, py:Number):IDisplayObject2D
+		override public function pickup(px:Number, py:Number):DisplayObject2D
 		{
 			for each(var child:DisplayObject2D in _childList){
-				var target:IDisplayObject2D = child.pickup(px, py);
+				var target:DisplayObject2D = child.pickup(px, py);
 				if(target != null){
 					return target;
 				}
@@ -174,7 +172,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override public function getRect(targetSpace:IDisplayObject2D, result:Rectangle):void
+		override public function getRect(targetSpace:DisplayObject2D, result:Rectangle):void
 		{
 			if(_childList.length <= 0){
 				super.getRect(targetSpace, result);
@@ -199,7 +197,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override public function getBounds(targetSpace:IDisplayObject2D, result:Rectangle):void
+		override public function getBounds(targetSpace:DisplayObject2D, result:Rectangle):void
 		{
 			if(_childList.length <= 0){
 				super.getBounds(targetSpace, result);

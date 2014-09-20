@@ -1,6 +1,6 @@
 package snjdck.g2d.filter
 {
-	import snjdck.g2d.core.IDisplayObject2D;
+	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
@@ -24,7 +24,7 @@ package snjdck.g2d.filter
 			this.blurY = blurY;
 		}
 		
-		override public function draw(target:IDisplayObject2D, render:GpuRender, context3d:GpuContext):void
+		override public function draw(target:DisplayObject2D, render:GpuRender, context3d:GpuContext):void
 		{
 			numPasses = Math.ceil(blurX) + Math.ceil(blurY);
 			if(numPasses > 0){

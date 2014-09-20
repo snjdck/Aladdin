@@ -11,8 +11,7 @@ package snjdck.gpu
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
-	import snjdck.g2d.core.IDisplayObject2D;
-	import snjdck.g2d.core.IDisplayObjectContainer2D;
+	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
@@ -29,7 +28,7 @@ package snjdck.gpu
 	public class View3D implements ITicker
 	{
 		public const scene3d:Object3D = new Object3D();
-		public const scene2d:IDisplayObjectContainer2D = new DisplayObjectContainer2D();
+		public const scene2d:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
 		public const camera3d:Camera3D = new Camera3D();
 		
@@ -120,7 +119,7 @@ package snjdck.gpu
 			context3d.setFc(27, new <Number>[0.004, 0, 0, 0.6]);
 		}
 		
-		public function getObjectUnderPoint(px:Number, py:Number):IDisplayObject2D
+		public function getObjectUnderPoint(px:Number, py:Number):DisplayObject2D
 		{
 			return scene2d.pickup(px, py);
 		}

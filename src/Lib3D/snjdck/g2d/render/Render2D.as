@@ -6,8 +6,8 @@ package snjdck.g2d.render
 	
 	import matrix33.toBuffer;
 	
-	import snjdck.g2d.core.IDisplayObject2D;
 	import snjdck.g2d.core.ITexture2D;
+	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.GpuContext;
@@ -78,7 +78,7 @@ package snjdck.g2d.render
 			context3d.setVc(127, VcConst, 1);
 		}
 		
-		public function drawImage(context3d:GpuContext, target:IDisplayObject2D, texture:ITexture2D):void
+		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D):void
 		{
 			var worldMatrix:Matrix = matrixStack.worldMatrix;
 			var frameMatrix:Matrix = texture.frameMatrix;
