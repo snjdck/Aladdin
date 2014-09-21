@@ -14,14 +14,10 @@ package snjdck.g3d.core
 
 	public class Camera3D extends Object3D
 	{
-//		private var origin:Vector3D;
-		
-//		private var mvp:Matrix3D;
-//		public var lens:Matrix3D;
-		
 		public var viewFrustum:ViewFrustum;
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
+		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
 		
 		public function Camera3D()
 		{
@@ -29,12 +25,9 @@ package snjdck.g3d.core
 			rotationZ = -45 * Unit.RADIAN;
 			scale = Math.SQRT1_2;
 			
-//			origin = new Vector3D();
-//			camera = new Vector3D();
-			
-//			mvp = new Matrix3D();
 			_worldMatrix.copyFrom(transform);
-			_worldMatrix.invert();
+			_worldMatrixInvert.copyFrom(_worldMatrix);
+			_worldMatrixInvert.invert();
 			
 			viewFrustum = new ViewFrustum();
 		}
@@ -43,31 +36,25 @@ package snjdck.g3d.core
 		{
 			collector.pushMatrix(transform);
 			_worldMatrix.copyFrom(collector.worldMatrix);
-			_worldMatrix.invert();
 			collector.popMatrix();
+			_worldMatrixInvert.copyFrom(_worldMatrix);
+			_worldMatrixInvert.invert();
 		}
 		
 		public function uploadMatrix(context3d:GpuContext):void
 		{
-			context3d.setVcM(2, _worldMatrix);
+			context3d.setVcM(2, _worldMatrixInvert);
+		}
+		
+		public function getSceneRay(screenX:Number, screenY:Number):Ray
+		{
+			return new Ray(
+				_worldMatrix.transformVector(new Vector3D(screenX, screenY)),
+				_worldMatrix.deltaTransformVector(Vector3D.Z_AXIS)
+			);
 		}
 		
 		/*
-		public function setLens(val:Matrix3D):void
-		{
-			this.lens = val;
-		}
-		
-		public function getMvpMatrix():Matrix3D
-		{
-			return mvp;
-		}
-		
-		public function moveOriginTo(pos:Vector3D):void
-		{
-			origin.copyFrom(pos);
-		}
-		
 		public function followTarget(obj3d:Object3D):void
 		{
 			origin.x = obj3d.x;

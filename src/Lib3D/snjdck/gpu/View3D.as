@@ -170,16 +170,9 @@ package snjdck.gpu
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
 		{
-			var screenPt:Vector3D = new Vector3D(
-				mouseX - 0.5 * context3d.backBufferWidth,
-				0.5 * context3d.backBufferHeight - mouseY
-			);
-			//todo 优化
-			var m:Matrix3D = createIsoMatrix();
-			m.invert();
-			screenPt = m.transformVector(screenPt);
-			var ray:Ray = new Ray(screenPt, Vector3D.Z_AXIS);
-			scene3d.testRay(ray, result);
+			var screenX:Number = mouseX - 0.5 * _width;
+			var screenY:Number = 0.5 * _height - mouseY;
+			scene3d.hitTest(camera3d.getSceneRay(screenX, screenY), result);
 		}
 		
 		public function pickNearestObjectUnderPoint(mouseX:Number, mouseY:Number):RayTestInfo

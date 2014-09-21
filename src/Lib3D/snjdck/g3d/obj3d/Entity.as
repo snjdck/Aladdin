@@ -71,16 +71,16 @@ package snjdck.g3d.obj3d
 			collector.popMatrix();
 		}
 		//*
-		override protected function onTestRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
+		override protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void
 		{
 //			var ray:Ray = getLocalRay(globalRay);
-			var ray:Ray = globalRay.transformToLocal(worldMatrix);
+//			var ray:Ray = globalRay.transformToLocal(worldMatrix);
 			
 			var rayTestInfo:RayTestInfo = new RayTestInfo();
 			rayTestInfo.target = this;
 			
 			for each(var subMesh:SubMesh in mesh.subMeshes){
-				if(subMesh.testRay(ray, boneStateGroup, rayTestInfo)){
+				if(subMesh.testRay(localRay, boneStateGroup, rayTestInfo)){
 					result.push(rayTestInfo);
 					return;
 				}

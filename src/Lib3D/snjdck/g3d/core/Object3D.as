@@ -3,34 +3,25 @@ package snjdck.g3d.core
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.Matrix3D;
-	import flash.geom.Orientation3D;
 	import flash.geom.Vector3D;
 	import flash.support.DataEvent;
 	
-	import snjdck.g2d.core.IDisplayObject;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
 	
 	[Event(name="enterFrame", type="flash.events.Event")]
 	[Event(name="click", type="flash.events.MouseEvent")]
 	
-	public class Object3D extends EventDispatcher implements IDisplayObject
+	public class Object3D extends EventDispatcher
 	{
 		private var _parent:Object3D;
 		private var _nextSibling:Object3D;
 		private var _firstChild:Object3D;
-		
-		private var pivotX:Number=0, pivotY:Number=0, pivotZ:Number=0;
-//		private var _x:Number=0, _scaleX:Number=1, _rotationX:Number=0;
-//		private var _y:Number=0, _scaleY:Number=1, _rotationY:Number=0;
-//		private var _z:Number=0, _scaleZ:Number=1, _rotationZ:Number=0;
 		
 		private const _position:Vector3D = new Vector3D();
 		private const _rotation:Vector3D = new Vector3D();
@@ -41,8 +32,8 @@ package snjdck.g3d.core
 		ns_g3d const localMatrix:Matrix3D = new Matrix3D();
 		
 		public var width:Number, height:Number, length:Number;
-		private var _alpha:Number = 0;
-		private var _visible:Boolean;
+		public var alpha:Number = 1;
+		public var visible:Boolean;
 		public var name:String;
 		
 		public var mouseEnabled:Boolean;
@@ -79,17 +70,10 @@ package snjdck.g3d.core
 			return child;
 		}
 		
-		private function calcTransform():void
-		{
-			localMatrix.recompose(matrixComponents, Orientation3D.EULER_ANGLES);
-			if(0 == pivotX && 0 == pivotY && 0 == pivotZ) return;
-			localMatrix.prependTranslation(-pivotX, -pivotY, -pivotZ);
-		}
-		
 		public function get transform():Matrix3D
 		{
 			if(isLocalMatrixDirty){
-				calcTransform();
+				localMatrix.recompose(matrixComponents);
 				isLocalMatrixDirty = false;
 			}
 			return localMatrix;
@@ -116,27 +100,22 @@ package snjdck.g3d.core
 			collector.popMatrix();
 		}
 		
-		final public function testRay(globalRay:Ray, result:Vector.<RayTestInfo>):void
+		final public function hitTest(localRay:Ray, result:Vector.<RayTestInfo>):void
 		{
 			if(mouseEnabled){
-				onTestRay(globalRay, result);
+				hitTestImpl(localRay, result);
 			}
 			if(false == mouseChildren){
 				return;
 			}
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.visible){
-					child.testRay(globalRay, result);
+					child.hitTest(localRay.transformToLocal(child.transform), result);
 				}
 			}
 		}
 		
-		protected function onTestRay(ray:Ray, result:Vector.<RayTestInfo>):void	{}
-		
-//		ns_g3d function getLocalRay(globalRay:Ray):Ray
-//		{
-//			return globalRay.transformToLocal(worldMatrix);
-//		}
+		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void{}
 		
 		public function addChild(child:Object3D):void
 		{
@@ -327,16 +306,6 @@ package snjdck.g3d.core
 			isLocalMatrixDirty = true;
 		}
 		
-		public function get alpha():Number
-		{
-			return _alpha;
-		}
-		
-		public function set alpha(value:Number):void
-		{
-			_alpha = value;
-		}
-		
 		public function get opaque():Boolean
 		{
 			return BlendMode.NORMAL == _blendMode;
@@ -345,16 +314,6 @@ package snjdck.g3d.core
 		public function set opaque(value:Boolean):void
 		{
 			_blendMode = value ? BlendMode.NORMAL : BlendMode.ALPHAL;
-		}
-		
-		public function get visible():Boolean
-		{
-			return _visible;
-		}
-		
-		public function set visible(value:Boolean):void
-		{
-			_visible = value;
 		}
 		
 		public function removeFromParent():void
