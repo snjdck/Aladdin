@@ -1,13 +1,8 @@
 package snjdck.g2d.particlesystem
 {
-	import flash.geom.Matrix;
-	
-	import matrix33.compose;
-	
 	import snjdck.gpu.GpuColor;
-	import snjdck.gpu.asset.IGpuTexture;
 
-	final internal class Particle
+	final public class Particle
 	{
 		public var startX:Number;
 		public var startY:Number;
@@ -92,13 +87,5 @@ package snjdck.g2d.particlesystem
 			color.blue	+= colorDelta.blue	* passedTime;
 			color.alpha += colorDelta.alpha	* passedTime;
 		}
-		
-		public function getLocalMatrix(texture:IGpuTexture):Matrix
-		{
-			matrix33.compose(localMatrix, texture.width*scale, texture.height*scale, rotation, x, y);
-			return localMatrix;
-		}
-		
-		static private const localMatrix:Matrix = new Matrix();
 	}
 }

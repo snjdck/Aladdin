@@ -1,12 +1,29 @@
+#vc0 projection
+#vc1 world transform for x
+#vc2 world transform for y
+#vc3 textureWidth, textureHeight, 0.5, 0
+#vc4 x, y, scale, rotation
+
+#vt0 position
+#vt1 tw*scale,th*scale,sin(rotation),cos(rotation)
+
 @particle2d
 
-vt0 = va0
-vt0.xy -= vc127.xx
+vt0 = va0 - vc3.zzww		#pivot
+vt1 = vc4.zzww
 
-vt1.x = dp4: vt0, vc3		#local matrix
-vt1.y = dp4: vt0, vc4
+vt1.xy *= vc3.xy
+vt1.z = sin: vt1.z
+vt1.w = cos: vt1.w
 
-vt0.xy = vt1.xy
+vt2.zw = vt1.xxxy * vt1.zzzw
+vt1.z = neg: vt1.z
+vt2.xy = vt1.xy * vt1.wz
+
+vt1.x = dp3: vt0, vt2.xy	#rotation
+vt1.y = dp3: vt0, vt2.zw
+
+vt0.xy = vt1.xy + vc4.xy	#translation
 
 vt1.x = dp4: vt0, vc1		#world matrix
 vt1.y = dp4: vt0, vc2

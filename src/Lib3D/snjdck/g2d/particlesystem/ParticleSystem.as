@@ -159,8 +159,7 @@ package snjdck.g2d.particlesystem
 			r2d.pushMatrix(transform);
 			r2d.drawParticleBegin(context3d, mTexture, blendMode);
 			for(var i:int=0; i<mNumParticles; ++i){
-				var particle:Particle = mParticles[i];
-				r2d.drawParticle(context3d, particle.getLocalMatrix(mTexture), particle.color);
+				r2d.drawParticle(context3d, mParticles[i]);
 			}
 			r2d.popMatrix();
 			
