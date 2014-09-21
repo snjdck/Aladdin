@@ -38,23 +38,20 @@ package snjdck.g2d.particlesystem
 		
 		public function updatePositionByGravity(gravityX:Number, gravityY:Number, passedTime:Number):void
 		{
-			var distanceX:Number = x - startX;
-			var distanceY:Number = y - startY;
+			var dx:Number = x - startX;
+			var dy:Number = y - startY;
 			
-			var distanceScalar:Number = Math.sqrt(distanceX*distanceX + distanceY*distanceY);
+			var distanceScalar:Number = Math.sqrt(dx*dx + dy*dy);
 			distanceScalar = (distanceScalar <= 0.01) ? 100 : (1 / distanceScalar);
 			
-			var radialX:Number = distanceX * distanceScalar;
-			var radialY:Number = distanceY * distanceScalar;
+			dx *= distanceScalar;
+			dy *= distanceScalar;
 			
-			var tangentialX:Number = -radialY;
-			var tangentialY:Number =  radialX;
+			var radialX:Number = dx * radialAcceleration;
+			var radialY:Number = dy * radialAcceleration;
 			
-			radialX *= radialAcceleration;
-			radialY *= radialAcceleration;
-			
-			tangentialX *= tangentialAcceleration;
-			tangentialY *= tangentialAcceleration;
+			var tangentialX:Number = -dy * tangentialAcceleration;
+			var tangentialY:Number =  dx * tangentialAcceleration;
 			
 			velocityX += passedTime * (gravityX + radialX + tangentialX);
 			velocityY += passedTime * (gravityY + radialY + tangentialY);

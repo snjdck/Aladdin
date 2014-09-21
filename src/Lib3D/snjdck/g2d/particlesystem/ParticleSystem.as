@@ -80,66 +80,6 @@ package snjdck.g2d.particlesystem
 			mFrameTime = 0;
 		}
 		
-		private function advanceTime(passedTime:Number):void
-		{
-			var particleIndex:int = 0;
-			var particle:Particle;
-			
-			// advance existing particles
-			
-			while (particleIndex < mNumParticles)
-			{
-				particle = mParticles[particleIndex];
-				if(particle.time < particle.duration){
-					advanceParticle(particle, passedTime);
-					++particleIndex;
-				}else{
-					--mNumParticles;
-					if(particleIndex != mNumParticles){
-						var nextParticle:Particle = mParticles[mNumParticles];
-						mParticles[mNumParticles] = particle;
-						mParticles[particleIndex] = nextParticle;
-					}
-					if (mNumParticles == 0 && mEmissionTime == 0){
-//						dispatchEvent(new Event(Event.COMPLETE));
-					}
-				}
-			}
-			
-			// create and advance new particles
-			
-			if (mEmissionTime > 0)
-			{
-				var timeBetweenParticles:Number = 1.0 / mEmissionRate;
-				mFrameTime += passedTime;
-				
-				while (mFrameTime > 0)
-				{
-					if (mNumParticles < mMaxNumParticles)
-					{
-						if(mParticles.length <= mNumParticles){
-							mParticles.push(new Particle());
-						}
-						
-						particle = mParticles[mNumParticles];
-						ParticleSystemSetter.InitParticle(this, particle);
-						
-						// particle might be dead at birth
-						if (particle.duration > 0.0)
-						{
-							advanceParticle(particle, mFrameTime);
-							++mNumParticles;
-						}
-					}
-					
-					mFrameTime -= timeBetweenParticles;
-				}
-				
-				if (mEmissionTime != Number.MAX_VALUE)
-					mEmissionTime = Math.max(0.0, mEmissionTime - passedTime);
-			}
-		}
-		
 		private function advanceParticle(particle:Particle, passedTime:Number):void
 		{
 			if(mEmitterType == EMITTER_TYPE_RADIAL){
@@ -169,7 +109,64 @@ package snjdck.g2d.particlesystem
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
-			advanceTime(timeElapsed * 0.001);
+			const passedTime:Number = timeElapsed * 0.001;
+			
+			var particleIndex:int = 0;
+			var particle:Particle;
+			
+			// advance existing particles
+			
+			while(particleIndex < mNumParticles)
+			{
+				particle = mParticles[particleIndex];
+				if(particle.time < particle.duration){
+					advanceParticle(particle, passedTime);
+					++particleIndex;
+				}else{
+					--mNumParticles;
+					if(particleIndex != mNumParticles){
+						var nextParticle:Particle = mParticles[mNumParticles];
+						mParticles[mNumParticles] = particle;
+						mParticles[particleIndex] = nextParticle;
+					}
+					if (mNumParticles == 0 && mEmissionTime == 0){
+						//dispatchEvent(new Event(Event.COMPLETE));
+					}
+				}
+			}
+			
+			// create and advance new particles
+			if(mEmissionTime <= 0){
+				return;
+			}
+			
+			var timeBetweenParticles:Number = 1.0 / mEmissionRate;
+			mFrameTime += passedTime;
+			
+			while (mFrameTime > 0)
+			{
+				if (mNumParticles < mMaxNumParticles)
+				{
+					if(mParticles.length <= mNumParticles){
+						mParticles.push(new Particle());
+					}
+					
+					particle = mParticles[mNumParticles];
+					ParticleSystemSetter.InitParticle(this, particle);
+					
+					// particle might be dead at birth
+					if (particle.duration > 0){
+						advanceParticle(particle, mFrameTime);
+						++mNumParticles;
+					}
+				}
+				
+				mFrameTime -= timeBetweenParticles;
+			}
+			
+			if (mEmissionTime != Number.MAX_VALUE){
+				mEmissionTime = Math.max(0.0, mEmissionTime - passedTime);
+			}
 		}
 	}
 }
