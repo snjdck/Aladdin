@@ -1,11 +1,8 @@
 package snjdck.g3d.skeleton
 {
-	import flash.geom.Vector3D;
-	
 	import dict.getNumKeys;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.geom.Quaternion;
 	
 	use namespace ns_g3d;
 
@@ -43,7 +40,7 @@ package snjdck.g3d.skeleton
 					rootBone = bone;
 				}
 			}
-			rootBone.onInit(Quaternion.Null, NullVector);
+			rootBone.onInit(null);
 		}
 		
 		public function get numBones():int
@@ -105,9 +102,7 @@ package snjdck.g3d.skeleton
 		ns_g3d function onUpdate(aniName:String, time:Number, boneStateGroup:BoneStateGroup):void
 		{
 			rootBone.calculateKeyFrame(getAnimationByName(aniName), time);
-			rootBone.updateMatrix(Quaternion.Null, NullVector, boneStateGroup);
+			rootBone.updateMatrix(null, boneStateGroup);
 		}
-		
-		static private const NullVector:Vector3D = new Vector3D();
 	}
 }

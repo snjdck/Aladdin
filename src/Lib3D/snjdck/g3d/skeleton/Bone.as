@@ -1,10 +1,8 @@
 package snjdck.g3d.skeleton
 {
 	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.geom.Quaternion;
 	
 	use namespace ns_g3d;
 
@@ -20,8 +18,7 @@ package snjdck.g3d.skeleton
 		private var nextSibling:Bone;
 		private var firstChild:Bone;
 		
-		private var derivedOrientation:Quaternion;
-		private var derivedPosition:Vector3D;
+		private var derivedTransform:Transform;
 		
 		internal var matrixGlobalToLocal:Matrix3D;
 		
@@ -33,27 +30,26 @@ package snjdck.g3d.skeleton
 			transform = new Transform();
 			keyFrame = new Transform();
 			
-			derivedOrientation = new Quaternion();
-			derivedPosition = new Vector3D();
-			
+			derivedTransform = new Transform();
 			matrixGlobalToLocal = new Matrix3D();
 		}
 		
-		ns_g3d function onInit(parentRotation:Quaternion, parentTranslation:Vector3D):void
+		ns_g3d function onInit(parentTransform:Transform):void
 		{
-			parentRotation.rotateVector(transform.translation, derivedPosition);
-			derivedPosition.incrementBy(parentTranslation);
-			parentRotation.multiply(transform.rotation, derivedOrientation);
-			
-			derivedOrientation.toMatrix(matrixGlobalToLocal, derivedPosition);
+			if(null == parentTransform){
+				derivedTransform.copyFrom(transform);
+			}else{
+				parentTransform.concat(transform, derivedTransform);
+			}
+			derivedTransform.toMatrix(matrixGlobalToLocal);
 			matrixGlobalToLocal.invert();
 			
 			if(nextSibling){
-				nextSibling.onInit(parentRotation, parentTranslation);
+				nextSibling.onInit(parentTransform);
 			}
 			
 			if(firstChild){
-				firstChild.onInit(derivedOrientation, derivedPosition);
+				firstChild.onInit(derivedTransform);
 			}
 		}
 		
@@ -75,24 +71,31 @@ package snjdck.g3d.skeleton
 			test.nextSibling = bone;
 		}
 		
-		ns_g3d function updateMatrix(parentRotation:Quaternion, parentTranslation:Vector3D, boneStateGroup:BoneStateGroup):void
+		ns_g3d function updateMatrix(parentTransform:Transform, boneStateGroup:BoneStateGroup):void
 		{
-			parentRotation.rotateVector(transform.translation, derivedPosition);
-			derivedPosition.incrementBy(parentTranslation);
-			parentRotation.multiply(transform.rotation, derivedOrientation);
+//			parentRotation.rotateVector(transform.translation, derivedPosition);
+//			derivedPosition.incrementBy(parentTranslation);
+//			parentRotation.multiply(transform.rotation, derivedOrientation);
+			if(null == parentTransform){
+				derivedTransform.copyFrom(transform);
+			}else{
+				parentTransform.concat(transform, derivedTransform);
+			}
 			
-			derivedOrientation.rotateVector(keyFrame.translation, tempVector);
-			derivedPosition.incrementBy(tempVector);
-			derivedOrientation.multiply(keyFrame.rotation, derivedOrientation);
+			derivedTransform.concat(keyFrame, derivedTransform);
 			
-			derivedOrientation.toMatrix(boneStateGroup.getBoneMatrix(id), derivedPosition);
+//			derivedOrientation.rotateVector(keyFrame.translation, tempVector);
+//			derivedPosition.incrementBy(tempVector);
+//			derivedOrientation.multiply(keyFrame.rotation, derivedOrientation);
+			
+			derivedTransform.toMatrix(boneStateGroup.getBoneMatrix(id));
 			
 			if(nextSibling){
-				nextSibling.updateMatrix(parentRotation, parentTranslation, boneStateGroup);
+				nextSibling.updateMatrix(parentTransform, boneStateGroup);
 			}
 			
 			if(firstChild){
-				firstChild.updateMatrix(derivedOrientation, derivedPosition, boneStateGroup);
+				firstChild.updateMatrix(derivedTransform, boneStateGroup);
 			}
 		}
 		
@@ -115,6 +118,5 @@ package snjdck.g3d.skeleton
 			output.append(matrixLocalToGlobal);		//局部 -> 世界
 		}
 		*/
-		static private const tempVector:Vector3D = new Vector3D();
 	}
 }
