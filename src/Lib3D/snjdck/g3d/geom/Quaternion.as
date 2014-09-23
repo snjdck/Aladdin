@@ -217,10 +217,12 @@ package snjdck.g3d.geom
 			var ty:Number = v.y * (yy + ww - zz - xx) + v.z * (yz2 - xw2) + v.x * (xy2 + zw2);
 			var tz:Number = v.z * (zz + ww - xx - yy) + v.x * (xz2 - yw2) + v.y * (yz2 + xw2);
 			
-			result.setTo(tx, ty, tz);
+			result.x = tx;
+			result.y = ty;
+			result.z = tz;
 		}
 		
-		public function toMatrix(result:Matrix3D, translation:Vector3D=null, scale:Vector3D=null):void
+		public function toMatrix(result:Matrix3D, translation:Vector3D=null):void
 		{
 			//复制区域--begin
 			var xx:Number = x*x;
@@ -255,13 +257,13 @@ package snjdck.g3d.geom
 			}else{
 				rawData[12] = rawData[13] = rawData[14] = 0;
 			}
-			
+			/*
 			if(scale){
 				rawData[0] *= scale.x;
 				rawData[5] *= scale.y;
 				rawData[10] *= scale.z;
 			}
-			
+			//*/
 			result.copyRawDataFrom(rawData);
 		}
 		

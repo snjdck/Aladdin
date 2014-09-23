@@ -60,7 +60,9 @@ package snjdck.fileformat.ogre
 				bone.transform.rotation.readFrom(buffer);
 				
 				if(length > 30){
-					readVector3(buffer, bone.transform.scale);
+//					readVector3(buffer, bone.transform.scale);
+					buffer.position += 12;
+					trace("skeleton need support scale!");
 				}
 //				trace(bone.name, bone.transform);
 				skeleton.addBone(bone);
@@ -112,7 +114,9 @@ package snjdck.fileformat.ogre
 			keyFrame.transform.rotation.readFrom(buffer);
 			readVector3(buffer, keyFrame.transform.translation);
 			if(length > 32){
-				readVector3(buffer, keyFrame.transform.scale);
+				buffer.position += 12;
+				trace("skeleton need support scale!");
+//				readVector3(buffer, keyFrame.transform.scale);
 			}
 //			trace("keyframe",output.length-1,keyFrame.transform);
 		}
@@ -142,7 +146,9 @@ package snjdck.fileformat.ogre
 				}
 				
 				if(hasScale){
-					readVector3(buffer, keyFrame.transform.scale);
+					buffer.position += 12;
+					trace("skeleton need support scale!");
+//					readVector3(buffer, keyFrame.transform.scale);
 				}
 				
 				output.push(keyFrame);
