@@ -191,7 +191,10 @@ package snjdck.g3d.geom
 			var tz:Number = (this.w * other.z) + (this.x * other.y) - (this.y * other.x) + (this.z * other.w);
 			var tw:Number = (this.w * other.w) - (this.x * other.x) - (this.y * other.y) - (this.z * other.z);
 			
-			result.setTo(tx, ty, tz, tw);
+			result.x = tx;
+			result.y = ty;
+			result.z = tz;
+			result.w = tw;
 		}
 		
 		/**
