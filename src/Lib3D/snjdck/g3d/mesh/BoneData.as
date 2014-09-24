@@ -9,7 +9,6 @@ package snjdck.g3d.mesh
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuVertexBuffer;
-	import snjdck.gpu.register.ConstRegister;
 	
 	use namespace ns_g3d;
 	
@@ -28,8 +27,8 @@ package snjdck.g3d.mesh
 		static private const BONE_REG_OFFSET:int = 8;
 		
 		static public var MAX_BONE_COUNT_PER_GEOMETRY:int = 40;
-		/** 每个顶点绑定的骨骼数量最大为12根 */
-		static private const MAX_BONE_COUNT_PER_VERTEX:int = 12;
+		/** 每个顶点绑定的骨骼数量最大为4根 */
+		static private const MAX_BONE_COUNT_PER_VERTEX:int = 4;
 		static private const data32PerVertex:int = MAX_BONE_COUNT_PER_VERTEX * 2;
 		
 		private var offsetDict:Vector.<int>;
@@ -105,12 +104,8 @@ package snjdck.g3d.mesh
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);
 			}
-			drawUnit.setVa(2, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
-			drawUnit.setVa(3, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
-			drawUnit.setVa(4, gpuBoneBuffer, 8, Context3DVertexBufferFormat.FLOAT_4);
-			drawUnit.setVa(5, gpuBoneBuffer, 12, Context3DVertexBufferFormat.FLOAT_4);
-			drawUnit.setVa(6, gpuBoneBuffer, 16, Context3DVertexBufferFormat.FLOAT_4);
-			drawUnit.setVa(7, gpuBoneBuffer, 20, Context3DVertexBufferFormat.FLOAT_4);
+			drawUnit.setVa(6, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
+			drawUnit.setVa(7, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
 			for(var i:int=0, n:int=boneIds.length; i<n; i++){
 				drawUnit.addBone(boneStateGroup.getBoneMatrix(boneIds[i]));
 			}

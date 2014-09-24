@@ -28,7 +28,7 @@ package snjdck.g3d.skeleton
 			trackList[boneId] = keyFrames;
 		}
 		
-		ns_g3d function getTransform(boneId:int, time:Number, result:Transform):void
+		internal function getTransform(boneId:int, time:Number, result:Transform):void
 		{
 			var keyFrames:Vector.<KeyFrame> = trackList[boneId];
 			

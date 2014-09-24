@@ -1,111 +1,21 @@
-
-@g3d_preDrawDepth
-vt0 = m44: va0, vc4	#世界矩阵
-op = m44: vt0, vc0	#相机投影矩阵
-oc = fc0
-
-#========================
-
 @bone_ani_pos.vs
 #--bone-1
-vt0.xyz = m34: va0, vc[va2.x]
-vt1 = vt0.xyz * va2.y
+vt0.xyz = m34: va0, vc[va6.x]
+vt1 = vt0.xyz * va6.y
 
 #--bone-2
-vt0.xyz = m34: va0, vc[va2.z]
-vt1 += vt0.xyz * va2.w
-
-#--bone-3
-vt0.xyz = m34: va0, vc[va3.x]
-vt1 += vt0.xyz * va3.y
-
-#--bone-4
-vt0.xyz = m34: va0, vc[va3.z]
-vt1 += vt0.xyz * va3.w
-
-#--bone-5
-vt0.xyz = m34: va0, vc[va4.x]
-vt1 += vt0.xyz * va4.y
-
-#--bone-6
-vt0.xyz = m34: va0, vc[va4.z]
-vt1 += vt0.xyz * va4.w
-
-#--bone-7
-vt0.xyz = m34: va0, vc[va5.x]
-vt1 += vt0.xyz * va5.y
-
-#--bone-8
-vt0.xyz = m34: va0, vc[va5.z]
-vt1 += vt0.xyz * va5.w
-
-#--bone-9
-vt0.xyz = m34: va0, vc[va6.x]
-vt1 += vt0.xyz * va6.y
-
-#--bone-10
 vt0.xyz = m34: va0, vc[va6.z]
 vt1 += vt0.xyz * va6.w
 
-#--bone-11
+#--bone-3
 vt0.xyz = m34: va0, vc[va7.x]
 vt1 += vt0.xyz * va7.y
 
-#--bone-12
+#--bone-4
 vt0.xyz = m34: va0, vc[va7.z]
 vt1 += vt0.xyz * va7.w
 
 vt1.w = va0
-
-#===============================================================
-@bone_ani_normal.vs
-#--bone-1
-vt0.xyz = m33: va1, vc[va2.x]
-vt2 = vt0.xyz * va2.y
-
-#--bone-2
-vt0.xyz = m33: va1, vc[va2.z]
-vt2 += vt0.xyz * va2.w
-
-#--bone-3
-vt0.xyz = m33: va1, vc[va3.x]
-vt2 += vt0.xyz * va3.y
-
-#--bone-4
-vt0.xyz = m33: va1, vc[va3.z]
-vt2 += vt0.xyz * va3.w
-
-#--bone-5
-vt0.xyz = m33: va1, vc[va4.x]
-vt2 += vt0.xyz * va4.y
-
-#--bone-6
-vt0.xyz = m33: va1, vc[va4.z]
-vt2 += vt0.xyz * va4.w
-
-#--bone-7
-vt0.xyz = m33: va1, vc[va5.x]
-vt2 += vt0.xyz * va5.y
-
-#--bone-8
-vt0.xyz = m33: va1, vc[va5.z]
-vt2 += vt0.xyz * va5.w
-
-#--bone-9
-vt0.xyz = m33: va1, vc[va6.x]
-vt2 += vt0.xyz * va6.y
-
-#--bone-10
-vt0.xyz = m33: va1, vc[va6.z]
-vt2 += vt0.xyz * va6.w
-
-#--bone-11
-vt0.xyz = m33: va1, vc[va7.x]
-vt2 += vt0.xyz * va7.y
-
-#--bone-12
-vt0.xyz = m33: va1, vc[va7.z]
-vt2 += vt0.xyz * va7.w
 
 #===============================================================
 
