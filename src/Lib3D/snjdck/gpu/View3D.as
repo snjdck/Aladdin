@@ -108,7 +108,7 @@ package snjdck.gpu
 			context3d.enableErrorChecking = _enableErrorChecking;
 			Clock.getInstance().add(this);
 			if(context3d.isStandardProfile()){
-				BoneData.MAX_BONE_COUNT_PER_GEOMETRY = 80;
+				BoneData.MAX_BONE_COUNT_PER_GEOMETRY = 121;
 				GpuProgram.AgalVersion = 2;
 			}
 		}

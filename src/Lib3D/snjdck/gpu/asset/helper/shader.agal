@@ -1,31 +1,110 @@
 @bone_ani_pos.vs
 #--bone-1
-vt0.xyz = m34: va0, vc[va6.x]
-vt1 = vt0.xyz * va6.y
+vt1 = vc[va6.x]					#四元数
+vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
+vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
+vt1 *= vt1						#xx,yy,zz,ww
+
+vt4.xyz = vt2.zxy + vt3.yzx
+vt3.xyz = vt2.xyz - vt3.zxy
+
+vt2.xyz  = vt1.xyz + vt1.www
+vt2.xyz -= vt1.yzx
+vt2.xyz -= vt1.zxy
+
+vt2.xyz *= va0.xyz
+vt3.xyz *= va0.yzx
+vt4.xyz *= va0.zxy
+
+vt1.xyz = vt3.xyz + vt4.xyz
+vt1.xyz += vt1.xyz				#乘以2
+vt1.xyz += vt2.xyz
+vt1.xyz = add: vt1.xyz, vc[va6.x+1]		#偏移
+vt0.xyz = vt1.xyz * va6.y				#骨骼权重
 
 #--bone-2
-vt0.xyz = m34: va0, vc[va6.z]
-vt1 += vt0.xyz * va6.w
+vt1 = vc[va6.z]					#四元数
+vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
+vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
+vt1 *= vt1						#xx,yy,zz,ww
+
+vt4.xyz = vt2.zxy + vt3.yzx
+vt3.xyz = vt2.xyz - vt3.zxy
+
+vt2.xyz  = vt1.xyz + vt1.www
+vt2.xyz -= vt1.yzx
+vt2.xyz -= vt1.zxy
+
+vt2.xyz *= va0.xyz
+vt3.xyz *= va0.yzx
+vt4.xyz *= va0.zxy
+
+vt1.xyz = vt3.xyz + vt4.xyz
+vt1.xyz += vt1.xyz				#乘以2
+vt1.xyz += vt2.xyz
+vt1.xyz = add: vt1.xyz, vc[va6.z+1]		#偏移
+vt1.xyz *= va6.w						#骨骼权重
+vt0.xyz += vt1.xyz
 
 #--bone-3
-vt0.xyz = m34: va0, vc[va7.x]
-vt1 += vt0.xyz * va7.y
+vt1 = vc[va7.x]					#四元数
+vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
+vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
+vt1 *= vt1						#xx,yy,zz,ww
+
+vt4.xyz = vt2.zxy + vt3.yzx
+vt3.xyz = vt2.xyz - vt3.zxy
+
+vt2.xyz  = vt1.xyz + vt1.www
+vt2.xyz -= vt1.yzx
+vt2.xyz -= vt1.zxy
+
+vt2.xyz *= va0.xyz
+vt3.xyz *= va0.yzx
+vt4.xyz *= va0.zxy
+
+vt1.xyz = vt3.xyz + vt4.xyz
+vt1.xyz += vt1.xyz				#乘以2
+vt1.xyz += vt2.xyz
+vt1.xyz = add: vt1.xyz, vc[va7.x+1]		#偏移
+vt1.xyz *= va7.y						#骨骼权重
+vt0.xyz += vt1.xyz
 
 #--bone-4
-vt0.xyz = m34: va0, vc[va7.z]
-vt1 += vt0.xyz * va7.w
+vt1 = vc[va7.z]					#四元数
+vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
+vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
+vt1 *= vt1						#xx,yy,zz,ww
 
-vt1.w = va0
+vt4.xyz = vt2.zxy + vt3.yzx
+vt3.xyz = vt2.xyz - vt3.zxy
+
+vt2.xyz  = vt1.xyz + vt1.www
+vt2.xyz -= vt1.yzx
+vt2.xyz -= vt1.zxy
+
+vt2.xyz *= va0.xyz
+vt3.xyz *= va0.yzx
+vt4.xyz *= va0.zxy
+
+vt1.xyz = vt3.xyz + vt4.xyz
+vt1.xyz += vt1.xyz				#乘以2
+vt1.xyz += vt2.xyz
+vt1.xyz = add: vt1.xyz, vc[va7.z+1]		#偏移
+vt1.xyz *= va7.w						#骨骼权重
+vt0.xyz += vt1.xyz
+
+vt0.w = va0
 
 #===============================================================
 
 @objectImp.agal
-vt1.xyz = m34: vt1, vc5	#本地矩阵
-vt1.xyz = m34: vt1, vc2	#世界矩阵
-vt1.z = dp4: vt1, vc1
-vt1.xy += vc0.xy
-vt1.xy *= vc0.zw
-op = vt1
+vt0.xyz = m34: vt0, vc5	#本地矩阵
+vt0.xyz = m34: vt0, vc2	#世界矩阵
+vt0.z = dp4: vt0, vc1
+vt0.xy += vc0.xy
+vt0.xy *= vc0.zw
+op = vt0
 v0 = va1				#uv
 
 ft0 = tex: v0, fs0<>
@@ -57,7 +136,7 @@ ${bone_ani_pos.vs}
 ${objectImp.agal}
 
 @object
-vt1 = va0
+vt0 = va0
 ${objectImp.agal}
 
 @bone_ani_shadow

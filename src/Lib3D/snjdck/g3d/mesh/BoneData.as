@@ -16,17 +16,17 @@ package snjdck.g3d.mesh
 	{
 		static private function BoneIdToBoneIndex(boneId:int):int
 		{
-			return BONE_REG_OFFSET + boneId * 3;//每个骨头矩阵占3个寄存器
+			return BONE_REG_OFFSET + boneId * 2;//每个骨头矩阵占2个寄存器
 		}
 		
 		static private function BoneIndexToBoneId(boneIndex:int):int
 		{
-			return (boneIndex - BONE_REG_OFFSET) / 3;//每个骨头矩阵占3个寄存器
+			return (boneIndex - BONE_REG_OFFSET) / 2;//每个骨头矩阵占2个寄存器
 		}
 		
 		static private const BONE_REG_OFFSET:int = 8;
 		
-		static public var MAX_BONE_COUNT_PER_GEOMETRY:int = 40;
+		static public var MAX_BONE_COUNT_PER_GEOMETRY:int = 60;
 		/** 每个顶点绑定的骨骼数量最大为4根 */
 		static private const MAX_BONE_COUNT_PER_VERTEX:int = 4;
 		static private const data32PerVertex:int = MAX_BONE_COUNT_PER_VERTEX * 2;
@@ -107,7 +107,10 @@ package snjdck.g3d.mesh
 			drawUnit.setVa(6, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
 			drawUnit.setVa(7, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
 			for(var i:int=0, n:int=boneIds.length; i<n; i++){
-				drawUnit.addBone(boneStateGroup.getBoneMatrix(boneIds[i]));
+//				drawUnit.addBone(boneStateGroup.getBoneMatrix(boneIds[i]));
+//				const m:Matrix3D = new Matrix3D();
+//				boneStateGroup.getBoneStateGlobal(boneIds[i]).toMatrix(m);
+				drawUnit.addBone(boneStateGroup.getBoneStateGlobal(boneIds[i]));
 			}
 		}
 		
@@ -144,7 +147,7 @@ package snjdck.g3d.mesh
 			for(var boneId:* in vertexDict)
 			{
 				var vertexInfoList:Array = vertexDict[boneId];
-				var boneMatrix:Matrix3D = boneStateGroup.getBoneMatrix(boneId);
+				boneStateGroup.getBoneStateLocal(boneId).toMatrix(boneMatrix);
 				
 				var globalOffset:int, localOffset:int = 0;
 				
@@ -175,5 +178,6 @@ package snjdck.g3d.mesh
 		}
 		
 		static private const tempFloatBuffer:Vector.<Number> = new Vector.<Number>();
+		static private const boneMatrix:Matrix3D = new Matrix3D();
 	}
 }
