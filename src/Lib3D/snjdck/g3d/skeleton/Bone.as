@@ -1,7 +1,5 @@
 package snjdck.g3d.skeleton
 {
-	import flash.geom.Matrix3D;
-	
 	final public class Bone
 	{
 		public var name:String;
@@ -14,9 +12,7 @@ package snjdck.g3d.skeleton
 		private var nextSibling:Bone;
 		private var firstChild:Bone;
 		
-		private var derivedTransform:Transform;
-		
-		internal var matrixGlobalToLocal:Matrix3D;
+		private const transformGlobalToLocal:Transform = new Transform();
 		
 		public function Bone(name:String, id:int)
 		{
@@ -24,28 +20,24 @@ package snjdck.g3d.skeleton
 			this.id = id;
 			
 			keyFrame = new Transform();
-			
-			derivedTransform = new Transform();
-			matrixGlobalToLocal = new Matrix3D();
 		}
 		
 		internal function onInit(parentTransform:Transform):void
 		{
 			if(null == parentTransform){
-				derivedTransform.copyFrom(transform);
+				transformGlobalToLocal.copyFrom(transform);
 			}else{
-				parentTransform.concat(transform, derivedTransform);
+				parentTransform.prepend(transform, transformGlobalToLocal);
 			}
-			
-			derivedTransform.toMatrix(matrixGlobalToLocal);
-			matrixGlobalToLocal.invert();
 			
 			if(nextSibling){
 				nextSibling.onInit(parentTransform);
 			}
 			if(firstChild){
-				firstChild.onInit(derivedTransform);
+				firstChild.onInit(transformGlobalToLocal);
 			}
+			
+			transformGlobalToLocal.invert();
 		}
 		
 		internal function addChild(child:Bone):void
@@ -68,20 +60,21 @@ package snjdck.g3d.skeleton
 		
 		internal function updateMatrix(parentTransform:Transform, boneStateGroup:BoneStateGroup):void
 		{
+			var transformLocalToGlobal:Transform = boneStateGroup.getBoneStateLocal(id);
 			if(null == parentTransform){
-				derivedTransform.copyFrom(transform);
+				transformLocalToGlobal.copyFrom(transform);
 			}else{
-				parentTransform.concat(transform, derivedTransform);
+				parentTransform.prepend(transform, transformLocalToGlobal);
 			}
 			
-			derivedTransform.concat(keyFrame, derivedTransform);
-			derivedTransform.toMatrix(boneStateGroup.getBoneMatrix(id));
+			transformLocalToGlobal.prepend(keyFrame, transformLocalToGlobal);
+			transformLocalToGlobal.prepend(transformGlobalToLocal, boneStateGroup.getBoneStateGlobal(id));
 			
 			if(nextSibling){
 				nextSibling.updateMatrix(parentTransform, boneStateGroup);
 			}
 			if(firstChild){
-				firstChild.updateMatrix(derivedTransform, boneStateGroup);
+				firstChild.updateMatrix(transformLocalToGlobal, boneStateGroup);
 			}
 		}
 		

@@ -1,5 +1,7 @@
 package snjdck.g3d.skeleton
 {
+	import flash.geom.Matrix3D;
+	
 	import array.del;
 	
 	import snjdck.g3d.ns_g3d;
@@ -77,12 +79,15 @@ package snjdck.g3d.skeleton
 				if(null == list || list.length <= 0){
 					continue;
 				}
-				collector.pushMatrix(boneStateGroup.getBoneMatrix(boneId));
+				boneStateGroup.getBoneStateLocal(boneId).toMatrix(matrix);
+				collector.pushMatrix(matrix);
 				for each(var attachment:Object3D in list){
 					attachment.collectDrawUnit(collector);
 				}
 				collector.popMatrix();
 			}
 		}
+		
+		static private const matrix:Matrix3D = new Matrix3D();
 	}
 }

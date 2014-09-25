@@ -5,12 +5,10 @@ package snjdck.g3d.skeleton
 	
 	import snjdck.g3d.geom.Quaternion;
 	
-	import string.replace;
-	
 	import vec3.add;
 	import vec3.interpolate;
 
-	final internal class Transform
+	final public class Transform
 	{
 		static public function Interpolate(from:Transform, to:Transform, f:Number, result:Transform):void
 		{
@@ -18,14 +16,10 @@ package snjdck.g3d.skeleton
 			Quaternion.Slerp(from.rotation, to.rotation, f, result.rotation);
 		}
 		
-		public var translation:Vector3D;
-		public var rotation:Quaternion;
+		public const translation:Vector3D = new Vector3D();
+		public const rotation:Quaternion = new Quaternion();
 		
-		public function Transform()
-		{
-			translation = new Vector3D(0, 0, 0);
-			rotation = new Quaternion();
-		}
+		public function Transform(){}
 		
 		public function copyFrom(from:Transform):void
 		{
@@ -39,11 +33,18 @@ package snjdck.g3d.skeleton
 			rotation.setTo(0, 0, 0, 1);
 		}
 		
-		public function concat(other:Transform, result:Transform):void
+		public function prepend(other:Transform, result:Transform):void
 		{
 			rotation.rotateVector(other.translation, tempVector);
 			vec3.add(translation, tempVector, result.translation);
 			rotation.multiply(other.rotation, result.rotation);
+		}
+		
+		public function invert():void
+		{
+			rotation.w = -rotation.w;
+			rotation.rotateVector(translation, translation);
+			translation.negate();
 		}
 		
 		public function toMatrix(result:Matrix3D):void
@@ -51,13 +52,18 @@ package snjdck.g3d.skeleton
 			rotation.toMatrix(result, translation);
 		}
 		
-		static private const tempVector:Vector3D = new Vector3D();
-		
-		public function toString():String
+		public function copyRawDataTo(output:Vector.<Number>, offset:int):void
 		{
-			var axis:Vector3D = new Vector3D();
-			rotation.toAxisAngle(axis);
-			return replace("rotation:x=${x},y=${y},z=${z},angle=${w}", axis);
+			output[offset  ] = rotation.x;
+			output[offset+1] = rotation.y;
+			output[offset+2] = rotation.z;
+			output[offset+3] = rotation.w;
+			output[offset+4] = translation.x;
+			output[offset+5] = translation.y;
+			output[offset+6] = translation.z;
+			output[offset+7] = 1;				//scale
 		}
+		
+		static private const tempVector:Vector3D = new Vector3D();
 	}
 }

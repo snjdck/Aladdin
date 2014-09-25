@@ -1,35 +1,32 @@
 package snjdck.g3d.skeleton
 {
-	import flash.geom.Matrix3D;
-
 	public class BoneStateGroup
 	{
-		private var boneMatrixList:Array;
+		private const boneGlobalStateList:Array = [];
+		private const boneLocalStateList:Array = [];
 		
-		public function BoneStateGroup()
+		public function BoneStateGroup(){}
+		
+		/**
+		 * 返回顶点的变换(全局到局部,再局部到全局)
+		 */
+		public function getBoneStateGlobal(boneId:int):Transform
 		{
-			boneMatrixList = [];
+			if(null == boneGlobalStateList[boneId]){
+				boneGlobalStateList[boneId] = new Transform();
+			}
+			return boneGlobalStateList[boneId];
 		}
 		
-		public function getBoneMatrix(boneId:int):Matrix3D
+		/**
+		 * 返回顶点的变换(局部到全局)
+		 */
+		public function getBoneStateLocal(boneId:int):Transform
 		{
-			if(null == boneMatrixList[boneId]){
-				boneMatrixList[boneId] = new Matrix3D();
+			if(null == boneLocalStateList[boneId]){
+				boneLocalStateList[boneId] = new Transform();
 			}
-			return boneMatrixList[boneId];
-		}
-		
-		public function prependBoneTransform(skeleton:Skeleton):void
-		{
-			const boneCount:int = boneMatrixList.length;
-			for(var boneId:int=0; boneId<boneCount; ++boneId){
-				var boneMatrix:Matrix3D = boneMatrixList[boneId];
-				if(null == boneMatrix){
-					continue;
-				}
-				var bone:Bone = skeleton.getBoneById(boneId);
-				boneMatrix.prepend(bone.matrixGlobalToLocal);
-			}
+			return boneLocalStateList[boneId];
 		}
 	}
 }
