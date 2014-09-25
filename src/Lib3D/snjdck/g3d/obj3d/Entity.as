@@ -48,9 +48,11 @@ package snjdck.g3d.obj3d
 			if(mesh.subMeshes.length <= 0){
 				return;
 			}
+			/*
 			if(skeleton){
 				boneStateGroup.prependBoneTransform(skeleton);
 			}
+			*/
 //			super.collectDrawUnit(collector);
 			/*
 			if(!camera.viewFrustum.isBoundVisible(mesh.bound, worldMatrix)){
