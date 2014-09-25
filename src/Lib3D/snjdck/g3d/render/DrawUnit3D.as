@@ -3,6 +3,7 @@ package snjdck.g3d.render
 	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.skeleton.Transform;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
@@ -23,7 +24,7 @@ package snjdck.g3d.render
 		private var vaSlot:VertexRegister;
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
-		private const _boneList:Vector.<Matrix3D> = new Vector.<Matrix3D>();
+		private const _boneList:Vector.<Transform> = new Vector.<Transform>();
 		
 		public var shaderName:String;
 		public var textureName:String;
@@ -56,7 +57,7 @@ package snjdck.g3d.render
 			_worldMatrix.copyFrom(matrix);
 		}
 		
-		ns_g3d function addBone(bone:Matrix3D):void
+		ns_g3d function addBone(bone:Transform):void
 		{
 			_boneList[_boneList.length] = bone;
 		}
@@ -86,11 +87,11 @@ package snjdck.g3d.render
 			_worldMatrix.copyRawDataTo(floatBuffer, 0, true);
 			var offset:int = 12;
 			for(var i:int=0; i<boneCount; ++i){
-				var bone:Matrix3D = _boneList[i];
-				bone.copyRawDataTo(floatBuffer, offset, true);
-				offset += 12;
+				var bone:Transform = _boneList[i];
+				bone.copyRawDataTo(floatBuffer, offset);
+				offset += 8;
 			}
-			context3d.setVc(5, floatBuffer, 6+3*boneCount);
+			context3d.setVc(5, floatBuffer, offset >> 2);
 		}
 		
 		public function toString():String
