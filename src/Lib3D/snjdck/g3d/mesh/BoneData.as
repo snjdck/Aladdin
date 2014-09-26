@@ -107,9 +107,6 @@ package snjdck.g3d.mesh
 			drawUnit.setVa(6, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
 			drawUnit.setVa(7, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
 			for(var i:int=0, n:int=boneIds.length; i<n; i++){
-//				drawUnit.addBone(boneStateGroup.getBoneMatrix(boneIds[i]));
-//				const m:Matrix3D = new Matrix3D();
-//				boneStateGroup.getBoneStateGlobal(boneIds[i]).toMatrix(m);
 				drawUnit.addBone(boneStateGroup.getBoneStateGlobal(boneIds[i]));
 			}
 		}
@@ -147,7 +144,7 @@ package snjdck.g3d.mesh
 			for(var boneId:* in vertexDict)
 			{
 				var vertexInfoList:Array = vertexDict[boneId];
-				boneStateGroup.getBoneStateLocal(boneId).toMatrix(boneMatrix);
+				boneStateGroup.getBoneStateGlobal(boneId).toMatrix(boneMatrix);
 				
 				var globalOffset:int, localOffset:int = 0;
 				
