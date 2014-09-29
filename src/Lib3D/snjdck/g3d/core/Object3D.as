@@ -9,6 +9,7 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.g3d.pickup.RayCastStack;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
 	
@@ -32,7 +33,7 @@ package snjdck.g3d.core
 		ns_g3d const localMatrix:Matrix3D = new Matrix3D();
 		
 		public var width:Number, height:Number, length:Number;
-		public var alpha:Number = 1;
+		public var layer:uint;
 		public var visible:Boolean;
 		public var name:String;
 		
@@ -100,19 +101,25 @@ package snjdck.g3d.core
 			collector.popMatrix();
 		}
 		
-		final public function hitTest(localRay:Ray, result:Vector.<RayTestInfo>):void
+		final public function hitTest(rayCastStack:RayCastStack, result:Vector.<RayTestInfo>):void
 		{
+			if(!(mouseEnabled || mouseChildren)){
+				return;
+			}
+			rayCastStack.pushRay(transform);
 			if(mouseEnabled){
-				hitTestImpl(localRay, result);
+				hitTestImpl(rayCastStack.ray, result);
 			}
 			if(false == mouseChildren){
+				rayCastStack.popRay();
 				return;
 			}
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.visible){
-					child.hitTest(localRay.transformToLocal(child.transform), result);
+					child.hitTest(rayCastStack, result);
 				}
 			}
+			rayCastStack.popRay();
 		}
 		
 		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void{}

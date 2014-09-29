@@ -1,6 +1,5 @@
 package snjdck.g3d.geom
 {
-	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import math.nearEquals;
@@ -13,23 +12,10 @@ package snjdck.g3d.geom
 	 */	
 	public class Ray
 	{
-		private var pos:Vector3D;
-		private var dir:Vector3D;
+		public const pos:Vector3D = new Vector3D();
+		public const dir:Vector3D = new Vector3D();
 		
-		public function Ray(pos:Vector3D=null, dir:Vector3D=null)
-		{
-			this.pos = pos;
-			this.dir = dir;
-		}
-		
-		/** 将射线变换到本地坐标 */
-		public function transformToLocal(localToRayMatrix:Matrix3D):Ray
-		{
-			tempMatrix.copyFrom(localToRayMatrix);
-			tempMatrix.invert();
-			
-			return new Ray(tempMatrix.transformVector(pos), tempMatrix.deltaTransformVector(dir));
-		}
+		public function Ray(){}
 		
 		private function getPt(t:Number):Vector3D
 		{
@@ -93,7 +79,5 @@ package snjdck.g3d.geom
 		static private const p:Vector3D = new Vector3D();
 		static private const t:Vector3D = new Vector3D();
 		static private const q:Vector3D = new Vector3D();
-		
-		static private const tempMatrix:Matrix3D = new Matrix3D();
 	}
 }

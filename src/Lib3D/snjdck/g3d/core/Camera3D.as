@@ -3,6 +3,10 @@ package snjdck.g3d.core
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
+	import matrix44.transformCoords;
+	import matrix44.transformCoordsDelta;
+	import matrix44.transformVector;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
@@ -46,12 +50,10 @@ package snjdck.g3d.core
 			context3d.setVcM(2, _worldMatrixInvert);
 		}
 		
-		public function getSceneRay(screenX:Number, screenY:Number):Ray
+		public function getSceneRay(screenX:Number, screenY:Number, ray:Ray):void
 		{
-			return new Ray(
-				_worldMatrix.transformVector(new Vector3D(screenX, screenY)),
-				_worldMatrix.deltaTransformVector(Vector3D.Z_AXIS)
-			);
+			matrix44.transformCoords(_worldMatrix, screenX, screenY, 0, ray.pos);
+			matrix44.transformCoordsDelta(_worldMatrix, 0, 0, 1, ray.dir);
 		}
 		
 		/*

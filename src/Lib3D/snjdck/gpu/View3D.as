@@ -5,9 +5,7 @@ package snjdck.gpu
 	import flash.display3D.Context3DProfile;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
-	import flash.geom.d3.createIsoMatrix;
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
@@ -19,6 +17,7 @@ package snjdck.gpu
 	import snjdck.g3d.geom.Ray;
 	import snjdck.g3d.geom.RayTestInfo;
 	import snjdck.g3d.mesh.BoneData;
+	import snjdck.g3d.pickup.RayCastStack;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.render.GpuRender;
@@ -31,6 +30,7 @@ package snjdck.gpu
 		public const scene2d:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
 		public const camera3d:Camera3D = new Camera3D();
+		private const rayCastStack:RayCastStack = new RayCastStack();
 		
 		public var timeScale:Number = 1;
 		
@@ -172,7 +172,8 @@ package snjdck.gpu
 		{
 			var screenX:Number = mouseX - 0.5 * _width;
 			var screenY:Number = 0.5 * _height - mouseY;
-			scene3d.hitTest(camera3d.getSceneRay(screenX, screenY), result);
+			rayCastStack.reset(camera3d, screenX, screenY);
+			scene3d.hitTest(rayCastStack, result);
 		}
 		
 		public function pickNearestObjectUnderPoint(mouseX:Number, mouseY:Number):RayTestInfo

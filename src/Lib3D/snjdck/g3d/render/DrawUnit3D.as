@@ -19,6 +19,8 @@ package snjdck.g3d.render
 		static private const MAX_VA_COUNT:uint = 8;
 		static private const MAX_FS_COUNT:uint = 8;
 		
+		public var layer:uint;
+		
 		private const floatBuffer:Vector.<Number> = new Vector.<Number>(129*4, true);
 		
 		private var vaSlot:VertexRegister;
