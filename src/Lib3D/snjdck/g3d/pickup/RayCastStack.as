@@ -4,9 +4,6 @@ package snjdck.g3d.pickup
 	
 	import matrix44.transformVector;
 	import matrix44.transformVectorDelta;
-	
-	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.geom.Ray;
 
 	public class RayCastStack
 	{
@@ -17,11 +14,6 @@ package snjdck.g3d.pickup
 		{
 			rayStack = new <Ray>[new Ray()];
 			rayIndex = 0;
-		}
-		
-		public function reset(camera:Camera3D, screenX:Number, screenY:Number):void
-		{
-			camera.getSceneRay(screenX, screenY, ray);
 		}
 		
 		public function pushRay(matrix:Matrix3D):void

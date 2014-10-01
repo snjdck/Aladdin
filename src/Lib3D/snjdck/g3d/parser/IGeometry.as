@@ -3,8 +3,8 @@ package snjdck.g3d.parser
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.geom.Bound;
-	import snjdck.g3d.geom.Ray;
-	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 

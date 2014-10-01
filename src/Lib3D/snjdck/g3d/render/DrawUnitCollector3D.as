@@ -4,6 +4,7 @@ package snjdck.g3d.render
 	import flash.support.ObjectPool;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.matrixstack.MatrixStack3D;
 	
@@ -15,12 +16,11 @@ package snjdck.g3d.render
 		
 		ns_g3d const opaqueList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
 		ns_g3d const blendList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
+		ns_g3d const cameraList:Vector.<Camera3D> = new Vector.<Camera3D>();
 		
 		private const matrixStack:MatrixStack3D = new MatrixStack3D();
 		
-		public function DrawUnitCollector3D()
-		{
-		}
+		public function DrawUnitCollector3D(){}
 		
 		public function clear():void
 		{
@@ -30,6 +30,7 @@ package snjdck.g3d.render
 			while(blendList.length > 0){
 				recoverDrawUnit(blendList.pop());
 			}
+			cameraList.length = 0;
 		}
 		
 		private function recoverDrawUnit(drawUnit:DrawUnit3D):void
@@ -65,6 +66,21 @@ package snjdck.g3d.render
 		public function get worldMatrix():Matrix3D
 		{
 			return matrixStack.worldMatrix;
+		}
+		
+		public function addCamera(camera:Camera3D):void
+		{
+			cameraList.push(camera);
+		}
+		
+		public function drawBegin():void
+		{
+			cameraList.sort(__sortCamera);
+		}
+		
+		static private function __sortCamera(left:Camera3D, right:Camera3D):int
+		{
+			return left.depth - right.depth;
 		}
 	}
 }

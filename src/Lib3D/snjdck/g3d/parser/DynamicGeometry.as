@@ -1,8 +1,8 @@
 package snjdck.g3d.parser
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.geom.Ray;
-	import snjdck.g3d.geom.RayTestInfo;
+	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
@@ -41,7 +41,6 @@ package snjdck.g3d.parser
 				drawUnit.shaderName = ShaderName.BONE_ANI;
 				boneData.getDrawUnit(drawUnit, boneStateGroup);
 			}else{
-				trace("render by cpu!");
 				drawUnit.shaderName = ShaderName.OBJECT;
 				syncTempVertexData(boneStateGroup);
 				uploadVertexData(tempVertexData);

@@ -2,7 +2,6 @@ package snjdck.gpu
 {
 	import flash.display.Stage;
 	import flash.display.Stage3D;
-	import flash.display3D.Context3DProfile;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Vector3D;
@@ -14,12 +13,10 @@ package snjdck.gpu
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.geom.Ray;
-	import snjdck.g3d.geom.RayTestInfo;
-	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.pickup.RayCastStack;
+	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuProgram;
+	import snjdck.gpu.projection.OrthoProjection3D;
 	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
@@ -56,6 +53,17 @@ package snjdck.gpu
 			
 			scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
 			scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
+			camera3d.projection = new OrthoProjection3D();
+			camera3d.projection.resize(_width, _height);
+			
+//			var testCamera:Camera3D = new Camera3D();
+//			testCamera.projection = new OrthoProjection3D();
+//			testCamera.projection.resize(_width, _height);
+//			testCamera.depth = 1;
+//			scene3d.addChild(testCamera);
+//			testCamera.viewportRect.x = 0.5;
+//			testCamera.viewportRect.width = 0.5;
+			
 			
 			init();
 		}
@@ -69,8 +77,7 @@ package snjdck.gpu
 		{
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
-//			stage3d.requestContext3D(Context3DRenderMode.SOFTWARE, Context3DProfile.BASELINE);
-			stage3d.requestContext3DMatchingProfiles(new <String>[Context3DProfile.STANDARD, Context3DProfile.BASELINE]);
+			stage3d.requestContext3D();
 			
 			stage2d.addEventListener(MouseEvent.CLICK,			__onStageEvent);
 			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,		__onStageEvent);
@@ -107,10 +114,6 @@ package snjdck.gpu
 			trace(context3d.driverInfo);
 			context3d.enableErrorChecking = _enableErrorChecking;
 			Clock.getInstance().add(this);
-			if(context3d.isStandardProfile()){
-				BoneData.MAX_BONE_COUNT_PER_GEOMETRY = 121;
-				GpuProgram.AgalVersion = 2;
-			}
 		}
 		
 		protected function onDeviceLost():void
@@ -140,7 +143,7 @@ package snjdck.gpu
 			scene2d.onUpdate(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			render.drawScene3D(scene3d, camera3d, context3d);
+			render.drawScene3D(scene3d, context3d);
 			render.drawScene2D(scene2d, context3d);
 			context3d.present();
 		}
@@ -170,9 +173,9 @@ package snjdck.gpu
 		
 		public function pickObjectsUnderPoint(mouseX:Number, mouseY:Number, result:Vector.<RayTestInfo>):void
 		{
-			var screenX:Number = mouseX - 0.5 * _width;
-			var screenY:Number = 0.5 * _height - mouseY;
-			rayCastStack.reset(camera3d, screenX, screenY);
+			var screenX:Number = 2 * (mouseX - stage3d.x) / _width - 1;
+			var screenY:Number = 1 - 2 * (mouseY - stage3d.y) / _height;
+			camera3d.getSceneRay(screenX, screenY, rayCastStack.ray);
 			scene3d.hitTest(rayCastStack, result);
 		}
 		

@@ -1,16 +1,18 @@
 package snjdck.g3d.core
 {
 	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
+	import flash.geom.Rectangle;
 	
 	import matrix44.transformCoords;
 	import matrix44.transformCoordsDelta;
 	import matrix44.transformVector;
+	import matrix44.transformVectorDelta;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.geom.Ray;
+	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.projection.Projection3D;
 	
 	import stdlib.constant.Unit;
 	
@@ -18,10 +20,17 @@ package snjdck.g3d.core
 
 	public class Camera3D extends Object3D
 	{
+		static private const scissorRect:Rectangle = new Rectangle();
 		public var viewFrustum:ViewFrustum;
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
+		
+		public var projection:Projection3D;
+		public const viewportRect:Rectangle = new Rectangle(0, 0, 1, 1);
+		public var clipViewport:Boolean = true;
+		public var cullingMask:uint;
+		public var depth:int;
 		
 		public function Camera3D()
 		{
@@ -41,70 +50,48 @@ package snjdck.g3d.core
 			collector.pushMatrix(transform);
 			_worldMatrix.copyFrom(collector.worldMatrix);
 			collector.popMatrix();
+			
+			collector.addCamera(this);
+			
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
 		}
 		
-		public function uploadMatrix(context3d:GpuContext):void
+		ns_g3d function drawBegin(context3d:GpuContext):void
 		{
+			projection.upload(context3d, this);
 			context3d.setVcM(2, _worldMatrixInvert);
+			
+			scissorRect.x = viewportRect.x * context3d.bufferWidth;
+			scissorRect.y = viewportRect.y * context3d.bufferHeight;
+			scissorRect.width = viewportRect.width * context3d.bufferWidth;
+			scissorRect.height = viewportRect.height * context3d.bufferHeight;
+			
+			if(clipViewport){
+				context3d.setScissorRect(scissorRect);
+			}
 		}
 		
+		ns_g3d function drawEnd(context3d:GpuContext):void
+		{
+			if(clipViewport){
+				context3d.setScissorRect(null);
+			}
+		}
+		
+		/**
+		 * @param screenX [-1, 1]
+		 * @param screenY [-1, 1]
+		 */		
 		public function getSceneRay(screenX:Number, screenY:Number, ray:Ray):void
 		{
-			matrix44.transformCoords(_worldMatrix, screenX, screenY, 0, ray.pos);
-			matrix44.transformCoordsDelta(_worldMatrix, 0, 0, 1, ray.dir);
+			projection.getViewRay(screenX, screenY, ray);
+			
+			matrix44.transformVector(_worldMatrix, ray.pos, ray.pos);
+			matrix44.transformVectorDelta(_worldMatrix, ray.dir, ray.dir);
 		}
 		
 		/*
-		public function followTarget(obj3d:Object3D):void
-		{
-			origin.x = obj3d.x;
-			origin.y = obj3d.y;
-			origin.z = obj3d.z;
-		}
-		*/
-		/*
-		public function moveCameraBy(dx:Number, dy:Number):void
-		{
-			moveCameraTo(camera.x + dx, camera.y + dy);
-		}
-		
-		public function moveCameraTo(px:Number, py:Number):void
-		{
-			camera.x = px;
-			camera.y = py;
-			
-			origin.x = py + px * 0.5;
-			origin.y = py - px * 0.5;
-		}
-		
-		public function moveOriginTo(px:Number, py:Number):void
-		{
-			origin.x = px;
-			origin.y = py;
-			
-			camera.x = px - py;
-			camera.y = (px + py) * 0.5;
-		}
-		
-		override public function onUpdate(timeElapsed:int):void
-		{
-			super.onUpdate(timeElapsed);
-			
-			mvp.copyFrom(worldMatrix);
-			mvp.appendTranslation(origin.x, origin.y, origin.z);
-			mvp.invert();
-			mvp.append(lens);
-			
-			viewFrustum.update(mvp);
-		}
-		
-		override ns_g3d function getLocalRay(globalRay:Ray):Ray
-		{
-			return globalRay.transformToLocal(mvp);
-		}
-		
 		static private const CONST_A:Number = 0.5 * Math.sqrt(6);
 		static private const CONST_B:Number = 0.5 * Math.sqrt(3);
 		

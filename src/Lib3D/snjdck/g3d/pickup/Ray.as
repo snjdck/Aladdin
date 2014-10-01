@@ -1,4 +1,4 @@
-package snjdck.g3d.geom
+package snjdck.g3d.pickup
 {
 	import flash.geom.Vector3D;
 	
