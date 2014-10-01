@@ -3,7 +3,6 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
-	import flash.display3D.Context3DProfile;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
@@ -55,11 +54,6 @@ package snjdck.gpu.asset
 		public function set enableErrorChecking(value:Boolean):void
 		{
 			context3d.enableErrorChecking = value;
-		}
-		
-		public function isStandardProfile():Boolean
-		{
-			return Context3DProfile.STANDARD == context3d.profile;
 		}
 		
 		public function dispose():void
