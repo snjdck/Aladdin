@@ -1,6 +1,8 @@
 package snjdck.gpu.projection
 {
-	public class PerspectiveProjection3D extends Projection3D// implements IProjection
+	import stdlib.constant.Unit;
+
+	public class PerspectiveProjection3D extends Projection3D
 	{
 		public function PerspectiveProjection3D()
 		{
@@ -8,10 +10,10 @@ package snjdck.gpu.projection
 			transform[3] = 1;
 		}
 		
-		override public function resize(width:int, height:int):void
+		public function fov(fieldOfViewY:Number, aspectRatio:Number):void
 		{
-			transform[0] = _zNear * 2.0 / width;
-			transform[1] = _zNear * 2.0 / height;
+			scaleY = 1.0 / Math.tan(0.5 * fieldOfViewY * Unit.RADIAN);
+			scaleX = scaleY * aspectRatio;
 		}
 		
 		override public function setDepthCliping(zNear:Number, zFar:Number):void

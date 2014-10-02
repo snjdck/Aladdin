@@ -1,7 +1,5 @@
 package snjdck.gpu.projection
 {
-	import flash.geom.Rectangle;
-	
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.asset.GpuContext;
@@ -13,11 +11,9 @@ package snjdck.gpu.projection
 		protected var scaleX:Number;
 		protected var scaleY:Number;
 		
-		protected var _zNear:Number = 1;
+		private var _zNear:Number = 1;
 		
 		public function Projection3D(){}
-		
-		public function resize(width:int, height:int):void{}
 		
 		public function setDepthCliping(zNear:Number, zFar:Number):void
 		{
@@ -29,8 +25,8 @@ package snjdck.gpu.projection
 		{
 			transform[0] = scaleX * camera.viewportRect.width;
 			transform[1] = scaleY * camera.viewportRect.height;
-			transform[4] = camera.viewportRect.width  - 1 + 2 * camera.viewportRect.x;
-			transform[5] = camera.viewportRect.height - 1 - 2 * camera.viewportRect.y;
+			transform[4] = camera.viewportRect.width  + 2 * camera.viewportRect.x - 1;
+			transform[5] = camera.viewportRect.height - 2 * camera.viewportRect.y - 1;
 			context3d.setVc(0, transform, 2);
 		}
 		

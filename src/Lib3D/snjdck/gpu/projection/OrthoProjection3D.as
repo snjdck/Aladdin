@@ -3,7 +3,7 @@ package snjdck.gpu.projection
 	/**
 	 * 平行投影,left hand
 	 */	
-	final public class OrthoProjection3D extends Projection3D// implements IProjection
+	final public class OrthoProjection3D extends Projection3D
 	{
 		public function OrthoProjection3D()
 		{
@@ -11,7 +11,7 @@ package snjdck.gpu.projection
 			transform[7] = 1;
 		}
 		
-		override public function resize(width:int, height:int):void
+		public function resize(width:int, height:int):void
 		{
 			scaleX = 2 / width;
 			scaleY = 2 / height;

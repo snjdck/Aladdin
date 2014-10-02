@@ -1,6 +1,6 @@
 package snjdck.gpu.projection
 {
-	final public class Projection2D implements IProjection
+	final public class Projection2D
 	{
 		private var a:Number = 0;
 		private var b:Number = 0;
