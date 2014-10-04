@@ -7,7 +7,6 @@ package snjdck.g3d.projection
 	{
 		public function OrthoProjection3D()
 		{
-			setDepthCliping(-1000, 4000);
 			transform[7] = 1;
 		}
 		

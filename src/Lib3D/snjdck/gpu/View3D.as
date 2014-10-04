@@ -17,8 +17,6 @@ package snjdck.gpu
 	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.Render3D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.g3d.projection.OrthoProjection3D;
-	import snjdck.g3d.projection.PerspectiveProjection3D;
 	
 	use namespace ns_g3d;
 	
@@ -27,8 +25,7 @@ package snjdck.gpu
 		public const scene3d:Object3D = new Object3D();
 		public const scene2d:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
-		public const camera3d:Camera3D = new Camera3D();
-//		private const rayCastStack:RayCastStack = new RayCastStack();
+		public var camera3d:Camera3D;
 		
 		public var timeScale:Number = 1;
 		
@@ -55,21 +52,20 @@ package snjdck.gpu
 			
 			scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
 			scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
-//			var proj:PerspectiveProjection3D = new PerspectiveProjection3D();
-//			proj.fov(60, _width/_height);
-//			proj.setDepthCliping(1, 200);
-			var proj:OrthoProjection3D = new OrthoProjection3D();
-			proj.resize(_width, _height);
-			camera3d.projection = proj;
 			
-//			var testCamera:Camera3D = new Camera3D();
-//			testCamera.projection = new OrthoProjection3D();
-//			testCamera.projection.resize(_width, _height);
-//			testCamera.depth = 1;
-//			scene3d.addChild(testCamera);
-//			testCamera.viewportRect.x = 0.5;
-//			testCamera.viewportRect.width = 0.5;
+			camera3d = Camera3D.NewPerspectiveCamera(60, _width/_height, 500, 4000);
+			camera3d.zOffset = -1000;
+			/*
+			camera3d.viewport.width = 0.5;
+			camera3d.viewport.height = 0.5;
 			
+			var testCamera:Camera3D = Camera3D.NewIsoCamera(_width, _height, -1000, 4000);
+			testCamera.depth = 1;
+			scene3d.addChild(testCamera);
+			testCamera.viewport.x = 0.5;
+			testCamera.viewport.width = 0.5;
+			testCamera.viewport.height = 0.5;
+			*/
 			
 			init();
 		}

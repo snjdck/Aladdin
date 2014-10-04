@@ -8,9 +8,11 @@ package snjdck.g3d.core
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.projection.OrthoProjection3D;
+	import snjdck.g3d.projection.PerspectiveProjection3D;
+	import snjdck.g3d.projection.Projection3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.g3d.projection.Projection3D;
 	
 	import stdlib.constant.Unit;
 	
@@ -18,6 +20,39 @@ package snjdck.g3d.core
 
 	public class Camera3D extends Object3D
 	{
+		static public function NewIsoCamera(screenWidth:int, screenHeight:int, zNear:Number, zFar:Number):Camera3D
+		{
+			var proj:OrthoProjection3D = new OrthoProjection3D();
+			proj.resize(screenWidth, screenHeight);
+			proj.setDepthCliping(zNear, zFar);
+			
+			var camera:Camera3D = new Camera3D();
+			
+			camera.rotationX = 120 * Unit.RADIAN;
+			camera.rotationZ = -45 * Unit.RADIAN;
+			camera.scale = Math.SQRT1_2;
+			
+			camera.projection = proj;
+			
+			return camera;
+		}
+		
+		static public function NewPerspectiveCamera(fieldOfView:Number, aspectRatio:Number, zNear:Number, zFar:Number):Camera3D
+		{
+			var proj:PerspectiveProjection3D = new PerspectiveProjection3D();
+			proj.fov(fieldOfView, aspectRatio);
+			proj.setDepthCliping(zNear, zFar);
+			
+			var camera:Camera3D = new Camera3D();
+			
+			camera.rotationX = 135 * Unit.RADIAN;
+			camera.rotationZ = -45 * Unit.RADIAN;
+			
+			camera.projection = proj;
+			
+			return camera;
+		}
+		
 		static private const scissorRect:Rectangle = new Rectangle();
 		public var viewFrustum:ViewFrustum;
 		
@@ -30,16 +65,10 @@ package snjdck.g3d.core
 		public var cullingMask:uint;
 		public var depth:int;
 		
+		public var zOffset:Number = 0;
+		
 		public function Camera3D()
 		{
-			rotationX = 120 * Unit.RADIAN;
-			rotationZ = -45 * Unit.RADIAN;
-			scale = Math.SQRT1_2;
-			
-			_worldMatrix.copyFrom(transform);
-			_worldMatrixInvert.copyFrom(_worldMatrix);
-			_worldMatrixInvert.invert();
-			
 			viewFrustum = new ViewFrustum();
 		}
 		
@@ -51,6 +80,7 @@ package snjdck.g3d.core
 			
 			collector.addCamera(this);
 			
+			_worldMatrix.prependTranslation(0, 0, zOffset);
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
 		}
@@ -61,7 +91,7 @@ package snjdck.g3d.core
 			context3d.setVcM(2, _worldMatrixInvert);
 			
 			scissorRect.x = viewport.x * context3d.bufferWidth;
-			scissorRect.y = viewport.y * context3d.bufferHeight;
+			scissorRect.y = (1 - viewport.y - viewport.height) * context3d.bufferHeight;
 			scissorRect.width = viewport.width * context3d.bufferWidth;
 			scissorRect.height = viewport.height * context3d.bufferHeight;
 			

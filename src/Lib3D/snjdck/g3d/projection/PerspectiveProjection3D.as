@@ -6,14 +6,13 @@ package snjdck.g3d.projection
 	{
 		public function PerspectiveProjection3D()
 		{
-			setDepthCliping(1, 2);
 			transform[3] = 1;
 		}
 		
 		public function fov(fieldOfViewY:Number, aspectRatio:Number):void
 		{
 			scaleY = 1.0 / Math.tan(0.5 * fieldOfViewY * Unit.RADIAN);
-			scaleX = scaleY * aspectRatio;
+			scaleX = scaleY / aspectRatio;
 		}
 		
 		override public function setDepthCliping(zNear:Number, zFar:Number):void
