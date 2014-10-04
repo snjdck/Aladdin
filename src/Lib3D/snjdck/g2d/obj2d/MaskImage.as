@@ -1,13 +1,12 @@
 package snjdck.g2d.obj2d
 {
-	import flash.geom.Matrix;
 	import flash.lang.IDisposable;
 	
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.impl.Texture2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
-	import snjdck.gpu.render.GpuRender;
 	
 	[Deprecated]
 	class MaskImage extends Image implements IDisposable
@@ -45,12 +44,12 @@ package snjdck.g2d.obj2d
 			scene2d.onUpdate(timeElapsed);
 		}
 		
-		override public function draw(render:GpuRender, context3d:GpuContext):void
+		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			
 			renderTarget.setRenderToSelfAndClear(context3d);
-			render.drawScene2D(scene2d, context3d);
+			render.drawScene(scene2d, context3d);
 			
 			context3d.renderTarget = prevRenderTarget;
 			super.draw(render, context3d);

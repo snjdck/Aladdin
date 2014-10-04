@@ -3,8 +3,6 @@ package snjdck.g3d.core
 	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	
-	import matrix44.transformCoords;
-	import matrix44.transformCoordsDelta;
 	import matrix44.transformVector;
 	import matrix44.transformVectorDelta;
 	
@@ -12,7 +10,7 @@ package snjdck.g3d.core
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.projection.Projection3D;
+	import snjdck.g3d.projection.Projection3D;
 	
 	import stdlib.constant.Unit;
 	
@@ -27,7 +25,7 @@ package snjdck.g3d.core
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
 		
 		public var projection:Projection3D;
-		public const viewportRect:Rectangle = new Rectangle(0, 0, 1, 1);
+		public const viewport:Viewport = new Viewport();
 		public var clipViewport:Boolean = true;
 		public var cullingMask:uint;
 		public var depth:int;
@@ -62,10 +60,10 @@ package snjdck.g3d.core
 			projection.upload(context3d, this);
 			context3d.setVcM(2, _worldMatrixInvert);
 			
-			scissorRect.x = viewportRect.x * context3d.bufferWidth;
-			scissorRect.y = viewportRect.y * context3d.bufferHeight;
-			scissorRect.width = viewportRect.width * context3d.bufferWidth;
-			scissorRect.height = viewportRect.height * context3d.bufferHeight;
+			scissorRect.x = viewport.x * context3d.bufferWidth;
+			scissorRect.y = viewport.y * context3d.bufferHeight;
+			scissorRect.width = viewport.width * context3d.bufferWidth;
+			scissorRect.height = viewport.height * context3d.bufferHeight;
 			
 			if(clipViewport){
 				context3d.setScissorRect(scissorRect);
@@ -90,29 +88,5 @@ package snjdck.g3d.core
 			matrix44.transformVector(_worldMatrix, ray.pos, ray.pos);
 			matrix44.transformVectorDelta(_worldMatrix, ray.dir, ray.dir);
 		}
-		
-		/*
-		static private const CONST_A:Number = 0.5 * Math.sqrt(6);
-		static private const CONST_B:Number = 0.5 * Math.sqrt(3);
-		
-		public function isoToScreen(isoPt:Vector3D, screenPt:Vector3D):void
-		{
-			screenPt.x = isoPt.x - isoPt.y;
-			screenPt.y = (isoPt.x + isoPt.y) * 0.5 - isoPt.z * CONST_A;
-			screenPt.z = (isoPt.x + isoPt.y) * CONST_B + isoPt.z * Math.SQRT1_2;
-			
-			screenPt.x -= camera.x;
-			screenPt.y -= camera.y;
-		}
-		
-		public function screenToIso(screenPt:Vector3D, isoPt:Vector3D):void
-		{
-			var screenX:Number = camera.x + screenPt.x;
-			var screenY:Number = camera.y + screenPt.y;
-			
-			isoPt.x = screenY + screenX * 0.5;
-			isoPt.y = screenY - screenX * 0.5;
-		}
-		//*/
 	}
 }

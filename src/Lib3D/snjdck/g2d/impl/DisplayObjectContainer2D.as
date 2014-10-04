@@ -5,8 +5,8 @@ package snjdck.g2d.impl
 	import array.delAt;
 	import array.insert;
 	
+	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.render.GpuRender;
 	
 	public class DisplayObjectContainer2D extends DisplayObject2D
 	{
@@ -135,12 +135,12 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		override public function draw(render:GpuRender, context3d:GpuContext):void
+		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
 			if(_childList.length <= 0){
 				return;
 			}
-			render.r2d.pushMatrix(transform);
+			render.pushMatrix(transform);
 			for each(var child:DisplayObject2D in _childList){
 				if(!child.hasVisibleArea()){
 					continue;
@@ -151,7 +151,7 @@ package snjdck.g2d.impl
 					child.draw(render, context3d);
 				}
 			}
-			render.r2d.popMatrix();
+			render.popMatrix();
 		}
 		
 		override public function pickup(px:Number, py:Number):DisplayObject2D

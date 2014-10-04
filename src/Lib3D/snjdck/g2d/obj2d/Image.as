@@ -1,10 +1,8 @@
 package snjdck.g2d.obj2d
 {
-	import flash.geom.Rectangle;
-	
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.impl.Texture2D;
-	import snjdck.gpu.render.GpuRender;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
 
 	public class Image extends DisplayObject2D
@@ -38,11 +36,11 @@ package snjdck.g2d.obj2d
 			return super.hasVisibleArea() && (texture != null);
 		}
 		
-		override public function draw(render:GpuRender, context3d:GpuContext):void
+		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
-			render.r2d.pushMatrix(transform);
-			render.r2d.drawImage(context3d, this, texture);
-			render.r2d.popMatrix();
+			render.pushMatrix(transform);
+			render.drawImage(context3d, this, texture);
+			render.popMatrix();
 		}
 	}
 }

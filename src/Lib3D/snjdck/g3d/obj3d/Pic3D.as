@@ -5,13 +5,14 @@ package snjdck.g3d.obj3d
 	
 	import snjdck.g2d.impl.Texture2D;
 	import snjdck.g2d.obj2d.Image;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.render.Render3D;
 	import snjdck.gpu.View3D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
-	import snjdck.gpu.render.GpuRender;
 	
 	use namespace ns_g3d;
 
@@ -20,6 +21,7 @@ package snjdck.g3d.obj3d
 		static private const camera3d:Camera3D = new Camera3D();
 		private var renderTarget:GpuRenderTarget;
 		private var object3d:Object3D;
+		private var r3d:Render3D = new Render3D();
 		
 		public function Pic3D(width:int, height:int, object3d:Object3D)
 		{
@@ -50,16 +52,16 @@ package snjdck.g3d.obj3d
 			object3d.onUpdate(timeElapsed);
 		}
 		
-		override public function draw(render:GpuRender, context3d:GpuContext):void
+		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
 			
 			renderTarget.setRenderToSelfAndClear(context3d);
-			render.drawScene3D(object3d, camera3d, context3d);
+			r3d.draw(object3d, context3d);
 			
 			context3d.renderTarget = prevRenderTarget;
 			
-			render.r2d.drawBegin(context3d);
+			render.drawBegin(context3d);
 			super.draw(render, context3d);
 		}
 	}

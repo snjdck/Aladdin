@@ -8,8 +8,8 @@ package snjdck.g3d.core
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.pickup.RayCastStack;
+	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
 	
@@ -339,6 +339,15 @@ package snjdck.g3d.core
 			_position.x = tempPoint.x;
 			_position.y = tempPoint.y;
 			_position.z = tempPoint.z;
+		}
+		
+		public function get root():Object3D
+		{
+			var target:Object3D = this;
+			while(target.parent != null){
+				target = target.parent;
+			}
+			return target;
 		}
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();

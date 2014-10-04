@@ -10,8 +10,8 @@ package snjdck.g2d.impl
 	import matrix33.transformCoords;
 	
 	import snjdck.g2d.core.IFilter2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.render.GpuRender;
 	
 	import stdlib.constant.Unit;
 
@@ -66,7 +66,7 @@ package snjdck.g2d.impl
 		}
 		
 		virtual public function onUpdate(timeElapsed:int):void{}
-		virtual public function draw(render:GpuRender, context3d:GpuContext):void{}
+		virtual public function draw(render:Render2D, context3d:GpuContext):void{}
 		
 		virtual public function pickup(px:Number, py:Number):DisplayObject2D
 		{

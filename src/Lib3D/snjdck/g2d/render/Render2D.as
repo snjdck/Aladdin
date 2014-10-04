@@ -17,11 +17,8 @@ package snjdck.g2d.render
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
 	import snjdck.gpu.matrixstack.MatrixStack2D;
-	import snjdck.gpu.projectionstack.IProjectionStack;
-	import snjdck.gpu.projectionstack.Projection2DStack;
-	import snjdck.gpu.render.IRender;
 
-	final public class Render2D implements IRender, IProjectionStack
+	final public class Render2D
 	{
 		private const projectionStack:Projection2DStack = new Projection2DStack();
 		
@@ -32,6 +29,14 @@ package snjdck.g2d.render
 		private var isGpuBufferInited:Boolean;
 		
 		public function Render2D(){}
+		
+		public function drawScene(scene:DisplayObject2D, context3d:GpuContext):void
+		{
+			pushScreen(context3d.bufferWidth, context3d.bufferHeight);
+			drawBegin(context3d);
+			scene.draw(this, context3d);
+			popScreen();
+		}
 		
 		public function offset(dx:Number=0, dy:Number=0):void
 		{

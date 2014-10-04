@@ -1,13 +1,13 @@
 package snjdck.g2d.filter
 {
 	import snjdck.g2d.impl.DisplayObject2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
-	import snjdck.gpu.render.GpuRender;
 
 	final public class BlurFilter extends Filter2D
 	{
@@ -24,7 +24,7 @@ package snjdck.g2d.filter
 			this.blurY = blurY;
 		}
 		
-		override public function draw(target:DisplayObject2D, render:GpuRender, context3d:GpuContext):void
+		override public function draw(target:DisplayObject2D, render:Render2D, context3d:GpuContext):void
 		{
 			numPasses = Math.ceil(blurX) + Math.ceil(blurY);
 			if(numPasses > 0){
@@ -34,9 +34,9 @@ package snjdck.g2d.filter
 			}
 		}
 		
-		override public function renderFilter(texture:IGpuTexture, render:GpuRender, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
+		override public function renderFilter(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
 		{
-			render.r2d.pushScreen(texture.width, texture.height);
+			render.pushScreen(texture.width, texture.height);
 			
 			const prevBlendMode:BlendMode = context3d.blendMode;
 			
@@ -59,11 +59,11 @@ package snjdck.g2d.filter
 					if(!frontBuffer.hasCleared()){
 						context3d.clearStencil();
 					}
-					render.r2d.drawTexture(context3d, gpuTexture);
+					render.drawTexture(context3d, gpuTexture);
 				}else{
-					render.r2d.popScreen();
+					render.popScreen();
 					context3d.renderTarget = output;
-					render.r2d.drawTexture(context3d, gpuTexture, textureX, textureY);
+					render.drawTexture(context3d, gpuTexture, textureX, textureY);
 				}
 			}
 			onDrawEnd();

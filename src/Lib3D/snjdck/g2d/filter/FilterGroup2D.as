@@ -2,12 +2,12 @@ package snjdck.g2d.filter
 {
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.impl.DisplayObject2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
-	import snjdck.gpu.render.GpuRender;
 
 	public class FilterGroup2D extends Filter2D
 	{
@@ -27,7 +27,7 @@ package snjdck.g2d.filter
 			_marginX = Math.max(_marginY, filter.marginY);
 		}
 		
-		override public function draw(target:DisplayObject2D, render:GpuRender, context3d:GpuContext):void
+		override public function draw(target:DisplayObject2D, render:Render2D, context3d:GpuContext):void
 		{
 			switch(_filterList.length)
 			{
@@ -43,14 +43,14 @@ package snjdck.g2d.filter
 			}
 		}
 		
-		override public function renderFilter(texture:IGpuTexture, render:GpuRender, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
+		override public function renderFilter(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
 		{
 			switch(_filterList.length)
 			{
 				case 0:
 					context3d.renderTarget = output;
 					context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXTURE);
-					render.r2d.drawTexture(context3d, texture, textureX, textureY);
+					render.drawTexture(context3d, texture, textureX, textureY);
 					break;
 				case 1:
 					var filter:IFilter2D = _filterList[0];
@@ -61,7 +61,7 @@ package snjdck.g2d.filter
 			}
 		}
 		
-		private function renderFilterImpl(texture:IGpuTexture, render:GpuRender, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
+		private function renderFilterImpl(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
 		{
 			const filterCount:int = _filterList.length;
 			
@@ -72,7 +72,7 @@ package snjdck.g2d.filter
 				frontBuffer = new GpuRenderTarget(texture.width, texture.height);
 			}
 			
-			render.r2d.pushScreen(texture.width, texture.height);
+			render.pushScreen(texture.width, texture.height);
 			
 			for(var i:int=0; i<filterCount; i++){
 				const swapTemp:GpuRenderTarget = frontBuffer;
@@ -87,7 +87,7 @@ package snjdck.g2d.filter
 					const gpuTexture:IGpuTexture = (i == 0 ? texture : backBuffer);
 					filter.renderFilter(gpuTexture, render, context3d, frontBuffer, 0, 0);
 				}else{
-					render.r2d.popScreen();
+					render.popScreen();
 					filter.renderFilter(backBuffer, render, context3d, output, textureX, textureY);
 				}
 			}

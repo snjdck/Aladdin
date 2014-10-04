@@ -4,10 +4,9 @@ package snjdck.g2d.obj2d
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
-	import flash.geom.Matrix;
 	
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
-	import snjdck.gpu.render.GpuRender;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
 	
 	public class StencilMaskSprite extends DisplayObjectContainer2D
@@ -28,7 +27,7 @@ package snjdck.g2d.obj2d
 			maskImage.onUpdate(timeElapsed);
 		}
 		
-		override public function draw(render:GpuRender, context3d:GpuContext):void
+		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
 			if(stencilIndex >= MAX_RECURSIVE_COUNT){
 				throw new Error("stencil mask is too much!");
@@ -52,7 +51,7 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		private function drawMask(render:GpuRender, context3d:GpuContext, refValue:uint):void
+		private function drawMask(render:Render2D, context3d:GpuContext, refValue:uint):void
 		{
 			context3d.setStencilReferenceValue(refValue, 0xFF, 1 << stencilIndex);
 			context3d.setStencilActions(
