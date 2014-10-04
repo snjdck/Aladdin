@@ -23,7 +23,27 @@ package snjdck.g3d.core
 		{
 			var px:Number = 0.5 * (screenX + 1) - x;
 			var py:Number = 0.5 * (screenY + 1) - y;
-			return (0 <= px) && (0 <= py) && (px < width) && (py < height);
+			return (px * (px - width) <= 0) && (py * (py - height) <= 0);
+		}
+		
+		public function mirrorH():void
+		{
+			x += width;
+			width = -width;
+		}
+		
+		public function mirrorV():void
+		{
+			y += height;
+			height = -height;
+		}
+		
+		public function mirror():void
+		{
+			x += width;
+			y += height;
+			width = -width;
+			height = -height;
 		}
 	}
 }

@@ -5,6 +5,8 @@ package snjdck.g3d.render
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.pickup.RayCastStack;
+	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	
@@ -13,6 +15,8 @@ package snjdck.g3d.render
 	public class Render3D
 	{
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
+		
+		private const rayCastStack:RayCastStack = new RayCastStack();
 		
 		public function Render3D(){}
 		
@@ -66,9 +70,15 @@ package snjdck.g3d.render
 			}
 		}
 		
-		public function pickup():void
+		public function pickup(screenX:Number, screenY:Number, result:Vector.<RayTestInfo>):void
 		{
-			
+			for each(var camera3d:Camera3D in collector.cameraList)
+			{
+				if(camera3d.mouseEnabled && camera3d.viewport.contains(screenX, screenY)){
+					camera3d.getSceneRay(screenX, screenY, rayCastStack.ray);
+					camera3d.root.hitTest(rayCastStack, result);
+				}
+			}
 		}
 	}
 }

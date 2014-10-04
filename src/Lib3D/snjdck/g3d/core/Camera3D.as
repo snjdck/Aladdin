@@ -57,7 +57,7 @@ package snjdck.g3d.core
 		
 		ns_g3d function drawBegin(context3d:GpuContext):void
 		{
-			projection.upload(context3d, this);
+			projection.upload(context3d, viewport);
 			context3d.setVcM(2, _worldMatrixInvert);
 			
 			scissorRect.x = viewport.x * context3d.bufferWidth;

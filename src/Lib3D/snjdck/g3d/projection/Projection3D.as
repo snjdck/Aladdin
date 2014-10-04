@@ -1,6 +1,7 @@
 package snjdck.g3d.projection
 {
 	import snjdck.g3d.core.Camera3D;
+	import snjdck.g3d.core.Viewport;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.asset.GpuContext;
 
@@ -21,9 +22,9 @@ package snjdck.g3d.projection
 			transform[6] = transform[2] * -zNear;
 		}
 		
-		final public function upload(context3d:GpuContext, camera:Camera3D):void
+		final public function upload(context3d:GpuContext, viewport:Viewport):void
 		{
-			camera.viewport.adjust(transform, scaleX, scaleY);
+			viewport.adjust(transform, scaleX, scaleY);
 			context3d.setVc(0, transform, 2);
 		}
 		

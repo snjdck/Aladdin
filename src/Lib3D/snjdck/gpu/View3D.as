@@ -10,14 +10,15 @@ package snjdck.gpu
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
+	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.pickup.RayCastStack;
 	import snjdck.g3d.pickup.RayTestInfo;
+	import snjdck.g3d.render.Render3D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.projection.OrthoProjection3D;
-	import snjdck.gpu.render.GpuRender;
+	import snjdck.g3d.projection.OrthoProjection3D;
+	import snjdck.g3d.projection.PerspectiveProjection3D;
 	
 	use namespace ns_g3d;
 	
@@ -27,13 +28,14 @@ package snjdck.gpu
 		public const scene2d:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
 		public const camera3d:Camera3D = new Camera3D();
-		private const rayCastStack:RayCastStack = new RayCastStack();
+//		private const rayCastStack:RayCastStack = new RayCastStack();
 		
 		public var timeScale:Number = 1;
 		
 		private var hasInit:Boolean;
 		
-		private const render:GpuRender = new GpuRender();
+		private const render3d:Render3D = new Render3D();
+		private const render2d:Render2D = new Render2D();
 		
 		private var _enableErrorChecking:Boolean;
 		
@@ -53,8 +55,12 @@ package snjdck.gpu
 			
 			scene3d.addEventListener(Event.ADDED_TO_STAGE, forwardEvt);
 			scene3d.addEventListener(Event.REMOVED_FROM_STAGE, forwardEvt);
-			camera3d.projection = new OrthoProjection3D();
-			camera3d.projection.resize(_width, _height);
+//			var proj:PerspectiveProjection3D = new PerspectiveProjection3D();
+//			proj.fov(60, _width/_height);
+//			proj.setDepthCliping(1, 200);
+			var proj:OrthoProjection3D = new OrthoProjection3D();
+			proj.resize(_width, _height);
+			camera3d.projection = proj;
 			
 //			var testCamera:Camera3D = new Camera3D();
 //			testCamera.projection = new OrthoProjection3D();
@@ -143,8 +149,8 @@ package snjdck.gpu
 			scene2d.onUpdate(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			render.drawScene3D(scene3d, context3d);
-			render.drawScene2D(scene2d, context3d);
+			render3d.draw(scene3d, context3d);
+			render2d.drawScene(scene2d, context3d);
 			context3d.present();
 		}
 		
@@ -175,8 +181,7 @@ package snjdck.gpu
 		{
 			var screenX:Number = 2 * (mouseX - stage3d.x) / _width - 1;
 			var screenY:Number = 1 - 2 * (mouseY - stage3d.y) / _height;
-			camera3d.getSceneRay(screenX, screenY, rayCastStack.ray);
-			scene3d.hitTest(rayCastStack, result);
+			render3d.pickup(screenX, screenY, result);
 		}
 		
 		public function pickNearestObjectUnderPoint(mouseX:Number, mouseY:Number):RayTestInfo
