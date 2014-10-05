@@ -1,10 +1,8 @@
 package snjdck.g3d.core
 {
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
-	import flash.support.DataEvent;
+	import flash.signals.Signal;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
@@ -15,10 +13,7 @@ package snjdck.g3d.core
 	
 	use namespace ns_g3d;
 	
-	[Event(name="enterFrame", type="flash.events.Event")]
-	[Event(name="click", type="flash.events.MouseEvent")]
-	
-	public class Object3D extends EventDispatcher
+	public class Object3D
 	{
 		private var _parent:Object3D;
 		private var _nextSibling:Object3D;
@@ -41,6 +36,8 @@ package snjdck.g3d.core
 		public var mouseChildren:Boolean;
 		
 		private var _blendMode:BlendMode;
+		
+		public const mouseDownSignal:Signal = new Signal(RayTestInfo);
 		
 		public function Object3D()
 		{
@@ -376,6 +373,7 @@ package snjdck.g3d.core
 			return tempMatrix.transformVector(pt);
 		}
 		//*/
+		/*
 		ns_g3d function hasMouseEvent(evtType:String):Boolean
 		{
 			if(hasEventListener(evtType)){
@@ -393,7 +391,7 @@ package snjdck.g3d.core
 		{
 			notifyEvent(new DataEvent(evtType, rayTestInfo, true));
 		}
-		//*
+		
 		private function notifyEvent(evt:Event):Boolean
 		{
 			var result:Boolean;

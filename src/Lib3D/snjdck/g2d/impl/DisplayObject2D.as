@@ -4,6 +4,7 @@ package snjdck.g2d.impl
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.signals.Signal;
 	
 	import matrix33.compose;
 	import matrix33.prependTranslation;
@@ -22,7 +23,9 @@ package snjdck.g2d.impl
 		private var _rotation:Number;
 		protected var _width:Number, _height:Number;
 		
-		public var mouseEnabled:Boolean;
+		public var mouseEnabled:Boolean = true;
+		public const mouseDownSignal:Signal = new Signal();
+		public const mouseUpSignal:Signal = new Signal();
 		
 		public var alpha:Number = 1;
 		private var _colorTransform:ColorTransform;
@@ -70,15 +73,10 @@ package snjdck.g2d.impl
 		
 		virtual public function pickup(px:Number, py:Number):DisplayObject2D
 		{
-			if(false == visible){
-				return null;
-			}
-			
-			getRect(this, tempRect);
+			getRect(null, tempRect);
 			if(tempRect.contains(px, py)){
 				return this;
 			}
-			
 			return null;
 		}
 		

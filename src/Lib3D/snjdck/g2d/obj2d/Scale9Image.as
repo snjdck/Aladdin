@@ -68,13 +68,13 @@ package snjdck.g2d.obj2d
 			bottomLeft.y = y2;
 			bottom.y = y2;
 			bottomRight.y = y2;
-			
 		}
 		
 		private function createGridImage(regionX:Number, regionY:Number, regionRight:Number, regionBottom:Number):Image
 		{
-			return null;
-//			return new Image(new SubTexture2D(texture, new Rectangle(regionX, regionY, regionRight-regionX, regionBottom-regionY)));
+			var tex:Texture2D = new Texture2D(texture.gpuTexture);
+			tex.region = new Rectangle(regionX, regionY, regionRight-regionX, regionBottom-regionY);
+			return new Image(tex);
 		}
 		
 		public function get texture():Texture2D
@@ -138,9 +138,7 @@ package snjdck.g2d.obj2d
 		
 		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
-			if(false == visible){
-				return;
-			}
+			render.pushMatrix(transform);
 			
 			topLeft.draw(render, context3d);
 			top.draw(render, context3d);
@@ -153,6 +151,8 @@ package snjdck.g2d.obj2d
 			bottomLeft.draw(render, context3d);
 			bottom.draw(render, context3d);
 			bottomRight.draw(render, context3d);
+			
+			render.popMatrix();
 		}
 		/*
 		override public function collectDrawUnits(collector:Collector2D):void

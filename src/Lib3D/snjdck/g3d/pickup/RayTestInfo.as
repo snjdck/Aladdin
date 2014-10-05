@@ -5,7 +5,6 @@ package snjdck.g3d.pickup
 	import flash.geom.d3.createIsoMatrix;
 	
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.render.Render3D;
 
 	public class RayTestInfo
 	{

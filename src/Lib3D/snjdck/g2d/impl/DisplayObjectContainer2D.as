@@ -156,7 +156,14 @@ package snjdck.g2d.impl
 		
 		override public function pickup(px:Number, py:Number):DisplayObject2D
 		{
-			for each(var child:DisplayObject2D in _childList){
+			if(!mouseChildren){
+				return null;
+			}
+			for(var i:int=_childList.length-1; i>=0; --i){
+				var child:DisplayObject2D = _childList[i];
+				if(!(child.hasVisibleArea() && child.mouseEnabled)){
+					continue;
+				}
 				var target:DisplayObject2D = child.pickup(px, py);
 				if(target != null){
 					return target;
