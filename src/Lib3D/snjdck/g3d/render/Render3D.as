@@ -42,24 +42,25 @@ package snjdck.g3d.render
 				
 				if(hasOpaqueDrawUnits){
 					context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
-					drawUnits(context3d, collector.opaqueList);
+					drawUnits(context3d, camera3d, collector.opaqueList);
 				}
 				
 				if(hasBlendDrawUnits){
 					context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
-					drawUnits(context3d, collector.blendList);
+					drawUnits(context3d, camera3d, collector.blendList);
 				}
 				
 				camera3d.drawEnd(context3d);
 			}
 		}
 		
-		private function drawUnits(context3d:GpuContext, drawUnitList:Vector.<DrawUnit3D>):void
+		private function drawUnits(context3d:GpuContext, camera3d:Camera3D, drawUnitList:Vector.<DrawUnit3D>):void
 		{
 			var currentShaderName:String;
 			var currentTextureName:String;
 			
 			for each(var drawUnit:DrawUnit3D in drawUnitList){
+				//todo judge whether the object is in camera's sight
 				if(drawUnit.shaderName != currentShaderName){
 					currentShaderName = drawUnit.shaderName;
 					context3d.program = AssetMgr.Instance.getProgram(currentShaderName);
