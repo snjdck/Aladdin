@@ -1,5 +1,6 @@
 package snjdck.g3d.pickup
 {
+	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import math.nearEquals;
@@ -14,6 +15,7 @@ package snjdck.g3d.pickup
 	{
 		public const pos:Vector3D = new Vector3D();
 		public const dir:Vector3D = new Vector3D();
+		public const worldMatrix:Matrix3D = new Matrix3D();
 		
 		public function Ray(){}
 		
@@ -69,6 +71,7 @@ package snjdck.g3d.pickup
 			result.v = det * v;
 			result.t = det * e2.dotProduct(q);
 			result.localPos = getPt(result.t);
+			result.globalPos = worldMatrix.transformVector(result.localPos);
 			
 			return true;
 		}

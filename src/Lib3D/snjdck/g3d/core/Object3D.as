@@ -112,7 +112,7 @@ package snjdck.g3d.core
 				return;
 			}
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.visible){
+				if(child.hasVisibleArea()){
 					child.hitTest(rayCastStack, result);
 				}
 			}
@@ -342,77 +342,6 @@ package snjdck.g3d.core
 			_position.y = tempPoint.y;
 			_position.z = tempPoint.z;
 		}
-		
-		public function get root():Object3D
-		{
-			var target:Object3D = this;
-			while(target.parent != null){
-				target = target.parent;
-			}
-			return target;
-		}
-		
-		private const _worldMatrix:Matrix3D = new Matrix3D();
-		
-		public function get worldMatrix():Matrix3D
-		{
-//			_worldMatrix.copyFrom(transform);
-			_worldMatrix.identity();
-			var target:Object3D = this.parent;
-			while(target != null){
-				_worldMatrix.append(target.transform);
-				target = target.parent;
-			}
-			return _worldMatrix;
-		}
-		/*
-		public function localToGlobal(pt:Vector3D):Vector3D
-		{
-			return worldMatrix.transformVector(pt);
-		}
-		
-		public function globalToLocal(pt:Vector3D):Vector3D
-		{
-			tempMatrix.copyFrom(worldMatrix);
-			tempMatrix.invert();
-			return tempMatrix.transformVector(pt);
-		}
-		//*/
-		/*
-		ns_g3d function hasMouseEvent(evtType:String):Boolean
-		{
-			if(hasEventListener(evtType)){
-				return true;
-			}
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.hasMouseEvent(evtType)){
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		public function notifyMouseEvent(evtType:String, rayTestInfo:RayTestInfo):void
-		{
-			notifyEvent(new DataEvent(evtType, rayTestInfo, true));
-		}
-		
-		private function notifyEvent(evt:Event):Boolean
-		{
-			var result:Boolean;
-			
-			if(hasEventListener(evt.type)){
-				result = dispatchEvent(evt);
-			}
-			
-			if(evt.bubbles && parent){
-				parent.notifyEvent(evt);
-			}
-			
-			return result;
-		}
-		//*/
-		
 		//--------------------------util methods---------------------
 		
 		public function removeAllChildren():void

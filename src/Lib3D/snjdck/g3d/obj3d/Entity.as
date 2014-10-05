@@ -66,18 +66,15 @@ package snjdck.g3d.obj3d
 			{
 				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
 				drawUnit.blendMode = blendMode;
-				drawUnit.worldMatrix = collector.worldMatrix;
+				drawUnit.worldMatrix.copyFrom(collector.worldMatrix);
 				subMesh.getDrawUnit(drawUnit, boneStateGroup);
 				collector.addDrawUnit(drawUnit);
 			}
 			collector.popMatrix();
 		}
-		//*
+		
 		override protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void
 		{
-//			var ray:Ray = getLocalRay(globalRay);
-//			var ray:Ray = globalRay.transformToLocal(worldMatrix);
-			
 			var rayTestInfo:RayTestInfo = new RayTestInfo();
 			rayTestInfo.target = this;
 			
@@ -88,7 +85,7 @@ package snjdck.g3d.obj3d
 				}
 			}
 		}
-		//*/
+		
 		private function checkBoneName(boneName:String):Bone
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);

@@ -25,6 +25,9 @@ package snjdck.g3d.pickup
 				rayStack.push(new Ray());
 			}
 			
+			ray.worldMatrix.copyFrom(matrix);
+			ray.worldMatrix.append(prevRay.worldMatrix);
+			
 			transform.copyFrom(matrix);
 			transform.invert();
 			

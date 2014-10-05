@@ -5,6 +5,7 @@ package snjdck.g3d.render
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
+	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.matrixstack.MatrixStack3D;
 	
@@ -14,11 +15,13 @@ package snjdck.g3d.render
 	{
 		static private const drawUnitPool:ObjectPool = new ObjectPool(DrawUnit3D);
 		
+		private const matrixStack:MatrixStack3D = new MatrixStack3D();
+		
 		ns_g3d const opaqueList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
 		ns_g3d const blendList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
 		ns_g3d const cameraList:Vector.<Camera3D> = new Vector.<Camera3D>();
 		
-		private const matrixStack:MatrixStack3D = new MatrixStack3D();
+		ns_g3d var root:Object3D;
 		
 		public function DrawUnitCollector3D(){}
 		
@@ -31,6 +34,7 @@ package snjdck.g3d.render
 				recoverDrawUnit(blendList.pop());
 			}
 			cameraList.length = 0;
+			root = null;
 		}
 		
 		private function recoverDrawUnit(drawUnit:DrawUnit3D):void

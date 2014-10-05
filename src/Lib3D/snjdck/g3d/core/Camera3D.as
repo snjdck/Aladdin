@@ -2,7 +2,9 @@ package snjdck.g3d.core
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
+	import flash.geom.Vector3D;
 	
+	import matrix44.extractPosition;
 	import matrix44.transformVector;
 	import matrix44.transformVectorDelta;
 	
@@ -11,6 +13,7 @@ package snjdck.g3d.core
 	import snjdck.g3d.projection.OrthoProjection3D;
 	import snjdck.g3d.projection.PerspectiveProjection3D;
 	import snjdck.g3d.projection.Projection3D;
+	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -115,8 +118,52 @@ package snjdck.g3d.core
 		{
 			projection.getViewRay(screenX, screenY, ray);
 			
+			ray.worldMatrix.copyFrom(_worldMatrixInvert);
+			
 			matrix44.transformVector(_worldMatrix, ray.pos, ray.pos);
 			matrix44.transformVectorDelta(_worldMatrix, ray.dir, ray.dir);
 		}
+		
+		public function world2camera(input:Vector3D, output:Vector3D):void
+		{
+			matrix44.transformVector(_worldMatrixInvert, input, output);
+		}
+		
+		public function world2screen(input:Vector3D, output:Vector3D):void
+		{
+			matrix44.transformVector(_worldMatrixInvert, input, output);
+			projection.scene2screen(output, output);
+		}
+		
+		public function sortDrawUnits(collector:DrawUnitCollector3D):void
+		{
+			collector.blendList.sort(__sortBlend);
+			collector.opaqueList.sort(__sortOpaque);
+		}
+		
+		private function __sortBlend(left:DrawUnit3D, right:DrawUnit3D):int
+		{
+			matrix44.extractPosition(left.worldMatrix, v1);
+			matrix44.extractPosition(right.worldMatrix, v2);
+			
+			world2camera(v1, v1);
+			world2camera(v2, v2);
+			
+			return v2.z - v1.z;
+		}
+		
+		private function __sortOpaque(left:DrawUnit3D, right:DrawUnit3D):int
+		{
+			matrix44.extractPosition(left.worldMatrix, v1);
+			matrix44.extractPosition(right.worldMatrix, v2);
+			
+			world2camera(v1, v1);
+			world2camera(v2, v2);
+			
+			return v1.z - v2.z;
+		}
+		
+		static private const v1:Vector3D = new Vector3D();
+		static private const v2:Vector3D = new Vector3D();
 	}
 }

@@ -25,7 +25,7 @@ package snjdck.g3d.render
 		
 		private var vaSlot:VertexRegister;
 		
-		private const _worldMatrix:Matrix3D = new Matrix3D();
+		ns_g3d const worldMatrix:Matrix3D = new Matrix3D();
 		private const _boneList:Vector.<Transform> = new Vector.<Transform>();
 		
 		public var shaderName:String;
@@ -54,11 +54,6 @@ package snjdck.g3d.render
 			blendMode = BlendMode.NORMAL;
 		}
 		
-		ns_g3d function set worldMatrix(matrix:Matrix3D):void
-		{
-			_worldMatrix.copyFrom(matrix);
-		}
-		
 		ns_g3d function addBone(bone:Transform):void
 		{
 			_boneList[_boneList.length] = bone;
@@ -83,10 +78,10 @@ package snjdck.g3d.render
 		{
 			const boneCount:int = _boneList.length;
 			if(boneCount <= 0){
-				context3d.setVcM(5, _worldMatrix);
+				context3d.setVcM(5, worldMatrix);
 				return;
 			}
-			_worldMatrix.copyRawDataTo(floatBuffer, 0, true);
+			worldMatrix.copyRawDataTo(floatBuffer, 0, true);
 			var offset:int = 12;
 			for(var i:int=0; i<boneCount; ++i){
 				var bone:Transform = _boneList[i];

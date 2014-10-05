@@ -24,6 +24,7 @@ package snjdck.g3d.render
 		{
 			collector.clear();
 			scene3d.collectDrawUnit(collector);
+			collector.root = scene3d;
 			
 			const hasOpaqueDrawUnits:Boolean = collector.opaqueList.length > 0;
 			const hasBlendDrawUnits:Boolean = collector.blendList.length > 0;
@@ -37,6 +38,7 @@ package snjdck.g3d.render
 			for each(var camera3d:Camera3D in collector.cameraList)
 			{
 				camera3d.drawBegin(context3d);
+				camera3d.sortDrawUnits(collector);
 				
 				if(hasOpaqueDrawUnits){
 					context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
@@ -76,7 +78,7 @@ package snjdck.g3d.render
 			{
 				if(camera3d.mouseEnabled && camera3d.viewport.contains(screenX, screenY)){
 					camera3d.getSceneRay(screenX, screenY, rayCastStack.ray);
-					camera3d.root.hitTest(rayCastStack, result);
+					collector.root.hitTest(rayCastStack, result);
 				}
 			}
 		}

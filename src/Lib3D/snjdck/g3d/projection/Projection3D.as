@@ -1,6 +1,7 @@
 package snjdck.g3d.projection
 {
-	import snjdck.g3d.core.Camera3D;
+	import flash.geom.Vector3D;
+	
 	import snjdck.g3d.core.Viewport;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.asset.GpuContext;
@@ -36,6 +37,17 @@ package snjdck.g3d.projection
 			
 			ray.pos.setTo(viewX, viewY, _zNear);
 			ray.dir.setTo(viewX * transform[3], viewY * transform[3], _zNear);
+		}
+		
+		final public function scene2screen(input:Vector3D, output:Vector3D):void
+		{
+			output.w = input.z * transform[3] + transform[7];
+			output.x = input.x * transform[0];
+			output.y = input.y * transform[1];
+			output.z = input.z * transform[2] + transform[6];
+			output.project();
+			output.x += transform[4];
+			output.y += transform[5];
 		}
 	}
 }
