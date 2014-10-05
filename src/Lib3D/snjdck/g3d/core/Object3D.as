@@ -91,7 +91,7 @@ package snjdck.g3d.core
 			}
 			collector.pushMatrix(transform);
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.visible){
+				if(child.hasVisibleArea()){
 					child.collectDrawUnit(collector);
 				}
 			}
@@ -120,6 +120,11 @@ package snjdck.g3d.core
 		}
 		
 		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void{}
+		
+		public function hasVisibleArea():Boolean
+		{
+			return visible && (_scale.x != 0) && (_scale.y != 0) && (_scale.z != 0);
+		}
 		
 		public function addChild(child:Object3D):void
 		{
