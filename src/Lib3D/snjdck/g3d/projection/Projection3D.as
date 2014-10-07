@@ -49,5 +49,18 @@ package snjdck.g3d.projection
 			output.x += transform[4];
 			output.y += transform[5];
 		}
+		
+		final public function screen2scene(input:Vector3D, output:Vector3D):void
+		{
+			if(0 == transform[3]){//平行投影
+				output.x = (input.x - transform[4]) / transform[0];
+				output.y = (input.y - transform[5]) / transform[1];
+				output.z = (input.z - transform[6]) / transform[2];
+			}else{//透视投影
+				output.z = transform[6] / (input.z - transform[2]);
+				output.x = (input.x - transform[4]) / transform[0] * output.z;
+				output.y = (input.y - transform[5]) / transform[1] * output.z;
+			}
+		}
 	}
 }
