@@ -39,28 +39,7 @@ package snjdck.g3d.projection
 			ray.dir.setTo(viewX * transform[3], viewY * transform[3], _zNear);
 		}
 		
-		final public function scene2screen(input:Vector3D, output:Vector3D):void
-		{
-			output.w = input.z * transform[3] + transform[7];
-			output.x = input.x * transform[0];
-			output.y = input.y * transform[1];
-			output.z = input.z * transform[2] + transform[6];
-			output.project();
-			output.x += transform[4];
-			output.y += transform[5];
-		}
-		
-		final public function screen2scene(input:Vector3D, output:Vector3D):void
-		{
-			if(0 == transform[3]){//平行投影
-				output.x = (input.x - transform[4]) / transform[0];
-				output.y = (input.y - transform[5]) / transform[1];
-				output.z = (input.z - transform[6]) / transform[2];
-			}else{//透视投影
-				output.z = transform[6] / (input.z - transform[2]);
-				output.x = (input.x - transform[4]) / transform[0] * output.z;
-				output.y = (input.y - transform[5]) / transform[1] * output.z;
-			}
-		}
+		virtual public function scene2screen(input:Vector3D, output:Vector3D):void{}
+		virtual public function screen2scene(input:Vector3D, output:Vector3D):void{}
 	}
 }
