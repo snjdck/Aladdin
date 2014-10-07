@@ -10,7 +10,7 @@ package snjdck.g2d.filter
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
 
-	public class Filter2D implements IFilter2D
+	internal class Filter2D implements IFilter2D
 	{
 		static private const bounds:Rectangle = new Rectangle();
 		private var imageBuffer:GpuRenderTarget;
