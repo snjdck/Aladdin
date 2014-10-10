@@ -103,8 +103,8 @@ vt0.xyz = m34: vt0, vc5	#本地矩阵
 vt0.xyz = m34: vt0, vc2	#世界矩阵
 vt0 = vt0.xyzz * vc0
 vt0.zw = vt0 + vc1
-vt1.xy = vc1.xy * vt0.w
-vt0.xy += vt1.xy
+vt0.xyw = vt0 / vt0.w
+vt0.xy = vt0 + vc1
 op = vt0
 v0 = va1				#uv
 

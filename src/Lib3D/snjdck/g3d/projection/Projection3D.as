@@ -13,13 +13,14 @@ package snjdck.g3d.projection
 		protected var scaleX:Number;
 		protected var scaleY:Number;
 		
-		private var _zNear:Number = 1;
+		protected var _zNear:Number;
 		
 		public function Projection3D(){}
 		
-		public function setDepthCliping(zNear:Number, zFar:Number):void
+		final public function setDepthCliping(zNear:Number, zFar:Number):void
 		{
 			_zNear = zNear;
+			transform[2] = 1.0 / (zFar - zNear);
 			transform[6] = transform[2] * -zNear;
 		}
 		
@@ -29,16 +30,7 @@ package snjdck.g3d.projection
 			context3d.setVc(0, transform, 2);
 		}
 		
-		final public function getViewRay(screenX:Number, screenY:Number, ray:Ray):void
-		{
-			var viewW:Number = _zNear * transform[3] + transform[7];
-			var viewX:Number = (screenX - transform[4]) / transform[0] * viewW;
-			var viewY:Number = (screenY - transform[5]) / transform[1] * viewW;
-			
-			ray.pos.setTo(viewX, viewY, _zNear);
-			ray.dir.setTo(viewX * transform[3], viewY * transform[3], _zNear);
-		}
-		
+		virtual public function getViewRay(screenX:Number, screenY:Number, ray:Ray):void{}
 		virtual public function scene2screen(input:Vector3D, output:Vector3D):void{}
 		virtual public function screen2scene(input:Vector3D, output:Vector3D):void{}
 	}
