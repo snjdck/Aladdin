@@ -27,6 +27,8 @@ package snjdck.gpu.asset
 		private var vaUseInfo:uint;
 		private var fsUseInfo:uint;
 		
+		private var _texture:IGpuTexture;
+		
 		private var _renderTarget:GpuRenderTarget;
 		
 		public function GpuContext(context3d:Context3D)
@@ -226,6 +228,11 @@ package snjdck.gpu.asset
 		
 		public function set texture(value:IGpuTexture):void
 		{
+			if(value == _texture){
+				return;
+			}
+			
+			_texture = value;
 			setTextureAt(0, value);
 		}
 		

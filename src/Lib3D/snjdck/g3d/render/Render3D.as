@@ -8,7 +8,6 @@ package snjdck.g3d.render
 	import snjdck.g3d.pickup.RayCastStack;
 	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.helper.AssetMgr;
 	
 	use namespace ns_g3d;
 
@@ -56,19 +55,8 @@ package snjdck.g3d.render
 		
 		private function drawUnits(context3d:GpuContext, camera3d:Camera3D, drawUnitList:Vector.<DrawUnit3D>):void
 		{
-			var currentShaderName:String;
-			var currentTextureName:String;
-			
 			for each(var drawUnit:DrawUnit3D in drawUnitList){
 				//todo judge whether the object is in camera's sight
-				if(drawUnit.shaderName != currentShaderName){
-					currentShaderName = drawUnit.shaderName;
-					context3d.program = AssetMgr.Instance.getProgram(currentShaderName);
-				}
-				if(drawUnit.textureName && drawUnit.textureName != currentTextureName){
-					currentTextureName = drawUnit.textureName;
-					context3d.setTextureAt(0, AssetMgr.Instance.getTexture(currentTextureName));
-				}
 				drawUnit.exec(context3d);
 			}
 		}

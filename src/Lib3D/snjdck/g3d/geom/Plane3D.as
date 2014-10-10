@@ -6,6 +6,9 @@ package snjdck.g3d.geom
 	import vec3.dotProd;
 	import vec3.subtract;
 
+	/**
+	 * ax + by + cz + d = 0
+	 */
 	public class Plane3D
 	{
 		public var a:Number;
@@ -13,9 +16,7 @@ package snjdck.g3d.geom
 		public var c:Number;
 		public var d:Number;
 		
-		public function Plane3D()
-		{
-		}
+		public function Plane3D(){}
 		
 		public function setTo(va:Number, vb:Number, vc:Number, vd:Number):void
 		{
@@ -28,6 +29,25 @@ package snjdck.g3d.geom
 		public function distance(pt:Vector3D):Number
 		{
 			return a * pt.x + b * pt.y + c * pt.z + d;
+		}
+		
+		/** 点在平面上的投影点 */
+		public function project(pt:Vector3D, result:Vector3D):void
+		{
+			tempNormal.setTo(a, b, c);
+			tempNormal.normalize();
+			var d:Number = distance(pt);
+			tempNormal.scaleBy(d);
+			vec3.subtract(pt, tempNormal, result);
+		}
+		
+		public function mirror(pt:Vector3D, result:Vector3D):void
+		{
+			tempNormal.setTo(a, b, c);
+			tempNormal.normalize();
+			var d:Number = distance(pt);
+			tempNormal.scaleBy(d * 2);
+			vec3.subtract(pt, tempNormal, result);
 		}
 		
 		public function normalize():void

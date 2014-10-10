@@ -8,6 +8,7 @@ package snjdck.g3d.render
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.register.VertexRegister;
 	
 	import string.replace;
@@ -66,6 +67,8 @@ package snjdck.g3d.render
 		
 		public function exec(context3d:GpuContext):void
 		{
+			context3d.program = AssetMgr.Instance.getProgram(shaderName);
+			context3d.texture = AssetMgr.Instance.getTexture(textureName)
 			context3d.blendMode = blendMode;
 			
 			vaSlot.upload(context3d);
