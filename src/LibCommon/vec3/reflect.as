@@ -4,9 +4,9 @@ package vec3
 
 	public function reflect(dirIn:Vector3D, normal:Vector3D, dirOut:Vector3D):void
 	{
-		normal.normalize();
-		var len:Number = dotProd(dirIn, normal);
-		normal.scaleBy(-2 * len);
-		vec3.add(dirIn, normal, dirOut);
+		var len:Number = dotProd(dirIn, normal) * 2;
+		dirOut.x = dirIn.x - normal.x * len;
+		dirOut.y = dirIn.y - normal.y * len;
+		dirOut.z = dirIn.z - normal.z * len;
 	}
 }
