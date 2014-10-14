@@ -1,6 +1,7 @@
 package snjdck.g2d.render
 {
 	import flash.display3D.Context3DCompareMode;
+	import flash.display3D.Context3DTriangleFace;
 	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix;
 	
@@ -78,6 +79,7 @@ package snjdck.g2d.render
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
 			context3d.blendMode = BlendMode.ALPHAL;
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
+			context3d.setCulling(Context3DTriangleFace.NONE);
 			initGpuBuffer(context3d);
 			context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 		}
