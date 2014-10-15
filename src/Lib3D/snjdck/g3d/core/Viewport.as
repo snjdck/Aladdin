@@ -45,5 +45,13 @@ package snjdck.g3d.core
 			width = -width;
 			height = -height;
 		}
+		
+		public function copyFrom(other:Viewport):void
+		{
+			this.x = other.x;
+			this.y = other.y;
+			this.width = other.width;
+			this.height = other.height;
+		}
 	}
 }

@@ -4,9 +4,7 @@ package snjdck.g3d.render
 	import flash.support.ObjectPool;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.matrixstack.MatrixStack3D;
 	
 	use namespace ns_g3d;
@@ -17,9 +15,9 @@ package snjdck.g3d.render
 		
 		private const matrixStack:MatrixStack3D = new MatrixStack3D();
 		
-		ns_g3d const opaqueList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
-		ns_g3d const blendList:Vector.<DrawUnit3D> = new Vector.<DrawUnit3D>();
-		ns_g3d const cameraList:Vector.<Camera3D> = new Vector.<Camera3D>();
+		ns_g3d const opaqueList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
+		ns_g3d const blendList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
+		ns_g3d const cameraList:Vector.<CameraUnit3D> = new Vector.<CameraUnit3D>();
 		
 		ns_g3d var root:Object3D;
 		
@@ -28,7 +26,7 @@ package snjdck.g3d.render
 		public function clear():void
 		{
 			while(opaqueList.length > 0){
-				recoverDrawUnit(opaqueList.pop());
+				recoverDrawUnit(opaqueList.pop() as DrawUnit3D);
 			}
 			while(blendList.length > 0){
 				recoverDrawUnit(blendList.pop());
@@ -39,6 +37,9 @@ package snjdck.g3d.render
 		
 		private function recoverDrawUnit(drawUnit:DrawUnit3D):void
 		{
+			if(null == drawUnit){
+				return;
+			}
 			drawUnit.clear();
 			drawUnitPool.setObjectIn(drawUnit);
 		}
@@ -48,9 +49,9 @@ package snjdck.g3d.render
 			return drawUnitPool.getObjectOut();
 		}
 		
-		public function addDrawUnit(drawUnit:DrawUnit3D):void
+		public function addDrawUnit(drawUnit:IDrawUnit3D):void
 		{
-			if(drawUnit.blendMode.equals(BlendMode.NORMAL)){
+			if(drawUnit.isOpaque()){
 				opaqueList.push(drawUnit);
 			}else{
 				blendList.push(drawUnit);
@@ -72,7 +73,7 @@ package snjdck.g3d.render
 			return matrixStack.worldMatrix;
 		}
 		
-		public function addCamera(camera:Camera3D):void
+		public function addCamera(camera:CameraUnit3D):void
 		{
 			cameraList.push(camera);
 		}
@@ -82,7 +83,7 @@ package snjdck.g3d.render
 			cameraList.sort(__sortCamera);
 		}
 		
-		static private function __sortCamera(left:Camera3D, right:Camera3D):int
+		static private function __sortCamera(left:CameraUnit3D, right:CameraUnit3D):int
 		{
 			return left.depth - right.depth;
 		}

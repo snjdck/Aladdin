@@ -15,8 +15,13 @@ package snjdck.g3d.render
 	
 	use namespace ns_g3d;
 
-	final public class DrawUnit3D
+	final public class DrawUnit3D implements IDrawUnit3D
 	{
+		static public const PROJECTION_MATRIX_OFFSET:int = 0;
+		static public const CAMERA_MATRIX_OFFSET:int = 2;
+		static public const WORLD_MATRIX_OFFSET:int = 5;
+		static public const BONE_MATRIX_OFFSET:int = 8;
+		
 		static private const MAX_VA_COUNT:uint = 8;
 		static private const MAX_FS_COUNT:uint = 8;
 		
@@ -65,7 +70,7 @@ package snjdck.g3d.render
 			vaSlot.setVa(slotIndex, buffer, offset, format);
 		}
 		
-		public function exec(context3d:GpuContext):void
+		public function draw(render3d:Render3D, camera3d:CameraUnit3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram(shaderName);
 			context3d.texture = AssetMgr.Instance.getTexture(textureName)
@@ -81,7 +86,7 @@ package snjdck.g3d.render
 		{
 			const boneCount:int = _boneList.length;
 			if(boneCount <= 0){
-				context3d.setVcM(5, worldMatrix);
+				context3d.setVcM(WORLD_MATRIX_OFFSET, worldMatrix);
 				return;
 			}
 			worldMatrix.copyRawDataTo(floatBuffer, 0, true);
@@ -91,8 +96,14 @@ package snjdck.g3d.render
 				bone.copyRawDataTo(floatBuffer, offset);
 				offset += 8;
 			}
-			context3d.setVc(5, floatBuffer, offset >> 2);
+			context3d.setVc(WORLD_MATRIX_OFFSET, floatBuffer, offset >> 2);
 		}
+		
+		public function isOpaque():Boolean
+		{
+			return blendMode.equals(BlendMode.NORMAL);
+		}
+		
 		
 		public function toString():String
 		{

@@ -2,9 +2,12 @@ package snjdck.g3d.projection
 {
 	import flash.geom.Vector3D;
 	
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	
 	import stdlib.constant.Unit;
+	
+	use namespace ns_g3d;
 
 	final public class PerspectiveProjection3D extends Projection3D
 	{
@@ -17,6 +20,19 @@ package snjdck.g3d.projection
 		{
 			scaleY = 1.0 / Math.tan(0.5 * fieldOfViewY * Unit.RADIAN);
 			scaleX = scaleY / aspectRatio;
+			
+			var hFactor:Number = 1 / Math.sqrt(scaleX*scaleX+1);
+			var vFactor:Number = 1 / Math.sqrt(scaleY*scaleY+1);
+			
+			viewFrustum.left.x = scaleX * hFactor;
+			viewFrustum.left.z = hFactor;
+			viewFrustum.right.x = -viewFrustum.left.x;
+			viewFrustum.right.z = hFactor;
+			
+			viewFrustum.bottom.y = scaleY * vFactor;
+			viewFrustum.bottom.z = vFactor;
+			viewFrustum.top.y = -viewFrustum.bottom.y;
+			viewFrustum.top.z = vFactor;
 		}
 		
 		override public function getViewRay(screenX:Number, screenY:Number, ray:Ray):void

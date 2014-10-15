@@ -2,9 +2,13 @@ package snjdck.g3d.projection
 {
 	import flash.geom.Vector3D;
 	
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.ViewFrustum;
 	import snjdck.g3d.core.Viewport;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.asset.GpuContext;
+	
+	use namespace ns_g3d;
 
 	public class Projection3D
 	{
@@ -15,6 +19,8 @@ package snjdck.g3d.projection
 		
 		protected var _zNear:Number;
 		
+		public const viewFrustum:ViewFrustum = new ViewFrustum();
+		
 		public function Projection3D(){}
 		
 		final public function setDepthCliping(zNear:Number, zFar:Number):void
@@ -22,6 +28,9 @@ package snjdck.g3d.projection
 			_zNear = zNear;
 			transform[2] = 1.0 / (zFar - zNear);
 			transform[6] = transform[2] * -zNear;
+			
+			viewFrustum.near.w = -zNear;
+			viewFrustum.far.w = zFar;
 		}
 		
 		final public function upload(context3d:GpuContext, viewport:Viewport):void
