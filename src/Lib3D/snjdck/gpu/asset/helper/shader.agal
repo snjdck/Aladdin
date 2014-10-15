@@ -114,24 +114,6 @@ ft0 = tex: v0, fs0<>
 ft1.x = ft0.w - fc27.x
 kil:ft1.x
 oc = ft0
-
-
-@shadowImp.agal
-op = m44: vt1, vc0		#相机投影矩阵
-oc = fc27.zzzw
-
-
-@wireframeImp.agal
-vt0 = vc12
-vt0.xyz = m33: vt0, vc8	#面向相机
-
-vt0.xyz = crs: va1, vt0
-vt0.xyz = nrm: vt0
-
-vt1.xyz += vt0 * va1.w * vc12.w
-
-op = m44: vt1, vc0	#相机投影矩阵
-oc = fc1
 #===============================================================
 
 @bone_ani
@@ -148,25 +130,6 @@ ${objectImp.vs}
 vt0.xy = vt0 * vc8 
 v0 = vt0 + vc8.zw
 oc = tex: v0, fs0<2d,clamp>
-
-@bone_ani_shadow
-${bone_ani_pos.vs}
-vt1 = m44: vt1, vc4	#世界矩阵
-${shadowImp.agal}
-
-@object_shadow
-vt1 = m44: va0, vc4	#世界矩阵
-${shadowImp.agal}
-
-@bone_ani_wireframe
-${bone_ani_pos.vs}
-vt1 = m44: vt1, vc4	#世界矩阵
-${wireframeImp.agal}
-
-@object_wireframe
-vt1 = m44: va0, vc4	#世界矩阵
-${wireframeImp.agal}
-
 #===============================================================
 @particle
 vt6.x = vc12.x - va1.w * va2.w	#当前时间 - startTime, va1.w表示粒子是总粒子中的第几个
