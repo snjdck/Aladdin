@@ -138,7 +138,8 @@ package snjdck.fileformat.ogre
 			
 			if(MeshChunkID.MESH_BOUNDS == getChunkId()){
 				seekToData();
-				mesh.bound.readFrom(buffer);
+				//minX, minY, minZ, maxX, maxY, maxZ, radius
+				buffer.position += 28;
 			}
 		}
 		
