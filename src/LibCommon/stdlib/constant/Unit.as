@@ -13,5 +13,7 @@ package stdlib.constant
 		static public const GB:Number = 1 / (1 << 30);
 		static public const TB:Number = 1 / (1 << 40);
 		static public const PB:Number = 1 / (1 << 50);
+		
+		static public const G:Number = 9.8;
 	}
 }
