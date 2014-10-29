@@ -1,11 +1,13 @@
 package snjdck.g3d.parser
 {
+	import flash.geom.Matrix3D;
+	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.pickup.RayTestInfo;
-	import snjdck.g3d.mesh.BoneData;
-	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
+	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.helper.ShaderName;
 	
 	use namespace ns_g3d;
@@ -34,19 +36,6 @@ package snjdck.g3d.parser
 			return boneData.numBones;
 		}
 		
-		override public function getDrawUnit(drawUnit:DrawUnit3D, boneStateGroup:BoneStateGroup):void
-		{
-			super.getDrawUnit(drawUnit, null);
-			if(boneData.canRenderByGPU()){
-				drawUnit.shaderName = ShaderName.BONE_ANI;
-				boneData.getDrawUnit(drawUnit, boneStateGroup);
-			}else{
-				drawUnit.shaderName = ShaderName.OBJECT;
-				syncTempVertexData(boneStateGroup);
-				uploadVertexData(tempVertexData);
-			}
-		}
-		
 		override public function testRay(ray:Ray, result:RayTestInfo, boneStateGroup:BoneStateGroup):Boolean
 		{
 			syncTempVertexData(boneStateGroup);
@@ -59,6 +48,24 @@ package snjdck.g3d.parser
 				tempVertexData = new Vector.<Number>(getPosData().length, true);
 			}
 			boneData.transformVertex(getPosData(), tempVertexData, boneStateGroup);
+		}
+		
+		override protected function onDraw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
+		{
+			if(boneData.canRenderByGPU()){
+				boneData.draw(context3d, worldMatrix, boneStateGroup);
+			}else{
+				syncTempVertexData(boneStateGroup);
+				uploadVertexData(tempVertexData);
+			}
+		}
+		
+		override public function get shaderName():String
+		{
+			if(boneData.canRenderByGPU()){
+				return ShaderName.BONE_ANI;
+			}
+			return ShaderName.OBJECT;
 		}
 	}
 }

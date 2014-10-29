@@ -1,17 +1,19 @@
 package snjdck.g3d.parser
 {
 	import flash.display3D.Context3DVertexBufferFormat;
+	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import array.copy;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.geom.Bound;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.asset.helper.ShaderName;
@@ -106,22 +108,6 @@ package snjdck.g3d.parser
 			uvData[offset+1] = v;
 		}
 		*/
-		public function getDrawUnit(drawUnit:DrawUnit3D, boneStateGroup:BoneStateGroup):void
-		{
-			drawUnit.shaderName = ShaderName.OBJECT;
-			if(null == gpuPosBuffer){
-				gpuPosBuffer = GpuAssetFactory.CreateGpuVertexBuffer(posData, 3);
-			}
-			if(null == gpuUvBuffer){
-				gpuUvBuffer = GpuAssetFactory.CreateGpuVertexBuffer(uvData, 2);
-			}
-			if(null == gpuIndexBuffer){
-				gpuIndexBuffer = GpuAssetFactory.CreateGpuIndexBuffer(indexData);
-			}
-			drawUnit.setVa(0, gpuPosBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
-			drawUnit.setVa(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-			drawUnit.indexBuffer = gpuIndexBuffer;
-		}
 		
 		protected function testRayImp(ray:Ray, result:RayTestInfo, vertexBuffer:Vector.<Number>):Boolean
 		{
@@ -154,23 +140,26 @@ package snjdck.g3d.parser
 			result.setTo(buffer[offset], buffer[offset+1], buffer[offset+2]);
 		}
 		
-		public function calculateBound(bound:Bound):void
+		public function calculateBound(bound:AABB):void
 		{
+			var minX:Number=Number.MAX_VALUE, maxX:Number=Number.MIN_VALUE;
+			var minY:Number=Number.MAX_VALUE, maxY:Number=Number.MIN_VALUE;
+			var minZ:Number=Number.MAX_VALUE, maxZ:Number=Number.MIN_VALUE;
+			
 			for(var i:int=0, n:int=posData.length; i<n; i+=3){
 				var vx:Number = posData[i];
 				var vy:Number = posData[i+1];
 				var vz:Number = posData[i+2];
 				
-				if(vx < bound.minX)	bound.minX = vx;
-				if(vx > bound.maxX)	bound.maxX = vx;
-				if(vy < bound.minY)	bound.minY = vy;
-				if(vy > bound.maxY)	bound.maxY = vy;
-				if(vz < bound.minZ)	bound.minZ = vz;
-				if(vz > bound.maxZ) bound.maxZ = vz;
-				
-				var r:Number = Math.sqrt(vx*vx+vy*vy+vz*vz);
-				if(r > bound.radius)bound.radius = r;
+				if(vx < minX)	minX = vx;
+				if(vx > maxX)	maxX = vx;
+				if(vy < minY)	minY = vy;
+				if(vy > maxY)	maxY = vy;
+				if(vz < minZ)	minZ = vz;
+				if(vz > maxZ) 	maxZ = vz;
 			}
+			
+			bound.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
 		}
 		
 		public function get numBones():int
@@ -181,6 +170,33 @@ package snjdck.g3d.parser
 		protected function uploadVertexData(data:Vector.<Number>):void
 		{
 			gpuPosBuffer.upload(data);
+		}
+		
+		final public function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
+		{
+			if(null == gpuPosBuffer){
+				gpuPosBuffer = GpuAssetFactory.CreateGpuVertexBuffer(posData, 3);
+			}
+			if(null == gpuUvBuffer){
+				gpuUvBuffer = GpuAssetFactory.CreateGpuVertexBuffer(uvData, 2);
+			}
+			if(null == gpuIndexBuffer){
+				gpuIndexBuffer = GpuAssetFactory.CreateGpuIndexBuffer(indexData);
+			}
+			onDraw(context3d, worldMatrix, boneStateGroup);
+			context3d.setVertexBufferAt(0, gpuPosBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
+			context3d.setVertexBufferAt(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			context3d.drawTriangles(gpuIndexBuffer);
+		}
+		
+		protected function onDraw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
+		{
+			context3d.setVcM(DrawUnit3D.WORLD_MATRIX_OFFSET, worldMatrix);
+		}
+		
+		public function get shaderName():String
+		{
+			return ShaderName.OBJECT;
 		}
 	}
 }

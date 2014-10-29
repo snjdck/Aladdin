@@ -15,24 +15,10 @@ package snjdck.g3d.projection
 		public function OrthoProjection3D()
 		{
 			transform[7] = 1;
-			
-			viewFrustum.left.x = 1;
-			viewFrustum.right.x = -1;
-			viewFrustum.bottom.y = 1;
-			viewFrustum.top.y = -1;
-			
 		}
 		
 		public function resize(width:int, height:int):void
 		{
-			var halfWidth:Number = width * 0.5;
-			var halfHeight:Number = height * 0.5;
-			
-			viewFrustum.left.w = halfWidth;
-			viewFrustum.right.w = halfWidth;
-			viewFrustum.bottom.w = halfHeight;
-			viewFrustum.top.w = halfHeight;
-			
 			scaleX = 2 / width;
 			scaleY = 2 / height;
 		}

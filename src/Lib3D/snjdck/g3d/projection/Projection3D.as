@@ -3,9 +3,8 @@ package snjdck.g3d.projection
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.ViewFrustum;
-	import snjdck.g3d.core.Viewport;
 	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.viewfrustum.ViewFrustum;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
@@ -19,7 +18,9 @@ package snjdck.g3d.projection
 		
 		protected var _zNear:Number;
 		
-		public const viewFrustum:ViewFrustum = new ViewFrustum();
+		public var viewFrustum:ViewFrustum;
+		public var offsetX:Number = 0;
+		public var offsetY:Number = 0;
 		
 		public function Projection3D(){}
 		
@@ -28,14 +29,14 @@ package snjdck.g3d.projection
 			_zNear = zNear;
 			transform[2] = 1.0 / (zFar - zNear);
 			transform[6] = transform[2] * -zNear;
-			
-			viewFrustum.near.w = -zNear;
-			viewFrustum.far.w = zFar;
 		}
 		
-		final public function upload(context3d:GpuContext, viewport:Viewport):void
+		final public function upload(context3d:GpuContext):void
 		{
-			viewport.adjust(transform, scaleX, scaleY);
+			transform[0] = scaleX;
+			transform[1] = scaleY;
+			transform[4] = offsetX * 2;
+			transform[5] = offsetY * 2
 			context3d.setVc(0, transform, 2);
 		}
 		

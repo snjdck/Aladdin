@@ -53,7 +53,7 @@ package snjdck.g3d.render
 		{
 			for each(var camera3d:CameraUnit3D in collector.cameraList)
 			{
-				if(camera3d.mouseEnabled && camera3d.viewport.contains(screenX, screenY)){
+				if(camera3d.mouseEnabled){
 					camera3d.getSceneRay(screenX, screenY, rayCastStack.ray);
 					collector.root.hitTest(rayCastStack, result);
 				}

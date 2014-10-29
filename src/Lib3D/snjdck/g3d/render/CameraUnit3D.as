@@ -5,45 +5,33 @@ package snjdck.g3d.render
 	import flash.geom.Rectangle;
 	import flash.geom.Vector3D;
 	
-	import matrix44.extractAxixsZ;
+	import matrix44.extractAxisZ;
 	import matrix44.extractPosition;
 	import matrix44.transformVector;
 	import matrix44.transformVectorDelta;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.core.ViewFrustum;
-	import snjdck.g3d.core.Viewport;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.projection.Projection3D;
+	import snjdck.g3d.viewfrustum.ViewFrustum;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
 
 	public class CameraUnit3D
 	{
-		static private const scissorRect:Rectangle = new Rectangle();
-		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
 		
 		public var projection:Projection3D;
-		public var viewport:Viewport;
+		public var viewFrusum:ViewFrustum;
 		public var depth:int;
 		public var mouseEnabled:Boolean;
-		public var clipViewport:Boolean = true;
-		
-		public var viewFrustum:ViewFrustum = new ViewFrustum();
-		private var _forward:Vector3D = new Vector3D();
 		
 		public function CameraUnit3D()
 		{
-		}
-		
-		public function get forward():Vector3D
-		{
-			extractAxixsZ(_worldMatrix, _forward);
-			return _forward;
 		}
 		
 		public function copyFrom(other:CameraUnit3D):void
@@ -52,11 +40,14 @@ package snjdck.g3d.render
 			_worldMatrixInvert.copyFrom(other._worldMatrixInvert);
 			
 			projection = other.projection;
-			viewport.copyFrom(other.viewport);
 			
 			depth = other.depth;
 			mouseEnabled = other.mouseEnabled;
-			clipViewport = other.clipViewport;
+		}
+		
+		public function containsAABB(bound:AABB):Boolean
+		{
+			return false;
 		}
 		
 		public function appendMatrix(other:Matrix3D):void
@@ -69,15 +60,16 @@ package snjdck.g3d.render
 		public function reset(camera:Camera3D, worldMatrix:Matrix3D, zOffset:Number):void
 		{
 			projection = camera.projection;
-			viewport = camera.viewport;
+			viewFrusum = camera.viewFrusum;
 			depth = camera.depth;
 			mouseEnabled = camera.mouseEnabled;
-			clipViewport = camera.clipViewport;
 			
 			_worldMatrix.copyFrom(worldMatrix);
 			_worldMatrix.prependTranslation(0, 0, zOffset);
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
+			
+			viewFrusum.updateAABB(_worldMatrix);
 		}
 		
 		public function render(render3d:Render3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
@@ -91,7 +83,9 @@ package snjdck.g3d.render
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 				for each(drawUnit in collector.opaqueList){
 					//todo judge whether the object is in camera's sight
-					drawUnit.draw(render3d, this, collector, context3d);
+					if(viewFrusum.containsAABB(drawUnit.getAABB())){
+						drawUnit.draw(render3d, this, collector, context3d);
+					}
 				}
 			}
 			
@@ -99,32 +93,17 @@ package snjdck.g3d.render
 				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
 				for each(drawUnit in collector.blendList){
 					//todo judge whether the object is in camera's sight
-					drawUnit.draw(render3d, this, collector, context3d);
+					if(viewFrusum.containsAABB(drawUnit.getAABB())){
+						drawUnit.draw(render3d, this, collector, context3d);
+					}
 				}
 			}
-			
-			drawEnd(context3d);
 		}
 		
 		ns_g3d function drawBegin(context3d:GpuContext):void
 		{
-			projection.upload(context3d, viewport);
+			projection.upload(context3d);
 			context3d.setVcM(2, _worldMatrixInvert);
-			
-			if(clipViewport){
-				scissorRect.x = viewport.x * context3d.bufferWidth;
-				scissorRect.y = (1 - viewport.y - viewport.height) * context3d.bufferHeight;
-				scissorRect.width = viewport.width * context3d.bufferWidth;
-				scissorRect.height = viewport.height * context3d.bufferHeight;
-				context3d.setScissorRect(scissorRect);
-			}
-		}
-		
-		private function drawEnd(context3d:GpuContext):void
-		{
-			if(clipViewport){
-				context3d.setScissorRect(null);
-			}
 		}
 		
 		/**

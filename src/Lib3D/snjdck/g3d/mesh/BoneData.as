@@ -7,7 +7,9 @@ package snjdck.g3d.mesh
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
+	import snjdck.g3d.skeleton.Transform;
 	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	
 	use namespace ns_g3d;
@@ -99,16 +101,28 @@ package snjdck.g3d.mesh
 			vertexDict[boneId].push(vertexIndex*3, index+1);//顶点数据的起始偏移,权重数据的偏移
 		}
 		
-		public function getDrawUnit(drawUnit:DrawUnit3D, boneStateGroup:BoneStateGroup):void
+		//todo rename?
+		public function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);
 			}
-			drawUnit.setVa(6, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
-			drawUnit.setVa(7, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
-			for(var i:int=0, n:int=boneIds.length; i<n; i++){
-				drawUnit.addBone(boneStateGroup.getBoneStateGlobal(boneIds[i]));
+			context3d.setVertexBufferAt(6, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
+			context3d.setVertexBufferAt(7, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
+			
+			const boneCount:int = boneIds.length;
+			if(boneCount <= 0){
+				context3d.setVcM(DrawUnit3D.WORLD_MATRIX_OFFSET, worldMatrix);
+				return;
 			}
+			worldMatrix.copyRawDataTo(tempFloatBuffer, 0, true);
+			var offset:int = 12;
+			for(var i:int=0; i<boneCount; ++i){
+				var bone:Transform = boneStateGroup.getBoneStateGlobal(boneIds[i]);
+				bone.copyRawDataTo(tempFloatBuffer, offset);
+				offset += 8;
+			}
+			context3d.setVc(DrawUnit3D.WORLD_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
 		}
 		
 		ns_g3d function adjustBoneWeight():void

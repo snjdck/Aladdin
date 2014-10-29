@@ -19,7 +19,7 @@ package snjdck.g3d.pickup
 		
 		public function Ray(){}
 		
-		private function getPt(t:Number):Vector3D
+		public function getPt(t:Number):Vector3D
 		{
 			var result:Vector3D = dir.clone();
 			result.scaleBy(t);

@@ -4,13 +4,14 @@ package snjdck.g3d.core
 	import snjdck.g3d.projection.Projection3D;
 	import snjdck.g3d.render.CameraUnit3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.viewfrustum.ViewFrustum;
 	
 	use namespace ns_g3d;
 
 	final public class Camera3D extends Object3D
 	{
 		public var projection:Projection3D;
-		public const viewport:Viewport = new Viewport();
+		public var viewFrusum:ViewFrustum;
 		public var clipViewport:Boolean = true;
 		public var cullingMask:uint;
 		public var depth:int;

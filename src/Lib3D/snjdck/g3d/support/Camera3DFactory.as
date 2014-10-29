@@ -3,6 +3,7 @@ package snjdck.g3d.support
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.projection.OrthoProjection3D;
 	import snjdck.g3d.projection.PerspectiveProjection3D;
+	import snjdck.g3d.viewfrustum.OrthoViewFrustum;
 	
 	import stdlib.constant.Unit;
 
@@ -18,9 +19,10 @@ package snjdck.g3d.support
 			
 			camera.rotationX = 120 * Unit.RADIAN;
 			camera.rotationZ = -45 * Unit.RADIAN;
-			camera.scale = Math.SQRT1_2;
+//			camera.scale = Math.SQRT1_2;
 			
 			camera.projection = proj;
+			camera.viewFrusum = new OrthoViewFrustum(screenWidth, screenHeight, zNear, zFar);
 			
 			return camera;
 		}

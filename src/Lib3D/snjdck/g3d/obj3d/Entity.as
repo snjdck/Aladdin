@@ -2,10 +2,11 @@ package snjdck.g3d.obj3d
 {
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.skeleton.Bone;
@@ -20,6 +21,8 @@ package snjdck.g3d.obj3d
 	{
 		ns_g3d var mesh:Mesh;
 		ns_g3d var skeleton:Skeleton;
+		
+		public const bound:AABB = new AABB();
 		
 		public var aniName:String;
 		private var aniTime:int;
@@ -62,12 +65,19 @@ package snjdck.g3d.obj3d
 			}
 			*/
 			collector.pushMatrix(transform);
+			mesh.bound.transform(collector.worldMatrix, bound);
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
 				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
+				drawUnit.aabb = bound;
 				drawUnit.blendMode = blendMode;
 				drawUnit.worldMatrix.copyFrom(collector.worldMatrix);
-				subMesh.getDrawUnit(drawUnit, boneStateGroup);
+				
+				drawUnit.textureName = subMesh.materialName;
+				drawUnit.geometry = subMesh.geometry;
+				drawUnit.shaderName = subMesh.geometry.shaderName;
+				drawUnit.boneStateGroup = boneStateGroup;
+				
 				collector.addDrawUnit(drawUnit);
 			}
 			collector.popMatrix();

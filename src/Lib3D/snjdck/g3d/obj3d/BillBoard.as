@@ -18,10 +18,10 @@ package snjdck.g3d.obj3d
 			this.size = size;
 			this.materialName = materialName;
 			createBill();
-			bound.minX = bound.minY = size * -0.5;
-			bound.maxX = bound.maxY = size * 0.5;
-			bound.minZ = 0; bound.maxZ = 1;
-			bound.radius = size * 0.5;
+//			bound.minX = bound.minY = size * -0.5;
+//			bound.maxX = bound.maxY = size * 0.5;
+//			bound.minZ = 0; bound.maxZ = 1;
+//			bound.radius = size * 0.5;
 		}
 		
 		private function createBill():void

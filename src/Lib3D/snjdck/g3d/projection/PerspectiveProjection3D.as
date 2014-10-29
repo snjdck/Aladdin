@@ -20,7 +20,7 @@ package snjdck.g3d.projection
 		{
 			scaleY = 1.0 / Math.tan(0.5 * fieldOfViewY * Unit.RADIAN);
 			scaleX = scaleY / aspectRatio;
-			
+			/*
 			var hFactor:Number = 1 / Math.sqrt(scaleX*scaleX+1);
 			var vFactor:Number = 1 / Math.sqrt(scaleY*scaleY+1);
 			
@@ -33,6 +33,7 @@ package snjdck.g3d.projection
 			viewFrustum.bottom.z = vFactor;
 			viewFrustum.top.y = -viewFrustum.bottom.y;
 			viewFrustum.top.z = vFactor;
+			*/
 		}
 		
 		override public function getViewRay(screenX:Number, screenY:Number, ray:Ray):void
