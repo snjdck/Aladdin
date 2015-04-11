@@ -3,12 +3,14 @@ package snjdck.gpu
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.geom.Vector3D;
+	import flash.signals.ISignal;
 	import flash.signals.Signal;
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g3d.pickup.RayTestInfo;
+	import snjdck.gpu.matrixstack.MatrixStack2DInv;
 
 	final public class Input implements ITicker
 	{
@@ -21,6 +23,8 @@ package snjdck.gpu
 		public const mouseDownSignal:Signal = new Signal();
 		public const mouseUpSignal:Signal = new Signal();
 		public const clickSignal:Signal = new Signal();
+		
+		private const matrixStack:MatrixStack2DInv = new MatrixStack2DInv();
 		
 		public function Input(stage:Stage)
 		{
@@ -71,13 +75,12 @@ package snjdck.gpu
 		private function boradcast2d(evtType:String):Boolean
 		{
 			var result:Boolean = true;
-			var target:DisplayObject2D = App3D.app.view3d.scene2d.pickup(mouseLocation.x, mouseLocation.y);
-			trace(target);
+			var target:DisplayObject2D = App3D.app.view3d.scene2d.pickup(matrixStack, mouseLocation.x, mouseLocation.y);
+			
 			if(null == target){
 				target = App3D.app.view3d.scene2d;
 				result = false;
 			}
-			
 			while(target != null && target.mouseEnabled){
 				switch(evtType){
 					case MouseEvent.MOUSE_DOWN:

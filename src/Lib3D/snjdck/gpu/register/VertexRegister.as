@@ -3,7 +3,7 @@ package snjdck.gpu.register
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 
-	final public class VertexRegister
+	final internal class VertexRegister
 	{
 		private var slotCount:int;
 		

@@ -3,6 +3,7 @@ package snjdck.gpu
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.events.Event;
+	import flash.utils.getTimer;
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
@@ -12,6 +13,7 @@ package snjdck.gpu
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.render.Render3D;
+	import snjdck.g3d.support.Camera3DFactory;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
@@ -47,7 +49,8 @@ package snjdck.gpu
 			this._height = stage.stageHeight;
 			this.stage2d = stage;
 			
-			camera3d = Camera3D.NewPerspectiveCamera(60, _width/_height, 500, 4000);
+			camera3d = Camera3DFactory.NewIsoCamera(_width, _height, 0, 5000);
+//			camera3d = Camera3DFactory.NewPerspectiveCamera(60, _width/_height, 500, 4000);
 			camera3d.zOffset = -1000;
 			/*
 			camera3d.viewport.width = 0.5;
@@ -121,13 +124,19 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
+			var t1:int = getTimer();
 			scene3d.onUpdate(timeElapsed * timeScale);
+			var t2:int = getTimer();
 			scene2d.onUpdate(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
+			var t4:int = getTimer();
 			render3d.draw(scene3d, context3d);
+			var t5:int = getTimer();
 			render2d.drawScene(scene2d, context3d);
 			context3d.present();
+			
+			//trace("=========================\n", t2-t1, t5-t4);
 		}
 		
 		public function set enableErrorChecking(value:Boolean):void
