@@ -1,7 +1,8 @@
 package snjdck.g3d.mesh
 {
+	import array.pushIfNotHas;
+	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.skeleton.Skeleton;
 	
@@ -11,7 +12,6 @@ package snjdck.g3d.mesh
 	{
 		ns_g3d var subMeshes:Array;
 		ns_g3d var skeleton:Skeleton;
-		public const bound:AABB = new AABB();
 		
 		public function Mesh()
 		{
@@ -35,6 +35,17 @@ package snjdck.g3d.mesh
 			var entity:Entity = new entityCls(this);
 			entity.name = name;
 			return entity;
+		}
+		
+		public function getTextureNames():Array
+		{
+			var result:Array = [];
+			
+			for each(var subMesh:SubMesh in subMeshes){
+				array.pushIfNotHas(result, subMesh.materialName);
+			}
+			
+			return result;
 		}
 	}
 }

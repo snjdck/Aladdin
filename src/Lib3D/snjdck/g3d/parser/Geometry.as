@@ -33,6 +33,8 @@ package snjdck.g3d.parser
 		private var gpuUvBuffer:GpuVertexBuffer;
 		private var gpuIndexBuffer:GpuIndexBuffer;
 		
+		private const _bound:AABB = new AABB();
+		
 		public function Geometry(vertexData:Vector.<Number>, indexData:Vector.<uint>)
 		{
 			this._vertexCount = vertexData.length / 5;
@@ -140,7 +142,7 @@ package snjdck.g3d.parser
 			result.setTo(buffer[offset], buffer[offset+1], buffer[offset+2]);
 		}
 		
-		public function calculateBound(bound:AABB):void
+		public function calculateBound():void
 		{
 			var minX:Number=Number.MAX_VALUE, maxX:Number=Number.MIN_VALUE;
 			var minY:Number=Number.MAX_VALUE, maxY:Number=Number.MIN_VALUE;
@@ -159,19 +161,24 @@ package snjdck.g3d.parser
 				if(vz > maxZ) 	maxZ = vz;
 			}
 			
-			bound.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
+			_bound.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
+		}
+		
+		public function get bound():AABB
+		{
+			return _bound;
 		}
 		
 		public function get numBones():int
 		{
 			return 0;
 		}
-		
+		/*
 		protected function uploadVertexData(data:Vector.<Number>):void
 		{
 			gpuPosBuffer.upload(data);
 		}
-		
+		*/
 		final public function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuPosBuffer){

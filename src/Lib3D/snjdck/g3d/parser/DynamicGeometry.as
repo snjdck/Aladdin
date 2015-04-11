@@ -38,10 +38,10 @@ package snjdck.g3d.parser
 		
 		override public function testRay(ray:Ray, result:RayTestInfo, boneStateGroup:BoneStateGroup):Boolean
 		{
-			syncTempVertexData(boneStateGroup);
+//			syncTempVertexData(boneStateGroup);
 			return testRayImp(ray, result, tempVertexData);
 		}
-		
+		/*
 		private function syncTempVertexData(boneStateGroup:BoneStateGroup):void
 		{
 			if(null == tempVertexData){
@@ -49,15 +49,15 @@ package snjdck.g3d.parser
 			}
 			boneData.transformVertex(getPosData(), tempVertexData, boneStateGroup);
 		}
-		
+		*/
 		override protected function onDraw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
 		{
-			if(boneData.canRenderByGPU()){
+//			if(boneData.canRenderByGPU()){
 				boneData.draw(context3d, worldMatrix, boneStateGroup);
-			}else{
-				syncTempVertexData(boneStateGroup);
-				uploadVertexData(tempVertexData);
-			}
+//			}else{
+//				syncTempVertexData(boneStateGroup);
+//				uploadVertexData(tempVertexData);
+//			}
 		}
 		
 		override public function get shaderName():String

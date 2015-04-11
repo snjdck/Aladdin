@@ -33,7 +33,7 @@ package snjdck.g3d.render
 		public var textureName:String;
 		
 		ns_g3d var blendMode:BlendMode;
-		public var aabb:AABB;
+		public const aabb:AABB = new AABB();
 		
 		public var geometry:IGeometry;
 		public var boneStateGroup:BoneStateGroup;

@@ -3,18 +3,34 @@ package snjdck.g3d.bound
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
+	import matrix44.transformVector;
+	
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
+	
+	use namespace ns_g3d;
 
-	public class AABB implements IBoundingBox
+	public class AABB extends Sphere implements IBoundingBox
 	{
-		internal var center:Vector3D;
 		private var halfSize:Vector3D;
-//		public var radius:Number;
+		
+		private var isDirty:Boolean;
+		private var sourceAABB:AABB;
+		private var matrix:Matrix3D;
 		
 		public function AABB()
 		{
-			center = new Vector3D();
 			halfSize = new Vector3D();
+			radius = 0;
+		}
+		
+		public function bind(other:AABB, worldMatrix:Matrix3D):void
+		{
+			transformVector(worldMatrix, other.center, center);
+			radius = other.radius;
+			isDirty = true;
+			sourceAABB = other;
+			matrix = worldMatrix;
 		}
 		
 		public function setMinMax(minX:Number, minY:Number, minZ:Number, maxX:Number, maxY:Number, maxZ:Number):void
@@ -26,6 +42,8 @@ package snjdck.g3d.bound
 			halfSize.x = 0.5 * (maxX - minX);
 			halfSize.y = 0.5 * (maxY - minY);
 			halfSize.z = 0.5 * (maxZ - minZ);
+			
+			radius = halfSize.length;
 		}
 		
 		public function setCenterAndSize(center:Vector3D, size:Vector3D):void
@@ -33,6 +51,7 @@ package snjdck.g3d.bound
 			this.center.copyFrom(center);
 			halfSize = size;
 			halfSize.scaleBy(0.5);
+			radius = halfSize.length;
 		}
 		
 		public function hitRay(ray:Ray):Boolean
@@ -106,8 +125,8 @@ package snjdck.g3d.bound
 				&& (Math.abs(ab.y) - other.getProjectLen(Vector3D.Y_AXIS) < halfSize.y)
 				&& (Math.abs(ab.z) - other.getProjectLen(Vector3D.Z_AXIS) < halfSize.z);
 		}
-		
-		public function transform(matrix:Matrix3D, result:AABB):void
+		/*
+		private function transform(matrix:Matrix3D, result:AABB):void
 		{
 			var rawData:Vector.<Number> = matrix.rawData;
 			var minX:Number = rawData[12], maxX:Number = minX;
@@ -189,7 +208,18 @@ package snjdck.g3d.bound
 				minZ += factor * this.maxZ;
 				maxZ += factor * this.minZ;
 			}
-			result.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
+			result.halfSize.x = 0.5 * (maxX - minX);
+			result.halfSize.y = 0.5 * (maxY - minY);
+			result.halfSize.z = 0.5 * (maxZ - minZ);
 		}
+		
+		ns_g3d function updateSize():void
+		{
+			if(isDirty){
+				sourceAABB.transform(matrix, this);
+				isDirty = false;
+			}
+		}
+		*/
 	}
 }

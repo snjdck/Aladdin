@@ -1,8 +1,8 @@
 package snjdck.g3d.obj3d
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.pickup.Ray;
@@ -22,12 +22,6 @@ package snjdck.g3d.obj3d
 		ns_g3d var mesh:Mesh;
 		ns_g3d var skeleton:Skeleton;
 		
-		public const bound:AABB = new AABB();
-		
-		public var aniName:String;
-		private var aniTime:int;
-		public var timeScale:Number = 1;
-		
 		private var boneStateGroup:BoneStateGroup = new BoneStateGroup();
 		private const boneAttachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup();
 		
@@ -39,39 +33,27 @@ package snjdck.g3d.obj3d
 			if(mesh.skeleton){
 				skeleton = mesh.skeleton;
 				aniName = skeleton.getAnimationNames()[0];
+				boneStateGroup.skeleton = skeleton;
 			}
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			super.collectDrawUnit(collector);
-//			skeleton.onUpdate(aniName, aniTime * 0.001, boneStateGroup);
 			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
 			
 			if(mesh.subMeshes.length <= 0){
 				return;
 			}
-			/*
-			if(skeleton){
-				boneStateGroup.prependBoneTransform(skeleton);
-			}
-			*/
-//			super.collectDrawUnit(collector);
-			/*
-			if(!camera.viewFrustum.isBoundVisible(mesh.bound, worldMatrix)){
-				++collector.numCulledEntities;
-				collector.numCulledDrawUnits += mesh.subMeshes.length;
-				return;
-			}
-			*/
+			
 			collector.pushMatrix(transform);
-			mesh.bound.transform(collector.worldMatrix, bound);
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
 				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
-				drawUnit.aabb = bound;
 				drawUnit.blendMode = blendMode;
 				drawUnit.worldMatrix.copyFrom(collector.worldMatrix);
+				
+				drawUnit.aabb.bind(subMesh.geometry.bound, drawUnit.worldMatrix);
 				
 				drawUnit.textureName = subMesh.materialName;
 				drawUnit.geometry = subMesh.geometry;
@@ -139,12 +121,12 @@ package snjdck.g3d.obj3d
 				return;
 			}
 			
-			const len:int = skeleton.getAnimationLength(aniName) * 1000;
-			aniTime += timeElapsed * timeScale;
-			if(aniTime > len){
-				aniTime -= len;
-			}
-			skeleton.onUpdate(aniName, aniTime * 0.001, boneStateGroup);
+			boneStateGroup.advanceTime(timeElapsed * 0.001);
+		}
+		
+		public function set aniName(value:String):void
+		{
+			boneStateGroup.animation = skeleton.getAnimationByName(value);
 		}
 	}
 }

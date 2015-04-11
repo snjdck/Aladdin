@@ -22,11 +22,11 @@ package snjdck.g3d.render
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
 		
 		private const rayCastStack:RayCastStack = new RayCastStack();
-		
+		/*
 		private var gpuVertexBuffer:GpuVertexBuffer;
 		private var gpuIndexBuffer:GpuIndexBuffer;
 		private var isGpuBufferInited:Boolean;
-		
+		*/
 		public function Render3D(){}
 		
 		public function draw(scene3d:Object3D, context3d:GpuContext):void
@@ -59,7 +59,7 @@ package snjdck.g3d.render
 				}
 			}
 		}
-		
+		/*
 		public function drawQuad(context3d:GpuContext, worldMatrix:Matrix3D, texture:IGpuTexture):void
 		{
 			initGpuBuffer(context3d);
@@ -97,7 +97,7 @@ package snjdck.g3d.render
 			gpuIndexBuffer = new GpuIndexBuffer(6);
 			gpuIndexBuffer.upload(new <uint>[0,1,2,0,2,3]);
 		}
-		
+		*/
 		static private const constData:Vector.<Number> = new Vector.<Number>();
 	}
 }

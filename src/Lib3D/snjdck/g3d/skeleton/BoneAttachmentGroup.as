@@ -2,7 +2,7 @@ package snjdck.g3d.skeleton
 {
 	import flash.geom.Matrix3D;
 	
-	import array.del;
+	import array.delAt;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
@@ -13,10 +13,12 @@ package snjdck.g3d.skeleton
 	public class BoneAttachmentGroup
 	{
 		private var boneAttachmentList:Array;
+		private var numAttachments:int;
 		
 		public function BoneAttachmentGroup()
 		{
 			boneAttachmentList = [];
+			numAttachments = 0;
 		}
 		
 		public function addAttachment(boneId:int, attachment:Object3D):void
@@ -27,6 +29,7 @@ package snjdck.g3d.skeleton
 			}else{
 				list.push(attachment);
 			}
+			++numAttachments;
 		}
 		
 		public function removeAttachment(boneId:int, attachment:Object3D):void
@@ -35,7 +38,11 @@ package snjdck.g3d.skeleton
 			if(null == list || list.length <= 0){
 				return;
 			}
-			array.del(list, attachment);
+			var index:int = list.indexOf(attachment);
+			if(index >= 0){
+				array.delAt(list, index);
+				--numAttachments;
+			}
 		}
 		
 		public function removeAttachmentsOnBone(boneId:int):void
@@ -44,6 +51,7 @@ package snjdck.g3d.skeleton
 			if(null == list || list.length <= 0){
 				return;
 			}
+			numAttachments -= list.length;
 			list.length = 0;
 		}
 		
@@ -55,10 +63,14 @@ package snjdck.g3d.skeleton
 				}
 				list.length = 0;
 			}
+			numAttachments = 0;
 		}
 		
 		public function onUpdate(timeElapsed:int):void
 		{
+			if(numAttachments <= 0){
+				return;
+			}
 			const boneCount:int = boneAttachmentList.length;
 			for(var boneId:int=0; boneId<boneCount; ++boneId){
 				var list:Vector.<Object3D> = boneAttachmentList[boneId];
@@ -73,6 +85,9 @@ package snjdck.g3d.skeleton
 		
 		public function collectDrawUnits(collector:DrawUnitCollector3D, boneStateGroup:BoneStateGroup):void
 		{
+			if(numAttachments <= 0){
+				return;
+			}
 			const boneCount:int = boneAttachmentList.length;
 			for(var boneId:int=0; boneId<boneCount; ++boneId){
 				var list:Vector.<Object3D> = boneAttachmentList[boneId];

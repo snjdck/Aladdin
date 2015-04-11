@@ -1,7 +1,5 @@
 package snjdck.g3d.skeleton
 {
-	import flash.geom.Vector3D;
-	
 	import math.nearEquals;
 	
 	import snjdck.g3d.ns_g3d;

@@ -99,9 +99,9 @@ package snjdck.g3d.skeleton
 			return dict.getKeys(animationDict);
 		}
 		
-		ns_g3d function onUpdate(aniName:String, time:Number, boneStateGroup:BoneStateGroup):void
+		public function onUpdate(animation:Animation, time:Number, boneStateGroup:BoneStateGroup):void
 		{
-			rootBone.calculateKeyFrame(getAnimationByName(aniName), time);
+			rootBone.calculateKeyFrame(animation, time);
 			rootBone.updateMatrix(null, boneStateGroup);
 		}
 	}

@@ -5,6 +5,9 @@ package snjdck.g3d.viewfrustum
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bound.Sphere;
+	
+	import stdlib.constant.Unit;
 
 	/**
 	 * plane ax+by+cz+d=0
@@ -22,9 +25,18 @@ package snjdck.g3d.viewfrustum
 		private const top:Vector3D = new Vector3D();
 		private const bottom:Vector3D = new Vector3D();
 		
-		public function PerspectiveViewFrustum()
+		public const sphere:Sphere = new Sphere();
+		
+		public function PerspectiveViewFrustum(fieldOfViewY:Number, aspectRatio:Number, zNear:Number, zFar:Number)
 		{
 			aabbPoints = new Vector.<Number>(24, true);
+			
+			var tan:Number = Math.tan(0.5 * fieldOfViewY * Unit.RADIAN);
+			var factor:Number = tan * tan * (1 + aspectRatio * aspectRatio);
+			
+			var offset:Number = 0.5 * Math.max(0, (zFar - zNear) - (zFar + zNear) * factor);
+			sphere.center.z = zFar - offset;
+			sphere.radius = Math.sqrt(offset * offset + zFar * zFar * factor);
 		}
 		/*
 		public function isBoundVisible(bound:Bound, matrix:Matrix3D):Boolean

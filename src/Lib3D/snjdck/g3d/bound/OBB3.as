@@ -6,17 +6,19 @@ package snjdck.g3d.bound
 	import matrix44.extractAxisX;
 	import matrix44.transformVector;
 	
+	import snjdck.g3d.ns_g3d;
+	
 	import vec3.crossProd;
 	import vec3.crossProdAxisX;
 	import vec3.crossProdAxisY;
 	import vec3.crossProdAxisZ;
 	import vec3.dotProd;
 	import vec3.subtract;
+	
+	use namespace ns_g3d;
 
-	public class OBB3 implements IBoundingBox
+	public class OBB3 extends Sphere implements IBoundingBox
 	{
-		private var center:Vector3D;
-		
 		private var xAxis:Vector3D;
 		private var yAxis:Vector3D;
 		private var zAxis:Vector3D;
@@ -25,7 +27,6 @@ package snjdck.g3d.bound
 		
 		public function OBB3()
 		{
-			center = new Vector3D();
 			xAxis = new Vector3D(1, 0, 0);
 			yAxis = new Vector3D(0, 1, 0);
 			zAxis = new Vector3D(0, 0, 1);
@@ -37,6 +38,7 @@ package snjdck.g3d.bound
 			this.center.copyFrom(center);
 			halfSize = size;
 			halfSize.scaleBy(0.5);
+			radius = halfSize.length;
 		}
 		
 		public function transform(matrix:Matrix3D, result:OBB3):void
@@ -51,11 +53,16 @@ package snjdck.g3d.bound
 			result.zAxis.normalize();
 			
 			result.halfSize.copyFrom(halfSize);
+			result.radius = radius;
 		}
 		
 		public function hitTest(other:OBB3):Boolean
 		{
 			vec3.subtract(other.center, center, ab);
+			var totalRadius:Number = radius + other.radius;
+			if(ab.lengthSquared >= totalRadius * totalRadius){
+				return false;
+			}
 			return hitTestAxis(other, ab)
 				&& other.hitTestAxis(this, ab)
 				&& test2(other, xAxis, other.xAxis)
@@ -98,9 +105,15 @@ package snjdck.g3d.bound
 		
 		public function hitTestAABB(other:AABB):Boolean
 		{
-			vec3.subtract(other.center, center, ab);
-			return hitTestAxis(other, ab)
-				&& other.hitTestAxis(this, ab)
+			return hitTestSphere(other);
+			/*
+				return false;
+			}
+			return true;
+			other.updateSize();
+			
+			return other.hitTestAxis(this, ab)
+				&& hitTestAxis(other, ab)
 				&& testX(other, xAxis)
 				&& testY(other, xAxis)
 				&& testZ(other, xAxis)
@@ -110,8 +123,9 @@ package snjdck.g3d.bound
 				&& testX(other, zAxis)
 				&& testY(other, zAxis)
 				&& testZ(other, zAxis);
+			*/
 		}
-		
+		/*
 		private function testX(other:IBoundingBox, selfAxis:Vector3D):Boolean
 		{
 			vec3.crossProdAxisX(selfAxis, axis);
@@ -132,5 +146,6 @@ package snjdck.g3d.bound
 			axis.normalize();
 			return getProjectLen(axis) + other.getProjectLen(axis) > absDot(ab, axis);
 		}
+		*/
 	}
 }

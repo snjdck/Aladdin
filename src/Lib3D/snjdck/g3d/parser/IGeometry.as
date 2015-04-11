@@ -17,7 +17,8 @@ package snjdck.g3d.parser
 		function getIndexData():Vector.<uint>;
 		function testRay(ray:Ray, result:RayTestInfo, boneStateGroup:BoneStateGroup):Boolean;
 		function getVertex(vertexIndex:uint, result:Vector3D, buffer:Vector.<Number>=null):void;
-		function calculateBound(bound:AABB):void;
+		function calculateBound():void;
+		function get bound():AABB;
 		
 		function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void;
 		function get shaderName():String;

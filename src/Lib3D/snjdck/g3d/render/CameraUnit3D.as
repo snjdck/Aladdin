@@ -4,6 +4,7 @@ package snjdck.g3d.render
 	import flash.geom.Matrix3D;
 	import flash.geom.Rectangle;
 	import flash.geom.Vector3D;
+	import flash.utils.getTimer;
 	
 	import matrix44.extractAxisZ;
 	import matrix44.extractPosition;
@@ -11,10 +12,11 @@ package snjdck.g3d.render
 	import matrix44.transformVectorDelta;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.projection.Projection3D;
+	import snjdck.g3d.terrain.Terrain;
 	import snjdck.g3d.viewfrustum.ViewFrustum;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -81,12 +83,15 @@ package snjdck.g3d.render
 			
 			if(collector.opaqueList.length > 0){
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
+				//Terrain.ins.draw(context3d);
+//				var t1:int = getTimer();
 				for each(drawUnit in collector.opaqueList){
 					//todo judge whether the object is in camera's sight
 					if(viewFrusum.containsAABB(drawUnit.getAABB())){
 						drawUnit.draw(render3d, this, collector, context3d);
 					}
 				}
+//				trace("culling",getTimer()-t1);
 			}
 			
 			if(collector.blendList.length > 0){

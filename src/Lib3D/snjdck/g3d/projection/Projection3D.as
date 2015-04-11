@@ -3,6 +3,7 @@ package snjdck.g3d.projection
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.bound.Sphere;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.viewfrustum.ViewFrustum;
 	import snjdck.gpu.asset.GpuContext;
@@ -17,6 +18,7 @@ package snjdck.g3d.projection
 		protected var scaleY:Number;
 		
 		protected var _zNear:Number;
+		protected var _zFar:Number;
 		
 		public var viewFrustum:ViewFrustum;
 		public var offsetX:Number = 0;
@@ -27,6 +29,7 @@ package snjdck.g3d.projection
 		final public function setDepthCliping(zNear:Number, zFar:Number):void
 		{
 			_zNear = zNear;
+			_zFar = zFar;
 			transform[2] = 1.0 / (zFar - zNear);
 			transform[6] = transform[2] * -zNear;
 		}

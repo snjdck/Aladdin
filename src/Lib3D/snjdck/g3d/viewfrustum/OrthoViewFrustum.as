@@ -3,8 +3,14 @@ package snjdck.g3d.viewfrustum
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
+	import matrix44.extractPosition;
+	
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.bound.OBB3;
+	import snjdck.g3d.bound.Sphere;
+	import snjdck.gpu.geom.OBB2;
+	
+	import stdlib.constant.Unit;
 
 	public class OrthoViewFrustum implements ViewFrustum
 	{
@@ -14,11 +20,17 @@ package snjdck.g3d.viewfrustum
 		private var halfWidth:Number;
 		private var halfHeight:Number;
 		
-		private const obb:OBB3 = new OBB3();
+		private const obb3:OBB3 = new OBB3();
+		private const obb2:OBB2 = new OBB2();
+		public const sphere:Sphere = new Sphere();
 		
 		public function OrthoViewFrustum(width:Number, height:Number, zNear:Number, zFar:Number)
 		{
-			obb.setCenterAndSize(new Vector3D(0, 0, 0.5 * (zNear+zFar)), new Vector3D(width, height, zFar-zNear));
+			obb3.setCenterAndSize(new Vector3D(0, 0, 0.5 * (zFar + zNear)), new Vector3D(width, height, zFar - zNear));
+			obb2.center = new Vector3D();
+			obb2.rotation = 45 * Unit.RADIAN;
+			obb2.halfWidth = width * 0.5;
+			obb2.halfHeight = 0.25 * ((zFar - zNear) * Math.sqrt(3) + height);
 		}
 		
 		public function isSphereVisible(pos:Vector3D, radius:Number):Boolean
@@ -46,7 +58,8 @@ package snjdck.g3d.viewfrustum
 		
 		public function updateAABB(cameraWorldMatrix:Matrix3D):void
 		{
-			obb.transform(cameraWorldMatrix, tempAABB);
+			obb3.transform(cameraWorldMatrix, tempAABB);
+			matrix44.extractPosition(cameraWorldMatrix, obb2.center);
 		}
 		
 		public function containsAABB(bound:AABB):Boolean
@@ -54,6 +67,6 @@ package snjdck.g3d.viewfrustum
 			return tempAABB.hitTestAABB(bound);
 		}
 		
-		static private const tempAABB:OBB3 = new OBB3();
+		private const tempAABB:OBB3 = new OBB3();
 	}
 }

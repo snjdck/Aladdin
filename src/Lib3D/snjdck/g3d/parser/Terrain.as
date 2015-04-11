@@ -70,6 +70,8 @@ package snjdck.g3d.parser
 			
 			subTerrain.geometry = geometry;
 			subTerrain.materialName = materialName;
+			
+			geometry.calculateBound();
 		}
 		
 		private function generateVerticeBuffer(numVertexPerRow:uint, numVertexPerCol:uint, offsetX:Number, offsetY:Number):Vector.<Number>

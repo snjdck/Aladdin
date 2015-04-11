@@ -18,7 +18,7 @@ package snjdck.g3d.projection
 		
 		public function fov(fieldOfViewY:Number, aspectRatio:Number):void
 		{
-			scaleY = 1.0 / Math.tan(0.5 * fieldOfViewY * Unit.RADIAN);
+			scaleY = 1 / Math.tan(0.5 * fieldOfViewY * Unit.RADIAN);
 			scaleX = scaleY / aspectRatio;
 			/*
 			var hFactor:Number = 1 / Math.sqrt(scaleX*scaleX+1);
