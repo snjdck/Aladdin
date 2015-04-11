@@ -1,95 +1,67 @@
 ﻿package snjdck.quadtree
 {
-	import flash.display.Graphics;
-	import flash.geom.Rectangle;
+	import flash.debugger.enterDebugger;
+	import flash.geom.Vector3D;
+	
+	import snjdck.gpu.geom.AABB2;
+	import snjdck.gpu.geom.OBB2;
 
 	/**
 	 * 00 01
 	 * 10 11
 	 */
-	final public class QuadTree
+	final public class QuadTree extends AABB2
 	{
-		static public function Create(bounds:Rectangle, maxLevel:int):QuadTree
+		static public function Create(halfSize:int, minSize:int):QuadTree
 		{
-			return new QuadTree(null, bounds, 0, maxLevel);
+			return new QuadTree(0, 0, 0x4000, 64);
 		}
 		
-		private var parent:QuadTree;
-		private var nodeList:Vector.<QuadTree>;
+		private var nodeList:Array;
 		private const objectList:Array = [];
 		
-		private var bounds:Rectangle;
-		private var centerX:int;
-		private var centerY:int;
-		
-		public function QuadTree(parent:QuadTree, bounds:Rectangle, level:int, maxLevel:int)
+		public function QuadTree(centerX:int, centerY:int, halfSize:int, minSize:int)
 		{
-			this.parent = parent;
-			this.bounds = bounds;
-			onInit(level, maxLevel);
+			this.center = new Vector3D(centerX, centerY);
+			this.halfWidth = halfSize;
+			this.halfHeight = halfSize;
+			onInit(minSize);
 		}
 		
-		private function onInit(level:int, maxLevel:int):void
+		private function onInit(minSize:int):void
 		{
-			var x:int = bounds.x;
-			var y:int = bounds.y;
-			var subWidth:int = bounds.width >> 1;
-			var subHeight:int = bounds.height >> 1;
-			
-			centerX = x + subWidth;
-			centerY = y + subHeight;
-			
-			if(level >= maxLevel){
+			if(halfWidth <= minSize || halfHeight <= minSize){
 				return;
 			}
-			
-			var nextLevel:int = level + 1;
-			nodeList = new Vector.<QuadTree>(4, true);
-			nodeList[0] = new QuadTree(this, new Rectangle(x, 		y, 		 subWidth, subHeight), nextLevel, maxLevel);
-			nodeList[1] = new QuadTree(this, new Rectangle(centerX,	y, 		 subWidth, subHeight), nextLevel, maxLevel);
-			nodeList[2] = new QuadTree(this, new Rectangle(x, 		centerY, subWidth, subHeight), nextLevel, maxLevel);
-			nodeList[3] = new QuadTree(this, new Rectangle(centerX,	centerY, subWidth, subHeight), nextLevel, maxLevel);
+			var childHalfSize:int = halfWidth >> 1;
+			nodeList = new Array(4);
+			nodeList[0] = new QuadTree(center.x - childHalfSize, center.y - childHalfSize, childHalfSize, minSize);
+			nodeList[1] = new QuadTree(center.x + childHalfSize, center.y - childHalfSize, childHalfSize, minSize);
+			nodeList[2] = new QuadTree(center.x - childHalfSize, center.y + childHalfSize, childHalfSize, minSize);
+			nodeList[3] = new QuadTree(center.x + childHalfSize, center.y + childHalfSize, childHalfSize, minSize);
 		}
 		
-		public function clear():void
+		private function classifyNode(node:IQuadTreeNode):QuadTree
 		{
-			objectList.length = 0;
-			for each(var node:QuadTree in nodeList){
-				node.clear();
-			}
-		}
-		
-		private function classifyNode(node:Object):QuadTree
-		{
-			var x:Number = node.x;
-			var y:Number = node.y;
-			var width:Number = node.width;
-			var height:Number = node.height;
-			
-			var isInTopQuadrant:Boolean = y + height < centerY;
-			var isInBottomQuadrant:Boolean = y > centerY;
-			
+			var isInTopQuadrant:Boolean = node.y + node.height <= center.y;
+			var isInBottomQuadrant:Boolean = node.y >= center.y;
 			if(!(isInTopQuadrant || isInBottomQuadrant)){
 				return this;
 			}
-			
-			var isInLeftQuadrant:Boolean = x + width < centerX;
-			var isInRightQuadrant:Boolean = x > centerX;
-			
+			var isInLeftQuadrant:Boolean = node.x + node.width <= center.x;
+			var isInRightQuadrant:Boolean = node.x >= center.x;
 			if(!(isInLeftQuadrant || isInRightQuadrant)){
 				return this;
 			}
-			
-			var index:int = (isInTopQuadrant  ? 0 : 2) | (isInLeftQuadrant ? 0 : 1);
+			var index:int = (isInTopQuadrant ? 0 : 2) | (isInLeftQuadrant ? 0 : 1);
 			return nodeList[index];
 		}
 		
-		private function findTargetTree(node:Object):QuadTree
+		private function findTargetTree(node:IQuadTreeNode):QuadTree
 		{
 			var targetTree:QuadTree = this;
 			var testTree:QuadTree = null;
-			
-			while(true){
+			for(;;){
 				if(null == targetTree.nodeList){
 					break;
 				}
@@ -99,109 +71,47 @@
 				}
 				targetTree = testTree;
 			}
-			
 			return targetTree;
 		}
 			
 		public function insert(node:IQuadTreeNode):void
 		{
 			var targetTree:QuadTree = findTargetTree(node);
-			targetTree.addNode(node);
-		}
-		
-		private function addNode(node:IQuadTreeNode):void
-		{
-			objectList.push(node);
-			node.parent = this;
-		}
-		
-		private function removeNode(node:IQuadTreeNode):void
-		{
-			var index:int = objectList.indexOf(node);
-			if(index < 0){
-				return;
+			if(targetTree.objectList.length > 1){
+				enterDebugger();
 			}
-			objectList.splice(index, 1);
-			node.parent = null;
+			targetTree.objectList.push(node);
 		}
 		
-		public function retrive(node:IQuadTreeNode, result:Array):void
+		public function getObjectsInArea(rect:OBB2, result:Array):void
 		{
-			var tree:QuadTree = node.parent;
-			while(tree != null){
-				result.push.apply(null, tree.objectList);
-				tree = tree.parent;
-			}
-		}
-		
-		public function update(node:IQuadTreeNode):void
-		{
-			var targetTree:QuadTree = findTargetTree(node);
-			
-			if(targetTree == node.parent){
-				return;
-			}
-			
-			node.parent.removeNode(node);
-			targetTree.addNode(node);
-		}
-		
-		public function getObjectsInArea(rect:Rectangle):Array
-		{
-			var result:Array = [];
-			getObjectsInAreaImpl(rect, result);
-			return result;
-		}
-		
-		private function getObjectsInAreaImpl(rect:Rectangle, result:Array):void
-		{
-			var tree:QuadTree = findTargetTree(rect);
-			while(tree != null){
-				for each(var node:IQuadTreeNode in tree.objectList){
-					if(intersects(node, rect)){
-						result[result.length] = node;
+			var stack:Array = [this];
+			while(stack.length > 0){
+				var currentNode:QuadTree = stack.pop();
+				switch(rect.hitTestAABB(currentNode)){
+				case OBB2.INTERECT:
+					result.push.apply(null, currentNode.objectList);
+					if(currentNode.nodeList != null){
+						stack.push.apply(null, currentNode.nodeList);
 					}
+					break;
+				case OBB2.CONTAINS:
+					currentNode.collectObjsRecursively(result);
+					break;
 				}
-				tree = tree.parent;
 			}
 		}
 		
-		private function intersects(node:IQuadTreeNode, rect:Rectangle):Boolean
+		private function collectObjsRecursively(result:Array):void
 		{
-			if(node.x >= rect.right){
-				return false;
+			var stack:Array = [this];
+			while(stack.length > 0){
+				var currentNode:QuadTree = stack.pop();
+				result.push.apply(null, currentNode.objectList);
+				if(currentNode.nodeList != null){
+					stack.push.apply(null, currentNode.nodeList);
+				}
 			}
-			if(node.y >= rect.bottom){
-				return false;
-			}
-			if(node.x + node.width <= rect.x){
-				return false;
-			}
-			if(node.y + node.height <= rect.y){
-				return false;
-			}
-			return true;
-		}
-		
-		public function drawGrid(g:Graphics):void
-		{
-			g.lineStyle(0x000000);
-			
-			g.moveTo(centerX, bounds.y);
-			g.lineTo(centerX, bounds.bottom);
-			g.moveTo(bounds.x, centerY);
-			g.lineTo(bounds.right, centerY);
-			
-			for each(var node:QuadTree in nodeList){
-				node.drawGrid(g);
-			}
-		}
-		
-		public function drawCell(g:Graphics):void
-		{
-			g.lineStyle(0x00FF00);
-			g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
-			g.endFill();
 		}
 	}
 }
