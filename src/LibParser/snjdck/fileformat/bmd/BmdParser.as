@@ -263,7 +263,7 @@ package snjdck.fileformat.bmd
 			
 			boneData.adjustBoneWeight();
 			var geometry:DynamicGeometry = new DynamicGeometry(vertexData, indexBuffer, boneData);
-			geometry.calculateBound(mesh.bound);
+			geometry.calculateBound();
 			
 			subMesh.geometry = geometry;
 			subMesh.onInit();

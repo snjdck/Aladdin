@@ -7,18 +7,19 @@ package snjdck.fileformat.ogre
 	
 	import lambda.call;
 	
-	import snjdck.g3d.ns_g3d;
-	import snjdck.gpu.asset.GpuAssetFactory;
-	import snjdck.g3d.mesh.BoneData;
-	import snjdck.g3d.mesh.Mesh;
-	import snjdck.g3d.mesh.SubMesh;
-	import snjdck.g3d.parser.DynamicGeometry;
-	import snjdck.g3d.parser.Geometry;
 	import snjdck.fileformat.ogre.support.MeshChunkID;
 	import snjdck.fileformat.ogre.support.VertexBufferParam;
 	import snjdck.fileformat.ogre.support.VertexElement;
 	import snjdck.fileformat.ogre.support.VertexElementSemantic;
 	import snjdck.fileformat.ogre.support.VertexElementType;
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.mesh.BoneData;
+	import snjdck.g3d.mesh.Mesh;
+	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.parser.DynamicGeometry;
+	import snjdck.g3d.parser.Geometry;
+	import snjdck.gpu.asset.GpuAssetFactory;
+	import snjdck.gpu.asset.helper.AssetMgr;
 	
 	import stream.readCString;
 	
@@ -133,7 +134,8 @@ package snjdck.fileformat.ogre
 			
 			if(MeshChunkID.MESH_SKELETON_LINK == getChunkId()){
 				seekToData();
-				mesh.skeletonLink = readCString(buffer);
+				var skeletonLink:String = readCString(buffer);
+				mesh.skeleton = AssetMgr.Instance.getSkeleton(skeletonLink);
 			}
 			
 			if(MeshChunkID.MESH_BOUNDS == getChunkId()){
