@@ -4,6 +4,7 @@ package flash.profiler
 	import flash.display.Sprite;
 	import flash.display.Stage3D;
 	import flash.display3D.Context3D;
+	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Context3DTextureFormat;
 	import flash.display3D.IndexBuffer3D;
 	import flash.display3D.VertexBuffer3D;
@@ -67,16 +68,34 @@ package flash.profiler
 			texture.dispose();
 		}
 		
+		private function testConst():void
+		{
+			context3d.setProgramConstantsFromVector(Context3DProgramType.VERTEX, 0, list, 8);
+		}
+		
+		private function testCopy():void
+		{
+			for(var i:int=0; i<32; i++){
+				dest[i] = list[i];
+			}
+			
+		}
+		
+		private var list:Vector.<Number> = new Vector.<Number>(128 * 4, true);
+		private var dest:Vector.<Number> = new Vector.<Number>(128 * 4, true);
+		
 		private function __onCreate(evt:Event):void
 		{
 			context3d = stage3d.context3D;
 			context3d.configureBackBuffer(stage.stageWidth, stage.stageHeight, 4);
 //			context3d.enableErrorChecking = true;
 			trace(context3d.driverInfo);
-			
-			trace("vertex", calcFuncExecTime(testVertexBuffer));
-			trace("index", calcFuncExecTime(testIndexBuffer));
-			trace("texture", calcFuncExecTime(testTexture));
+			const count:int = 10000;
+//			trace("vertex", calcFuncExecTime(testVertexBuffer, null, count));
+//			trace("index", calcFuncExecTime(testIndexBuffer, null, count));
+//			trace("texture", calcFuncExecTime(testTexture));
+			trace("const", calcFuncExecTime(testConst, null, count));
+			trace("copy", calcFuncExecTime(testCopy, null, count));
 		}
 	}
 }

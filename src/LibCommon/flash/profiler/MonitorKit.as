@@ -2,18 +2,19 @@ package flash.profiler
 {
 	import flash.display.Graphics;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.factory.newShape;
 	import flash.system.System;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
-	import flash.utils.getTimer;
+	
+	import snjdck.clock.Clock;
+	import snjdck.clock.ITicker;
 	
 	import stdlib.constant.Unit;
 
-	public class MonitorKit extends Sprite
+	public class MonitorKit extends Sprite implements ITicker
 	{
 		static private const LINE_THICKNESS:Number = 2;
 		static private const MEMORY_USED_COLOR:uint = 0xFF00;
@@ -26,8 +27,6 @@ package flash.profiler
 		private var numFrame:int;//已经运行的帧数
 		
 		private var elapsed:int;			//已经运行的时间
-		private var last:int;				//上次记录的时间
-		private var now:int;				//现在记录的时间
 		
 		private var fps:Number;				//每秒运行多少帧
 		private var processMem:Number;		//进程的内存使用量
@@ -66,16 +65,14 @@ package flash.profiler
 			
 			createLabel();
 			
-			last = getTimer();
-			addEventListener(Event.ENTER_FRAME, __onEnterFrame);
+			Clock.getInstance().add(this);
 		}
 		
-		private function __onEnterFrame(evt:Event):void
+		public function onTick(timeElapsed:int):void
 		{
-			now = getTimer();
 			++numFrame;
-			elapsed = now - last;
 			
+			elapsed += timeElapsed;
 			if(elapsed >= delay)
 			{
 				fps = 1000 * numFrame / elapsed;
@@ -89,8 +86,9 @@ package flash.profiler
 				updateInfo();
 				
 				numFrame = 0;
-				last = now;
+				elapsed = 0;
 			}
+			
 			updateUI();
 		}
 		

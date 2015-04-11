@@ -4,6 +4,7 @@ package flash.signals
 	
 	import dict.deleteKey;
 	import dict.hasKey;
+	import dict.isEmpty;
 	
 	import lambda.apply;
 
@@ -21,6 +22,9 @@ package flash.signals
 		
 		public function notify(...args):void
 		{
+			if(dict.isEmpty(handlerMap)){
+				return;
+			}
 			checkArgs(args);
 			for(var handler:* in handlerMap){
 				lambda.apply(handler, args);
