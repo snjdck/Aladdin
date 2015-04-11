@@ -1,6 +1,7 @@
 package flash.ioc.ip
 {
 	import flash.ioc.IInjector;
+	import flash.ioc.IInjectionPoint;
 
 	internal class InjectionPointProperty implements IInjectionPoint
 	{
@@ -21,11 +22,6 @@ package flash.ioc.ip
 			if(null != val){
 				target[name] = val;
 			}
-		}
-		
-		public function getTypesNeedInject(result:Array):void
-		{
-			result.push(argType);
 		}
 	}
 }

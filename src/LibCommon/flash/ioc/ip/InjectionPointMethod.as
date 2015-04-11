@@ -1,10 +1,7 @@
 package flash.ioc.ip
 {
-	import array.append;
-	
+	import flash.ioc.IInjectionPoint;
 	import flash.ioc.IInjector;
-	
-	import lambda.apply;
 
 	internal class InjectionPointMethod implements IInjectionPoint
 	{
@@ -19,12 +16,22 @@ package flash.ioc.ip
 		
 		public function injectInto(target:Object, injector:IInjector):void
 		{
-			lambda.apply(target[methodName], argTypes && injector.getInstances(argTypes));
+			var method:Function = target[methodName];
+			if(null == argTypes || 0 == argTypes.length){
+				method();
+			}else{
+				method.apply(null, getInstances(injector));
+			}
 		}
 		
-		public function getTypesNeedInject(result:Array):void
+		private function getInstances(injector:IInjector):Array
 		{
-			array.append(result, argTypes);
+			var count:int = argTypes.length;
+			var result:Array = new Array(count);
+			for(var i:int=0; i<count; i++){
+				result[i] = injector.getInstance(argTypes[i]);
+			}
+			return result;
 		}
 	}
 }
