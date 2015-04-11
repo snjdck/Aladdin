@@ -21,37 +21,25 @@ package snjdck.g2d.obj2d
 			this.maskImage = maskImage;
 		}
 		
-		override public function onUpdate(timeElapsed:int):void
-		{
-			super.onUpdate(timeElapsed);
-			maskImage.onUpdate(timeElapsed);
-		}
-		
 		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
 			if(stencilIndex >= MAX_RECURSIVE_COUNT){
 				throw new Error("stencil mask is too much!");
 			}
 			
-			drawMask(render, context3d, 0xFF);
-			enableClipping(context3d, (2 << stencilIndex) - 1);
-			
+			drawMask(render, context3d, 0xFF, (2 << stencilIndex) - 1);
 			++stencilIndex;
-			
 			super.draw(render, context3d);
-			
 			--stencilIndex;
-			
 			if(stencilIndex > 0){
-				drawMask(render, context3d, 0x00);
-				enableClipping(context3d, (1 << stencilIndex) - 1);
+				drawMask(render, context3d, 0x00, (1 << stencilIndex) - 1);
 			}else{//重置回默认状态
-				context3d.clear(0, 0, 0, 1, 1, 0, Context3DClearMask.STENCIL);
+				context3d.clearStencil();
 				context3d.setStencilActions();
 			}
 		}
 		
-		private function drawMask(render:Render2D, context3d:GpuContext, refValue:uint):void
+		private function drawMask(render:Render2D, context3d:GpuContext, refValue:uint, readMask:uint):void
 		{
 			context3d.setStencilReferenceValue(refValue, 0xFF, 1 << stencilIndex);
 			context3d.setStencilActions(
@@ -62,10 +50,6 @@ package snjdck.g2d.obj2d
 				Context3DStencilAction.SET
 			);
 			maskImage.draw(render, context3d);
-		}
-		
-		private function enableClipping(context3d:GpuContext, readMask:uint):void
-		{
 			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL);
 			context3d.setStencilReferenceValue(0xFF, readMask);
 		}

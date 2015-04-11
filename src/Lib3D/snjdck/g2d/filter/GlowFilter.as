@@ -27,7 +27,7 @@ package snjdck.g2d.filter
 		override public function renderFilter(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
 		{
 			super.renderFilter(texture, render, context3d, output, textureX, textureY);
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXTURE);
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
 			render.drawTexture(context3d, texture, textureX, textureY);
 		}
 	}

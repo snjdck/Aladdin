@@ -2,32 +2,27 @@ package snjdck.g2d.render
 {
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DTriangleFace;
-	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix;
+	
+	import array.copy;
 	
 	import matrix33.toBuffer;
 	
 	import snjdck.g2d.core.ITexture2D;
 	import snjdck.g2d.impl.DisplayObject2D;
-	import snjdck.g2d.particlesystem.Particle;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuIndexBuffer;
-	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.asset.helper.AssetMgr;
 	import snjdck.gpu.asset.helper.ShaderName;
 	import snjdck.gpu.matrixstack.MatrixStack2D;
+	import snjdck.gpu.support.QuadRender;
 
 	final public class Render2D
 	{
 		private const projectionStack:Projection2DStack = new Projection2DStack();
-		
 		private const matrixStack:MatrixStack2D = new MatrixStack2D();
-		
-		private var gpuVertexBuffer:GpuVertexBuffer;
-		private var gpuIndexBuffer:GpuIndexBuffer;
-		private var isGpuBufferInited:Boolean;
+		private const constData:Vector.<Number> = new Vector.<Number>(28, true);
 		
 		public function Render2D(){}
 		
@@ -80,103 +75,65 @@ package snjdck.g2d.render
 			context3d.blendMode = BlendMode.ALPHAL;
 			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
 			context3d.setCulling(Context3DTriangleFace.NONE);
-			initGpuBuffer(context3d);
-			context3d.setVertexBufferAt(0, gpuVertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			QuadRender.Instance.drawBegin(context3d);
 		}
 		
 		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D):void
 		{
-			var worldMatrix:Matrix = matrixStack.worldMatrix;
-			var frameMatrix:Matrix = texture.frameMatrix;
-			var uvMatrix:Matrix = texture.uvMatrix;
+			copyWorldProjectData(constData);
 			
-			matrix33.toBuffer(worldMatrix, constData, 4);
+			copyMatrix(texture.frameMatrix, 12);
+			copyMatrix(texture.uvMatrix, 14);
 			
-			constData[12] = frameMatrix.a * target.width;
-			constData[13] = frameMatrix.d * target.height;
-			constData[14] = frameMatrix.tx;
-			constData[15] = frameMatrix.ty;
+			constData[20] = target.width;
+			constData[21] = texture.width;
+			constData[22] = target.height;
+			constData[23] = texture.height;
+			if(null == texture.scale9){
+				constData[24] = constData[25] = constData[26] = constData[27] = 0;
+			}else{
+				copy(texture.scale9, constData, 4, 0, 24);
+			}
 			
-			constData[16] = uvMatrix.a;
-			constData[17] = uvMatrix.d;
-			constData[18] = uvMatrix.tx;
-			constData[19] = uvMatrix.ty;
-			
-			projectionStack.projection.upload(constData);
-			
-			context3d.setVc(0, constData, 5);
-			
-			constData[0] = target.colorTransform.redMultiplier;
-			constData[1] = target.colorTransform.greenMultiplier;
-			constData[2] = target.colorTransform.blueMultiplier;
-			constData[3] = target.colorTransform.alphaMultiplier;
-			constData[4] = target.colorTransform.redOffset;
-			constData[5] = target.colorTransform.greenOffset;
-			constData[6] = target.colorTransform.blueOffset;
-			constData[7] = target.colorTransform.alphaOffset;
-			
-			context3d.setFc(0, constData, 2);
-			
+			context3d.setVc(0, constData, 7);
 			context3d.texture = texture.gpuTexture;
-			context3d.drawTriangles(gpuIndexBuffer);
+			QuadRender.Instance.drawTriangles(context3d, texture.scale9 != null);
 		}
 		
 		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
 		{
-			constData[4] = texture.width;
-			constData[5] = texture.height;
-			constData[6] = textureX;
-			constData[7] = textureY;
+			constData[4] = constData[9] = 
+			constData[12] = constData[13] = constData[14] = constData[15] = 1;
+			constData[5] = constData[6] = constData[7] = 
+			constData[8] = constData[10] = constData[11] = 
+			constData[18] = constData[19] = 
+			constData[24] = constData[25] = constData[26] = constData[27] = 0;
 			
 			projectionStack.projection.upload(constData);
 			
-			context3d.setVc(0, constData, 2);
+			constData[16] = textureX;
+			constData[17] = textureY;
+			
+			constData[20] = constData[21] = texture.width;
+			constData[22] = constData[23] = texture.height;
+			
+			context3d.setVc(0, constData, 7);
 			context3d.texture = texture;
-			context3d.drawTriangles(gpuIndexBuffer);
+			QuadRender.Instance.drawTriangles(context3d);
 		}
 		
-		public function drawParticleBegin(context3d:GpuContext, texture:IGpuTexture, blendMode:BlendMode):void
+		public function copyWorldProjectData(output:Vector.<Number>):void
 		{
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.PARTICLE_2D);
-			context3d.blendMode = blendMode;
-			
-			projectionStack.projection.upload(constData);
-			matrix33.toBuffer(matrixStack.worldMatrix, constData, 4);
-			constData[12] = texture.width;
-			constData[13] = texture.height;
-			constData[14] = 0.5;
-			constData[15] = 0;
-			
-			context3d.setVc(0, constData, 4);
-			context3d.texture = texture;
+			projectionStack.projection.upload(output);
+			matrix33.toBuffer(matrixStack.worldMatrix, output, 4);
 		}
 		
-		public function drawParticle(context3d:GpuContext, particle:Particle):void
+		private function copyMatrix(matrix:Matrix, toIndex:int):void
 		{
-			constData[0] = particle.x;
-			constData[1] = particle.y;
-			constData[2] = particle.scale;
-			constData[3] = particle.rotation;
-			context3d.setVc(4, constData, 1);
-			particle.color.copyTo(constData);
-			context3d.setFc(0, constData, 1);
-			context3d.drawTriangles(gpuIndexBuffer);
+			constData[toIndex  ] = matrix.a;
+			constData[toIndex+1] = matrix.d;
+			constData[toIndex+4] = matrix.tx;
+			constData[toIndex+5] = matrix.ty;
 		}
-		
-		private function initGpuBuffer(context3d:GpuContext):void
-		{
-			if(isGpuBufferInited){
-				return;
-			}
-			isGpuBufferInited = true;
-			
-			gpuVertexBuffer = new GpuVertexBuffer(4, 2);
-			gpuVertexBuffer.upload(new <Number>[0,0,1,0,1,1,0,1]);
-			
-			gpuIndexBuffer = new GpuIndexBuffer(6);
-			gpuIndexBuffer.upload(new <uint>[0,1,2,0,2,3]);
-		}
-		
-		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
 	}
 }

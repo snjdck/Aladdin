@@ -1,6 +1,5 @@
 package snjdck.g2d.impl
 {
-	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -13,6 +12,7 @@ package snjdck.g2d.impl
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.matrixstack.MatrixStack2DInv;
 	
 	import stdlib.constant.Unit;
 
@@ -28,7 +28,6 @@ package snjdck.g2d.impl
 		public const mouseUpSignal:Signal = new Signal();
 		
 		public var alpha:Number = 1;
-		private var _colorTransform:ColorTransform;
 		
 		public var visible:Boolean = true;
 		public var filter:IFilter2D;
@@ -48,7 +47,6 @@ package snjdck.g2d.impl
 			_scaleX = _scaleY = 1;
 			_rotation = 0;
 			_width = _height = 0;
-			_colorTransform = new ColorTransform();
 		}
 		
 		/** 1.缩放, 2.旋转, 3.位移 */
@@ -71,13 +69,13 @@ package snjdck.g2d.impl
 		virtual public function onUpdate(timeElapsed:int):void{}
 		virtual public function draw(render:Render2D, context3d:GpuContext):void{}
 		
-		virtual public function pickup(px:Number, py:Number):DisplayObject2D
+		virtual public function pickup(matrixStack:MatrixStack2DInv, px:Number, py:Number):DisplayObject2D
 		{
-			getRect(null, tempRect);
-			if(tempRect.contains(px, py)){
-				return this;
-			}
-			return null;
+			matrixStack.pushMatrix(transform);
+			matrixStack.transformCoords(px, py, tempPt);
+			matrixStack.popMatrix();
+			var containsPt:Boolean = 0 <= tempPt.x && tempPt.x < width && 0 <= tempPt.y && tempPt.y < height;
+			return containsPt ? this : null;
 		}
 		
 		final public function removeFromParent():void
@@ -218,11 +216,6 @@ package snjdck.g2d.impl
 		public function set height(value:Number):void
 		{
 			_height = value;
-		}
-		
-		public function get colorTransform():ColorTransform
-		{
-			return _colorTransform;
 		}
 		
 		public function hasVisibleArea():Boolean

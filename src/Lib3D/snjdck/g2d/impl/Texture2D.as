@@ -19,6 +19,8 @@ package snjdck.g2d.impl
 		private var hasRegion:Boolean;
 		private const _regionMatrix:Matrix = new Matrix();
 		
+		private var _scale9:Vector.<Number>;
+		
 		public function Texture2D(gpuTexture:IGpuTexture=null)
 		{
 			this.gpuTexture = gpuTexture;
@@ -102,6 +104,24 @@ package snjdck.g2d.impl
 		public function get uvMatrix():Matrix
 		{
 			return _regionMatrix;
+		}
+		
+		public function get scale9():Vector.<Number>
+		{
+			return _scale9;
+		}
+		
+		public function set scale9grid(value:Rectangle):void
+		{
+			if(null == value){
+				_scale9 = null;
+				return;
+			}
+			_scale9 = new Vector.<Number>(4, true);
+			_scale9[0] = value.x;
+			_scale9[1] = gpuTexture.width - value.right;
+			_scale9[2] = value.y;
+			_scale9[3] = gpuTexture.height - value.bottom;
 		}
 	}
 }

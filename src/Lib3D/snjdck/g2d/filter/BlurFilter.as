@@ -48,7 +48,7 @@ package snjdck.g2d.filter
 			{
 				updateParameters(i, texture.width, texture.height);
 				
-				context3d.setVc(2, mOffsets, 1);
+				context3d.setVc(7, mOffsets, 1);
 				context3d.setFc(0, mWeights, 1);
 				
 				swapBuffer();
@@ -63,12 +63,11 @@ package snjdck.g2d.filter
 				}else{
 					render.popScreen();
 					context3d.renderTarget = output;
+					context3d.blendMode = prevBlendMode;
 					render.drawTexture(context3d, gpuTexture, textureX, textureY);
 				}
 			}
 			onDrawEnd();
-			
-			context3d.blendMode = prevBlendMode;
 		}
 		
 		override public function get marginX():int
@@ -155,8 +154,7 @@ package snjdck.g2d.filter
 			
 			// normalize weights so that sum equals "1.0"
 			
-			var weightSum:Number = mWeights[0] + 2*mWeights[1] + 2*mWeights[2];
-			var invWeightSum:Number = 1.0 / weightSum;
+			var invWeightSum:Number = 1 / (mWeights[0] + 2*mWeights[1] + 2*mWeights[2]);
 			
 			mWeights[0] *= invWeightSum;
 			mWeights[1] *= invWeightSum;

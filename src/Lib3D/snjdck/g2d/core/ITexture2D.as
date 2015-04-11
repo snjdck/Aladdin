@@ -10,5 +10,6 @@ package snjdck.g2d.core
 		function get gpuTexture():IGpuTexture;
 		function get frameMatrix():Matrix;
 		function get uvMatrix():Matrix;
+		function get scale9():Vector.<Number>;
 	}
 }

@@ -3,6 +3,7 @@ package snjdck.g2d.filter
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
@@ -49,7 +50,7 @@ package snjdck.g2d.filter
 			{
 				case 0:
 					context3d.renderTarget = output;
-					context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXTURE);
+					context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
 					render.drawTexture(context3d, texture, textureX, textureY);
 					break;
 				case 1:
@@ -64,6 +65,8 @@ package snjdck.g2d.filter
 		private function renderFilterImpl(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
 		{
 			const filterCount:int = _filterList.length;
+			const prevBlendMode:BlendMode = context3d.blendMode;
+			context3d.blendMode = BlendMode.NORMAL;
 			
 			var backBuffer:GpuRenderTarget = new GpuRenderTarget(texture.width, texture.height);
 			var frontBuffer:GpuRenderTarget;
@@ -88,6 +91,7 @@ package snjdck.g2d.filter
 					filter.renderFilter(gpuTexture, render, context3d, frontBuffer, 0, 0);
 				}else{
 					render.popScreen();
+					context3d.blendMode = prevBlendMode;
 					filter.renderFilter(backBuffer, render, context3d, output, textureX, textureY);
 				}
 			}

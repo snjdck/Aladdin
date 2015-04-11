@@ -7,6 +7,9 @@ package snjdck.g2d.particlesystem
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.gpu.support.QuadRender;
 	
 	public class ParticleSystem extends DisplayObject2D
 	{
@@ -94,15 +97,18 @@ package snjdck.g2d.particlesystem
 			const prevProgram:GpuProgram = context3d.program;
 			const prevBlendMode:BlendMode = context3d.blendMode;
 			
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.PARTICLE_2D);
+			context3d.blendMode = blendMode;
+			context3d.texture = mTexture;
+			
 			render.pushMatrix(transform);
-			render.drawParticleBegin(context3d, mTexture, blendMode);
-			for(var i:int=0; i<mNumParticles; ++i){
-				render.drawParticle(context3d, mParticles[i]);
-			}
+			ParticleRender.Instance.prepareVc(render, mTexture);
+			ParticleRender.Instance.drawParticles(context3d, mParticles, mNumParticles);
 			render.popMatrix();
 			
-			context3d.program = prevProgram;
 			context3d.blendMode = prevBlendMode;
+			context3d.program = prevProgram;
+			QuadRender.Instance.drawBegin(context3d);
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
