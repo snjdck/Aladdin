@@ -75,7 +75,8 @@ package flash.mvc.controller
 		
 		public function execCmd(cmdCls:Class):void
 		{
-			var cmd:Command = injector.newInstance(cmdCls);
+			var cmd:Command = new cmdCls();
+			injector.injectInto(cmd);
 			cmd.exec();
 		}
 	}

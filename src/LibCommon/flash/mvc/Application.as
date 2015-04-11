@@ -2,7 +2,7 @@ package flash.mvc
 {
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
-	import flash.mvc.service.ServiceInitializer;
+	//import flash.mvc.service.ServiceInitializer;
 	import flash.mvc.service.ServiceRegInfo;
 	import flash.reflection.getTypeName;
 	
@@ -14,12 +14,12 @@ package flash.mvc
 	{
 		private const injector:IInjector = new Injector();
 		private const moduleDict:Object = {};
-		private var serviceInitializer:ServiceInitializer;
+		//private var serviceInitializer:ServiceInitializer;
 		private var hasStartup:Boolean;
 		
 		public function Application()
 		{
-			serviceInitializer = new ServiceInitializer();
+			//serviceInitializer = new ServiceInitializer();
 			injector.mapValue(Application, this, null, false);
 			injector.mapValue(IInjector, injector, null, false);
 		}
@@ -51,7 +51,8 @@ package flash.mvc
 			if(hasStartup){
 				serviceRegInfo.regService(injector);
 			}else{
-				serviceInitializer.regService(serviceRegInfo);
+				//serviceInitializer.regService(serviceRegInfo);
+				injector.mapSingleton(serviceInterface, serviceClass, null, moduleInjector);
 			}
 		}
 		
@@ -77,14 +78,14 @@ package flash.mvc
 			for each(module in moduleDict){
 				module.initAllServices();
 			}
-			serviceInitializer.initialize(injector);
+			//serviceInitializer.initialize(injector);
 			for each(module in moduleDict){
 				module.initAllViews();
 			}
 			for each(module in moduleDict){
 				module.initAllControllers();
 			}
-			serviceInitializer = null;
+			//serviceInitializer = null;
 			for each(module in moduleDict){
 				module.onStartup();
 			}

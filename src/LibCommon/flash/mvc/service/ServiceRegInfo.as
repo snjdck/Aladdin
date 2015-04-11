@@ -16,7 +16,7 @@ package flash.mvc.service
 			this.serviceInterface = serviceInterface;
 			this.serviceClass = serviceClass;
 			this.moduleInjector = moduleInjector;
-			this.typesNeedToBeInjected = InjectionPoint.GetTypesNeedInject(serviceClass);
+			//this.typesNeedToBeInjected = InjectionPoint.GetTypesNeedInject(serviceClass);
 		}
 		
 		public function getTypesNeedToBeInjected():Array
@@ -26,7 +26,8 @@ package flash.mvc.service
 		
 		public function regService(appInjector:IInjector):void
 		{
-			var service:Object = moduleInjector.newInstance(serviceClass);
+			var service:Object = new serviceClass();
+			moduleInjector.injectInto(service);
 			appInjector.mapValue(serviceInterface, service, null, false);
 		}
 	}
