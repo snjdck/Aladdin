@@ -8,7 +8,6 @@ package snjdck.gpu.asset.helper
 		
 		static public const IMAGE:String = "image";
 		static public const IMAGE_DXT5:String = "image_dxt5";
-		static public const TEXTURE:String = "texture";
 		static public const BLUR:String = "blur";
 		static public const COLOR_MATRIX:String = "color_matrix";
 		

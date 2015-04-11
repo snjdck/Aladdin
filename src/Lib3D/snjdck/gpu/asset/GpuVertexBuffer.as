@@ -1,14 +1,13 @@
 package snjdck.gpu.asset
 {
-	import flash.display3D.Context3DBufferUsage;
-
 	final public class GpuVertexBuffer extends GpuAsset
 	{
 		private const uploadParams:Array = [];
 		
-		public function GpuVertexBuffer(numVertices:int, data32PerVertex:int, bufferUsage:String=Context3DBufferUsage.STATIC_DRAW)
+		public function GpuVertexBuffer(numVertices:int, data32PerVertex:int, isDynamic:Boolean=false)
 		{
-			super("createVertexBuffer", arguments);
+			var bufferUsage:String = isDynamic ? "dynamicDraw" : "staticDraw";
+			super("createVertexBuffer", [numVertices, data32PerVertex, bufferUsage]);
 			uploadParams[1] = 0;
 		}
 		

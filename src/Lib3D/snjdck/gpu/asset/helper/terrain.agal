@@ -1,0 +1,38 @@
+@terrain.cs
+vt0 = va0
+${objectImp.vs}
+
+ft0 = v.z - fc0
+ft0 = abs(ft0)
+ft0 /= fc0.x
+ft0 = sat(ft0)
+ft0 = fc1.x - ft0			#fc1.x == 1
+
+ft1.x = sge(v.z, fc0.x)
+ft1.y = slt(v.z, fc0.w)
+ft0.xw = ft0 * ft1.xxyy
+ft0.xw = ft0 - ft1.xxyy
+ft0.xw = ft0 + fc1.x		#fc1.x == 1
+
+ft1 = tex: v0, fs0
+ft2 = ft0.x * ft1
+ft1 = tex: v0, fs1
+ft2 += ft0.y * ft1
+ft1 = tex: v0, fs2
+ft2 = ft0.z * ft1
+ft1 = tex: v0, fs3
+ft2 = ft0.w * ft1
+
+
+@terrain_quad
+vt0 = va0
+${objectImp.vs}
+v0 = va0
+
+ft0 = tex: v0, fs0
+ft1 = tex: v0, fs1
+
+ft2 = ft1 - ft0
+ft2 *= fc0.x
+ft2 += ft0
+oc = ft2 * fc1

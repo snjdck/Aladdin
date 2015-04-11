@@ -13,11 +13,6 @@ package snjdck.gpu.asset
 			return result;
 		}
 		
-		static public function CreateGpuVertexBuffer2(numVertices:int, data32PerVertex:int, bufferUsage:String):GpuVertexBuffer
-		{
-			return new GpuVertexBuffer(numVertices, data32PerVertex, bufferUsage);
-		}
-		
 		static public function CreateGpuIndexBuffer(data:Vector.<uint>, numIndices:int=-1):GpuIndexBuffer
 		{
 			var result:GpuIndexBuffer = new GpuIndexBuffer(numIndices > 0 ? numIndices : data.length);

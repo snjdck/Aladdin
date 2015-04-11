@@ -2,6 +2,12 @@ package snjdck.gpu.asset.helper
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.filesystem.FileIO;
+//	import flash.filesystem.File;
+//	import flash.filesystem.FileMode;
+//	import flash.filesystem.FileStream;
+	import flash.http.loadMedia;
+	import flash.system.isAdobeAir;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
@@ -9,6 +15,8 @@ package snjdck.gpu.asset.helper
 	import dict.hasKey;
 	
 	import snjdck.fileformat.bmd.BmdParser;
+	import snjdck.fileformat.image.BmpParser;
+	import snjdck.fileformat.image.TgaParser;
 	import snjdck.fileformat.ogre.OgreMeshParser;
 	import snjdck.fileformat.ogre.OgreSkeletonParser;
 	import snjdck.g3d.mesh.Mesh;
@@ -60,6 +68,9 @@ package snjdck.gpu.asset.helper
 		
 		[Embed(source="particle.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_PARTICLE:Class;
+		
+		[Embed(source="terrain.agal", mimeType="application/octet-stream")]
+		static private const CLS_SHADER_DATA_TERRAIN:Class;
 		
 		static public const Instance:AssetMgr = new AssetMgr();
 		
@@ -124,7 +135,7 @@ package snjdck.gpu.asset.helper
 		private function regProgram(shaderName:String):void
 		{
 			var shaderCode:String = removeComments(shaderDict[shaderName]);
-			var index:int = shaderCode.search(/\r\n.*?(fs|ft|fc|oc|kil)/);
+			var index:int = shaderCode.search(/\n.*?(fs|ft|fc|oc|kil)/);
 			
 			var vertexProgram:Array = splitByLine(trim(shaderCode.slice(0, index)));
 			var fragmentProgram:Array = splitByLine(trim(shaderCode.slice(index)));
@@ -139,6 +150,7 @@ package snjdck.gpu.asset.helper
 				initShaderData(new CLS_SHADER_DATA_2D().toString());
 				initShaderData(new CLS_SHADER_DATA_3D().toString());
 				initShaderData(new CLS_SHADER_DATA_PARTICLE().toString());
+				initShaderData(new CLS_SHADER_DATA_TERRAIN().toString());
 			}
 			return programDict[name];
 		}
@@ -179,6 +191,8 @@ package snjdck.gpu.asset.helper
 			return hasKey(textureDict, name);
 		}
 		
+//		private var fs:FileStream = new FileStream();
+		
 		public function getTexture(name:String):IGpuTexture
 		{
 			if(!hasTexture(name)){
@@ -188,8 +202,12 @@ package snjdck.gpu.asset.helper
 				for each(var path:String in searchPathList){
 					file = new File(path + name);
 					if(file.exists){
-						var bin:ByteArray = FileIO.Read(file);
-						switch(file.extension){
+						var bin:ByteArray = new ByteArray();
+						fs.open(file, FileMode.READ);
+						fs.readBytes(bin);
+						fs.close();
+//						var bin:ByteArray = FileIO2.Read(file);
+						switch(FileIO.GetExt(file.name)){
 							case "tga":
 								regTexture(name, GpuAssetFactory.CreateGpuTexture2(new TgaParser(bin).decode()));
 								break;
@@ -256,6 +274,11 @@ package snjdck.gpu.asset.helper
 			fileDict[name] = OgreMeshParser.Parse(binCls);
 		}
 		
+		public function regMesh(name:String, mesh:Mesh):void
+		{
+			fileDict[name] = mesh;
+		}
+		
 		public function getMesh(name:String):Mesh
 		{
 			return fileDict[name];
@@ -272,7 +295,7 @@ package snjdck.gpu.asset.helper
 		
 		private function showError(text:String):void
 		{
-			trace("资源'" + text + "'未注册!");
+//			trace("资源'" + text + "'未注册!");
 			//throw new Error("资源'" + text + "'未注册!");
 		}
 	}

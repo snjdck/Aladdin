@@ -1,70 +1,56 @@
-#========================
-@image.raw
+@image.vs
 
-vt0 = va0
-vt0.xy *= vc3.xy			#frame
-vt0.xy += vc3.zw
+vt0 = va0.xxyy * vc5	#w,rw,h,rh
+vt1 = va1 * vc6			#lm,rm,tm,bm
+
+vt1 = vt1.xxzz + vt1.yyww
+vt1 += vt0
+vt1.yw = vt1 / vc5.yyww			#vt1 - x,u,y,v
+
+vt0 = vt1.xzyw * vc3			#frameMatrix & uvMatrix
+vt0 += vc4
+
+vt1.zw = vt0
+vt0.zw = va0
 
 vt1.x = dp4: vt0, vc1		#world matrix
 vt1.y = dp4: vt0, vc2
 
-vt0.xy = vt1.xy * vc0.xy	#screen matrix
+vt0.xy = vt1 * vc0			#screen matrix
 vt0.xy += vc0.zw
+
 op = vt0
+v0 = vt1.zw
 
-vt0.xy = va0 * vc4.xy			#uv matrix
-vt0.xy += vc4.zw
-v0 = vt0
-
-ft0 = tex: v0, fs0<2d,nearest,clamp,${0}>
-ft0 *= fc0
-ft0 += fc1
-ft1.x = ft0.w - fc27.x
-kil: ft1.x
-oc = ft0
-
+#========================
+@image.raw
+${image.vs}
+oc = tex: v0, fs0<2d,nearest,clamp,${0}>
 #========================
 @image<rgba>			${image.raw}
 @image_dxt5<dxt5>		${image.raw}
-
-﻿#========================
-@texture.vs
-
-vt0 = va0
-vt0.xy *= vc1.xy
-vt0.xy += vc1.zw
-vt0.xy *= vc0.xy
-vt0.xy += vc0.zw
-op = vt0
-v0 = va0
-
-@texture
-${texture.vs}
-oc = tex: v0, fs0<clamp,nearest>
 #========================
 @blur
 
-${texture.vs}
-v1 = va0 - vc2.zw
-v2 = va0 - vc2.xy
-v3 = va0 + vc2.xy
-v4 = va0 + vc2.zw
+${image.vs}
+v1 = vt1.zwzw - vc7.zwxy
+v2 = vt1.zwzw + vc7
 
 ft0 = tex: v0, fs0<clamp,linear>
 ft1 = ft0 * fc0.x
 ft0 = tex: v1, fs0<clamp,linear>
 ft1 += ft0 * fc0.z
+ft0 = tex: v1.zw, fs0<clamp,linear>
+ft1 += ft0 * fc0.y
 ft0 = tex: v2, fs0<clamp,linear>
 ft1 += ft0 * fc0.y
-ft0 = tex: v3, fs0<clamp,linear>
-ft1 += ft0 * fc0.y
-ft0 = tex: v4, fs0<clamp,linear>
+ft0 = tex: v2.zw, fs0<clamp,linear>
 oc = ft1 + ft0 * fc0.z
 
 #========================
 @color_matrix
 
-${texture.vs}
+${image.vs}
 ft0 = tex: v0, fs0<clamp,linear>
 ft0 = m44: ft0, fc0
 oc = ft0 + fc4

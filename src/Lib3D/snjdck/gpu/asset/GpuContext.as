@@ -15,6 +15,9 @@ package snjdck.gpu.asset
 	{
 		private var context3d:Context3D;
 		
+		private var _backBufferWidth:int;
+		private var _backBufferHeight:int;
+		
 		private var _blendMode:BlendMode;
 		
 		private var depthWriteMask:Boolean;
@@ -66,6 +69,8 @@ package snjdck.gpu.asset
 		public function configureBackBuffer(width:int, height:int, antiAlias:int):void
 		{
 			context3d.configureBackBuffer(width, height, antiAlias, true);
+			_backBufferWidth = width;
+			_backBufferHeight = height;
 		}
 		[Inline]
 		public function clear(red:Number=0.0, green:Number=0.0, blue:Number=0.0, alpha:Number=1.0, depth:Number=1.0, stencil:uint=0, mask:uint=0xFFFFFFFF):void
@@ -164,7 +169,7 @@ package snjdck.gpu.asset
 			context3d.setRenderToTexture(
 				_renderTarget.getRawGpuAsset(context3d),
 				_renderTarget.enableDepthAndStencil,
-				_renderTarget.antiAlias, 0, colorOutputIndex
+				_renderTarget.antiAlias, 0
 			);
 		}
 		
@@ -251,30 +256,30 @@ package snjdck.gpu.asset
 			return (vaUseInfo & (1 << slotIndex)) != 0;
 		}
 		[Inline]
-		public function clearDepthAndStencil():void
+		public function clearDepthAndStencil(depth:Number=1.0, stencil:uint=0):void
 		{
-			clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
+			clear(0.0, 0.0, 0.0, 1.0, depth, stencil, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
 		}
 		[Inline]
-		public function clearStencil():void
+		public function clearStencil(stencil:uint=0):void
 		{
-			clear(0.0, 0.0, 0.0, 1.0, 1.0, 0, Context3DClearMask.STENCIL);
+			clear(0.0, 0.0, 0.0, 1.0, 1.0, stencil, Context3DClearMask.STENCIL);
 		}
 		
 		public function get backBufferWidth():int
 		{
-			return context3d.backBufferWidth;
+			return _backBufferWidth;
 		}
 		
 		public function get backBufferHeight():int
 		{
-			return context3d.backBufferHeight;
+			return _backBufferHeight;
 		}
 		
 		public function get bufferWidth():int
 		{
 			if(null == _renderTarget){
-				return context3d.backBufferWidth;
+				return _backBufferWidth;
 			}
 			return _renderTarget.width;
 		}
@@ -282,7 +287,7 @@ package snjdck.gpu.asset
 		public function get bufferHeight():int
 		{
 			if(null == _renderTarget){
-				return context3d.backBufferHeight;
+				return _backBufferHeight;
 			}
 			return _renderTarget.height;
 		}
