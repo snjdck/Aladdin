@@ -8,7 +8,7 @@ package snjdck.g3d.render
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.AssetMgr;
 	
 	import string.replace;
 	

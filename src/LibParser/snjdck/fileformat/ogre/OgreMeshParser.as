@@ -19,7 +19,7 @@ package snjdck.fileformat.ogre
 	import snjdck.g3d.parser.DynamicGeometry;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.gpu.asset.GpuAssetFactory;
-	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.AssetMgr;
 	
 	import stream.readCString;
 	

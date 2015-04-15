@@ -9,7 +9,7 @@ package snjdck.g3d.terrain
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.quadtree.IQuadTreeNode;
 

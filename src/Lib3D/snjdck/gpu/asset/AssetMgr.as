@@ -1,4 +1,4 @@
-package snjdck.gpu.asset.helper
+package snjdck.gpu.asset
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -21,9 +21,6 @@ package snjdck.gpu.asset.helper
 	import snjdck.fileformat.ogre.OgreSkeletonParser;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.skeleton.Skeleton;
-	import snjdck.gpu.asset.GpuAssetFactory;
-	import snjdck.gpu.asset.GpuProgram;
-	import snjdck.gpu.asset.IGpuTexture;
 	
 	import string.has;
 	import string.removeComments;
@@ -60,16 +57,16 @@ package snjdck.gpu.asset.helper
 	 */
 	public class AssetMgr
 	{
-		[Embed(source="shader.agal", mimeType="application/octet-stream")]
+		[Embed(source="/snjdck/shader/shader.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_3D:Class;
 		
-		[Embed(source="shader2d.agal", mimeType="application/octet-stream")]
+		[Embed(source="/snjdck/shader/shader2d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_2D:Class;
 		
-		[Embed(source="particle.agal", mimeType="application/octet-stream")]
+		[Embed(source="/snjdck/shader/particle.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_PARTICLE:Class;
 		
-		[Embed(source="terrain.agal", mimeType="application/octet-stream")]
+		[Embed(source="/snjdck/shader/terrain.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_TERRAIN:Class;
 		
 		static public const Instance:AssetMgr = new AssetMgr();

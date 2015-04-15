@@ -8,7 +8,7 @@ package mu
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.obj3d.Entity;
-	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.AssetMgr;
 	
 	public class MuModelLoader extends Object3D
 	{

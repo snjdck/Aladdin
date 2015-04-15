@@ -22,7 +22,7 @@ package snjdck.g3d.terrain
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.geom.OBB2;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.quadtree.QuadTree;

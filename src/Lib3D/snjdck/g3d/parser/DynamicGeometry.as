@@ -8,7 +8,7 @@ package snjdck.g3d.parser
 	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 

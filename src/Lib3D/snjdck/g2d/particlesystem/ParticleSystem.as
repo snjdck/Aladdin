@@ -7,8 +7,8 @@ package snjdck.g2d.particlesystem
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.helper.AssetMgr;
-	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.shader.ShaderName;
 	import snjdck.gpu.support.QuadRender;
 	
 	public class ParticleSystem extends DisplayObject2D

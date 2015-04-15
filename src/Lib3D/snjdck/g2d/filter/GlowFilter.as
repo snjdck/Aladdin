@@ -5,8 +5,8 @@ package snjdck.g2d.filter
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.helper.AssetMgr;
-	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.shader.ShaderName;
 
 	public class GlowFilter extends FilterGroup2D
 	{

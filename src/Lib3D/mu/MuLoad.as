@@ -12,7 +12,7 @@ package mu
 	import snjdck.fileformat.image.TgaParser;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.gpu.asset.GpuAssetFactory;
-	import snjdck.gpu.asset.helper.AssetMgr;
+	import snjdck.gpu.asset.AssetMgr;
 
 	public class MuLoad
 	{

@@ -16,7 +16,7 @@ package snjdck.g3d.parser
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
-	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 	

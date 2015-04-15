@@ -12,8 +12,8 @@ package snjdck.g3d.render
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.helper.AssetMgr;
-	import snjdck.gpu.asset.helper.ShaderName;
+	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 
