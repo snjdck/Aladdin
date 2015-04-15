@@ -76,6 +76,9 @@ package snjdck.g3d.render
 		
 		public function render(render3d:Render3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
 		{
+			if(!collector.hasDrawUnits()){
+				return;
+			}
 			drawBegin(context3d);
 			sortDrawUnits(collector);
 			

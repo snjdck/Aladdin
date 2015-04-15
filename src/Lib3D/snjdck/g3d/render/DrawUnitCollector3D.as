@@ -3,6 +3,8 @@ package snjdck.g3d.render
 	import flash.geom.Matrix3D;
 	import flash.support.ObjectPool;
 	
+	import array.insert;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.matrixstack.MatrixStack3D;
@@ -22,6 +24,11 @@ package snjdck.g3d.render
 		ns_g3d var root:Object3D;
 		
 		public function DrawUnitCollector3D(){}
+		
+		public function hasDrawUnits():Boolean
+		{
+			return (opaqueList.length > 0) || (blendList.length > 0);
+		}
 		
 		public function clear():void
 		{
@@ -75,17 +82,19 @@ package snjdck.g3d.render
 		
 		public function addCamera(camera:CameraUnit3D):void
 		{
-			cameraList.push(camera);
+			var index:int = findCameraIndex(camera);
+			array.insert(cameraList, index, camera);
 		}
 		
-		public function drawBegin():void
+		private function findCameraIndex(camera:CameraUnit3D):int
 		{
-			cameraList.sort(__sortCamera);
-		}
-		
-		static private function __sortCamera(left:CameraUnit3D, right:CameraUnit3D):int
-		{
-			return left.depth - right.depth;
+			for(var i:int=cameraList.length; i>0; --i){
+				var testCamera:CameraUnit3D = cameraList[i-1];
+				if(camera.depth >= testCamera.depth){
+					return i;
+				}
+			}
+			return 0;
 		}
 	}
 }
