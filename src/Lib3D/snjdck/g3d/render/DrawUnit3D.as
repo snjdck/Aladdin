@@ -51,7 +51,7 @@ package snjdck.g3d.render
 			blendMode = BlendMode.NORMAL;
 		}
 		
-		public function draw(render3d:Render3D, camera3d:CameraUnit3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
+		public function draw(camera3d:CameraUnit3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram(shaderName);
 			context3d.texture = AssetMgr.Instance.getTexture(textureName);

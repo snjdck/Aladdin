@@ -23,7 +23,7 @@ package snjdck.g3d.render
 			collector.root = scene3d;
 			
 			for each(var camera3d:CameraUnit3D in collector.cameraList){
-				camera3d.render(this, collector, context3d);
+				camera3d.render(collector, context3d);
 			}
 		}
 		

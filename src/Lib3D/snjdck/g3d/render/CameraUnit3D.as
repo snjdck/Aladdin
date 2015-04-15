@@ -74,7 +74,7 @@ package snjdck.g3d.render
 			viewFrusum.updateAABB(_worldMatrix);
 		}
 		
-		public function render(render3d:Render3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
+		public function render(collector:DrawUnitCollector3D, context3d:GpuContext):void
 		{
 			if(!collector.hasDrawUnits()){
 				return;
@@ -91,7 +91,7 @@ package snjdck.g3d.render
 				for each(drawUnit in collector.opaqueList){
 					//todo judge whether the object is in camera's sight
 					if(viewFrusum.containsAABB(drawUnit.getAABB())){
-						drawUnit.draw(render3d, this, collector, context3d);
+						drawUnit.draw(this, collector, context3d);
 					}
 				}
 //				trace("culling",getTimer()-t1);
@@ -102,7 +102,7 @@ package snjdck.g3d.render
 				for each(drawUnit in collector.blendList){
 					//todo judge whether the object is in camera's sight
 					if(viewFrusum.containsAABB(drawUnit.getAABB())){
-						drawUnit.draw(render3d, this, collector, context3d);
+						drawUnit.draw(this, collector, context3d);
 					}
 				}
 			}
