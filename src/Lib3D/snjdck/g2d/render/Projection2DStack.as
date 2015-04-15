@@ -1,6 +1,5 @@
 package snjdck.g2d.render
 {
-
 	public class Projection2DStack
 	{
 		private var projectionStack:Vector.<Projection2D>;
