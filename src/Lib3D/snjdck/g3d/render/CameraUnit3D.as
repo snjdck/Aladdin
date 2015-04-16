@@ -122,7 +122,7 @@ package snjdck.g3d.render
 		{
 			projection.getViewRay(screenX, screenY, ray);
 			
-			ray.worldMatrix.copyFrom(_worldMatrixInvert);
+//			ray.worldMatrix.copyFrom(_worldMatrixInvert);
 			
 			matrix44.transformVector(_worldMatrix, ray.pos, ray.pos);
 			matrix44.transformVectorDelta(_worldMatrix, ray.dir, ray.dir);

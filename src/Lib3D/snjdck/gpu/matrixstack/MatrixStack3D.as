@@ -2,37 +2,22 @@ package snjdck.gpu.matrixstack
 {
 	import flash.geom.Matrix3D;
 
-	public class MatrixStack3D
+	public class MatrixStack3D extends MatrixStack3DBase
 	{
-		private var matrixStack:Vector.<Matrix3D>;
-		private var matrixIndex:int;
+		public function MatrixStack3D(){}
 		
-		public function MatrixStack3D()
+		override public function pushMatrix(matrix:Matrix3D):void
 		{
-			matrixStack = new Vector.<Matrix3D>();
-			matrixIndex = -1;
-		}
-		
-		public function pushMatrix(matrix:Matrix3D):void
-		{
-			++matrixIndex;
-			if(matrixStack.length <= matrixIndex){
-				matrixStack.push(new Matrix3D());
+			super.pushMatrix(matrix);
+			currentMatrix.copyFrom(matrix);
+			if(previousMatrix != null){
+				worldMatrix.append(previousMatrix);
 			}
-			worldMatrix.copyFrom(matrix);
-			if(matrixIndex > 0){
-				worldMatrix.append(matrixStack[matrixIndex-1]);
-			}
-		}
-		
-		public function popMatrix():void
-		{
-			--matrixIndex;
 		}
 		
 		public function get worldMatrix():Matrix3D
 		{
-			return matrixStack[matrixIndex];
+			return currentMatrix;
 		}
 	}
 }

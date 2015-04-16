@@ -2,13 +2,13 @@ package snjdck.g3d.pickup
 {
 	import flash.geom.Matrix3D;
 	
-	import matrix44.transformVector;
-	import matrix44.transformVectorDelta;
+	import snjdck.gpu.matrixstack.MatrixStack3DInv;
 
 	public class RayCastStack
 	{
 		private var rayStack:Vector.<Ray>;
 		private var rayIndex:int;
+		private var matrixStack:MatrixStack3DInv = new MatrixStack3DInv();
 		
 		public function RayCastStack()
 		{
@@ -25,26 +25,19 @@ package snjdck.g3d.pickup
 				rayStack.push(new Ray());
 			}
 			
-			ray.worldMatrix.copyFrom(matrix);
-			ray.worldMatrix.append(prevRay.worldMatrix);
-			
-			transform.copyFrom(matrix);
-			transform.invert();
-			
-			matrix44.transformVector(transform, prevRay.pos, ray.pos);
-			matrix44.transformVectorDelta(transform, prevRay.dir, ray.dir);
+			matrixStack.pushMatrix(matrix);
+			matrixStack.transformRay(prevRay, ray);
 		}
 		
 		public function popRay():void
 		{
 			--rayIndex;
+			matrixStack.popMatrix();
 		}
 		
 		public function get ray():Ray
 		{
 			return rayStack[rayIndex];
 		}
-		
-		static private const transform:Matrix3D = new Matrix3D();
 	}
 }
