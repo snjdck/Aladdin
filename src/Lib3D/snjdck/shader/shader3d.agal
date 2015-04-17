@@ -124,3 +124,10 @@ ${objectImp.agal}
 @object
 vt0 = va0
 ${objectImp.agal}
+
+@billboard
+vt0 = va0 + vc8.zzww	#将图片中心点从左上角改到正中
+vt0.xy = vt0 * vc8		#图片宽高
+${objectImp.vs}
+v0 = va0
+oc = tex: v0, fs0<clamp>

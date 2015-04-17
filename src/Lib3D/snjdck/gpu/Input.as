@@ -101,7 +101,7 @@ package snjdck.gpu
 				return;
 			}
 			
-			result.sort(__sort);
+//			result.sort(__sort);
 			var info:RayTestInfo = result[0];
 			
 			switch(evtType){

@@ -45,7 +45,9 @@ package snjdck.gpu.support
 		public function drawBegin(context3d:GpuContext):void
 		{
 			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_4);
+			if(context3d.isVaSlotInUse(1)){
+				context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_4);
+			}
 		}
 		
 		public function drawTriangles(context3d:GpuContext, useScale9Grid:Boolean=false):void

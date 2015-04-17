@@ -72,9 +72,9 @@ package snjdck.g3d.core
 				//				var t1:int = getTimer();
 				for each(drawUnit in collector.opaqueList){
 					//todo judge whether the object is in camera's sight
-					if(viewFrusum.containsAABB(drawUnit.getAABB())){
+//					if(viewFrusum.containsAABB(drawUnit.getAABB())){
 						drawUnit.draw(_worldMatrix, context3d);
-					}
+//					}
 				}
 				//				trace("culling",getTimer()-t1);
 			}
@@ -83,9 +83,9 @@ package snjdck.g3d.core
 				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
 				for each(drawUnit in collector.blendList){
 					//todo judge whether the object is in camera's sight
-					if(viewFrusum.containsAABB(drawUnit.getAABB())){
+//					if(viewFrusum.containsAABB(drawUnit.getAABB())){
 						drawUnit.draw(_worldMatrix, context3d);
-					}
+//					}
 				}
 			}
 		}

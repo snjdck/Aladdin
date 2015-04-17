@@ -7,6 +7,7 @@ package snjdck.shader
 	{
 		static public const OBJECT:String = "object";
 		static public const BONE_ANI:String = "bone_ani";
+		static public const BILLBOARD:String = "billboard";
 		
 		static public const IMAGE:String = "image";
 		static public const IMAGE_DXT5:String = "image_dxt5";

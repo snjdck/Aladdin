@@ -10,6 +10,11 @@ package snjdck.g2d.filter
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
 
+	/**
+	 * 
+	 * @author Alex
+	 * 当需要多个RenderTarget时,可以考虑申请一个大的RenderTarget,然后通过sessionRect来分割
+	 */	
 	internal class Filter2D implements IFilter2D
 	{
 		static private const bounds:Rectangle = new Rectangle();
