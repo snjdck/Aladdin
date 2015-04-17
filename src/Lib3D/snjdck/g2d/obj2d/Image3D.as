@@ -4,9 +4,9 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.render.Render3D;
 	import snjdck.g3d.support.Camera3DFactory;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -25,9 +25,7 @@ package snjdck.g2d.obj2d
 	{
 		private var camera3d:Camera3D;
 		private const scissorRect:Rectangle = new Rectangle();
-//		private var target:Object3D;
-		private var scene3d:Object3D = new Object3D();
-		private var r3d:Render3D = new Render3D();
+		private var scene3d:Scene3D = new Scene3D();
 		
 		public function Image3D(obj3d:Object3D, w:int, h:int)
 		{
@@ -37,13 +35,13 @@ package snjdck.g2d.obj2d
 			this.width = w;
 			this.height = h;
 			scene3d.addChild(obj3d);
-			scene3d.addChild(camera3d);
+			scene3d.camera = camera3d;
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
-			scene3d.onUpdate(timeElapsed);
+			scene3d.update(timeElapsed);
 		}
 		
 		override public function draw(render:Render2D, context3d:GpuContext):void
@@ -52,7 +50,7 @@ package snjdck.g2d.obj2d
 			context3d.setScissorRect(scissorRect);
 			camera3d.projection.offsetX =  (x - 0.5 * (context3d.bufferWidth - width)) / context3d.bufferWidth;
 			camera3d.projection.offsetY = -(y - 0.5 * (context3d.bufferHeight - height)) / context3d.bufferHeight;
-			r3d.draw(scene3d, context3d);
+			scene3d.draw(context3d);
 			context3d.setScissorRect(null);
 			
 			render.drawBegin(context3d);
