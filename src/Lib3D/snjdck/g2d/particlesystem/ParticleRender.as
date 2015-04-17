@@ -35,7 +35,7 @@ package snjdck.g2d.particlesystem
 		
 		public function prepareVc(render:Render2D, worldMatrix:Matrix, texture:IGpuTexture):void
 		{
-			render.copyWorldProjectData(constData);
+			render.copyProjectData(constData);
 			matrix33.toBuffer(worldMatrix, constData, 4);
 			constData[12] = texture.width;
 			constData[13] = texture.height;

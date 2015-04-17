@@ -8,20 +8,21 @@ package snjdck.g2d.render
 	
 	import matrix33.toBuffer;
 	
+	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.ITexture2D;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.AssetMgr;
-	import snjdck.shader.ShaderName;
-	import snjdck.gpu.matrixstack.MatrixStack2D;
 	import snjdck.gpu.support.QuadRender;
+	import snjdck.shader.ShaderName;
+	
+	use namespace ns_g2d;
 
 	final public class Render2D
 	{
 		private const projectionStack:Projection2DStack = new Projection2DStack();
-		private const matrixStack:MatrixStack2D = new MatrixStack2D();
 		private const constData:Vector.<Number> = new Vector.<Number>(28, true);
 		
 		public function Render2D(){}
@@ -51,16 +52,6 @@ package snjdck.g2d.render
 			projectionStack.popScreen();
 		}
 		
-		public function pushMatrix(matrix:Matrix):void
-		{
-			matrixStack.pushMatrix(matrix);
-		}
-		
-		public function popMatrix():void
-		{
-			matrixStack.popMatrix();
-		}
-		
 		public function drawBegin(context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
@@ -72,7 +63,8 @@ package snjdck.g2d.render
 		
 		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D):void
 		{
-			copyWorldProjectData(constData);
+			copyProjectData(constData);
+			matrix33.toBuffer(target.prevWorldMatrix, constData, 4);
 			
 			copyMatrix(texture.frameMatrix, 12);
 			copyMatrix(texture.uvMatrix, 14);
@@ -94,14 +86,14 @@ package snjdck.g2d.render
 		
 		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
 		{
+			copyProjectData(constData);
+			
 			constData[4] = constData[9] = 
 			constData[12] = constData[13] = constData[14] = constData[15] = 1;
 			constData[5] = constData[6] = constData[7] = 
 			constData[8] = constData[10] = constData[11] = 
 			constData[18] = constData[19] = 
 			constData[24] = constData[25] = constData[26] = constData[27] = 0;
-			
-			projectionStack.projection.upload(constData);
 			
 			constData[16] = textureX;
 			constData[17] = textureY;
@@ -114,10 +106,9 @@ package snjdck.g2d.render
 			QuadRender.Instance.drawTriangles(context3d);
 		}
 		
-		public function copyWorldProjectData(output:Vector.<Number>):void
+		public function copyProjectData(output:Vector.<Number>):void
 		{
 			projectionStack.projection.upload(output);
-			matrix33.toBuffer(matrixStack.worldMatrix, output, 4);
 		}
 		
 		private function copyMatrix(matrix:Matrix, toIndex:int):void
