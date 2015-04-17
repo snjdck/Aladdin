@@ -9,10 +9,10 @@ package snjdck.gpu
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.render.Render3D;
 	import snjdck.g3d.support.Camera3DFactory;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -20,16 +20,14 @@ package snjdck.gpu
 	
 	public class View3D implements ITicker
 	{
-		public const scene3d:Object3D = new Object3D();
+		public const scene3d:Scene3D = new Scene3D();
 		public const scene2d:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
-		public var camera3d:Camera3D;
 		
 		public var timeScale:Number = 1;
 		
 		private var hasInit:Boolean;
 		
-		public const render3d:Render3D = new Render3D();
 		private const render2d:Render2D = new Render2D();
 		
 		private var _enableErrorChecking:Boolean;
@@ -49,9 +47,9 @@ package snjdck.gpu
 			this._height = stage.stageHeight;
 			this.stage2d = stage;
 			
-			camera3d = Camera3DFactory.NewIsoCamera(_width, _height, 0, 5000);
+			scene3d.camera = Camera3DFactory.NewIsoCamera(_width, _height, 0, 5000);
 //			camera3d = Camera3DFactory.NewPerspectiveCamera(60, _width/_height, 500, 4000);
-			camera3d.zOffset = -1000;
+			scene3d.camera.zOffset = -1000;
 			/*
 			camera3d.viewport.width = 0.5;
 			camera3d.viewport.height = 0.5;
@@ -125,13 +123,13 @@ package snjdck.gpu
 		public function onTick(timeElapsed:int):void
 		{
 			var t1:int = getTimer();
-			scene3d.onUpdate(timeElapsed * timeScale);
+			scene3d.update(timeElapsed * timeScale);
 			var t2:int = getTimer();
 			scene2d.onUpdate(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
 			var t4:int = getTimer();
-			render3d.draw(scene3d, context3d);
+			scene3d.draw(context3d);
 			var t5:int = getTimer();
 			render2d.drawScene(scene2d, context3d);
 			context3d.present();

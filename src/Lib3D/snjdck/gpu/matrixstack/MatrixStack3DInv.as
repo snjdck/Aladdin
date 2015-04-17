@@ -1,11 +1,6 @@
 package snjdck.gpu.matrixstack
 {
 	import flash.geom.Matrix3D;
-	
-	import matrix44.transformVector;
-	import matrix44.transformVectorDelta;
-	
-	import snjdck.g3d.pickup.Ray;
 
 	public class MatrixStack3DInv extends MatrixStack3DBase
 	{
@@ -21,10 +16,9 @@ package snjdck.gpu.matrixstack
 			}
 		}
 		
-		public function transformRay(input:Ray, output:Ray):void
+		public function get worldMatrixInv():Matrix3D
 		{
-			matrix44.transformVector(currentMatrix, input.pos, output.pos);
-			matrix44.transformVectorDelta(currentMatrix, input.dir, output.dir);
+			return currentMatrix;
 		}
 	}
 }

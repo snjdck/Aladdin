@@ -100,7 +100,7 @@ package snjdck.gpu
 			var result:Vector.<RayTestInfo> = new Vector.<RayTestInfo>();
 			var view3d:View3D = App3D.app.view3d;
 			
-			view3d.render3d.pickup(view3d.screenX, view3d.screenY, result);
+			view3d.scene3d.pickup(view3d.screenX, view3d.screenY, result);
 			if(result.length < 1){
 				return;
 			}
