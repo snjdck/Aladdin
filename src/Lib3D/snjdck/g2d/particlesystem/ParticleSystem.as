@@ -1,15 +1,18 @@
 package snjdck.g2d.particlesystem
 {
+	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.GpuColor;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.AssetMgr;
-	import snjdck.shader.ShaderName;
 	import snjdck.gpu.support.QuadRender;
+	import snjdck.shader.ShaderName;
+	
+	use namespace ns_g2d;
 	
 	public class ParticleSystem extends DisplayObject2D
 	{
@@ -101,10 +104,10 @@ package snjdck.g2d.particlesystem
 			context3d.blendMode = blendMode;
 			context3d.texture = mTexture;
 			
-			render.pushMatrix(transform);
-			ParticleRender.Instance.prepareVc(render, mTexture);
+//			render.pushMatrix(transform);
+			ParticleRender.Instance.prepareVc(render, prevWorldMatrix, mTexture);
 			ParticleRender.Instance.drawParticles(context3d, mParticles, mNumParticles);
-			render.popMatrix();
+//			render.popMatrix();
 			
 			context3d.blendMode = prevBlendMode;
 			context3d.program = prevProgram;
@@ -113,6 +116,7 @@ package snjdck.g2d.particlesystem
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
+			super.onUpdate(timeElapsed);
 			const passedTime:Number = timeElapsed * 0.001;
 			
 			var particleIndex:int = 0;

@@ -1,6 +1,9 @@
 package snjdck.g2d.particlesystem
 {
 	import flash.display3D.Context3DVertexBufferFormat;
+	import flash.geom.Matrix;
+	
+	import matrix33.toBuffer;
 	
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
@@ -30,9 +33,10 @@ package snjdck.g2d.particlesystem
 			constData[15] = 0;
 		}
 		
-		public function prepareVc(render:Render2D, texture:IGpuTexture):void
+		public function prepareVc(render:Render2D, worldMatrix:Matrix, texture:IGpuTexture):void
 		{
 			render.copyWorldProjectData(constData);
+			matrix33.toBuffer(worldMatrix, constData, 4);
 			constData[12] = texture.width;
 			constData[13] = texture.height;
 		}
