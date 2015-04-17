@@ -38,9 +38,9 @@ package snjdck.g2d.obj2d
 		
 		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
-			render.pushMatrix(transform);
+//			render.pushMatrix(transform);
 			render.drawImage(context3d, this, texture);
-			render.popMatrix();
+//			render.popMatrix();
 		}
 	}
 }
