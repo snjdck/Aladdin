@@ -26,14 +26,6 @@ package snjdck.g2d.render
 		
 		public function Render2D(){}
 		
-		public function drawScene(scene:DisplayObject2D, context3d:GpuContext):void
-		{
-			pushScreen(context3d.bufferWidth, context3d.bufferHeight);
-			drawBegin(context3d);
-			scene.draw(this, context3d);
-			popScreen();
-		}
-		
 		public function offset(dx:Number=0, dy:Number=0):void
 		{
 			projectionStack.projection.offset(dx, dy);
