@@ -73,7 +73,7 @@ package snjdck.g3d.core
 				for each(drawUnit in collector.opaqueList){
 					//todo judge whether the object is in camera's sight
 					if(viewFrusum.containsAABB(drawUnit.getAABB())){
-						drawUnit.draw(this, collector, context3d);
+						drawUnit.draw(_worldMatrix, context3d);
 					}
 				}
 				//				trace("culling",getTimer()-t1);
@@ -84,7 +84,7 @@ package snjdck.g3d.core
 				for each(drawUnit in collector.blendList){
 					//todo judge whether the object is in camera's sight
 					if(viewFrusum.containsAABB(drawUnit.getAABB())){
-						drawUnit.draw(this, collector, context3d);
+						drawUnit.draw(_worldMatrix, context3d);
 					}
 				}
 			}

@@ -46,7 +46,7 @@ package snjdck.g3d.obj3d
 			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
-				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
+				var drawUnit:DrawUnit3D = subMesh.drawUnit;
 				drawUnit.blendMode = blendMode;
 				drawUnit.worldMatrix.copyFrom(collector.worldMatrix);
 				

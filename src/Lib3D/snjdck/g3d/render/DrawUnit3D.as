@@ -22,9 +22,6 @@ package snjdck.g3d.render
 		static public const WORLD_MATRIX_OFFSET:int = 5;
 		static public const BONE_MATRIX_OFFSET:int = 8;
 		
-		static private const MAX_VA_COUNT:uint = 8;
-		static private const MAX_FS_COUNT:uint = 8;
-		
 		public var layer:uint;
 		
 		
@@ -52,7 +49,7 @@ package snjdck.g3d.render
 			blendMode = BlendMode.NORMAL;
 		}
 		
-		public function draw(camera3d:Camera3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
+		public function draw(cameraWorldMatrix:Matrix3D, context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram(shaderName);
 			context3d.texture = AssetMgr.Instance.getTexture(textureName);

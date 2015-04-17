@@ -1,9 +1,10 @@
 package snjdck.g3d.mesh
 {
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.parser.IGeometry;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.pickup.RayTestInfo;
-	import snjdck.g3d.parser.IGeometry;
+	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	
 	use namespace ns_g3d;
@@ -12,6 +13,8 @@ package snjdck.g3d.mesh
 	{
 		public var materialName:String;
 		public var geometry:IGeometry;
+		
+		public const drawUnit:DrawUnit3D = new DrawUnit3D();
 		
 		public function SubMesh()
 		{

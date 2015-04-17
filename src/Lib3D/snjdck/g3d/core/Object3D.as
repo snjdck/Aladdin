@@ -28,7 +28,7 @@ package snjdck.g3d.core
 		
 		ns_g3d const prevWorldMatrix:Matrix3D = new Matrix3D();
 		
-		public var width:Number, height:Number, length:Number;
+//		public var width:Number, height:Number, length:Number;
 		public var layer:uint;
 		public var visible:Boolean;
 		public var name:String;
