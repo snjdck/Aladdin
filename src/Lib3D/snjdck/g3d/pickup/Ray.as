@@ -5,19 +5,38 @@ package snjdck.g3d.pickup
 	
 	import math.nearEquals;
 	
+	import matrix44.transformVector;
+	import matrix44.transformVectorDelta;
+	
 	import vec3.crossProd;
 	import vec3.subtract;
 	
 	/**
 	 * todo test bound volume, bound sphere
 	 */	
-	public class Ray
+	final public class Ray
 	{
 		public const pos:Vector3D = new Vector3D();
 		public const dir:Vector3D = new Vector3D();
-//		public const worldMatrix:Matrix3D = new Matrix3D();
 		
 		public function Ray(){}
+		
+		[Inline]
+		public function transform(matrix:Matrix3D, output:Ray):void
+		{
+			transformVector(matrix, pos, output.pos);
+			transformVectorDelta(matrix, dir, output.dir);
+		}
+		
+		[Inline]
+		public function transformInv(matrix:Matrix3D, output:Ray):void
+		{
+			tempMatrix.copyFrom(matrix);
+			tempMatrix.invert();
+			transform(tempMatrix, output);
+		}
+		
+		static private const tempMatrix:Matrix3D = new Matrix3D();
 		
 		public function getPt(t:Number):Vector3D
 		{
