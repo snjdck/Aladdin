@@ -3,10 +3,7 @@ package snjdck.g3d.render
 	import flash.geom.Matrix3D;
 	import flash.support.ObjectPool;
 	
-	import array.insert;
-	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.matrixstack.MatrixStack3D;
 	
 	use namespace ns_g3d;
