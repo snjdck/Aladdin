@@ -40,13 +40,10 @@ package snjdck.g3d.obj3d
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			super.collectDrawUnit(collector);
-			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
-			
-			if(mesh.subMeshes.length <= 0){
-				return;
-			}
 			
 			collector.pushMatrix(transform);
+			prevWorldMatrix.copyFrom(collector.worldMatrix);
+			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
 				var drawUnit:DrawUnit3D = collector.getFreeDrawUnit();
