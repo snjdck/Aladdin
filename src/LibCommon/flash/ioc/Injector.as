@@ -36,6 +36,9 @@ package flash.ioc
 		
 		public function mapValue(keyCls:Class, value:Object, id:String=null, needInject:Boolean=true, realInjector:IInjector=null):void
 		{
+			if(value != null){
+				assert(value is keyCls, "type don't match!");
+			}
 			var rule:IInjectionType = new InjectionTypeValue(value, needInject, realInjector || this);
 			mapRule(keyCls, rule, id);
 		}
