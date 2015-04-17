@@ -19,9 +19,6 @@ package snjdck.g3d.render
 		
 		ns_g3d const opaqueList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
 		ns_g3d const blendList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
-		ns_g3d const cameraList:Vector.<CameraUnit3D> = new Vector.<CameraUnit3D>();
-		
-		ns_g3d var root:Object3D;
 		
 		public function DrawUnitCollector3D(){}
 		
@@ -38,8 +35,6 @@ package snjdck.g3d.render
 			while(blendList.length > 0){
 				recoverDrawUnit(blendList.pop());
 			}
-			cameraList.length = 0;
-			root = null;
 		}
 		
 		private function recoverDrawUnit(drawUnit:DrawUnit3D):void
@@ -79,7 +74,7 @@ package snjdck.g3d.render
 		{
 			return matrixStack.worldMatrix;
 		}
-		
+		/*
 		public function addCamera(camera:CameraUnit3D):void
 		{
 			var index:int = findCameraIndex(camera);
@@ -96,5 +91,6 @@ package snjdck.g3d.render
 			}
 			return 0;
 		}
+		*/
 	}
 }

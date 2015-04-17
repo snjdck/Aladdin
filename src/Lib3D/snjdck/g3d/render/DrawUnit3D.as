@@ -4,11 +4,12 @@ package snjdck.g3d.render
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.parser.IGeometry;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.gpu.asset.GpuContext;
 	
 	import string.replace;
 	
@@ -51,7 +52,7 @@ package snjdck.g3d.render
 			blendMode = BlendMode.NORMAL;
 		}
 		
-		public function draw(camera3d:CameraUnit3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
+		public function draw(camera3d:Camera3D, collector:DrawUnitCollector3D, context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram(shaderName);
 			context3d.texture = AssetMgr.Instance.getTexture(textureName);
