@@ -63,7 +63,7 @@ package snjdck.gpu.asset
 		[Embed(source="/snjdck/shader/shader2d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_2D:Class;
 		
-		[Embed(source="/snjdck/shader/particle.agal", mimeType="application/octet-stream")]
+		[Embed(source="/snjdck/shader/particle2d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_PARTICLE:Class;
 		
 		[Embed(source="/snjdck/shader/terrain.agal", mimeType="application/octet-stream")]
