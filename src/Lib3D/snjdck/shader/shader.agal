@@ -130,39 +130,3 @@ ${objectImp.vs}
 vt0.xy = vt0 * vc8 
 v0 = vt0 + vc8.zw
 oc = tex: v0, fs0<2d,clamp>
-#===============================================================
-@particle
-vt6.x = vc12.x - va1.w * va2.w	#当前时间 - startTime, va1.w表示粒子是总粒子中的第几个
-vt6.y = vt6.x / va2.w	#t / lifetime
-vt6.y = frc: vt6.y		#当前时间在生命周期中的比值
-vt6.x = vt6.y * va2.w	#取余数后的时间
-
-vt1 = vc12.z * va3 * vt6.x * vt6.x	#0.5 * a * t * t
-
-vt0.xyz = va1 + vt1 + va2 * vt6.x	#va1=粒子中心点位置,加上v0 * t, 得到最终位置
-vt0.w = vc12.y			#设置w为1
-
-vt0 = m44: vt0, vc4		#世界矩阵,结果为粒子中心点坐标
-
-vt1.z = va0.z + va0.w * vt6.y	#粒子尺寸
-vt1.xy = va0.xy * vt1.z	#顶点偏移
-
-vt1.z = vc12.z			#设置z为0
-vt1.z += vc12.w
-
-vt1.xyz = m33: vt1, vc8	#面向相机
-
-vt0.xyz += vt1
-
-op = m44: vt0, vc0		#相机投影矩阵
-
-#纹理
-#x:[-1, 1] - [0, 1] =>  0.5 * x + 0.5
-#y:[1, -1] - [0, 1] => -0.5 * y + 0.5
-
-v0 = va0 * vc12.zw + vc12.zz	#uv
-v1 = va4 + va5 * vt6.y			#color
-			
-ft0 = tex: v0, fs0<>
-ft0.xyz *= v1
-oc = ft0
