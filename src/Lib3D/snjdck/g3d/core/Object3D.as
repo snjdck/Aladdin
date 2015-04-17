@@ -40,11 +40,18 @@ package snjdck.g3d.core
 		
 		public const mouseDownSignal:Signal = new Signal(RayTestInfo);
 		
+		private const renderableList:Vector.<IRenderable> = new Vector.<IRenderable>();
+		
 		public function Object3D()
 		{
 			visible = true;
 			mouseEnabled = true;
 			mouseChildren = true;
+		}
+		
+		public function addRenderable(renderable:IRenderable):void
+		{
+			renderableList.push(renderable);
 		}
 
 		public function get nextSibling():Object3D
@@ -80,6 +87,9 @@ package snjdck.g3d.core
 		
 		public function onUpdate(timeElapsed:int):void
 		{
+			for each(var renderable:IRenderable in renderableList){
+				renderable.onUpdate(timeElapsed);
+			}
 			/*
 			prevWorldMatrix.copyFrom(transform);
 			if(parent != null){
@@ -93,10 +103,13 @@ package snjdck.g3d.core
 		
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-			if(null == firstChild){
+			if(null == firstChild && renderableList.length <= 0){
 				return;
 			}
 			collector.pushMatrix(transform);
+			for each(var renderable:IRenderable in renderableList){
+				renderable.collectDrawUnit(collector);
+			}
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.hasVisibleArea()){
 					child.collectDrawUnit(collector);
