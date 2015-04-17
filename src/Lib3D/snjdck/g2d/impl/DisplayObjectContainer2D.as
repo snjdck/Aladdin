@@ -1,13 +1,15 @@
 package snjdck.g2d.impl
 {
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	import array.delAt;
 	import array.insert;
 	
+	import matrix33.transformCoordsInv;
+	
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.matrixstack.MatrixStack2DInv;
 	
 	public class DisplayObjectContainer2D extends DisplayObject2D
 	{
@@ -155,25 +157,25 @@ package snjdck.g2d.impl
 			render.popMatrix();
 		}
 		
-		override public function pickup(matrixStack:MatrixStack2DInv, px:Number, py:Number):DisplayObject2D
+		override public function pickup(px:Number, py:Number):DisplayObject2D
 		{
 			if(!mouseChildren || numChildren <= 0){
 				return null;
 			}
 			var result:DisplayObject2D = null;
-			matrixStack.pushMatrix(transform);
+			transformCoordsInv(transform, px, py, tempPt);
 			for(var i:int=_childList.length-1; i>=0; --i){
 				var child:DisplayObject2D = _childList[i];
 				if(!(child.hasVisibleArea() && child.mouseEnabled)){
 					continue;
 				}
-				var target:DisplayObject2D = child.pickup(matrixStack, px, py);
+				var target:DisplayObject2D = child.pickup(tempPt.x, tempPt.y);
 				if(target != null){
 					result = target;
 					break;
 				}
 			}
-			matrixStack.popMatrix();
+			
 			return result;
 		}
 		
@@ -230,5 +232,7 @@ package snjdck.g2d.impl
 			}
 			result.setTo(minX, minY, maxX-minX, maxY-minY);
 		}
+		
+		private const tempPt:Point = new Point();
 	}
 }
