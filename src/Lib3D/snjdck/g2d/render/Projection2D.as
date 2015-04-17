@@ -1,6 +1,6 @@
 package snjdck.g2d.render
 {
-	final public class Projection2D
+	internal class Projection2D
 	{
 		private var a:Number = 0;
 		private var b:Number = 0;
