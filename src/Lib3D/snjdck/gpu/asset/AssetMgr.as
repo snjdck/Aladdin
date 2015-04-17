@@ -57,7 +57,7 @@ package snjdck.gpu.asset
 	 */
 	public class AssetMgr
 	{
-		[Embed(source="/snjdck/shader/shader.agal", mimeType="application/octet-stream")]
+		[Embed(source="/snjdck/shader/shader3d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_3D:Class;
 		
 		[Embed(source="/snjdck/shader/shader2d.agal", mimeType="application/octet-stream")]

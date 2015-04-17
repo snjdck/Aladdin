@@ -1,10 +1,12 @@
 package snjdck.shader
 {
+	/**
+	 * 投影纹理,就是将最后的顶点坐标映射到[0,1]的uv坐标,再传递给v0
+	 */	
 	public class ShaderName
 	{
 		static public const OBJECT:String = "object";
 		static public const BONE_ANI:String = "bone_ani";
-		static public const PROJECT_TEXTURE:String = "project_texture";
 		
 		static public const IMAGE:String = "image";
 		static public const IMAGE_DXT5:String = "image_dxt5";

@@ -123,10 +123,3 @@ ${objectImp.agal}
 @object
 vt0 = va0
 ${objectImp.agal}
-
-@project_texture
-vt0 = va0
-${objectImp.vs}
-vt0.xy = vt0 * vc8 
-v0 = vt0 + vc8.zw
-oc = tex: v0, fs0<2d,clamp>
