@@ -6,7 +6,6 @@ package snjdck.g3d.core
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayCastStack;
 	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
@@ -26,6 +25,8 @@ package snjdck.g3d.core
 		
 		private var isLocalMatrixDirty:Boolean;
 		ns_g3d const localMatrix:Matrix3D = new Matrix3D();
+		
+		ns_g3d const prevWorldMatrix:Matrix3D = new Matrix3D();
 		
 		public var width:Number, height:Number, length:Number;
 		public var layer:uint;
@@ -79,6 +80,12 @@ package snjdck.g3d.core
 		
 		public function onUpdate(timeElapsed:int):void
 		{
+			/*
+			prevWorldMatrix.copyFrom(transform);
+			if(parent != null){
+				prevWorldMatrix.append(parent.prevWorldMatrix);
+			}
+			*/
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				child.onUpdate(timeElapsed);
 			}
@@ -98,25 +105,23 @@ package snjdck.g3d.core
 			collector.popMatrix();
 		}
 		
-		final public function hitTest(rayCastStack:RayCastStack, result:Vector.<RayTestInfo>):void
+		final public function hitTest(ray:Ray, result:Vector.<RayTestInfo>):void
 		{
 			if(!(mouseEnabled || mouseChildren)){
 				return;
 			}
-			rayCastStack.pushRay(transform);
+			ray.transformInv(transform, tempRay);
 			if(mouseEnabled){
-				hitTestImpl(rayCastStack.ray, result);
+				hitTestImpl(tempRay, result);
 			}
 			if(false == mouseChildren){
-				rayCastStack.popRay();
 				return;
 			}
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.hasVisibleArea()){
-					child.hitTest(rayCastStack, result);
+					child.hitTest(tempRay, result);
 				}
 			}
-			rayCastStack.popRay();
 		}
 		
 		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void{}
@@ -429,6 +434,8 @@ package snjdck.g3d.core
 		{
 			translateLocal(Vector3D.X_AXIS, distance);
 		}
+		
+		private const tempRay:Ray = new Ray();
 	}
 }
 
