@@ -143,7 +143,7 @@ package snjdck.g2d.impl
 			if(_childList.length <= 0){
 				return;
 			}
-			render.pushMatrix(transform);
+//			render.pushMatrix(transform);
 			for each(var child:DisplayObject2D in _childList){
 				if(!child.hasVisibleArea()){
 					continue;
@@ -154,7 +154,7 @@ package snjdck.g2d.impl
 					child.draw(render, context3d);
 				}
 			}
-			render.popMatrix();
+//			render.popMatrix();
 		}
 		
 		override public function pickup(px:Number, py:Number):DisplayObject2D
@@ -181,6 +181,7 @@ package snjdck.g2d.impl
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
+			super.onUpdate(timeElapsed);
 			for each(var child:DisplayObject2D in _childList){
 				child.onUpdate(timeElapsed);
 			}

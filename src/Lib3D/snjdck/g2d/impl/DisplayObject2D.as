@@ -10,11 +10,14 @@ package snjdck.g2d.impl
 	import matrix33.transformCoords;
 	import matrix33.transformCoordsInv;
 	
+	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
 	
 	import stdlib.constant.Unit;
+	
+	use namespace ns_g2d;
 
 	public class DisplayObject2D
 	{
@@ -36,6 +39,8 @@ package snjdck.g2d.impl
 		
 		private var isLocalMatrixDirty:Boolean;
 		private const _localMatrix:Matrix = new Matrix();
+		
+		ns_g2d const prevWorldMatrix:Matrix = new Matrix();
 		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
@@ -66,7 +71,14 @@ package snjdck.g2d.impl
 			return _localMatrix;
 		}
 		
-		virtual public function onUpdate(timeElapsed:int):void{}
+		virtual public function onUpdate(timeElapsed:int):void
+		{
+			prevWorldMatrix.copyFrom(transform);
+			if(parent != null){
+				prevWorldMatrix.concat(parent.prevWorldMatrix);
+			}
+		}
+		
 		virtual public function draw(render:Render2D, context3d:GpuContext):void{}
 		
 		virtual public function pickup(px:Number, py:Number):DisplayObject2D
