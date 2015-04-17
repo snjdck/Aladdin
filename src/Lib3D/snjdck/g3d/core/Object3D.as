@@ -5,6 +5,7 @@ package snjdck.g3d.core
 	import flash.signals.Signal;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
@@ -137,7 +138,15 @@ package snjdck.g3d.core
 			}
 		}
 		
-		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void{}
+		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void
+		{
+			var rayTestInfo:RayTestInfo = new RayTestInfo();
+			rayTestInfo.target = this;
+			
+			for each(var renderable:IRenderable in renderableList){
+				renderable.hitTest(localRay);
+			}
+		}
 		
 		public function hasVisibleArea():Boolean
 		{
