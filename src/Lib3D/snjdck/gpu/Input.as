@@ -71,10 +71,10 @@ package snjdck.gpu
 		private function boradcast2d(evtType:String):Boolean
 		{
 			var result:Boolean = true;
-			var target:DisplayObject2D = App3D.app.view3d.scene2d.pickup(mouseLocation.x, mouseLocation.y);
+			var target:DisplayObject2D = App3D.app.view3d.scene2d.root.pickup(mouseLocation.x, mouseLocation.y);
 			
 			if(null == target){
-				target = App3D.app.view3d.scene2d;
+				target = App3D.app.view3d.scene2d.root;
 				result = false;
 			}
 			while(target != null && target.mouseEnabled){

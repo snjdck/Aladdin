@@ -3,16 +3,12 @@ package snjdck.gpu
 	import flash.display.Stage;
 	import flash.display.Stage3D;
 	import flash.events.Event;
-	import flash.utils.getTimer;
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
-	import snjdck.g2d.impl.DisplayObjectContainer2D;
-	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.Scene2D;
 	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.support.Camera3DFactory;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -21,14 +17,11 @@ package snjdck.gpu
 	public class View3D implements ITicker
 	{
 		public const scene3d:Scene3D = new Scene3D();
-		public const scene2d:DisplayObjectContainer2D = new DisplayObjectContainer2D();
-		
+		public const scene2d:Scene2D = new Scene2D();
 		
 		public var timeScale:Number = 1;
 		
 		private var hasInit:Boolean;
-		
-		private const render2d:Render2D = new Render2D();
 		
 		private var _enableErrorChecking:Boolean;
 		
@@ -122,19 +115,15 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			var t1:int = getTimer();
 			scene3d.update(timeElapsed * timeScale);
-			var t2:int = getTimer();
-			scene2d.onUpdate(timeElapsed);
+			scene2d.update(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			var t4:int = getTimer();
-			scene3d.draw(context3d);
-			var t5:int = getTimer();
-			render2d.drawScene(scene2d, context3d);
-			context3d.present();
 			
-			//trace("=========================\n", t2-t1, t5-t4);
+			scene3d.draw(context3d);
+			scene2d.draw(context3d);
+			
+			context3d.present();
 		}
 		
 		public function set enableErrorChecking(value:Boolean):void
