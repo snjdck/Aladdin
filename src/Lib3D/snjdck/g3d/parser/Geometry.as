@@ -9,7 +9,6 @@ package snjdck.g3d.parser
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
@@ -111,8 +110,9 @@ package snjdck.g3d.parser
 		}
 		*/
 		
-		protected function testRayImp(ray:Ray, result:RayTestInfo, vertexBuffer:Vector.<Number>):Boolean
+		protected function testRayImp(ray:Ray, mouseLocation:Vector3D, vertexBuffer:Vector.<Number>):Boolean
 		{
+			/*
 			var v0:Vector3D = new Vector3D();
 			var v1:Vector3D = new Vector3D();
 			var v2:Vector3D = new Vector3D();
@@ -126,13 +126,13 @@ package snjdck.g3d.parser
 					return true;
 				}
 			}
-			
+			*/
 			return false;
 		}
 		
-		public function testRay(ray:Ray, result:RayTestInfo, boneStateGroup:BoneStateGroup):Boolean
+		public function testRay(ray:Ray, mouseLocation:Vector3D, boneStateGroup:BoneStateGroup):Boolean
 		{
-			return testRayImp(ray, result, posData);
+			return testRayImp(ray, mouseLocation, posData);
 		}
 		
 		public function getVertex(vertexIndex:uint, result:Vector3D, buffer:Vector.<Number>=null):void

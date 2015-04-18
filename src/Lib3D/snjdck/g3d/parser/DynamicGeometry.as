@@ -1,11 +1,11 @@
 package snjdck.g3d.parser
 {
 	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.shader.ShaderName;
@@ -36,10 +36,10 @@ package snjdck.g3d.parser
 			return boneData.numBones;
 		}
 		
-		override public function testRay(ray:Ray, result:RayTestInfo, boneStateGroup:BoneStateGroup):Boolean
+		override public function testRay(ray:Ray, mouseLocation:Vector3D, boneStateGroup:BoneStateGroup):Boolean
 		{
 //			syncTempVertexData(boneStateGroup);
-			return testRayImp(ray, result, tempVertexData);
+			return testRayImp(ray, mouseLocation, tempVertexData);
 		}
 		/*
 		private function syncTempVertexData(boneStateGroup:BoneStateGroup):void

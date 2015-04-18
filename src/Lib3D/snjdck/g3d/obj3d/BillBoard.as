@@ -29,7 +29,6 @@ package snjdck.g3d.obj3d
 			return true;
 		}
 		
-		
 		public function onUpdate(timeElapsed:int):void
 		{
 		}

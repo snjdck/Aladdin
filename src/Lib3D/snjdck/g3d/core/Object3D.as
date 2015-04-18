@@ -5,9 +5,7 @@ package snjdck.g3d.core
 	import flash.signals.Signal;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.BlendMode;
 	
@@ -39,7 +37,8 @@ package snjdck.g3d.core
 		
 		private var _blendMode:BlendMode;
 		
-		public const mouseDownSignal:Signal = new Signal(RayTestInfo);
+		public const mouseDownSignal:Signal = new Signal();
+		public const mouseLocation:Vector3D = new Vector3D();
 		
 		private const renderableList:Vector.<IRenderable> = new Vector.<IRenderable>();
 		
@@ -119,7 +118,7 @@ package snjdck.g3d.core
 			collector.popMatrix();
 		}
 		
-		final public function hitTest(ray:Ray, result:Vector.<RayTestInfo>):void
+		final public function hitTest(ray:Ray, result:Vector.<Object3D>):void
 		{
 			if(!(mouseEnabled || mouseChildren)){
 				return;
@@ -138,13 +137,12 @@ package snjdck.g3d.core
 			}
 		}
 		
-		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void
+		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<Object3D>):void
 		{
-			var rayTestInfo:RayTestInfo = new RayTestInfo();
-			rayTestInfo.target = this;
-			
 			for each(var renderable:IRenderable in renderableList){
-				renderable.hitTest(localRay);
+				if(renderable.hitTest(localRay)){
+					result.push(this);
+				}
 			}
 		}
 		

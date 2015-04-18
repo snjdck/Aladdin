@@ -1,9 +1,10 @@
 package snjdck.g3d.mesh
 {
+	import flash.geom.Vector3D;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.parser.IGeometry;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	
@@ -25,9 +26,9 @@ package snjdck.g3d.mesh
 			trace(this, "骨骼数量:", geometry.numBones, "材质名称:", materialName);
 		}
 		
-		final ns_g3d function testRay(ray:Ray, boneStateGroup:BoneStateGroup, result:RayTestInfo):Boolean
+		final ns_g3d function testRay(ray:Ray, boneStateGroup:BoneStateGroup, mouseLocation:Vector3D):Boolean
 		{
-			return geometry.testRay(ray, result, boneStateGroup);
+			return geometry.testRay(ray, mouseLocation, boneStateGroup);
 		}
 	}
 }

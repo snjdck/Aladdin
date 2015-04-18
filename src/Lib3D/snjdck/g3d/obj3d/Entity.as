@@ -6,7 +6,6 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.skeleton.Bone;
@@ -62,14 +61,11 @@ package snjdck.g3d.obj3d
 			collector.popMatrix();
 		}
 		
-		override protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void
+		override protected function hitTestImpl(localRay:Ray, result:Vector.<Object3D>):void
 		{
-			var rayTestInfo:RayTestInfo = new RayTestInfo();
-			rayTestInfo.target = this;
-			
 			for each(var subMesh:SubMesh in mesh.subMeshes){
-				if(subMesh.testRay(localRay, boneStateGroup, rayTestInfo)){
-					result.push(rayTestInfo);
+				if(subMesh.testRay(localRay, boneStateGroup, mouseLocation)){
+					result.push(this);
 					return;
 				}
 			}

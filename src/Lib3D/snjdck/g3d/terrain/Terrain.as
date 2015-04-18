@@ -17,12 +17,11 @@ package snjdck.g3d.terrain
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.geom.OBB2;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.quadtree.QuadTree;
@@ -183,18 +182,14 @@ package snjdck.g3d.terrain
 		
 		private const fcConst:Vector.<Number> = new Vector.<Number>(8);
 		
-		override protected function hitTestImpl(localRay:Ray, result:Vector.<RayTestInfo>):void
+		override protected function hitTestImpl(localRay:Ray, result:Vector.<Object3D>):void
 		{
-			var rayTestInfo:RayTestInfo = new RayTestInfo();
-			rayTestInfo.target = this;
-			
 			var t:Number = -localRay.pos.z / localRay.dir.z;
 			var pos:Vector3D = localRay.getPt(t);
 			
 			if(mapSize.contains(pos.x, pos.y)){
-				rayTestInfo.localPos = pos;
-				rayTestInfo.globalPos = pos;
-				result.push(rayTestInfo);
+				mouseLocation.copyFrom(pos);
+				result.push(this);
 			}
 		}
 		

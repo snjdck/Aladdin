@@ -51,6 +51,7 @@ package snjdck.g3d.pickup
 		 * result.y = v
 		 * result.z = t
 		 */
+		/*
 		public function testTriangle(v0:Vector3D, v1:Vector3D, v2:Vector3D, result:RayTestInfo):Boolean
 		{
 			vec3.subtract(v1, v0, e1);
@@ -101,5 +102,6 @@ package snjdck.g3d.pickup
 		static private const p:Vector3D = new Vector3D();
 		static private const t:Vector3D = new Vector3D();
 		static private const q:Vector3D = new Vector3D();
+		*/
 	}
 }

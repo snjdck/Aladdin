@@ -5,7 +5,6 @@ package snjdck.g3d
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.pickup.RayTestInfo;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
@@ -36,7 +35,7 @@ package snjdck.g3d
 			camera.render(collector, context3d);
 		}
 		
-		public function pickup(screenX:Number, screenY:Number, result:Vector.<RayTestInfo>):void
+		public function pickup(screenX:Number, screenY:Number, result:Vector.<Object3D>):void
 		{
 			camera.getSceneRay(screenX, screenY, ray);
 			root.hitTest(ray, result);
@@ -54,15 +53,14 @@ package snjdck.g3d
 		
 		public function notifyEvent(evtType:String, screenX:Number, screenY:Number):Boolean
 		{
-			var result:Vector.<RayTestInfo> = new Vector.<RayTestInfo>();
+			var result:Vector.<Object3D> = new Vector.<Object3D>();
 			
 			pickup(screenX, screenY, result);
 			
-			var info:RayTestInfo = result[0];
-			for each(var testInfo:RayTestInfo in result){
+			for each(var target:Object3D in result){
 				switch(evtType){
 					case MouseEvent.MOUSE_DOWN:
-						info.target.mouseDownSignal.notify(info);
+						target.mouseDownSignal.notify();
 						break;
 					case MouseEvent.MOUSE_UP:
 						break;
