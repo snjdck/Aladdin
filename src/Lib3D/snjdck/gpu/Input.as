@@ -7,8 +7,6 @@ package snjdck.gpu
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
-	import snjdck.g2d.impl.DisplayObject2D;
-	import snjdck.g3d.pickup.RayTestInfo;
 
 	final public class Input implements ITicker
 	{
@@ -63,61 +61,7 @@ package snjdck.gpu
 					clickSignal.notify();
 					break;
 			}
-			if(!boradcast2d(evt.type)){
-				boradcast3d(evt.type);
-			}
-		}
-		
-		private function boradcast2d(evtType:String):Boolean
-		{
-			var result:Boolean = true;
-			var target:DisplayObject2D = App3D.app.view3d.scene2d.root.pickup(mouseLocation.x, mouseLocation.y);
-			
-			if(null == target){
-				target = App3D.app.view3d.scene2d.root;
-				result = false;
-			}
-			while(target != null && target.mouseEnabled){
-				switch(evtType){
-					case MouseEvent.MOUSE_DOWN:
-						target.mouseDownSignal.notify();
-						break;
-					case MouseEvent.MOUSE_UP:
-						target.mouseUpSignal.notify();
-						break;
-				}
-				target = target.parent;
-			}
-			return result;
-		}
-		
-		private function boradcast3d(evtType:String):void
-		{
-			var result:Vector.<RayTestInfo> = new Vector.<RayTestInfo>();
-			var view3d:View3D = App3D.app.view3d;
-			
-			view3d.scene3d.pickup(view3d.screenX, view3d.screenY, result);
-			if(result.length < 1){
-				return;
-			}
-			
-//			result.sort(__sort);
-			var info:RayTestInfo = result[0];
-			
-			switch(evtType){
-				case MouseEvent.MOUSE_DOWN:
-					info.target.mouseDownSignal.notify(info);
-					break;
-				case MouseEvent.MOUSE_UP:
-					break;
-			}
-		}
-		
-		static private function __sort(a:RayTestInfo, b:RayTestInfo):int
-		{
-			var pa:Vector3D = a.globalPos;
-			var pb:Vector3D = b.globalPos;
-			return pa.z < pb.z ? -1 : 1;
+			App3D.app.view3d.notifyEvent(evt.type);
 		}
 	}
 }

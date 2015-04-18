@@ -14,7 +14,7 @@ package snjdck.gpu
 	
 	use namespace ns_g3d;
 	
-	public class View3D implements ITicker
+	final public class View3D implements ITicker
 	{
 		public const scene3d:Scene3D = new Scene3D();
 		public const scene2d:Scene2D = new Scene2D();
@@ -124,6 +124,21 @@ package snjdck.gpu
 			scene2d.draw(context3d);
 			
 			context3d.present();
+		}
+		
+		public function notifyEvent(evtType:String):void
+		{
+			var stageX:Number = stage2d.mouseX - stage3d.x;
+			var stageY:Number = stage2d.mouseY - stage3d.y;
+			
+			if(scene2d.notifyEvent(evtType, stageX, stageY)){
+				return;
+			}
+			
+			var screenX:Number = 2 * stageX / _width - 1;
+			var screenY:Number = 1 - 2 * stageY / _height;
+			
+			scene3d.notifyEvent(evtType, screenX, screenY);
 		}
 		
 		public function set enableErrorChecking(value:Boolean):void

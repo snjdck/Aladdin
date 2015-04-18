@@ -75,14 +75,12 @@ package snjdck.gpu.asset
 		[Inline]
 		public function clear(red:Number=0.0, green:Number=0.0, blue:Number=0.0, alpha:Number=1.0, depth:Number=1.0, stencil:uint=0, mask:uint=0xFFFFFFFF):void
 		{
-			if(mask > 0){
-				context3d.clear(red, green, blue, alpha, depth, stencil, mask);
-				if(_renderTarget != null){
-					_renderTarget._hasCleared = true;
-				}
+			context3d.clear(red, green, blue, alpha, depth, stencil, mask);
+			if(_renderTarget != null){
+				_renderTarget._hasCleared = true;
 			}
 		}
-		
+		[Inline]
 		public function present():void
 		{
 			context3d.present();

@@ -6,5 +6,6 @@ package snjdck.gpu
 	{
 		function update(timeElapsed:int):void;
 		function draw(context3d:GpuContext):void;
+		function notifyEvent(evtType:String, px:Number, py:Number):Boolean;
 	}
 }

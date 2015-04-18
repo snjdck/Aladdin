@@ -1,5 +1,7 @@
 package snjdck.g3d
 {
+	import flash.events.MouseEvent;
+	
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
@@ -19,9 +21,7 @@ package snjdck.g3d
 		
 		private const ray:Ray = new Ray();
 		
-		public function Scene3D()
-		{
-		}
+		public function Scene3D(){}
 		
 		public function update(timeElapsed:int):void
 		{
@@ -50,6 +50,25 @@ package snjdck.g3d
 		public function findChild(childName:String):Object3D
 		{
 			return root.findChild(childName);
+		}
+		
+		public function notifyEvent(evtType:String, screenX:Number, screenY:Number):Boolean
+		{
+			var result:Vector.<RayTestInfo> = new Vector.<RayTestInfo>();
+			
+			pickup(screenX, screenY, result);
+			
+			var info:RayTestInfo = result[0];
+			for each(var testInfo:RayTestInfo in result){
+				switch(evtType){
+					case MouseEvent.MOUSE_DOWN:
+						info.target.mouseDownSignal.notify(info);
+						break;
+					case MouseEvent.MOUSE_UP:
+						break;
+				}
+			}
+			return result.length > 0;
 		}
 	}
 }
