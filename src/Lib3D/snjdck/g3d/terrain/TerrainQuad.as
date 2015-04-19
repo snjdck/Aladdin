@@ -4,12 +4,12 @@ package snjdck.g3d.terrain
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import snjdck.g3d.render.DrawUnit3D;
+	import snjdck.g3d.parser.Geometry;
 	import snjdck.gpu.GpuColor;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.quadtree.IQuadTreeNode;
 
@@ -57,7 +57,7 @@ package snjdck.g3d.terrain
 		{
 //			vertexBuffer.upload(vertexData);
 			
-			context3d.setVcM(DrawUnit3D.WORLD_MATRIX_OFFSET, worldMatrix);
+			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldMatrix);
 			
 			/*
 			context3d.setTextureAt(0, AssetMgr.Instance.getTexture("terrain"));

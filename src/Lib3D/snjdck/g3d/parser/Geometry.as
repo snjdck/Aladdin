@@ -9,7 +9,6 @@ package snjdck.g3d.parser
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
@@ -21,6 +20,11 @@ package snjdck.g3d.parser
 	
 	public class Geometry implements IGeometry
 	{
+		static public const PROJECTION_MATRIX_OFFSET:int = 0;
+		static public const CAMERA_MATRIX_OFFSET:int = 2;
+		static public const WORLD_MATRIX_OFFSET:int = 5;
+		static public const BONE_MATRIX_OFFSET:int = 8;
+		
 		private var _vertexCount:uint;
 		private var _faceCount:uint;
 		
@@ -198,12 +202,7 @@ package snjdck.g3d.parser
 		
 		protected function onDraw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
 		{
-			context3d.setVcM(DrawUnit3D.WORLD_MATRIX_OFFSET, worldMatrix);
-		}
-		
-		public function get shaderName():String
-		{
-			return ShaderName.OBJECT;
+			context3d.setVcM(WORLD_MATRIX_OFFSET, worldMatrix);
 		}
 	}
 }

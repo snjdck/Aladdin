@@ -1,8 +1,5 @@
 package snjdck.g3d.obj3d
 {
-	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Camera3D;
@@ -29,6 +26,11 @@ package snjdck.g3d.obj3d
 			aabb.setMinMax(-s, -s, 0, s, s, 0);
 		}
 		
+		public function get bound():AABB
+		{
+			return aabb;
+		}
+		
 		override protected function onHitTest(localRay:Ray):Boolean
 		{
 			return aabb.hitRay(localRay, mouseLocation);
@@ -40,7 +42,14 @@ package snjdck.g3d.obj3d
 			collector.addDrawUnit(this);
 		}
 		
-		public function draw(cameraWorldMatrix:Matrix3D, context3d:GpuContext):void
+		public function isInSight(camera3d:Camera3D):Boolean
+		{
+			// TODO Auto Generated method stub
+			return camera3d.isInSight(aabb);
+		}
+		
+		
+		public function draw(context3d:GpuContext, camera3d:Camera3D):void
 		{
 			/*
 			var t1:Vector.<Vector3D> = cameraWorldMatrix.decompose();
@@ -62,14 +71,9 @@ package snjdck.g3d.obj3d
 			QuadRender.Instance.drawTriangles(context3d);
 		}
 		
-		public function isOpaque():Boolean
+		public function get shaderName():String
 		{
-			return true;
-		}
-		
-		public function getAABB():AABB
-		{
-			return null;
+			return ShaderName.BILLBOARD;
 		}
 	}
 }

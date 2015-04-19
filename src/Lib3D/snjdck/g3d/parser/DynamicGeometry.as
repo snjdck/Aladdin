@@ -59,13 +59,5 @@ package snjdck.g3d.parser
 //				uploadVertexData(tempVertexData);
 //			}
 		}
-		
-		override public function get shaderName():String
-		{
-			if(boneData.canRenderByGPU()){
-				return ShaderName.BONE_ANI;
-			}
-			return ShaderName.OBJECT;
-		}
 	}
 }

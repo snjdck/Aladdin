@@ -5,7 +5,7 @@ package snjdck.g3d.mesh
 	import flash.utils.Dictionary;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.render.DrawUnit3D;
+	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Transform;
 	import snjdck.gpu.asset.GpuAssetFactory;
@@ -112,7 +112,7 @@ package snjdck.g3d.mesh
 			
 			const boneCount:int = boneIds.length;
 			if(boneCount <= 0){
-				context3d.setVcM(DrawUnit3D.WORLD_MATRIX_OFFSET, worldMatrix);
+				context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldMatrix);
 				return;
 			}
 			worldMatrix.copyRawDataTo(tempFloatBuffer, 0, true);
@@ -122,7 +122,7 @@ package snjdck.g3d.mesh
 				bone.copyRawDataTo(tempFloatBuffer, offset);
 				offset += 8;
 			}
-			context3d.setVc(DrawUnit3D.WORLD_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
+			context3d.setVc(Geometry.WORLD_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
 		}
 		
 		ns_g3d function adjustBoneWeight():void

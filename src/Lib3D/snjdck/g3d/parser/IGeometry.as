@@ -20,6 +20,5 @@ package snjdck.g3d.parser
 		function get bound():AABB;
 		
 		function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void;
-		function get shaderName():String;
 	}
 }

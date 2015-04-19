@@ -3,6 +3,7 @@ package snjdck.g3d.render
 	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.matrixstack.MatrixStack3D;
 	
 	use namespace ns_g3d;
@@ -53,7 +54,7 @@ package snjdck.g3d.render
 		*/
 		public function addDrawUnit(drawUnit:IDrawUnit3D):void
 		{
-			if(drawUnit.isOpaque()){
+			if(drawUnit.blendMode.equals(BlendMode.NORMAL)){
 				opaqueList.push(drawUnit);
 			}else{
 				blendList.push(drawUnit);

@@ -13,6 +13,7 @@ package snjdck.g3d.core
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.viewfrustum.ViewFrustum;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
@@ -56,7 +57,12 @@ package snjdck.g3d.core
 			
 			viewFrusum.updateAABB(_worldMatrix);
 		}
-		
+		/**
+		 *过滤掉完全看不到的对象 
+		 * @param collector
+		 * @param context3d
+		 * 
+		 */		
 		public function render(collector:DrawUnitCollector3D, context3d:GpuContext):void
 		{
 			if(!collector.hasDrawUnits()){
@@ -71,9 +77,10 @@ package snjdck.g3d.core
 				//Terrain.ins.draw(context3d);
 				//				var t1:int = getTimer();
 				for each(drawUnit in collector.opaqueList){
-					//todo judge whether the object is in camera's sight
-//					if(viewFrusum.containsAABB(drawUnit.getAABB())){
-						drawUnit.draw(_worldMatrix, context3d);
+					context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
+					context3d.blendMode = drawUnit.blendMode;
+//					if(viewFrusum.containsAABB(drawUnit.bound)){
+						drawUnit.draw(context3d, this);
 //					}
 				}
 				//				trace("culling",getTimer()-t1);
@@ -82,12 +89,18 @@ package snjdck.g3d.core
 			if(collector.blendList.length > 0){
 				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
 				for each(drawUnit in collector.blendList){
-					//todo judge whether the object is in camera's sight
-//					if(viewFrusum.containsAABB(drawUnit.getAABB())){
-						drawUnit.draw(_worldMatrix, context3d);
+					context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
+					context3d.blendMode = drawUnit.blendMode;
+//					if(viewFrusum.containsAABB(drawUnit.bound)){
+						drawUnit.draw(context3d, this);
 //					}
 				}
 			}
+		}
+		
+		public function isInSight(bound:AABB):Boolean
+		{
+			return viewFrusum.containsAABB(bound);
 		}
 		
 		ns_g3d function drawBegin(context3d:GpuContext):void

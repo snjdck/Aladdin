@@ -5,17 +5,14 @@ package snjdck.g3d.mesh
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.parser.IGeometry;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	
 	use namespace ns_g3d;
 	
-	final public class SubMesh
+	final public class SubMesh 
 	{
 		public var materialName:String;
 		public var geometry:IGeometry;
-		
-		public const drawUnit:DrawUnit3D = new DrawUnit3D();
 		
 		public function SubMesh()
 		{

@@ -2,21 +2,25 @@ package snjdck.g3d.obj3d
 {
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnit3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.BoneAttachmentGroup;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 
-	public class Entity extends Object3D
+	public class Entity extends Object3D implements IDrawUnit3D
 	{
 		ns_g3d var mesh:Mesh;
 		ns_g3d var skeleton:Skeleton;
@@ -36,6 +40,42 @@ package snjdck.g3d.obj3d
 			}
 		}
 		
+		private var aabb:AABB = new AABB();
+		
+		public function isInSight(camera3d:Camera3D):Boolean
+		{
+			for each(var subMesh:SubMesh in mesh.subMeshes)
+			{
+				aabb.bind(subMesh.geometry.bound, prevWorldMatrix);
+				
+				if(camera3d.isInSight(aabb)){
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		public function draw(context3d:GpuContext, camera3d:Camera3D):void
+		{
+			for each(var subMesh:SubMesh in mesh.subMeshes)
+			{
+				aabb.bind(subMesh.geometry.bound, prevWorldMatrix);
+				
+				if(!camera3d.isInSight(aabb)){
+					return;
+				}
+				
+				context3d.texture = AssetMgr.Instance.getTexture(subMesh.materialName);
+				
+				subMesh.geometry.draw(context3d, prevWorldMatrix, boneStateGroup);
+			}
+		}
+		
+		public function get shaderName():String
+		{
+			return mesh.skeleton ? ShaderName.BONE_ANI : ShaderName.OBJECT;
+		}
+		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			super.collectDrawUnit(collector);
@@ -43,21 +83,8 @@ package snjdck.g3d.obj3d
 			collector.pushMatrix(transform);
 			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
 			collector.popMatrix();
-			for each(var subMesh:SubMesh in mesh.subMeshes)
-			{
-				var drawUnit:DrawUnit3D = subMesh.drawUnit;
-				drawUnit.blendMode = blendMode;
-				drawUnit.worldMatrix.copyFrom(prevWorldMatrix);
-				
-				drawUnit.aabb.bind(subMesh.geometry.bound, drawUnit.worldMatrix);
-				
-				drawUnit.textureName = subMesh.materialName;
-				drawUnit.geometry = subMesh.geometry;
-				drawUnit.shaderName = subMesh.geometry.shaderName;
-				drawUnit.boneStateGroup = boneStateGroup;
-				
-				collector.addDrawUnit(drawUnit);
-			}
+			
+			collector.addDrawUnit(this);
 		}
 		
 		override protected function onHitTest(localRay:Ray):Boolean
