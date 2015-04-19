@@ -32,5 +32,10 @@ package snjdck.gpu
 		{
 			return sourceFactor == other.sourceFactor && destinationFactor == other.destinationFactor;
 		}
+		
+		public function isOpaque():Boolean
+		{
+			return equals(NORMAL);
+		}
 	}
 }
