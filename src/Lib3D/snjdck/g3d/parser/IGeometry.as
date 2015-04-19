@@ -19,6 +19,6 @@ package snjdck.g3d.parser
 		function calculateBound():void;
 		function get bound():AABB;
 		
-		function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void;
+		function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void;
 	}
 }

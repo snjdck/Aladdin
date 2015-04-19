@@ -6,6 +6,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
@@ -57,6 +58,8 @@ package snjdck.g3d.obj3d
 		
 		public function draw(context3d:GpuContext, camera3d:Camera3D):void
 		{
+			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, prevWorldMatrix);
+			
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
 				aabb.bind(subMesh.geometry.bound, prevWorldMatrix);
@@ -67,7 +70,7 @@ package snjdck.g3d.obj3d
 				
 				context3d.texture = AssetMgr.Instance.getTexture(subMesh.materialName);
 				
-				subMesh.geometry.draw(context3d, prevWorldMatrix, boneStateGroup);
+				subMesh.geometry.draw(context3d, boneStateGroup);
 			}
 		}
 		

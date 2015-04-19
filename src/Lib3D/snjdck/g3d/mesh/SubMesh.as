@@ -3,6 +3,7 @@ package snjdck.g3d.mesh
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.parser.IGeometry;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.skeleton.BoneStateGroup;
@@ -12,7 +13,7 @@ package snjdck.g3d.mesh
 	final public class SubMesh 
 	{
 		public var materialName:String;
-		public var geometry:IGeometry;
+		public var geometry:Geometry;
 		
 		public function SubMesh()
 		{

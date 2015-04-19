@@ -10,7 +10,6 @@ package snjdck.fileformat.bmd
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
-	import snjdck.g3d.parser.DynamicGeometry;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.Bone;

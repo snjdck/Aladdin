@@ -102,7 +102,7 @@ package snjdck.g3d.mesh
 		}
 		
 		//todo rename?
-		public function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
+		public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);
@@ -112,17 +112,15 @@ package snjdck.g3d.mesh
 			
 			const boneCount:int = boneIds.length;
 			if(boneCount <= 0){
-				context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldMatrix);
 				return;
 			}
-			worldMatrix.copyRawDataTo(tempFloatBuffer, 0, true);
-			var offset:int = 12;
+			var offset:int = 0;
 			for(var i:int=0; i<boneCount; ++i){
 				var bone:Transform = boneStateGroup.getBoneStateGlobal(boneIds[i]);
 				bone.copyRawDataTo(tempFloatBuffer, offset);
 				offset += 8;
 			}
-			context3d.setVc(Geometry.WORLD_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
+			context3d.setVc(Geometry.BONE_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
 		}
 		
 		ns_g3d function adjustBoneWeight():void

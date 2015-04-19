@@ -5,8 +5,6 @@ package snjdck.fileformat.ogre
 	
 	import array.setValue;
 	
-	import lambda.call;
-	
 	import snjdck.fileformat.ogre.support.MeshChunkID;
 	import snjdck.fileformat.ogre.support.VertexBufferParam;
 	import snjdck.fileformat.ogre.support.VertexElement;
@@ -16,7 +14,6 @@ package snjdck.fileformat.ogre
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
-	import snjdck.g3d.parser.DynamicGeometry;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuAssetFactory;

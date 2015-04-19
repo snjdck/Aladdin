@@ -8,13 +8,13 @@ package snjdck.g3d.parser
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
-	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 	
@@ -38,7 +38,9 @@ package snjdck.g3d.parser
 		
 		private const _bound:AABB = new AABB();
 		
-		public function Geometry(vertexData:Vector.<Number>, indexData:Vector.<uint>)
+		ns_g3d var boneData:BoneData;
+		
+		public function Geometry(vertexData:Vector.<Number>, indexData:Vector.<uint>, boneData:BoneData=null)
 		{
 			this._vertexCount = vertexData.length / 5;
 			this._faceCount = indexData.length / 3;
@@ -51,6 +53,8 @@ package snjdck.g3d.parser
 				array.copy(vertexData, posData, 3, i*5, i*3);
 				array.copy(vertexData, uvData, 2, i*5+3, i*2);
 			}
+			
+			this.boneData = boneData || new BoneData(vertexCount);
 		}
 		
 		public function getPosData():Vector.<Number>
@@ -85,6 +89,9 @@ package snjdck.g3d.parser
 			posData = null;
 			uvData = null;
 			indexData = null;
+			boneData.dispose();
+			boneData = null;
+			
 		}
 		
 		public function get vertexCount():uint
@@ -175,7 +182,7 @@ package snjdck.g3d.parser
 		
 		public function get numBones():int
 		{
-			return 0;
+			return boneData ? boneData.numBones : 0;
 		}
 		/*
 		protected function uploadVertexData(data:Vector.<Number>):void
@@ -183,7 +190,7 @@ package snjdck.g3d.parser
 			gpuPosBuffer.upload(data);
 		}
 		*/
-		final public function draw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
+		final public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuPosBuffer){
 				gpuPosBuffer = GpuAssetFactory.CreateGpuVertexBuffer(posData, 3);
@@ -194,15 +201,12 @@ package snjdck.g3d.parser
 			if(null == gpuIndexBuffer){
 				gpuIndexBuffer = GpuAssetFactory.CreateGpuIndexBuffer(indexData);
 			}
-			onDraw(context3d, worldMatrix, boneStateGroup);
 			context3d.setVertexBufferAt(0, gpuPosBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
 			context3d.setVertexBufferAt(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			if(boneData != null){
+				boneData.draw(context3d, boneStateGroup);
+			}
 			context3d.drawTriangles(gpuIndexBuffer);
-		}
-		
-		protected function onDraw(context3d:GpuContext, worldMatrix:Matrix3D, boneStateGroup:BoneStateGroup):void
-		{
-			context3d.setVcM(WORLD_MATRIX_OFFSET, worldMatrix);
 		}
 	}
 }
