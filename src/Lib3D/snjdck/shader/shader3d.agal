@@ -1,3 +1,8 @@
+#vc0-1		PROJECTION_MATRIX
+#vc2-4		CAMERA_MATRIX
+#vc5-7		WORLD_MATRIX
+#vc8-127	BONE_MATRIX
+
 @bone.vs
 vt1 = vc[${0}]					#四元数
 vt2.xyz = vt1 * vt1.yzx			#xy,yz,zx
