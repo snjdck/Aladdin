@@ -1,16 +1,17 @@
 package snjdck.fileformat.bmd
 {
-	import array.setValue;
-	
 	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
+	import array.setValue;
+	
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.parser.DynamicGeometry;
+	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.KeyFrame;
@@ -262,7 +263,7 @@ package snjdck.fileformat.bmd
 			}
 			
 			boneData.adjustBoneWeight();
-			var geometry:DynamicGeometry = new DynamicGeometry(vertexData, indexBuffer, boneData);
+			var geometry:Geometry = new Geometry(vertexData, indexBuffer, boneData);
 			geometry.calculateBound();
 			
 			subMesh.geometry = geometry;

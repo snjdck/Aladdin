@@ -18,8 +18,8 @@ package snjdck.fileformat.ogre
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.DynamicGeometry;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.gpu.asset.GpuAssetFactory;
 	
 	import stream.readCString;
 	
@@ -114,7 +114,7 @@ package snjdck.fileformat.ogre
 					break;
 				}
 			}
-			return lambda.call((skeletallyAnimated?DynamicGeometry:Geometry), vertexData, indexData);
+			return new Geometry(vertexData, indexData);
 		}
 		
 		private function readMesh():void
@@ -174,7 +174,7 @@ package snjdck.fileformat.ogre
 			}
 			
 			if(MeshChunkID.SUBMESH_BONE_ASSIGNMENT == getChunkId()){
-				var boneData:BoneData = (subMesh.geometry as DynamicGeometry).boneData;
+				var boneData:BoneData = subMesh.geometry.boneData;
 				while(MeshChunkID.SUBMESH_BONE_ASSIGNMENT == getChunkId()){
 					seekToData();
 					boneData.assignBone(buffer.readUnsignedInt(), buffer.readUnsignedShort(), buffer.readFloat());
