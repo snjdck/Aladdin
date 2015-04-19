@@ -3,9 +3,10 @@ package snjdck.g3d.obj3d
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.core.IRenderable;
+	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
@@ -16,9 +17,10 @@ package snjdck.g3d.obj3d
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
-	public class BillBoard implements IRenderable, IDrawUnit3D
+	use namespace ns_g3d;
+	
+	public class BillBoard extends Object3D implements IDrawUnit3D
 	{
-		private const worldMatrix:Matrix3D = new Matrix3D();
 		private var aabb:AABB = new AABB();
 		
 		public function BillBoard()
@@ -27,18 +29,14 @@ package snjdck.g3d.obj3d
 			aabb.setMinMax(-s, -s, 0, s, s, 0);
 		}
 		
-		public function hitTest(localRay:Ray, hit:Vector3D):Boolean
+		override protected function onHitTest(localRay:Ray):Boolean
 		{
-			return aabb.hitRay(localRay, hit);
+			return aabb.hitRay(localRay, mouseLocation);
 		}
 		
-		public function onUpdate(timeElapsed:int):void
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-		}
-		
-		public function collectDrawUnit(collector:DrawUnitCollector3D):void
-		{
-			worldMatrix.copyFrom(collector.worldMatrix);
+			super.collectDrawUnit(collector);
 			collector.addDrawUnit(this);
 		}
 		
@@ -55,7 +53,7 @@ package snjdck.g3d.obj3d
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.BILLBOARD);
 			context3d.texture = tex;
 			context3d.blendMode = BlendMode.NORMAL;
-			context3d.setVcM(5, worldMatrix);
+			context3d.setVcM(5, prevWorldMatrix);
 			context3d.setVc(8, new <Number>[
 				count * tex.width, count * tex.height, -0.5, 0,
 				count,count,1,1

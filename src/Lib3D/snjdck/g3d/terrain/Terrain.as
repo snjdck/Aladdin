@@ -182,15 +182,16 @@ package snjdck.g3d.terrain
 		
 		private const fcConst:Vector.<Number> = new Vector.<Number>(8);
 		
-		override protected function hitTestImpl(localRay:Ray, result:Vector.<Object3D>):void
+		override protected function onHitTest(localRay:Ray):Boolean
 		{
 			var t:Number = -localRay.pos.z / localRay.dir.z;
 			var pos:Vector3D = localRay.getPt(t);
 			
 			if(mapSize.contains(pos.x, pos.y)){
 				mouseLocation.copyFrom(pos);
-				result.push(this);
+				return true;
 			}
+			return false;
 		}
 		
 		[Embed(source="C:/Users/Alex/MU1_03H_full(Chs)/data/世界地图/World1/Terrain.obj", mimeType="application/octet-stream")]

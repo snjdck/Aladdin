@@ -40,18 +40,11 @@ package snjdck.g3d.core
 		public const mouseDownSignal:Signal = new Signal();
 		public const mouseLocation:Vector3D = new Vector3D();
 		
-		private const renderableList:Vector.<IRenderable> = new Vector.<IRenderable>();
-		
 		public function Object3D()
 		{
 			visible = true;
 			mouseEnabled = true;
 			mouseChildren = true;
-		}
-		
-		public function addRenderable(renderable:IRenderable):void
-		{
-			renderableList.push(renderable);
 		}
 
 		public function get nextSibling():Object3D
@@ -87,9 +80,6 @@ package snjdck.g3d.core
 		
 		public function onUpdate(timeElapsed:int):void
 		{
-			for each(var renderable:IRenderable in renderableList){
-				renderable.onUpdate(timeElapsed);
-			}
 			/*
 			prevWorldMatrix.copyFrom(transform);
 			if(parent != null){
@@ -103,13 +93,8 @@ package snjdck.g3d.core
 		
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-			if(null == firstChild && renderableList.length <= 0){
-				return;
-			}
 			collector.pushMatrix(transform);
-			for each(var renderable:IRenderable in renderableList){
-				renderable.collectDrawUnit(collector);
-			}
+			prevWorldMatrix.copyFrom(collector.worldMatrix);
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.hasVisibleArea()){
 					child.collectDrawUnit(collector);
@@ -124,8 +109,8 @@ package snjdck.g3d.core
 				return;
 			}
 			ray.transformInv(transform, tempRay);
-			if(mouseEnabled){
-				hitTestImpl(tempRay, result);
+			if(mouseEnabled && onHitTest(tempRay)){
+				result.push(this);
 			}
 			if(false == mouseChildren){
 				return;
@@ -137,14 +122,9 @@ package snjdck.g3d.core
 			}
 		}
 		
-		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<Object3D>):void
+		virtual protected function onHitTest(localRay:Ray):Boolean
 		{
-			for each(var renderable:IRenderable in renderableList){
-				if(renderable.hitTest(localRay, mouseLocation)){
-					result.push(this);
-					return;
-				}
-			}
+			return false;
 		}
 		
 		public function hasVisibleArea():Boolean

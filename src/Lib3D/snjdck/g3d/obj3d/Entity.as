@@ -41,13 +41,13 @@ package snjdck.g3d.obj3d
 			super.collectDrawUnit(collector);
 			
 			collector.pushMatrix(transform);
-			prevWorldMatrix.copyFrom(collector.worldMatrix);
 			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
+			collector.popMatrix();
 			for each(var subMesh:SubMesh in mesh.subMeshes)
 			{
 				var drawUnit:DrawUnit3D = subMesh.drawUnit;
 				drawUnit.blendMode = blendMode;
-				drawUnit.worldMatrix.copyFrom(collector.worldMatrix);
+				drawUnit.worldMatrix.copyFrom(prevWorldMatrix);
 				
 				drawUnit.aabb.bind(subMesh.geometry.bound, drawUnit.worldMatrix);
 				
@@ -58,17 +58,16 @@ package snjdck.g3d.obj3d
 				
 				collector.addDrawUnit(drawUnit);
 			}
-			collector.popMatrix();
 		}
 		
-		override protected function hitTestImpl(localRay:Ray, result:Vector.<Object3D>):void
+		override protected function onHitTest(localRay:Ray):Boolean
 		{
 			for each(var subMesh:SubMesh in mesh.subMeshes){
 				if(subMesh.testRay(localRay, boneStateGroup, mouseLocation)){
-					result.push(this);
-					return;
+					return true;
 				}
 			}
+			return false;
 		}
 		
 		private function checkBoneName(boneName:String):Bone
