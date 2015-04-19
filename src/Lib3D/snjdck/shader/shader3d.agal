@@ -1,99 +1,49 @@
+@bone.vs
+vt1 = vc[${0}]					#四元数
+vt2.xyz = vt1 * vt1.yzx			#xy,yz,zx
+vt3.xyz = vt1 * vt1.www			#xw,yw,zw
+vt1 *= vt1						#xx,yy,zz,ww
+
+vt4.xyz = vt2.zxy + vt3.yzx
+vt3.xyz = vt2.xyz - vt3.zxy
+
+vt2.xyz  = vt1 + vt1.w
+vt2.xyz -= vt1.yzx
+vt2.xyz -= vt1.zxy
+
+vt2.xyz *= va0.xyz
+vt3.xyz *= va0.yzx
+vt4.xyz *= va0.zxy
+
+vt1.xyz = vt3.xyz + vt4.xyz
+vt1.xyz += vt1.xyz					#乘以2
+vt1.xyz += vt2.xyz
+vt1.xyz = add: vt1, vc[${0}+1]		#偏移
+
+@bone1.vs<va6.x>
+${bone.vs}
+vt0.xyz = vt1 * va6.y				#骨骼权重
+
+@bone2.vs<va6.z>
+${bone.vs}
+vt1.xyz *= va6.w					#骨骼权重
+vt0.xyz += vt1
+
+@bone3.vs<va7.x>
+${bone.vs}
+vt1.xyz *= va7.y					#骨骼权重
+vt0.xyz += vt1
+
+@bone4.vs<va7.z>
+${bone.vs}
+vt1.xyz *= va7.w					#骨骼权重
+vt0.xyz += vt1
+
 @bone_ani_pos.vs
-#--bone-1
-vt1 = vc[va6.x]					#四元数
-vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
-vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
-vt1 *= vt1						#xx,yy,zz,ww
-
-vt4.xyz = vt2.zxy + vt3.yzx
-vt3.xyz = vt2.xyz - vt3.zxy
-
-vt2.xyz  = vt1.xyz + vt1.www
-vt2.xyz -= vt1.yzx
-vt2.xyz -= vt1.zxy
-
-vt2.xyz *= va0.xyz
-vt3.xyz *= va0.yzx
-vt4.xyz *= va0.zxy
-
-vt1.xyz = vt3.xyz + vt4.xyz
-vt1.xyz += vt1.xyz				#乘以2
-vt1.xyz += vt2.xyz
-vt1.xyz = add: vt1.xyz, vc[va6.x+1]		#偏移
-vt0.xyz = vt1.xyz * va6.y				#骨骼权重
-
-#--bone-2
-vt1 = vc[va6.z]					#四元数
-vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
-vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
-vt1 *= vt1						#xx,yy,zz,ww
-
-vt4.xyz = vt2.zxy + vt3.yzx
-vt3.xyz = vt2.xyz - vt3.zxy
-
-vt2.xyz  = vt1.xyz + vt1.www
-vt2.xyz -= vt1.yzx
-vt2.xyz -= vt1.zxy
-
-vt2.xyz *= va0.xyz
-vt3.xyz *= va0.yzx
-vt4.xyz *= va0.zxy
-
-vt1.xyz = vt3.xyz + vt4.xyz
-vt1.xyz += vt1.xyz				#乘以2
-vt1.xyz += vt2.xyz
-vt1.xyz = add: vt1.xyz, vc[va6.z+1]		#偏移
-vt1.xyz *= va6.w						#骨骼权重
-vt0.xyz += vt1.xyz
-
-#--bone-3
-vt1 = vc[va7.x]					#四元数
-vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
-vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
-vt1 *= vt1						#xx,yy,zz,ww
-
-vt4.xyz = vt2.zxy + vt3.yzx
-vt3.xyz = vt2.xyz - vt3.zxy
-
-vt2.xyz  = vt1.xyz + vt1.www
-vt2.xyz -= vt1.yzx
-vt2.xyz -= vt1.zxy
-
-vt2.xyz *= va0.xyz
-vt3.xyz *= va0.yzx
-vt4.xyz *= va0.zxy
-
-vt1.xyz = vt3.xyz + vt4.xyz
-vt1.xyz += vt1.xyz				#乘以2
-vt1.xyz += vt2.xyz
-vt1.xyz = add: vt1.xyz, vc[va7.x+1]		#偏移
-vt1.xyz *= va7.y						#骨骼权重
-vt0.xyz += vt1.xyz
-
-#--bone-4
-vt1 = vc[va7.z]					#四元数
-vt2.xyz = vt1.xyz * vt1.yzx		#xy,yz,zx
-vt3.xyz = vt1.xyz * vt1.www		#xw,yw,zw
-vt1 *= vt1						#xx,yy,zz,ww
-
-vt4.xyz = vt2.zxy + vt3.yzx
-vt3.xyz = vt2.xyz - vt3.zxy
-
-vt2.xyz  = vt1.xyz + vt1.www
-vt2.xyz -= vt1.yzx
-vt2.xyz -= vt1.zxy
-
-vt2.xyz *= va0.xyz
-vt3.xyz *= va0.yzx
-vt4.xyz *= va0.zxy
-
-vt1.xyz = vt3.xyz + vt4.xyz
-vt1.xyz += vt1.xyz				#乘以2
-vt1.xyz += vt2.xyz
-vt1.xyz = add: vt1.xyz, vc[va7.z+1]		#偏移
-vt1.xyz *= va7.w						#骨骼权重
-vt0.xyz += vt1.xyz
-
+${bone1.vs}
+${bone2.vs}
+${bone3.vs}
+${bone4.vs}
 vt0.w = va0
 
 #===============================================================
