@@ -54,14 +54,14 @@ package snjdck.g3d.bound
 			radius = halfSize.length;
 		}
 		
-		public function hitRay(ray:Ray):Boolean
+		public function hitRay(ray:Ray, hit:Vector3D):Boolean
 		{
-			return containsPt(ray.getPt((minX - ray.pos.x) / ray.dir.x))
-				|| containsPt(ray.getPt((maxX - ray.pos.x) / ray.dir.x))
-				|| containsPt(ray.getPt((minY - ray.pos.y) / ray.dir.y))
-				|| containsPt(ray.getPt((maxY - ray.pos.y) / ray.dir.y))
-				|| containsPt(ray.getPt((minZ - ray.pos.z) / ray.dir.z))
-				|| containsPt(ray.getPt((maxZ - ray.pos.z) / ray.dir.z));
+			return containsPt(ray.getPt((minX - ray.pos.x) / ray.dir.x, hit))
+				|| containsPt(ray.getPt((maxX - ray.pos.x) / ray.dir.x, hit))
+				|| containsPt(ray.getPt((minY - ray.pos.y) / ray.dir.y, hit))
+				|| containsPt(ray.getPt((maxY - ray.pos.y) / ray.dir.y, hit))
+				|| containsPt(ray.getPt((minZ - ray.pos.z) / ray.dir.z, hit))
+				|| containsPt(ray.getPt((maxZ - ray.pos.z) / ray.dir.z, hit));
 		}
 		
 		public function containsPt(pt:Vector3D):Boolean

@@ -38,9 +38,13 @@ package snjdck.g3d.pickup
 		
 		static private const tempMatrix:Matrix3D = new Matrix3D();
 		
-		public function getPt(t:Number):Vector3D
+		public function getPt(t:Number, result:Vector3D=null):Vector3D
 		{
-			var result:Vector3D = dir.clone();
+			if(null == result){
+				result = dir.clone();
+			}else{
+				result.copyFrom(dir);
+			}
 			result.scaleBy(t);
 			result.incrementBy(pos);
 			return result;

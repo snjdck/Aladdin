@@ -19,14 +19,17 @@ package snjdck.g3d.obj3d
 	public class BillBoard implements IRenderable, IDrawUnit3D
 	{
 		private const worldMatrix:Matrix3D = new Matrix3D();
+		private var aabb:AABB = new AABB();
 		
 		public function BillBoard()
 		{
+			var s:int = 15 * 128;
+			aabb.setMinMax(-s, -s, 0, s, s, 0);
 		}
 		
-		public function hitTest(localRay:Ray):Boolean
+		public function hitTest(localRay:Ray, hit:Vector3D):Boolean
 		{
-			return true;
+			return aabb.hitRay(localRay, hit);
 		}
 		
 		public function onUpdate(timeElapsed:int):void

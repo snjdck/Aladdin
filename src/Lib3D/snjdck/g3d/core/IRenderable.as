@@ -1,5 +1,7 @@
 package snjdck.g3d.core
 {
+	import flash.geom.Vector3D;
+	
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 
@@ -7,6 +9,6 @@ package snjdck.g3d.core
 	{
 		function onUpdate(timeElapsed:int):void;
 		function collectDrawUnit(collector:DrawUnitCollector3D):void;
-		function hitTest(localRay:Ray):Boolean;
+		function hitTest(localRay:Ray, hit:Vector3D):Boolean;
 	}
 }

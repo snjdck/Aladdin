@@ -140,8 +140,9 @@ package snjdck.g3d.core
 		virtual protected function hitTestImpl(localRay:Ray, result:Vector.<Object3D>):void
 		{
 			for each(var renderable:IRenderable in renderableList){
-				if(renderable.hitTest(localRay)){
+				if(renderable.hitTest(localRay, mouseLocation)){
 					result.push(this);
+					return;
 				}
 			}
 		}
