@@ -13,6 +13,7 @@ package snjdck.g3d.core
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.viewfrustum.ViewFrustum;
+	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -74,11 +75,11 @@ package snjdck.g3d.core
 			
 			if(collector.opaqueList.length > 0){
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
+				context3d.blendMode = BlendMode.NORMAL;
 				//Terrain.ins.draw(context3d);
 				//				var t1:int = getTimer();
 				for each(drawUnit in collector.opaqueList){
 					context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
-					context3d.blendMode = drawUnit.blendMode;
 //					if(viewFrusum.containsAABB(drawUnit.bound)){
 						drawUnit.draw(context3d, this);
 //					}
@@ -103,7 +104,7 @@ package snjdck.g3d.core
 			return viewFrusum.containsAABB(bound);
 		}
 		
-		ns_g3d function drawBegin(context3d:GpuContext):void
+		private function drawBegin(context3d:GpuContext):void
 		{
 			projection.upload(context3d);
 			context3d.setVcM(2, _worldMatrixInvert);
