@@ -15,6 +15,7 @@ package snjdck.fileformat.bmd
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.KeyFrame;
 	import snjdck.g3d.skeleton.Skeleton;
+	import snjdck.g3d.skeleton.Transform;
 	
 	import stream.readFixedString;
 	
@@ -35,6 +36,10 @@ package snjdck.fileformat.bmd
 		
 		public var mesh:Mesh;
 		private var skeleton:Skeleton;
+		
+		private var isStaticMesh:Boolean;
+		private var lastKeyFrameTransform:Transform;
+		
 		
 		public function BmdParser(ba:ByteArray)
 		{
@@ -79,9 +84,13 @@ package snjdck.fileformat.bmd
 			
 			readFixedString(buffer, 32);//file name
 			
-			const subMeshCount:int = buffer.readUnsignedShort();//图片数量
+			const subMeshCount:int = buffer.readUnsignedShort();//网格数量
 			const boneCount:uint = buffer.readUnsignedShort();//骨骼数量
 			const animationCount:int = buffer.readUnsignedShort();//动画数量
+			
+			if(boneCount == 1 && animationCount == boneCount){
+				isStaticMesh = true;
+			}
 			
 			var i:int;
 			
@@ -91,6 +100,9 @@ package snjdck.fileformat.bmd
 			
 			for(i=0; i<animationCount; i++){
 				const keyFrameCount:int = buffer.readUnsignedShort();
+				if(isStaticMesh && keyFrameCount > 1){
+					isStaticMesh = false;
+				}
 				var animation:Animation = new Animation(i.toString(), keyFrameCount);
 				skeleton.addAnimation(animation);
 				if(buffer.readUnsignedByte() == 0){
@@ -112,6 +124,16 @@ package snjdck.fileformat.bmd
 			
 			if(buffer.bytesAvailable > 0){
 				throw new Error("BMD数据解析失败!");
+			}
+			
+			if(false == isStaticMesh){
+				return;
+			}
+			mesh.skeleton = null;
+			for each(var subMesh:SubMesh in mesh.subMeshes){
+				subMesh.geometry.boneData = null;
+				var posData:Vector.<Number> = subMesh.geometry.getPosData();
+				lastKeyFrameTransform.transformVectors(posData, posData);
 			}
 		}
 		
@@ -136,7 +158,9 @@ package snjdck.fileformat.bmd
 			var keyFrame:KeyFrame;
 			
 			for(i=0; i<n; i++){
-				keyFrames[i] = new KeyFrame(i);
+				keyFrame = new KeyFrame(i);
+				keyFrames[i] = keyFrame;
+				lastKeyFrameTransform = keyFrame.transform;
 			}
 			
 			if(flag){

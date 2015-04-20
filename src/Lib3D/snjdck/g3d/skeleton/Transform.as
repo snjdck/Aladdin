@@ -52,6 +52,12 @@ package snjdck.g3d.skeleton
 			rotation.toMatrix(result, translation);
 		}
 		
+		public function transformVectors(vIn:Vector.<Number>, vOut:Vector.<Number>):void
+		{
+			toMatrix(tempMatrix);
+			tempMatrix.transformVectors(vIn, vOut);
+		}
+		
 		public function copyRawDataTo(output:Vector.<Number>, offset:int):void
 		{
 			output[offset  ] = rotation.x;
@@ -65,5 +71,6 @@ package snjdck.g3d.skeleton
 		}
 		
 		static private const tempVector:Vector3D = new Vector3D();
+		static private const tempMatrix:Matrix3D = new Matrix3D();
 	}
 }
