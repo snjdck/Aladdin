@@ -231,12 +231,10 @@ package snjdck.gpu.asset
 		
 		public function set texture(value:IGpuTexture):void
 		{
-			if(value == _texture){
-				return;
+			if(value != _texture){
+				_texture = value;
+				setTextureAt(0, value);
 			}
-			
-			_texture = value;
-			setTextureAt(0, value);
 		}
 		
 		public function setTextureAt(slotIndex:int, texture:IGpuTexture):void
