@@ -3,6 +3,7 @@ package snjdck.g3d.render
 	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
 	
 	use namespace ns_g3d;
 
@@ -48,6 +49,24 @@ package snjdck.g3d.render
 		public function get worldMatrix():Matrix3D
 		{
 			return matrixStack.worldMatrix;
+		}
+		
+		public function cullInvisibleUnits(camera:Camera3D):void
+		{
+			trace("begin cull");
+			cullList(camera, opaqueList);
+			cullList(camera, blendList);
+		}
+		
+		private function cullList(camera:Camera3D, list:Vector.<IDrawUnit3D>):void
+		{
+			for(var i:int=list.length-1; i>=0; --i){
+				var drawUnit:IDrawUnit3D = list[i];
+				if(!drawUnit.isInSight(camera)){
+					trace(drawUnit["name"], "is culled");
+					list.splice(i, 1);
+				}
+			}
 		}
 	}
 }

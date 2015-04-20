@@ -66,13 +66,28 @@ package snjdck.g3d.core
 		 */		
 		public function render(collector:DrawUnitCollector3D, context3d:GpuContext):void
 		{
+			collector.cullInvisibleUnits(this);
 			if(!collector.hasDrawUnits()){
 				return;
 			}
 			drawBegin(context3d);
 			
+			
+			
 			var drawUnit:IDrawUnit3D;
 			
+			//collector.opaqueList.sort(
+			/*
+			var list:Array = [];
+			for each(drawUnit in collector.opaqueList){
+				list.push(drawUnit.shaderName);
+			}
+			list.push(null);
+			for each(drawUnit in collector.blendList){
+				list.push(drawUnit.shaderName);
+			}
+			trace("shader names",list);
+			*/
 			if(collector.opaqueList.length > 0){
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 				context3d.blendMode = BlendMode.NORMAL;
