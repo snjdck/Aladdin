@@ -68,5 +68,18 @@ package snjdck.g3d.render
 				}
 			}
 		}
+		
+		public function sortDrawUnits():void
+		{
+			opaqueList.sort(__sortOpaque__);
+		}
+		
+		static private function __sortOpaque__(left:IDrawUnit3D, right:IDrawUnit3D):int
+		{
+			if(left.shaderName == right.shaderName){
+				return 0;
+			}
+			return (left.shaderName < right.shaderName) ? -1 : 1;
+		}
 	}
 }

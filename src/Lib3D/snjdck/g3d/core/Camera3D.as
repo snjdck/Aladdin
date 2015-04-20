@@ -70,6 +70,7 @@ package snjdck.g3d.core
 			if(!collector.hasDrawUnits()){
 				return;
 			}
+			collector.sortDrawUnits();
 			drawBegin(context3d);
 			
 			
@@ -77,7 +78,7 @@ package snjdck.g3d.core
 			var drawUnit:IDrawUnit3D;
 			
 			//collector.opaqueList.sort(
-			/*
+			//*
 			var list:Array = [];
 			for each(drawUnit in collector.opaqueList){
 				list.push(drawUnit.shaderName);
@@ -87,7 +88,7 @@ package snjdck.g3d.core
 				list.push(drawUnit.shaderName);
 			}
 			trace("shader names",list);
-			*/
+			//*/
 			if(collector.opaqueList.length > 0){
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 				context3d.blendMode = BlendMode.NORMAL;
@@ -95,9 +96,7 @@ package snjdck.g3d.core
 				//				var t1:int = getTimer();
 				for each(drawUnit in collector.opaqueList){
 					context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
-//					if(viewFrusum.containsAABB(drawUnit.bound)){
-						drawUnit.draw(context3d, this);
-//					}
+					drawUnit.draw(context3d, this);
 				}
 				//				trace("culling",getTimer()-t1);
 			}
@@ -107,9 +106,7 @@ package snjdck.g3d.core
 				for each(drawUnit in collector.blendList){
 					context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
 					context3d.blendMode = drawUnit.blendMode;
-//					if(viewFrusum.containsAABB(drawUnit.bound)){
-						drawUnit.draw(context3d, this);
-//					}
+					drawUnit.draw(context3d, this);
 				}
 			}
 		}
