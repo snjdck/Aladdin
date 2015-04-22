@@ -68,7 +68,9 @@ package snjdck.g3d.obj3d
 					return;
 				}
 				
-				context3d.texture = AssetMgr.Instance.getTexture(subMesh.materialName);
+				if(context3d.isFsSlotInUse(0)){
+					context3d.texture = AssetMgr.Instance.getTexture(subMesh.materialName);
+				}
 				
 				subMesh.geometry.draw(context3d, boneStateGroup);
 			}
@@ -76,7 +78,7 @@ package snjdck.g3d.obj3d
 		
 		public function get shaderName():String
 		{
-			return mesh.skeleton ? ShaderName.BONE_ANI : ShaderName.OBJECT;
+			return mesh.skeleton ? ShaderName.DYNAMIC_OBJECT : ShaderName.STATIC_OBJECT;
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void

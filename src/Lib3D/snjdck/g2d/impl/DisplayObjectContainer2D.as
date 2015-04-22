@@ -138,12 +138,17 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
+		override public function preDrawDepth(render:Render2D, context3d:GpuContext):void
+		{
+			for each(var child:DisplayObject2D in _childList){
+				if(child.hasVisibleArea()){
+					child.preDrawDepth(render, context3d);
+				}
+			}
+		}
+		
 		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
-			if(_childList.length <= 0){
-				return;
-			}
-//			render.pushMatrix(transform);
 			for each(var child:DisplayObject2D in _childList){
 				if(!child.hasVisibleArea()){
 					continue;
@@ -154,7 +159,6 @@ package snjdck.g2d.impl
 					child.draw(render, context3d);
 				}
 			}
-//			render.popMatrix();
 		}
 		
 		override public function pickup(px:Number, py:Number):DisplayObject2D

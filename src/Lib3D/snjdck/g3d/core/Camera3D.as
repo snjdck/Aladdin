@@ -1,6 +1,5 @@
 package snjdck.g3d.core
 {
-	import flash.display3D.Context3DCompareMode;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
@@ -10,11 +9,8 @@ package snjdck.g3d.core
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.projection.Projection3D;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.viewfrustum.ViewFrustum;
-	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
@@ -58,57 +54,11 @@ package snjdck.g3d.core
 			
 			viewFrusum.updateAABB(_worldMatrix);
 		}
-		/**
-		 *过滤掉完全看不到的对象 
-		 * @param collector
-		 * @param context3d
-		 * 
-		 */		
-		public function render(collector:DrawUnitCollector3D, context3d:GpuContext):void
+		
+		public function uploadMVP(context3d:GpuContext):void
 		{
-			collector.cullInvisibleUnits(this);
-			if(!collector.hasDrawUnits()){
-				return;
-			}
-			collector.sortDrawUnits();
-			drawBegin(context3d);
-			
-			
-			
-			var drawUnit:IDrawUnit3D;
-			
-			//collector.opaqueList.sort(
-			//*
-			var list:Array = [];
-			for each(drawUnit in collector.opaqueList){
-				list.push(drawUnit.shaderName);
-			}
-			list.push(null);
-			for each(drawUnit in collector.blendList){
-				list.push(drawUnit.shaderName);
-			}
-			trace("shader names",list);
-			//*/
-			if(collector.opaqueList.length > 0){
-				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
-				context3d.blendMode = BlendMode.NORMAL;
-				//Terrain.ins.draw(context3d);
-				//				var t1:int = getTimer();
-				for each(drawUnit in collector.opaqueList){
-					context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
-					drawUnit.draw(context3d, this);
-				}
-				//				trace("culling",getTimer()-t1);
-			}
-			
-			if(collector.blendList.length > 0){
-				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
-				for each(drawUnit in collector.blendList){
-					context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
-					context3d.blendMode = drawUnit.blendMode;
-					drawUnit.draw(context3d, this);
-				}
-			}
+			projection.upload(context3d);
+			context3d.setVcM(2, _worldMatrixInvert);
 		}
 		
 		public function isInSight(bound:AABB):Boolean
@@ -116,10 +66,15 @@ package snjdck.g3d.core
 			return viewFrusum.containsAABB(bound);
 		}
 		
-		private function drawBegin(context3d:GpuContext):void
+		public function cullInvisibleUnits(list:Vector.<IDrawUnit3D>):void
 		{
-			projection.upload(context3d);
-			context3d.setVcM(2, _worldMatrixInvert);
+			for(var i:int=list.length-1; i>=0; --i){
+				var drawUnit:IDrawUnit3D = list[i];
+				if(!drawUnit.isInSight(this)){
+					trace(drawUnit["name"], "is culled");
+					list.splice(i, 1);
+				}
+			}
 		}
 		
 		/**

@@ -251,6 +251,11 @@ package snjdck.gpu.asset
 		{
 			return (vaUseInfo & (1 << slotIndex)) != 0;
 		}
+		
+		public function isFsSlotInUse(slotIndex:int):Boolean
+		{
+			return (fsUseInfo & (1 << slotIndex)) != 0;
+		}
 		[Inline]
 		public function clearDepthAndStencil(depth:Number=1.0, stencil:uint=0):void
 		{

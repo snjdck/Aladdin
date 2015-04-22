@@ -120,6 +120,7 @@ package snjdck.gpu
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
 			
+			scene2d.preDrawDepth(context3d);
 			scene3d.draw(context3d);
 			scene2d.draw(context3d);
 			

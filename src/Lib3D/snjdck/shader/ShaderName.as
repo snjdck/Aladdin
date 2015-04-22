@@ -5,8 +5,8 @@ package snjdck.shader
 	 */	
 	public class ShaderName
 	{
-		static public const OBJECT:String = "object";
-		static public const BONE_ANI:String = "bone_ani";
+		static public const DYNAMIC_OBJECT:String = "bone_ani";
+		static public const STATIC_OBJECT:String = "object";
 		static public const BILLBOARD:String = "billboard";
 		
 		static public const IMAGE:String = "image";
@@ -17,7 +17,7 @@ package snjdck.shader
 		static public const PARTICLE_2D:String = "particle2d";
 //		static public const G2D_DRAW_SCREEN:String = "g2d_drawScreen";
 //		static public const G2D:String = "g2d";
-//		static public const G2D_PRE_DRAW_DEPTH:String = "g2d_preDrawDepth";
-//		static public const G3D_PRE_DRAW_DEPTH:String = "g3d_preDrawDepth";
+		static public const G2D_PRE_DRAW_DEPTH:String = "g2d_preDrawDepth";
+		static public const G3D_PRE_DRAW_DEPTH:String = "g3d_preDrawDepth";
 	}
 }

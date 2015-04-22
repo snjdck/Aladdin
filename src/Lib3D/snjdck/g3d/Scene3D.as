@@ -32,7 +32,7 @@ package snjdck.g3d
 		
 		public function draw(context3d:GpuContext):void
 		{
-			camera.render(collector, context3d);
+			collector.render(context3d, camera);
 		}
 		
 		public function pickup(screenX:Number, screenY:Number, result:Vector.<Object3D>):void

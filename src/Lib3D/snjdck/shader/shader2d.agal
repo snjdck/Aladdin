@@ -20,22 +20,25 @@ vt0.xy = vt1 * vc0			#screen matrix
 vt0.xy += vc0.zw
 
 op = vt0
-v0 = vt1.zw
 
+#========================
+@g2d_preDrawDepth
+${image.vs}
+oc = fc0
 #========================
 @image.raw
 ${image.vs}
+v0 = vt1.zw
 oc = tex: v0, fs0<2d,nearest,clamp,${0}>
 #========================
 @image<rgba>			${image.raw}
 @image_dxt5<dxt5>		${image.raw}
 #========================
 @blur
-
 ${image.vs}
+v0 = vt1.zw
 v1 = vt1.zwzw - vc7.zwxy
 v2 = vt1.zwzw + vc7
-
 ft0 = tex: v0, fs0<clamp,linear>
 ft1 = ft0 * fc0.x
 ft0 = tex: v1, fs0<clamp,linear>
@@ -46,11 +49,10 @@ ft0 = tex: v2, fs0<clamp,linear>
 ft1 += ft0 * fc0.y
 ft0 = tex: v2.zw, fs0<clamp,linear>
 oc = ft1 + ft0 * fc0.z
-
 #========================
 @color_matrix
-
 ${image.vs}
+v0 = vt1.zw
 ft0 = tex: v0, fs0<clamp,linear>
 ft0 = m44: ft0, fc0
 oc = ft0 + fc4

@@ -65,12 +65,15 @@ op = vt0
 @objectImp.agal
 ${objectImp.vs}
 v0 = va1				#uv
-
 ft0 = tex: v0, fs0<clamp>
 ft1.x = ft0.w - fc27.x
 kil:ft1.x
 oc = ft0
 #===============================================================
+@g3d_preDrawDepth
+vt0 = va0
+${objectImp.vs}
+oc = fc0
 
 @bone_ani
 ${bone_ani_pos.vs}

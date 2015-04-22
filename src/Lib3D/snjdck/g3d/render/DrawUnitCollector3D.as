@@ -1,9 +1,14 @@
 package snjdck.g3d.render
 {
+	import flash.display3D.Context3DCompareMode;
 	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
+	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 
@@ -11,28 +16,23 @@ package snjdck.g3d.render
 	{
 		private const matrixStack:MatrixStack3D = new MatrixStack3D();
 		
-		ns_g3d const opaqueList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
-		ns_g3d const blendList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
+		private const opaqueDrawUnits:DrawUnitGroup = new DrawUnitGroup();
+		private const blendDrawUnits:DrawUnitGroup = new DrawUnitGroup();
 		
 		public function DrawUnitCollector3D(){}
 		
-		public function hasDrawUnits():Boolean
-		{
-			return (opaqueList.length > 0) || (blendList.length > 0);
-		}
-		
 		public function clear():void
 		{
-			opaqueList.length = 0;
-			blendList.length = 0;
+			opaqueDrawUnits.clear();
+			blendDrawUnits.clear();
 		}
 		
 		public function addDrawUnit(drawUnit:IDrawUnit3D):void
 		{
 			if(drawUnit.blendMode.isOpaque()){
-				opaqueList.push(drawUnit);
+				opaqueDrawUnits.addDrawUnit(drawUnit);
 			}else{
-				blendList.push(drawUnit);
+				blendDrawUnits.addDrawUnit(drawUnit);
 			}
 		}
 		
@@ -51,35 +51,43 @@ package snjdck.g3d.render
 			return matrixStack.worldMatrix;
 		}
 		
-		public function cullInvisibleUnits(camera:Camera3D):void
+		public function render(context3d:GpuContext, camera3d:Camera3D):void
 		{
-			trace("begin cull");
-			cullList(camera, opaqueList);
-			cullList(camera, blendList);
-		}
-		
-		private function cullList(camera:Camera3D, list:Vector.<IDrawUnit3D>):void
-		{
-			for(var i:int=list.length-1; i>=0; --i){
-				var drawUnit:IDrawUnit3D = list[i];
-				if(!drawUnit.isInSight(camera)){
-					trace(drawUnit["name"], "is culled");
-					list.splice(i, 1);
-				}
+			opaqueDrawUnits.cullInvisibleUnits(camera3d);
+			blendDrawUnits.cullInvisibleUnits(camera3d);
+			if(!(opaqueDrawUnits.hasDrawUnits() || blendDrawUnits.hasDrawUnits())){
+				return;
+			}
+			
+			camera3d.uploadMVP(context3d);
+			
+			preDrawDepth(context3d, camera3d);
+			
+			if(opaqueDrawUnits.hasDrawUnits()){
+				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
+				context3d.blendMode = BlendMode.NORMAL;
+				opaqueDrawUnits.draw(context3d, camera3d, false);
+			}
+			
+			if(blendDrawUnits.hasDrawUnits()){
+				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
+				blendDrawUnits.draw(context3d, camera3d, true);
 			}
 		}
 		
-		public function sortDrawUnits():void
+		private function preDrawDepth(context3d:GpuContext, camera3d:Camera3D):void
 		{
-			opaqueList.sort(__sortOpaque__);
-		}
-		
-		static private function __sortOpaque__(left:IDrawUnit3D, right:IDrawUnit3D):int
-		{
-			if(left.shaderName == right.shaderName){
-				return 0;
+			var staticDrawUnits:Vector.<IDrawUnit3D> = opaqueDrawUnits.getStaticDrawUnits();
+			if(staticDrawUnits.length <= 0){
+				return;
 			}
-			return (left.shaderName < right.shaderName) ? -1 : 1;
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.G3D_PRE_DRAW_DEPTH);
+			context3d.setDepthTest(true, Context3DCompareMode.LESS);
+			context3d.setColorMask(false, false, false, false);
+			for each(var drawUnit:IDrawUnit3D in staticDrawUnits){
+				drawUnit.draw(context3d, camera3d);
+			}
+			context3d.setColorMask(true, true, true, true);
 		}
 	}
 }

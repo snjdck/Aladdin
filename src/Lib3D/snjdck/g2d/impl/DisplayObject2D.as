@@ -79,6 +79,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
+		virtual public function preDrawDepth(render:Render2D, context3d:GpuContext):void{}
 		virtual public function draw(render:Render2D, context3d:GpuContext):void{}
 		
 		virtual public function pickup(px:Number, py:Number):DisplayObject2D

@@ -84,7 +84,24 @@ package snjdck.g2d.render
 			QuadRender.Instance.drawTriangles(context3d, texture.scale9 != null);
 		}
 		
-		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
+		public function drawLocalRect(context3d:GpuContext, worldMatrix:Matrix, x:Number, y:Number, width:Number, height:Number):void
+		{
+			copyProjectData(constData);
+			matrix33.toBuffer(worldMatrix, constData, 4);
+			
+			constData[12] = constData[13] = 1;
+			constData[16] = x;
+			constData[17] = y;
+			
+			constData[20] = constData[21] = width;
+			constData[22] = constData[23] = height;
+			constData[24] = constData[25] = constData[26] = constData[27] = 0;
+			
+			context3d.setVc(0, constData, 7);
+			QuadRender.Instance.drawTriangles(context3d);
+		}
+		
+		public function drawWorldRect(context3d:GpuContext, x:Number, y:Number, width:Number, height:Number):void
 		{
 			copyProjectData(constData);
 			
@@ -95,15 +112,20 @@ package snjdck.g2d.render
 			constData[18] = constData[19] = 
 			constData[24] = constData[25] = constData[26] = constData[27] = 0;
 			
-			constData[16] = textureX;
-			constData[17] = textureY;
+			constData[16] = x;
+			constData[17] = y;
 			
-			constData[20] = constData[21] = texture.width;
-			constData[22] = constData[23] = texture.height;
+			constData[20] = constData[21] = width;
+			constData[22] = constData[23] = height;
 			
 			context3d.setVc(0, constData, 7);
-			context3d.texture = texture;
 			QuadRender.Instance.drawTriangles(context3d);
+		}
+		
+		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
+		{
+			context3d.texture = texture;
+			drawWorldRect(context3d, textureX, textureY, texture.width, texture.height);
 		}
 		
 		public function copyProjectData(output:Vector.<Number>):void

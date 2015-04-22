@@ -202,7 +202,9 @@ package snjdck.g3d.parser
 				gpuIndexBuffer = GpuAssetFactory.CreateGpuIndexBuffer(indexData);
 			}
 			context3d.setVertexBufferAt(0, gpuPosBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
-			context3d.setVertexBufferAt(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			if(context3d.isVaSlotInUse(1)){
+				context3d.setVertexBufferAt(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			}
 			if(boneData != null){
 				boneData.draw(context3d, boneStateGroup);
 			}
