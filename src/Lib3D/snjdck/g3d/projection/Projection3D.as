@@ -37,8 +37,8 @@ package snjdck.g3d.projection
 		{
 			transform[0] = scaleX;
 			transform[1] = scaleY;
-			transform[4] = offsetX * 2;
-			transform[5] = offsetY * 2
+			transform[4] = offsetX;
+			transform[5] = offsetY;
 			context3d.setVc(0, transform, 2);
 		}
 		

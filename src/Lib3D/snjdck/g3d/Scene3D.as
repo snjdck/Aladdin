@@ -28,11 +28,20 @@ package snjdck.g3d
 			collector.clear();
 			root.collectDrawUnit(collector);
 			camera.update();
+			collector.cullInvisibleUnits(camera);
 		}
 		
 		public function draw(context3d:GpuContext):void
 		{
 			collector.render(context3d, camera);
+		}
+		
+		public function preDrawDepth(context3d:GpuContext):void
+		{
+			if(collector.hasDrawUnits()){
+				camera.uploadMVP(context3d);
+				collector.preDrawDepth(context3d, camera);
+			}
 		}
 		
 		public function pickup(screenX:Number, screenY:Number, result:Vector.<Object3D>):void

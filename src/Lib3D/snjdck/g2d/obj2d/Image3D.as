@@ -30,7 +30,7 @@ package snjdck.g2d.obj2d
 		public function Image3D(obj3d:Object3D, w:int, h:int)
 		{
 //			this.target = obj3d;
-			camera3d = Camera3DFactory.NewIsoCamera(1280, 720, 0, 5000);
+			camera3d = Camera3DFactory.NewIsoCamera(1000, 600, 0, 5000);
 			camera3d.zOffset = -1000;
 			this.width = w;
 			this.height = h;
@@ -46,10 +46,15 @@ package snjdck.g2d.obj2d
 		
 		override public function draw(render:Render2D, context3d:GpuContext):void
 		{
-			context3d.clearDepthAndStencil();
+			if(!context3d.isRectInBuffer(scissorRect)){
+				return;
+			}
+			
+			context3d.clearDepth();
 			context3d.setScissorRect(scissorRect);
-			camera3d.projection.offsetX =  (x - 0.5 * (context3d.bufferWidth - width)) / context3d.bufferWidth;
-			camera3d.projection.offsetY = -(y - 0.5 * (context3d.bufferHeight - height)) / context3d.bufferHeight;
+			camera3d.projection.offsetX = (2 * x + width) / context3d.bufferWidth - 1;
+			camera3d.projection.offsetY = 1 - (2 * y + height) / context3d.bufferHeight;
+			camera3d.uploadMVP(context3d);
 			scene3d.draw(context3d);
 			context3d.setScissorRect(null);
 			

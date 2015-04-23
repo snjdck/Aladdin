@@ -21,6 +21,11 @@ package snjdck.g3d.render
 		
 		public function DrawUnitCollector3D(){}
 		
+		public function hasDrawUnits():Boolean
+		{
+			return opaqueDrawUnits.hasDrawUnits() || blendDrawUnits.hasDrawUnits();
+		}
+		
 		public function clear():void
 		{
 			opaqueDrawUnits.clear();
@@ -51,43 +56,35 @@ package snjdck.g3d.render
 			return matrixStack.worldMatrix;
 		}
 		
-		public function render(context3d:GpuContext, camera3d:Camera3D):void
+		public function cullInvisibleUnits(camera3d:Camera3D):void
 		{
 			opaqueDrawUnits.cullInvisibleUnits(camera3d);
 			blendDrawUnits.cullInvisibleUnits(camera3d);
-			if(!(opaqueDrawUnits.hasDrawUnits() || blendDrawUnits.hasDrawUnits())){
-				return;
-			}
-			
-			camera3d.uploadMVP(context3d);
-			
-			preDrawDepth(context3d, camera3d);
-			
+		}
+		
+		public function render(context3d:GpuContext, camera3d:Camera3D):void
+		{
 			if(opaqueDrawUnits.hasDrawUnits()){
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 				context3d.blendMode = BlendMode.NORMAL;
 				opaqueDrawUnits.draw(context3d, camera3d, false);
 			}
-			
 			if(blendDrawUnits.hasDrawUnits()){
 				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
 				blendDrawUnits.draw(context3d, camera3d, true);
 			}
 		}
 		
-		private function preDrawDepth(context3d:GpuContext, camera3d:Camera3D):void
+		public function preDrawDepth(context3d:GpuContext, camera3d:Camera3D):void
 		{
 			var staticDrawUnits:Vector.<IDrawUnit3D> = opaqueDrawUnits.getStaticDrawUnits();
 			if(staticDrawUnits.length <= 0){
 				return;
 			}
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.G3D_PRE_DRAW_DEPTH);
-			context3d.setDepthTest(true, Context3DCompareMode.LESS);
-			context3d.setColorMask(false, false, false, false);
 			for each(var drawUnit:IDrawUnit3D in staticDrawUnits){
 				drawUnit.draw(context3d, camera3d);
 			}
-			context3d.setColorMask(true, true, true, true);
 		}
 	}
 }

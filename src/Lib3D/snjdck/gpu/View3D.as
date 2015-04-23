@@ -2,17 +2,16 @@ package snjdck.gpu
 {
 	import flash.display.Stage;
 	import flash.display.Stage3D;
+	import flash.display3D.Context3D;
+	import flash.display3D.Context3DCompareMode;
 	import flash.events.Event;
 	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.Scene2D;
 	import snjdck.g3d.Scene3D;
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.support.Camera3DFactory;
 	import snjdck.gpu.asset.GpuContext;
-	
-	use namespace ns_g3d;
 	
 	final public class View3D implements ITicker
 	{
@@ -20,10 +19,7 @@ package snjdck.gpu
 		public const scene2d:Scene2D = new Scene2D();
 		
 		public var timeScale:Number = 1;
-		
-		private var hasInit:Boolean;
-		
-		private var _enableErrorChecking:Boolean;
+		public var enableErrorChecking:Boolean;
 		
 		internal var stage2d:Stage;
 		internal var stage3d:Stage3D;
@@ -43,17 +39,6 @@ package snjdck.gpu
 			scene3d.camera = Camera3DFactory.NewIsoCamera(_width, _height, 0, 5000);
 //			camera3d = Camera3DFactory.NewPerspectiveCamera(60, _width/_height, 500, 4000);
 			scene3d.camera.zOffset = -1000;
-			/*
-			camera3d.viewport.width = 0.5;
-			camera3d.viewport.height = 0.5;
-			
-			var testCamera:Camera3D = Camera3D.NewIsoCamera(_width, _height, -1000, 4000);
-			testCamera.depth = 1;
-			scene3d.addChild(testCamera);
-			testCamera.viewport.x = 0.5;
-			testCamera.viewport.width = 0.5;
-			testCamera.viewport.height = 0.5;
-			*/
 			
 			init();
 		}
@@ -92,19 +77,12 @@ package snjdck.gpu
 		
 		private function __onDeviceCreate(evt:Event):void
 		{
-			context3d = new GpuContext(stage3d.context3D);
-			if(!hasInit){
-				onDeviceInit();
-				hasInit = true;
-			}
-			onDeviceLost();
-		}
-		
-		private function onDeviceInit():void
-		{
-			trace(context3d.driverInfo);
-			context3d.enableErrorChecking = _enableErrorChecking;
+			var ctx:Context3D = stage3d.context3D;
+			ctx.enableErrorChecking = enableErrorChecking;
+			trace(ctx.driverInfo);
+			context3d = new GpuContext(ctx);
 			Clock.getInstance().add(this);
+			onDeviceLost();
 		}
 		
 		protected function onDeviceLost():void
@@ -119,11 +97,13 @@ package snjdck.gpu
 			scene2d.update(timeElapsed);
 			
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			
+			context3d.setDepthTest(true, Context3DCompareMode.LESS);
+			context3d.setColorMask(false, false, false, false);
 			scene2d.preDrawDepth(context3d);
+			scene3d.preDrawDepth(context3d);
+			context3d.setColorMask(true, true, true, true);
 			scene3d.draw(context3d);
 			scene2d.draw(context3d);
-			
 			context3d.present();
 		}
 		
@@ -140,14 +120,6 @@ package snjdck.gpu
 			var screenY:Number = 1 - 2 * stageY / _height;
 			
 			scene3d.notifyEvent(evtType, screenX, screenY);
-		}
-		
-		public function set enableErrorChecking(value:Boolean):void
-		{
-			if(context3d != null){
-				context3d.enableErrorChecking = value;
-			}
-			_enableErrorChecking = value;
 		}
 	}
 }
