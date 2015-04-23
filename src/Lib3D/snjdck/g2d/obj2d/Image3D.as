@@ -29,7 +29,6 @@ package snjdck.g2d.obj2d
 		
 		public function Image3D(obj3d:Object3D, w:int, h:int)
 		{
-//			this.target = obj3d;
 			camera3d = Camera3DFactory.NewIsoCamera(1000, 600, 0, 5000);
 			camera3d.zOffset = -1000;
 			this.width = w;

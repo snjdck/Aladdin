@@ -19,7 +19,6 @@ package snjdck.g3d.core
 	{
 		public var projection:Projection3D;
 		public var viewFrusum:ViewFrustum;
-		public var cullingMask:uint;
 		public var zOffset:Number = 0;
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
@@ -33,13 +32,6 @@ package snjdck.g3d.core
 		public function containsAABB(bound:AABB):Boolean
 		{
 			return false;
-		}
-		
-		public function appendMatrix(other:Matrix3D):void
-		{
-			_worldMatrix.append(other);
-			_worldMatrixInvert.copyFrom(_worldMatrix);
-			_worldMatrixInvert.invert();
 		}
 		
 		public function update():void
