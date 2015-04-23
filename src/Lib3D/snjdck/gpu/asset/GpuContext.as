@@ -46,21 +46,6 @@ package snjdck.gpu.asset
 			stencilRefValue = 0xFFFF00;
 		}
 		
-		public function get driverInfo():String
-		{
-			return context3d.driverInfo;
-		}
-		
-		public function get enableErrorChecking():Boolean
-		{
-			return context3d.enableErrorChecking;
-		}
-		
-		public function set enableErrorChecking(value:Boolean):void
-		{
-			context3d.enableErrorChecking = value;
-		}
-		
 		public function dispose():void
 		{
 			context3d.dispose();
@@ -262,6 +247,11 @@ package snjdck.gpu.asset
 			clear(0.0, 0.0, 0.0, 1.0, depth, stencil, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
 		}
 		[Inline]
+		public function clearDepth(depth:Number=1.0):void
+		{
+			clear(0.0, 0.0, 0.0, 1.0, depth, 0, Context3DClearMask.DEPTH);
+		}
+		[Inline]
 		public function clearStencil(stencil:uint=0):void
 		{
 			clear(0.0, 0.0, 0.0, 1.0, 1.0, stencil, Context3DClearMask.STENCIL);
@@ -291,6 +281,11 @@ package snjdck.gpu.asset
 				return _backBufferHeight;
 			}
 			return _renderTarget.height;
+		}
+		
+		public function isRectInBuffer(rect:Rectangle):Boolean
+		{
+			return !(rect.x >= bufferWidth || rect.y >= bufferHeight || rect.right <= 0 || rect.bottom <= 0);
 		}
 	}
 }
