@@ -43,7 +43,7 @@ package snjdck.g2d.obj2d
 			scene3d.update(timeElapsed);
 		}
 		
-		override public function draw(render:Render2D, context3d:GpuContext):void
+		override protected function onDraw(render:Render2D, context3d:GpuContext):void
 		{
 			if(!context3d.isRectInBuffer(scissorRect)){
 				return;

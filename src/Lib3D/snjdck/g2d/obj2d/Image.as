@@ -45,6 +45,9 @@ package snjdck.g2d.obj2d
 		
 		override public function preDrawDepth(render:Render2D, context3d:GpuContext):void
 		{
+			if(clipContent){
+				return;
+			}
 			if(texture.scale9 != null){
 				var v:Vector.<Number> = texture.scale9;
 				render.drawLocalRect(context3d, prevWorldMatrix,
@@ -55,7 +58,7 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		override public function draw(render:Render2D, context3d:GpuContext):void
+		override protected function onDraw(render:Render2D, context3d:GpuContext):void
 		{
 			render.drawImage(context3d, this, texture);
 		}

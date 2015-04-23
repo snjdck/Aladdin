@@ -1,35 +1,37 @@
-package snjdck.g2d.obj2d
+package snjdck.g2d.impl
 {
-	import flash.display3D.Context3DClearMask;
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
+	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
 	
-	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	
-	public class StencilMaskSprite extends DisplayObjectContainer2D
+
+	internal class ClipRect extends Rectangle
 	{
 		static private const MAX_RECURSIVE_COUNT:int = 8;
 		static private var stencilIndex:int = 0;
 		
-		private var maskImage:Image;
+		private var worldMatrix:Matrix;
 		
-		public function StencilMaskSprite(maskImage:Image)
+		public function ClipRect(worldMatrix:Matrix)
 		{
-			this.maskImage = maskImage;
+			this.worldMatrix = worldMatrix;
 		}
 		
-		override public function draw(render:Render2D, context3d:GpuContext):void
+		public function drawBegin(render:Render2D, context3d:GpuContext):void
 		{
 			if(stencilIndex >= MAX_RECURSIVE_COUNT){
 				throw new Error("stencil mask is too much!");
 			}
-			
 			drawMask(render, context3d, 0xFF, (2 << stencilIndex) - 1);
 			++stencilIndex;
-			super.draw(render, context3d);
+		}
+		
+		public function drawEnd(render:Render2D, context3d:GpuContext):void
+		{
 			--stencilIndex;
 			if(stencilIndex > 0){
 				drawMask(render, context3d, 0x00, (1 << stencilIndex) - 1);
@@ -49,8 +51,12 @@ package snjdck.g2d.obj2d
 				Context3DStencilAction.KEEP,
 				Context3DStencilAction.SET
 			);
-			maskImage.draw(render, context3d);
-			context3d.setStencilActions(Context3DTriangleFace.FRONT_AND_BACK, Context3DCompareMode.EQUAL);
+			render.drawLocalRect(context3d, worldMatrix, x, y, width, height);
+			
+			context3d.setStencilActions(
+				Context3DTriangleFace.FRONT_AND_BACK,
+				Context3DCompareMode.EQUAL
+			);
 			context3d.setStencilReferenceValue(0xFF, readMask);
 		}
 	}

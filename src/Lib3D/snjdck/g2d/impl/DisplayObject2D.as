@@ -45,8 +45,13 @@ package snjdck.g2d.impl
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
 		
+		private var _clipRect:ClipRect;
+		public var clipContent:Boolean;
+		
 		public function DisplayObject2D()
 		{
+			_clipRect = new ClipRect(prevWorldMatrix);
+			
 			_pivotX = _pivotY = 0;
 			_x = _y = 0;
 			_scaleX = _scaleY = 1;
@@ -80,11 +85,25 @@ package snjdck.g2d.impl
 		}
 		
 		virtual public function preDrawDepth(render:Render2D, context3d:GpuContext):void{}
-		virtual public function draw(render:Render2D, context3d:GpuContext):void{}
+		final public function draw(render:Render2D, context3d:GpuContext):void
+		{
+			if(clipContent){
+				_clipRect.drawBegin(render, context3d);
+				onDraw(render, context3d);
+				_clipRect.drawEnd(render, context3d);
+			}else{
+				onDraw(render, context3d);
+			}
+		}
+		
+		virtual protected function onDraw(render:Render2D, context3d:GpuContext):void{}
 		
 		virtual public function pickup(px:Number, py:Number):DisplayObject2D
 		{
 			transformCoordsInv(transform, px, py, tempPt);
+			if(clipContent && !clipRect.containsPoint(tempPt)){
+				return null;
+			}
 			var containsPt:Boolean = (0 <= tempPt.x) && (tempPt.x < width) && (0 <= tempPt.y) && (tempPt.y < height);
 			return containsPt ? this : null;
 		}
@@ -227,6 +246,11 @@ package snjdck.g2d.impl
 		public function set height(value:Number):void
 		{
 			_height = value;
+		}
+		
+		public function get clipRect():Rectangle
+		{
+			return _clipRect;
 		}
 		
 		public function hasVisibleArea():Boolean

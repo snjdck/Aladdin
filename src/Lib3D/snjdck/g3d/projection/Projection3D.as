@@ -2,12 +2,9 @@ package snjdck.g3d.projection
 {
 	import flash.geom.Vector3D;
 	
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.viewfrustum.ViewFrustum;
 	import snjdck.gpu.asset.GpuContext;
-	
-	use namespace ns_g3d;
 
 	public class Projection3D
 	{

@@ -140,6 +140,9 @@ package snjdck.g2d.impl
 		
 		override public function preDrawDepth(render:Render2D, context3d:GpuContext):void
 		{
+			if(clipContent){
+				return;
+			}
 			for each(var child:DisplayObject2D in _childList){
 				if(child.hasVisibleArea()){
 					child.preDrawDepth(render, context3d);
@@ -147,7 +150,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override public function draw(render:Render2D, context3d:GpuContext):void
+		override protected function onDraw(render:Render2D, context3d:GpuContext):void
 		{
 			for each(var child:DisplayObject2D in _childList){
 				if(!child.hasVisibleArea()){
@@ -168,6 +171,9 @@ package snjdck.g2d.impl
 			}
 			var result:DisplayObject2D = null;
 			transformCoordsInv(transform, px, py, tempPt);
+			if(clipContent && !clipRect.containsPoint(tempPt)){
+				return null;
+			}
 			for(var i:int=_childList.length-1; i>=0; --i){
 				var child:DisplayObject2D = _childList[i];
 				if(!(child.hasVisibleArea() && child.mouseEnabled)){
