@@ -43,7 +43,7 @@ package snjdck.g2d.obj2d
 			scene3d.update(timeElapsed);
 		}
 		
-		override protected function onDraw(render:Render2D, context3d:GpuContext):void
+		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(!context3d.isRectInBuffer(scissorRect)){
 				return;
@@ -57,7 +57,7 @@ package snjdck.g2d.obj2d
 			scene3d.draw(context3d);
 			context3d.setScissorRect(null);
 			
-			render.drawBegin(context3d);
+			render2d.drawBegin(context3d);
 		}
 		
 		override public function set height(value:Number):void

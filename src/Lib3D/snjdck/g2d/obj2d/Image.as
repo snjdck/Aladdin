@@ -43,14 +43,14 @@ package snjdck.g2d.obj2d
 			return super.hasVisibleArea() && (texture != null);
 		}
 		
-		override public function preDrawDepth(render:Render2D, context3d:GpuContext):void
+		override public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){
 				return;
 			}
 			if(texture.scale9 != null){
 				var v:Vector.<Number> = texture.scale9;
-				render.drawLocalRect(context3d, prevWorldMatrix,
+				render2d.drawLocalRect(context3d, prevWorldMatrix,
 					v[0],v[1],
 					width - (v[0] + v[2]),
 					height - (v[1] + v[3])
@@ -58,9 +58,9 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		override protected function onDraw(render:Render2D, context3d:GpuContext):void
+		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			render.drawImage(context3d, this, texture);
+			render2d.drawImage(context3d, this, texture);
 		}
 		
 		public function set opaque(value:Boolean):void
