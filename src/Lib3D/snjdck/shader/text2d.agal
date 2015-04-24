@@ -1,19 +1,18 @@
 #vc0 projection
 #vc1 world transform for x
 #vc2 world transform for y
-#vc3 charSize, charSize/textureSize, 0, 1
+#vc3 textureW, textureH, 0, 0
 
 #va1 x, y, ux, uy
+#va2 charW, charH, 0, 0
 
 @text2d
 
-vt0 = va0 * vc3.xxww
-vt0.xy += va1
+vt0.xy = va0 * va2
+vt0 = vt0.xyxy + va1
+v0 = vt0.zw / vc3
+vt0.zw = va0
 
 ${mvp2d.vs}
 
-vt0 = va0 * vc3.yyww
-vt0.xy += va1.zw
-
-v0 = vt0
 oc = tex: v0, fs0<2d,linear,clamp>
