@@ -39,11 +39,13 @@ package flash.support
 			}
 		}
 		
-		public function recyleUsedItems(handler:Function):void
+		public function recyleUsedItems(handler:Function=null):void
 		{
 			while(usedItems.length > 0){
 				var item:Object = usedItems.pop();
-				handler(item);
+				if(handler != null){
+					handler(item);
+				}
 				unusedItems.push(item);
 			}
 		}
