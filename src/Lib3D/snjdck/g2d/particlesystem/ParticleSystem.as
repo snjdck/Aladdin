@@ -104,10 +104,8 @@ package snjdck.g2d.particlesystem
 			context3d.blendMode = blendMode;
 			context3d.texture = mTexture;
 			
-//			render.pushMatrix(transform);
 			ParticleRender.Instance.prepareVc(render2d, prevWorldMatrix, mTexture);
 			ParticleRender.Instance.drawParticles(context3d, mParticles, mNumParticles);
-//			render.popMatrix();
 			
 			context3d.blendMode = prevBlendMode;
 			context3d.program = prevProgram;

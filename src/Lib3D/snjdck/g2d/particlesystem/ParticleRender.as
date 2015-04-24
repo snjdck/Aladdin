@@ -1,36 +1,21 @@
 package snjdck.g2d.particlesystem
 {
-	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix;
 	
 	import matrix33.toBuffer;
 	
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuIndexBuffer;
-	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.gpu.support.QuadBatchRender;
 
-	final internal class ParticleRender
+	final internal class ParticleRender extends QuadBatchRender
 	{
-		static public const data32perVertex:int = 10;
-		static public const data32perQuad:int = 4 * data32perVertex;
-		
 		static public const Instance:ParticleRender = new ParticleRender();
-		
-		private var vertexBuffer:GpuVertexBuffer;
-		private const vertexData:Vector.<Number> = new Vector.<Number>();
-		
-		private var indexBuffer:GpuIndexBuffer;
-		private const indexData:Vector.<uint> = new Vector.<uint>();
-		
-		private const constData:Vector.<Number> = new Vector.<Number>(16, true);
-		private var maxQuadCount:int;
 		
 		public function ParticleRender()
 		{
 			constData[14] = 0.5;
-			constData[15] = 0;
 		}
 		
 		public function prepareVc(render:Render2D, worldMatrix:Matrix, texture:IGpuTexture):void
@@ -60,60 +45,6 @@ package snjdck.g2d.particlesystem
 				vertexData[offset+9] = vertexData[offset+19] = vertexData[offset+29] = vertexData[offset+39] = particle.color.alpha;
 			}
 			draw(context3d, numParticles);
-		}
-		
-		private function draw(context3d:GpuContext, quadCount:int):void
-		{
-			context3d.setVc(0, constData, 4);
-			vertexBuffer.upload(vertexData, quadCount << 2);
-			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_4);
-			context3d.setVertexBufferAt(2, vertexBuffer, 6, Context3DVertexBufferFormat.FLOAT_4);
-			context3d.drawTriangles(indexBuffer, 0, quadCount << 1);
-		}
-		
-		private function adjustData(quadCount:int):void
-		{
-			if(maxQuadCount < quadCount)
-			{
-				adjustVertexData(quadCount);
-				adjustIndexData(quadCount);
-				if(vertexBuffer != null){
-					vertexBuffer.dispose();
-				}
-				vertexBuffer = new GpuVertexBuffer(quadCount << 2, data32perVertex, true);
-				if(indexBuffer != null){
-					indexBuffer.dispose();
-				}
-				indexBuffer = new GpuIndexBuffer(indexData.length);
-				indexBuffer.upload(indexData);
-				maxQuadCount = quadCount;
-			}
-		}
-		
-		private function adjustVertexData(quadCount:int):void
-		{
-			vertexData.length = quadCount * data32perQuad;
-			for(var i:int=maxQuadCount; i<quadCount; ++i){
-				var offset:int = i * data32perQuad;
-//				vertexData[offset   ] = vertexData[offset+1 ] = vertexData[offset+11] = vertexData[offset+20] = 0;
-				vertexData[offset+10] = vertexData[offset+21] = vertexData[offset+30] = vertexData[offset+31] = 1;
-			}
-		}
-		
-		private function adjustIndexData(quadCount:int):void
-		{
-			var offset:int = indexData.length;
-			indexData.length = quadCount * 6;
-			for(var i:int=maxQuadCount; i<quadCount; ++i){
-				var index:int = i << 2;
-				indexData[offset++] = index;
-				indexData[offset++] = index + 1;
-				indexData[offset++] = index + 3;
-				indexData[offset++] = index;
-				indexData[offset++] = index + 3;
-				indexData[offset++] = index + 2;
-			}
 		}
 	}
 }
