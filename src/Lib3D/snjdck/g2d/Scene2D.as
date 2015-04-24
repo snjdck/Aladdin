@@ -15,7 +15,7 @@ package snjdck.g2d
 	{
 		public const root:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
-		private const render:Render2D = new Render2D();
+		private const render2d:Render2D = new Render2D();
 		
 		public function Scene2D(){}
 		
@@ -26,10 +26,10 @@ package snjdck.g2d
 		
 		public function draw(context3d:GpuContext):void
 		{
-			render.drawBegin(context3d);
-			render.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
-			root.draw(render, context3d);
-			render.popScreen();
+			render2d.drawBegin(context3d);
+			render2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
+			root.draw(render2d, context3d);
+			render2d.popScreen();
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void
@@ -37,9 +37,9 @@ package snjdck.g2d
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.G2D_PRE_DRAW_DEPTH);
 			QuadRender.Instance.drawBegin(context3d);
 			
-			render.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
-			root.preDrawDepth(render, context3d);
-			render.popScreen();
+			render2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
+			root.preDrawDepth(render2d, context3d);
+			render2d.popScreen();
 		}
 		
 		public function addChild(child:DisplayObject2D):void
