@@ -7,7 +7,7 @@ package snjdck.gpu.asset
 	import math.isPowerOfTwo;
 
 	/** cube texture需要上传所有level的mipmap */
-	final internal class GpuTexture extends GpuAsset implements IGpuTexture
+	final public class GpuTexture extends GpuAsset implements IGpuTexture
 	{
 		private const uploadParams:Array = [];
 		
