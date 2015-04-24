@@ -95,7 +95,7 @@ package snjdck.g2d.particlesystem
 			particle.onUpdate(passedTime);
 		}
 		
-		override protected function onDraw(render:Render2D, context3d:GpuContext):void
+		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			const prevProgram:GpuProgram = context3d.program;
 			const prevBlendMode:BlendMode = context3d.blendMode;
@@ -105,7 +105,7 @@ package snjdck.g2d.particlesystem
 			context3d.texture = mTexture;
 			
 //			render.pushMatrix(transform);
-			ParticleRender.Instance.prepareVc(render, prevWorldMatrix, mTexture);
+			ParticleRender.Instance.prepareVc(render2d, prevWorldMatrix, mTexture);
 			ParticleRender.Instance.drawParticles(context3d, mParticles, mNumParticles);
 //			render.popMatrix();
 			
