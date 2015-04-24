@@ -21,27 +21,27 @@ package snjdck.g2d.impl
 			this.worldMatrix = worldMatrix;
 		}
 		
-		public function drawBegin(render:Render2D, context3d:GpuContext):void
+		public function drawBegin(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(stencilIndex >= MAX_RECURSIVE_COUNT){
 				throw new Error("stencil mask is too much!");
 			}
-			drawMask(render, context3d, 0xFF, (2 << stencilIndex) - 1);
+			drawMask(render2d, context3d, 0xFF, (2 << stencilIndex) - 1);
 			++stencilIndex;
 		}
 		
-		public function drawEnd(render:Render2D, context3d:GpuContext):void
+		public function drawEnd(render2d:Render2D, context3d:GpuContext):void
 		{
 			--stencilIndex;
 			if(stencilIndex > 0){
-				drawMask(render, context3d, 0x00, (1 << stencilIndex) - 1);
+				drawMask(render2d, context3d, 0x00, (1 << stencilIndex) - 1);
 			}else{//重置回默认状态
 				context3d.clearStencil();
 				context3d.setStencilActions();
 			}
 		}
 		
-		private function drawMask(render:Render2D, context3d:GpuContext, refValue:uint, readMask:uint):void
+		private function drawMask(render2d:Render2D, context3d:GpuContext, refValue:uint, readMask:uint):void
 		{
 			context3d.setStencilReferenceValue(refValue, 0xFF, 1 << stencilIndex);
 			context3d.setStencilActions(
@@ -51,7 +51,7 @@ package snjdck.g2d.impl
 				Context3DStencilAction.KEEP,
 				Context3DStencilAction.SET
 			);
-			render.drawLocalRect(context3d, worldMatrix, x, y, width, height);
+			render2d.drawLocalRect(context3d, worldMatrix, x, y, width, height);
 			
 			context3d.setStencilActions(
 				Context3DTriangleFace.FRONT_AND_BACK,

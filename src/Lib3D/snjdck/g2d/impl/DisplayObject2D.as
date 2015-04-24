@@ -84,19 +84,19 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		virtual public function preDrawDepth(render:Render2D, context3d:GpuContext):void{}
-		final public function draw(render:Render2D, context3d:GpuContext):void
+		virtual public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void{}
+		final public function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){
-				_clipRect.drawBegin(render, context3d);
-				onDraw(render, context3d);
-				_clipRect.drawEnd(render, context3d);
+				_clipRect.drawBegin(render2d, context3d);
+				onDraw(render2d, context3d);
+				_clipRect.drawEnd(render2d, context3d);
 			}else{
-				onDraw(render, context3d);
+				onDraw(render2d, context3d);
 			}
 		}
 		
-		virtual protected function onDraw(render:Render2D, context3d:GpuContext):void{}
+		virtual protected function onDraw(render2d:Render2D, context3d:GpuContext):void{}
 		
 		virtual public function pickup(px:Number, py:Number):DisplayObject2D
 		{

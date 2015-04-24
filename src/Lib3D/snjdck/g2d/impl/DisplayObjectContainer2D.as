@@ -138,28 +138,28 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		override public function preDrawDepth(render:Render2D, context3d:GpuContext):void
+		override public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){
 				return;
 			}
 			for each(var child:DisplayObject2D in _childList){
 				if(child.hasVisibleArea()){
-					child.preDrawDepth(render, context3d);
+					child.preDrawDepth(render2d, context3d);
 				}
 			}
 		}
 		
-		override protected function onDraw(render:Render2D, context3d:GpuContext):void
+		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			for each(var child:DisplayObject2D in _childList){
 				if(!child.hasVisibleArea()){
 					continue;
 				}
 				if(child.filter != null){
-					child.filter.draw(child, render, context3d);
+					child.filter.draw(child, render2d, context3d);
 				}else{
-					child.draw(render, context3d);
+					child.draw(render2d, context3d);
 				}
 			}
 		}
