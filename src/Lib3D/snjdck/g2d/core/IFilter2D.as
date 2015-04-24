@@ -8,8 +8,8 @@ package snjdck.g2d.core
 
 	public interface IFilter2D
 	{
-		function draw(target:DisplayObject2D, render:Render2D, context3d:GpuContext):void;
-		function renderFilter(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void;
+		function draw(target:DisplayObject2D, render2d:Render2D, context3d:GpuContext):void;
+		function renderFilter(texture:IGpuTexture, render2d:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void;
 		function get marginX():int;
 		function get marginY():int;
 	}
