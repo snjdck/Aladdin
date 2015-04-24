@@ -195,6 +195,10 @@ package snjdck.gpu.asset
 			
 			vaUseInfo = _program.getVaUseInfo();
 			fsUseInfo = _program.getFsUseInfo();
+			
+			if(!isFsSlotInUse(0) && _texture != null){
+				_texture = null;
+			}
 		}
 		
 		private function unsetInputs(useInfo:uint, methodName:String):void
@@ -213,17 +217,21 @@ package snjdck.gpu.asset
 		{
 			context3d.setVertexBufferAt(slotIndex, buffer.getRawGpuAsset(context3d), bufferOffset, format);
 		}
-		
+		[Inline]
 		public function set texture(value:IGpuTexture):void
 		{
-			if(value != _texture){
-				_texture = value;
-				setTextureAt(0, value);
-			}
+			setTextureAt(0, value);
 		}
 		
 		public function setTextureAt(slotIndex:int, texture:IGpuTexture):void
 		{
+			if(0 == slotIndex){
+				if(_texture == texture){
+					return;
+				}else{
+					_texture = texture;
+				}
+			}
 			context3d.setTextureAt(slotIndex, texture.getRawGpuAsset(context3d));
 		}
 		
