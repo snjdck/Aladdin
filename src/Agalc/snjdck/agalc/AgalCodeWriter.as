@@ -88,7 +88,7 @@ package snjdck.agalc
 			var dimension:uint = 0;		//0=2D, 1=Cube, 2=3D
 			var filter:uint = 0;		//0=nearest, 1=linear
 			var mipmap:uint = 0;		//0=disable, 1=nearest, 2=linear
-			var wrapping:uint = 1;		//0=clamp, 1=repeat
+			var wrapping:uint = 1;		//0=clamp, 1=repeat, 2=clamp_u_repeat_v, 3=repeat_u_clamp_v
 			var textureFormat:uint = 0;	//0=rgba, 1=dxt1, 2=dxt5, 3=video
 			var special:uint = 0;
 			
@@ -121,6 +121,12 @@ package snjdck.agalc
 					case "repeat":
 						wrapping = 1;
 						break;
+					case "clamp_u_repeat_v":
+						wrapping = 2;
+						break;
+					case "repeat_u_clamp_v":
+						wrapping = 3;
+						break;
 					case "rgba":
 						textureFormat = 0;
 						break;
@@ -129,6 +135,9 @@ package snjdck.agalc
 						break;
 					case "dxt5":
 						textureFormat = 2;
+						break;
+					case "video":
+						textureFormat = 3;
 						break;
 					case "centroid":
 						special |= 1;
