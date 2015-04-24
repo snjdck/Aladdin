@@ -2,6 +2,7 @@
 #vc1 world transform for x
 #vc2 world transform for y
 #vc3 textureWidth, textureHeight, 0.5, 0
+
 #va1 x, y, scale, rotation
 #va2 color
 
@@ -26,13 +27,8 @@ vt1.y = dp3: vt0, vt2.zw
 
 vt0.xy = vt1.xy + va1.xy	#translation
 
-vt1.x = dp4: vt0, vc1		#world matrix
-vt1.y = dp4: vt0, vc2
+${mvp2d.vs}
 
-vt0.xy = vt1.xy * vc0.xy	#screen matrix
-vt0.xy += vc0.zw
-
-op = vt0
 v0 = va0
 v1 = va2
 

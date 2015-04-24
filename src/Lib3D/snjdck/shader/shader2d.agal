@@ -1,3 +1,12 @@
+@mvp2d.vs
+vt1.x = dp4: vt0, vc1		#world matrix
+vt1.y = dp4: vt0, vc2
+
+vt0.xy = vt1.xy * vc0		#screen matrix
+vt0.xy += vc0.zw
+
+op = vt0
+#========================
 @image.vs
 
 vt0 = va0.xxyy * vc5	#w,rw,h,rh
@@ -13,13 +22,7 @@ vt0 += vc4
 vt1.zw = vt0
 vt0.zw = va0
 
-vt1.x = dp4: vt0, vc1		#world matrix
-vt1.y = dp4: vt0, vc2
-
-vt0.xy = vt1 * vc0			#screen matrix
-vt0.xy += vc0.zw
-
-op = vt0
+${mvp2d.vs}
 
 #========================
 @g2d_preDrawDepth

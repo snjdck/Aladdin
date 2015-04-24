@@ -19,5 +19,7 @@ package snjdck.shader
 //		static public const G2D:String = "g2d";
 		static public const G2D_PRE_DRAW_DEPTH:String = "g2d_preDrawDepth";
 		static public const G3D_PRE_DRAW_DEPTH:String = "g3d_preDrawDepth";
+		
+		static public const TEXT_2D:String = "text2d";
 	}
 }
