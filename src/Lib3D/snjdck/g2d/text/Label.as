@@ -19,6 +19,7 @@ package snjdck.g2d.text
 		{
 			width = 100;
 			height = 100;
+			textColor[1] = 1;
 		}
 		
 		override public function hasVisibleArea():Boolean
@@ -31,11 +32,14 @@ package snjdck.g2d.text
 			const prevProgram:GpuProgram = context3d.program;
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
 			
+			context3d.setFc(0, textColor);
 			TextRender.Instance.prepareVc(render2d, prevWorldMatrix);
 			TextRender.Instance.drawText(context3d, text, width, height);
 			
 			context3d.program = prevProgram;
 			QuadRender.Instance.drawBegin(context3d);
 		}
+		
+		private const textColor:Vector.<Number> = new Vector.<Number>(4, true);
 	}
 }

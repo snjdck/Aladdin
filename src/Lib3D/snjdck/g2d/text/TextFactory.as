@@ -30,6 +30,7 @@ package snjdck.g2d.text
 		
 		public var _gpuTexture:GpuTexture;
 		private var texture:BitmapData;
+		private var isTextureDirty:Boolean;
 		
 		public function TextFactory()
 		{
@@ -54,6 +55,7 @@ package snjdck.g2d.text
 			matrix.tx = offsetX - 2;
 			matrix.ty = offsetY - 2;
 			texture.draw(tf, matrix);
+			isTextureDirty = true;
 		}
 		
 		public function getCharList(text:String, output:CharInfoList):void
@@ -80,7 +82,10 @@ package snjdck.g2d.text
 				}
 				output.push(charInfo);
 			}
-			_gpuTexture.upload(texture);
+			if(isTextureDirty){
+				_gpuTexture.upload(texture);
+				isTextureDirty = false;
+			}
 		}
 	}
 }

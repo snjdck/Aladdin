@@ -15,7 +15,10 @@ package snjdck.g2d.text
 		private const textFactory:TextFactory = new TextFactory();
 		private const charList:CharInfoList = new CharInfoList();
 		
-		public function TextRender(){}
+		public function TextRender()
+		{
+			constData[14] = 0.5;
+		}
 		
 		public function prepareVc(render:Render2D, worldMatrix:Matrix):void
 		{
@@ -55,10 +58,8 @@ package snjdck.g2d.text
 				
 				vertexData[offset+6] = vertexData[offset+16] = vertexData[offset+26] = vertexData[offset+36] = charInfo.width;
 				vertexData[offset+7] = vertexData[offset+17] = vertexData[offset+27] = vertexData[offset+37] = charInfo.height;
-				/*
-				vertexData[offset+8] = vertexData[offset+18] = vertexData[offset+28] = vertexData[offset+38] = 0;
-				vertexData[offset+9] = vertexData[offset+19] = vertexData[offset+29] = vertexData[offset+39] = 1;
-				//*/
+				vertexData[offset+8] = vertexData[offset+18] = vertexData[offset+28] = vertexData[offset+38] = 2;
+				vertexData[offset+9] = vertexData[offset+19] = vertexData[offset+29] = vertexData[offset+39] = 0;
 			}
 		}
 	}
