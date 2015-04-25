@@ -94,17 +94,11 @@ package snjdck.agalc
 			
 			for each(var flag:String in (flags && flags.split(","))){
 				switch(flag.toLowerCase()){
-					case "2d":
-						dimension = 0;
-						break;
 					case "cube":
 						dimension = 1;
 						break;
 					case "3d":
 						dimension = 2;
-						break;
-					case "nearest":
-						filter = 0;
 						break;
 					case "linear":
 						filter = 1;
@@ -126,9 +120,6 @@ package snjdck.agalc
 						break;
 					case "repeat_u_clamp_v":
 						wrapping = 3;
-						break;
-					case "rgba":
-						textureFormat = 0;
 						break;
 					case "dxt1":
 						textureFormat = 1;
