@@ -6,8 +6,10 @@ package snjdck.gpu.asset
 		
 		public function GpuVertexBuffer(numVertices:int, data32PerVertex:int, isDynamic:Boolean=false)
 		{
-			var bufferUsage:String = isDynamic ? "dynamicDraw" : "staticDraw";
-			super("createVertexBuffer", [numVertices, data32PerVertex, bufferUsage]);
+			super("createVertexBuffer", [numVertices, data32PerVertex]);
+			if(isDynamic && canUseBufferUsage){
+				initParams.push("dynamicDraw");
+			}
 			uploadParams[1] = 0;
 		}
 		

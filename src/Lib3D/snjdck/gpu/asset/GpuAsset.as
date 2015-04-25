@@ -1,11 +1,14 @@
 package snjdck.gpu.asset
 {
 	import flash.display3D.Context3D;
+	import flash.system.IsPlayerVersionHigherThan;
 	
 	import lambda.apply;
 	
 	internal class GpuAsset implements IGpuAsset
 	{
+		static protected const canUseBufferUsage:Boolean = IsPlayerVersionHigherThan(12);
+		
 		private var prevContext3d:Context3D;
 		
 		private var rawAsset:*;
