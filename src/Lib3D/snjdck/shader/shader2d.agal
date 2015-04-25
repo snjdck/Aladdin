@@ -32,7 +32,7 @@ oc = fc0
 @image.raw
 ${image.vs}
 v0 = vt1.zw
-oc = tex: v0, fs0<2d,nearest,clamp,${0}>
+oc = tex: v0, fs0<clamp,linear,${0}>
 #========================
 @image<rgba>			${image.raw}
 @image_dxt5<dxt5>		${image.raw}
