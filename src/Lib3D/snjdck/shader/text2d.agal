@@ -23,6 +23,6 @@ vt0.yw = va2.zzww - vt0.yyww
 v1 = vt0
 
 ft0 = tex: v0, fs0<2d,linear,clamp>
-ft0 = dp4: ft0, v1
+ft0.w = dp4: ft0, v1
 ft0.xyz = fc0
 oc = ft0
