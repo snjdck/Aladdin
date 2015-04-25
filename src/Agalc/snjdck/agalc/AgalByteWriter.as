@@ -61,6 +61,7 @@ package snjdck.agalc
 			rawData.writeShort(indexRegisterComponentSelect | (1 << 15));
 		}
 		
+		/** 相当于va0.xxxx */
 		public function writeSourceDummy():void
 		{
 			rawData.writeUnsignedInt(0);
