@@ -1,5 +1,6 @@
 package snjdck.gpu.asset
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.utils.IDataInput;
 	
@@ -28,8 +29,19 @@ package snjdck.gpu.asset
 			return new GpuTexture(width, height);
 		}
 		
-		static public function CreateGpuTexture2(source:BitmapData):IGpuTexture
+		static public function CreateGpuTexture2(input:*):IGpuTexture
 		{
+			var source:BitmapData;
+			if(input is BitmapData){
+				source = input;
+			}else if(input is Bitmap){
+				source = input.bitmapData;
+			}else if(input is Class){
+				source = new input().bitmapData;
+			}else{
+				throw new Error("error input!");
+			}
+			
 			var result:GpuTexture = new GpuTexture(source.width, source.height);
 			result.upload(source);
 			return result;

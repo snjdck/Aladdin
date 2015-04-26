@@ -26,7 +26,6 @@ package snjdck.gpu
 			stage.addEventListener(MouseEvent.MOUSE_UP,		__onStageEvent);
 //			stage.addEventListener(MouseEvent.CLICK,		__onStageEvent);
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, 	__onMouseMove);
-			Clock.getInstance().add(this);
 		}
 		
 		private function __onMouseMove(evt:MouseEvent):void

@@ -29,7 +29,9 @@ package snjdck.gpu.support
 			vertexBuffer.upload(vertexData, quadCount << 2);
 			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_4);
-			context3d.setVertexBufferAt(2, vertexBuffer, 6, Context3DVertexBufferFormat.FLOAT_4);
+			if(context3d.isVaSlotInUse(2)){
+				context3d.setVertexBufferAt(2, vertexBuffer, 6, Context3DVertexBufferFormat.FLOAT_4);
+			}
 			context3d.drawTriangles(indexBuffer, 0, quadCount << 1);
 		}
 		

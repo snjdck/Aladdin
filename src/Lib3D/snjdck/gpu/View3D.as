@@ -6,7 +6,6 @@ package snjdck.gpu
 	import flash.display3D.Context3DCompareMode;
 	import flash.events.Event;
 	
-	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.Scene2D;
 	import snjdck.g3d.Scene3D;
@@ -81,7 +80,6 @@ package snjdck.gpu
 			ctx.enableErrorChecking = enableErrorChecking;
 			trace(ctx.driverInfo);
 			context3d = new GpuContext(ctx);
-			Clock.getInstance().add(this);
 			onDeviceLost();
 		}
 		
@@ -95,7 +93,9 @@ package snjdck.gpu
 		{
 			scene3d.update(timeElapsed * timeScale);
 			scene2d.update(timeElapsed);
-			
+			if(null == context3d){
+				return;
+			}
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
 			context3d.setDepthTest(true, Context3DCompareMode.LESS);
 			context3d.setColorMask(false, false, false, false);
