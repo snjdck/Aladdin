@@ -247,5 +247,36 @@ package snjdck.g2d.impl
 		}
 		
 		private const tempPt:Point = new Point();
+		
+		public function get bottomChild():DisplayObject2D
+		{
+			return getChildAt(0);
+		}
+		
+		public function get topChild():DisplayObject2D
+		{
+			return getChildAt(numChildren - 1);
+		}
+		
+		public function swapChildToTop(child:DisplayObject2D):void
+		{
+			var childIndex:int = getChildIndex(child);
+			if(childIndex < 0){
+				return;
+			}
+			var lastIndex:int = numChildren - 1;
+			if(childIndex < lastIndex){
+				swapChildrenAt(childIndex, lastIndex);
+			}
+		}
+		
+		
+		public function swapChildToBottom(child:DisplayObject2D):void
+		{
+			var childIndex:int = getChildIndex(child);
+			if(childIndex > 0){
+				swapChildrenAt(childIndex, 0);
+			}
+		}
 	}
 }

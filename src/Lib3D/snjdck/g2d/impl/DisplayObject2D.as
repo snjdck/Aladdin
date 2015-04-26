@@ -13,6 +13,7 @@ package snjdck.g2d.impl
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	
 	import stdlib.constant.Unit;
@@ -37,6 +38,8 @@ package snjdck.g2d.impl
 		public var filter:IFilter2D;
 		
 		private var _parent:DisplayObjectContainer2D;
+		ns_g2d var _scene:IScene;
+		ns_g2d var _root:DisplayObjectContainer2D;
 		
 		private var isLocalMatrixDirty:Boolean;
 		private const _localMatrix:Matrix = new Matrix();
@@ -77,8 +80,13 @@ package snjdck.g2d.impl
 			return _localMatrix;
 		}
 		
-		virtual public function onUpdate(timeElapsed:int):void
+		public function onUpdate(timeElapsed:int):void
 		{
+			if(isDraging){
+				parent.globalToLocal(scene.mouseX, scene.mouseY, tempPt);
+				x = tempPt.x - dragOffsetX;
+				y = tempPt.y - dragOffsetY;
+			}
 			prevWorldMatrix.copyFrom(transform);
 			if(parent != null){
 				prevWorldMatrix.concat(parent.prevWorldMatrix);
@@ -113,7 +121,7 @@ package snjdck.g2d.impl
 		
 		final public function removeFromParent():void
 		{
-			if(parent){
+			if(parent != null){
 				parent.removeChild(this);
 			}
 		}
@@ -123,9 +131,19 @@ package snjdck.g2d.impl
 			transformCoordsInv(prevWorldMatrix, globalX, globalY, output);;
 		}
 		
+		public function globalToLocal2(globalPt:Point, output:Point):void
+		{
+			globalToLocal(globalPt.x, globalPt.y, output);
+		}
+		
 		public function localToGlobal(localX:Number, localY:Number, output:Point):void
 		{
 			transformCoords(prevWorldMatrix, localX, localY, output);
+		}
+		
+		public function localToGlobal2(localPt:Point, output:Point):void
+		{
+			localToGlobal(localPt.x, localPt.y, output);
 		}
 		
 		final public function get parent():DisplayObjectContainer2D
@@ -141,13 +159,13 @@ package snjdck.g2d.impl
 			
 			isLocked = true;
 			
-			if(parent){
+			if(parent != null){
 				parent.removeChild(this);
 			}
 			
 			_parent = value;
 			
-			if(parent){
+			if(parent != null){
 				parent.addChild(this);
 			}
 			
@@ -343,5 +361,41 @@ package snjdck.g2d.impl
 		static private const tempMatrix2:Matrix = new Matrix();
 		static private const tempPt:Point = new Point();
 		static private const tempRect:Rectangle = new Rectangle();
+		
+		public function swapToTop():void
+		{
+			parent.swapChildToTop(this);
+		}
+		
+		public function swapToBottom():void
+		{
+			parent.swapChildToBottom(this);
+		}
+		
+		public function get scene():IScene
+		{
+			return _scene || (parent ? parent.scene : null);
+		}
+		
+		public function get root():DisplayObjectContainer2D
+		{
+			return _root || (parent ? parent.root : null);
+		}
+		
+		private var isDraging:Boolean;
+		private var dragOffsetX:Number;
+		private var dragOffsetY:Number;
+		
+		public function startDrag():void
+		{
+			dragOffsetX = mouseX;
+			dragOffsetY = mouseY;
+			isDraging = true;
+		}
+		
+		public function stopDrag():void
+		{
+			isDraging = false;
+		}
 	}
 }

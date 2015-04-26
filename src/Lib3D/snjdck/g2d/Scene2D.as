@@ -11,13 +11,22 @@ package snjdck.g2d
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
+	use namespace ns_g2d;
+	
 	public class Scene2D implements IScene
 	{
 		public const root:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
 		private const render2d:Render2D = new Render2D();
 		
-		public function Scene2D(){}
+		ns_g2d var _mouseX:Number;
+		ns_g2d var _mouseY:Number;
+		
+		public function Scene2D()
+		{
+			root._scene = this;
+			root._root = root;
+		}
 		
 		public function update(timeElapsed:int):void
 		{
@@ -68,6 +77,16 @@ package snjdck.g2d
 				target = target.parent;
 			}
 			return result;
+		}
+		
+		public function get mouseX():Number
+		{
+			return _mouseX;
+		}
+		
+		public function get mouseY():Number
+		{
+			return _mouseY;
 		}
 	}
 }
