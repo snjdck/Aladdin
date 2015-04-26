@@ -63,7 +63,7 @@ package snjdck.g3d.core
 			for(var i:int=list.length-1; i>=0; --i){
 				var drawUnit:IDrawUnit3D = list[i];
 				if(!drawUnit.isInSight(this)){
-					trace(drawUnit["name"], "is culled");
+					//trace(drawUnit["name"], "is culled");
 					list.splice(i, 1);
 				}
 			}

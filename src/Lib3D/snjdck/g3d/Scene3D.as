@@ -33,7 +33,10 @@ package snjdck.g3d
 		
 		public function draw(context3d:GpuContext):void
 		{
-			collector.render(context3d, camera);
+			if(collector.hasDrawUnits()){
+				camera.uploadMVP(context3d);
+				collector.render(context3d, camera);
+			}
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void
@@ -48,16 +51,6 @@ package snjdck.g3d
 		{
 			camera.getSceneRay(screenX, screenY, ray);
 			root.hitTest(ray, result);
-		}
-		
-		public function addChild(child:Object3D):void
-		{
-			root.addChild(child);
-		}
-		
-		public function findChild(childName:String):Object3D
-		{
-			return root.findChild(childName);
 		}
 		
 		public function notifyEvent(evtType:String, screenX:Number, screenY:Number):Boolean
@@ -76,6 +69,16 @@ package snjdck.g3d
 				}
 			}
 			return result.length > 0;
+		}
+		
+		public function addChild(child:Object3D):void
+		{
+			root.addChild(child);
+		}
+		
+		public function findChild(childName:String):Object3D
+		{
+			return root.findChild(childName);
 		}
 	}
 }

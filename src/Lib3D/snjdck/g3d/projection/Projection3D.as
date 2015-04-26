@@ -1,5 +1,6 @@
 package snjdck.g3d.projection
 {
+	import flash.geom.Matrix;
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.pickup.Ray;
@@ -17,8 +18,8 @@ package snjdck.g3d.projection
 		protected var _zFar:Number;
 		
 		public var viewFrustum:ViewFrustum;
-		public var offsetX:Number = 0;
-		public var offsetY:Number = 0;
+		private var offsetX:Number = 0;
+		private var offsetY:Number = 0;
 		
 		public function Projection3D(){}
 		
@@ -37,6 +38,17 @@ package snjdck.g3d.projection
 			transform[4] = offsetX;
 			transform[5] = offsetY;
 			context3d.setVc(0, transform, 2);
+		}
+		
+		public function setViewport(worldMatrix:Matrix, width:int, height:int):void
+		{
+			offsetX = (worldMatrix.tx + width * 0.5) * scaleX - 1;
+			offsetY = 1 - (worldMatrix.ty + height * 0.5) * scaleY;
+		}
+		
+		public function resetViewport():void
+		{
+			offsetX = offsetY = 0;
 		}
 		
 		virtual public function getViewRay(screenX:Number, screenY:Number, ray:Ray):void{}
