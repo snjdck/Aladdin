@@ -20,6 +20,9 @@ package snjdck.g3d
 		
 		private const ray:Ray = new Ray();
 		
+		ns_g3d var _mouseX:Number;
+		ns_g3d var _mouseY:Number;
+		
 		public function Scene3D(){}
 		
 		public function update(timeElapsed:int):void
@@ -79,6 +82,16 @@ package snjdck.g3d
 		public function findChild(childName:String):Object3D
 		{
 			return root.findChild(childName);
+		}
+		
+		public function get mouseX():Number
+		{
+			return _mouseX;
+		}
+		
+		public function get mouseY():Number
+		{
+			return _mouseY;
 		}
 	}
 }
