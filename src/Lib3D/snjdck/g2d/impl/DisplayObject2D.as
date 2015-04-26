@@ -27,8 +27,9 @@ package snjdck.g2d.impl
 		protected var _width:Number, _height:Number;
 		
 		public var mouseEnabled:Boolean = true;
-		public const mouseDownSignal:Signal = new Signal();
-		public const mouseUpSignal:Signal = new Signal();
+		public var mouseX:Number, mouseY:Number;
+		public const mouseDownSignal:Signal = new Signal(DisplayObject2D);
+		public const mouseUpSignal:Signal = new Signal(DisplayObject2D);
 		
 		public var alpha:Number = 1;
 		
@@ -101,10 +102,12 @@ package snjdck.g2d.impl
 		virtual public function pickup(px:Number, py:Number):DisplayObject2D
 		{
 			transformCoordsInv(transform, px, py, tempPt);
+			mouseX = tempPt.x;
+			mouseY = tempPt.y;
 			if(clipContent && !clipRect.containsPoint(tempPt)){
 				return null;
 			}
-			var containsPt:Boolean = (0 <= tempPt.x) && (tempPt.x < width) && (0 <= tempPt.y) && (tempPt.y < height);
+			var containsPt:Boolean = (0 <= mouseX) && (mouseX < width) && (0 <= mouseY) && (mouseY < height);
 			return containsPt ? this : null;
 		}
 		
@@ -115,14 +118,14 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		public function globalToLocal(point:Point):Point
+		public function globalToLocal(globalX:Number, globalY:Number, output:Point):void
 		{
-			return null;
+			transformCoordsInv(prevWorldMatrix, globalX, globalY, output);;
 		}
 		
-		public function localToGlobal(point:Point):Point
+		public function localToGlobal(localX:Number, localY:Number, output:Point):void
 		{
-			return null;
+			transformCoords(prevWorldMatrix, localX, localY, output);
 		}
 		
 		final public function get parent():DisplayObjectContainer2D
@@ -214,6 +217,12 @@ package snjdck.g2d.impl
 		public function set scaleY(value:Number):void
 		{
 			_scaleY = value;
+			isLocalMatrixDirty = true;
+		}
+		
+		public function set scale(value:Number):void
+		{
+			_scaleX = _scaleY = value;
 			isLocalMatrixDirty = true;
 		}
 

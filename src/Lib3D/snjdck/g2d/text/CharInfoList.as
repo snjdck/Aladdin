@@ -35,13 +35,14 @@ package snjdck.g2d.text
 		
 		public function arrange(maxWidth:int, maxHeight:int):void
 		{
-			var offsetX:int, offsetY:int;
+			var offsetX:int = 2;
+			var offsetY:int = 2;
 			var charCount:int = list.length;
 			for(var i:int=0; i<charCount; ++i){
 				var charInfo:CharInfo = list[i];
 				if(offsetX + charInfo.width > maxWidth){
-					offsetY += charInfo.height;
-					offsetX = 0;
+					offsetY += charInfo.height + 4;
+					offsetX = 2;
 				}
 				if(offsetY + charInfo.height > maxHeight){
 					list.splice(i, charCount);

@@ -39,7 +39,7 @@ package snjdck.g2d.text
 			
 			App3D.app.stage.addChild(new Bitmap(texture)).y = 200;
 			
-			format = new TextFormat("宋体", 12, 0xFF0000);
+			format = new TextFormat("宋体", 16, 0xFF0000);
 			tf = new TextField();
 			tf.autoSize = TextFieldAutoSize.LEFT;
 			tf.defaultTextFormat = format;

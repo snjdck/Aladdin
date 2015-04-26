@@ -59,10 +59,10 @@ package snjdck.g2d
 			while(target != null && target.mouseEnabled){
 				switch(evtType){
 					case MouseEvent.MOUSE_DOWN:
-						target.mouseDownSignal.notify();
+						target.mouseDownSignal.notify(target);
 						break;
 					case MouseEvent.MOUSE_UP:
-						target.mouseUpSignal.notify();
+						target.mouseUpSignal.notify(target);
 						break;
 				}
 				target = target.parent;

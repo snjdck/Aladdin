@@ -171,6 +171,8 @@ package snjdck.g2d.impl
 			}
 			var result:DisplayObject2D = null;
 			transformCoordsInv(transform, px, py, tempPt);
+			mouseX = tempPt.x;
+			mouseY = tempPt.y;
 			if(clipContent && !clipRect.containsPoint(tempPt)){
 				return null;
 			}
@@ -179,7 +181,7 @@ package snjdck.g2d.impl
 				if(!(child.hasVisibleArea() && child.mouseEnabled)){
 					continue;
 				}
-				var target:DisplayObject2D = child.pickup(tempPt.x, tempPt.y);
+				var target:DisplayObject2D = child.pickup(mouseX, mouseY);
 				if(target != null){
 					result = target;
 					break;
