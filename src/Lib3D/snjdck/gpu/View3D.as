@@ -5,12 +5,19 @@ package snjdck.gpu
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DCompareMode;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	
+	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.Scene2D;
 	import snjdck.g3d.Scene3D;
+	import snjdck.g2d.ns_g2d;
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.support.Camera3DFactory;
 	import snjdck.gpu.asset.GpuContext;
+	
+	use namespace ns_g2d;
+	use namespace ns_g3d;
 	
 	final public class View3D implements ITicker
 	{
@@ -54,6 +61,9 @@ package snjdck.gpu
 		
 		private function init():void
 		{
+			stage2d.addEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
+			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,	__onStageEvent);
+			stage2d.addEventListener(MouseEvent.MOUSE_UP,	__onStageEvent);
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
 			stage3d.requestContext3D();
@@ -81,6 +91,7 @@ package snjdck.gpu
 			trace(ctx.driverInfo);
 			context3d = new GpuContext(ctx);
 			onDeviceLost();
+			Clock.getInstance().add(this);
 		}
 		
 		protected function onDeviceLost():void
@@ -91,11 +102,13 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
+			if(isMousePositionChanged){
+				scene3d._mouseX = scene2d._mouseX = stage2d.mouseX;
+				scene3d._mouseY = scene2d._mouseY = stage2d.mouseY;
+				isMousePositionChanged = false;
+			}
 			scene3d.update(timeElapsed * timeScale);
 			scene2d.update(timeElapsed);
-			if(null == context3d){
-				return;
-			}
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
 			context3d.setDepthTest(true, Context3DCompareMode.LESS);
 			context3d.setColorMask(false, false, false, false);
@@ -120,6 +133,18 @@ package snjdck.gpu
 			var screenY:Number = 1 - 2 * stageY / _height;
 			
 			scene3d.notifyEvent(evtType, screenX, screenY);
+		}
+		
+		private function __onStageEvent(evt:MouseEvent):void
+		{
+			notifyEvent(evt.type);
+		}
+		
+		private var isMousePositionChanged:Boolean;
+		
+		private function __onMouseMove(evt:MouseEvent):void
+		{
+			isMousePositionChanged = true;
 		}
 	}
 }

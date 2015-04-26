@@ -8,5 +8,7 @@ package snjdck.gpu
 		function preDrawDepth(context3d:GpuContext):void;
 		function draw(context3d:GpuContext):void;
 		function notifyEvent(evtType:String, px:Number, py:Number):Boolean;
+		function get mouseX():Number;
+		function get mouseY():Number;
 	}
 }
