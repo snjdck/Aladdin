@@ -5,9 +5,9 @@ package snjdck.g3d.support
 	
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.projection.OrthoProjection3D;
-	import snjdck.g3d.projection.PerspectiveProjection3D;
+//	import snjdck.g3d.projection.PerspectiveProjection3D;
 	import snjdck.g3d.viewfrustum.OrthoViewFrustum;
-	import snjdck.g3d.viewfrustum.PerspectiveViewFrustum;
+//	import snjdck.g3d.viewfrustum.PerspectiveViewFrustum;
 	
 	import stdlib.constant.Unit;
 
@@ -32,7 +32,7 @@ package snjdck.g3d.support
 			
 			return camera;
 		}
-		
+		/*
 		static public function NewPerspectiveCamera(fieldOfView:Number, aspectRatio:Number, zNear:Number, zFar:Number):Camera3D
 		{
 			var proj:PerspectiveProjection3D = new PerspectiveProjection3D();
@@ -52,5 +52,6 @@ package snjdck.g3d.support
 			
 			return camera;
 		}
+		*/
 	}
 }

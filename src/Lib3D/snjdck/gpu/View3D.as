@@ -42,9 +42,7 @@ package snjdck.gpu
 			this._height = stage.stageHeight;
 			this.stage2d = stage;
 			
-			scene3d.camera = Camera3DFactory.NewIsoCamera(_width, _height, 0, 5000);
-//			camera3d = Camera3DFactory.NewPerspectiveCamera(60, _width/_height, 500, 4000);
-			scene3d.camera.zOffset = -1000;
+			scene3d.camera = Camera3DFactory.NewIsoCamera(_width, _height, -1000, 4000);
 			
 			init();
 		}
@@ -61,7 +59,6 @@ package snjdck.gpu
 		
 		private function init():void
 		{
-			stage2d.addEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
 			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,	__onStageEvent);
 			stage2d.addEventListener(MouseEvent.MOUSE_UP,	__onStageEvent);
 			stage3d = stage2d.stage3Ds[0];
@@ -102,11 +99,8 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			if(isMousePositionChanged){
-				scene3d._mouseX = scene2d._mouseX = stage2d.mouseX;
-				scene3d._mouseY = scene2d._mouseY = stage2d.mouseY;
-				isMousePositionChanged = false;
-			}
+			scene3d._mouseX = scene2d._mouseX = stage2d.mouseX;
+			scene3d._mouseY = scene2d._mouseY = stage2d.mouseY;
 			scene3d.update(timeElapsed * timeScale);
 			scene2d.update(timeElapsed);
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
@@ -138,13 +132,6 @@ package snjdck.gpu
 		private function __onStageEvent(evt:MouseEvent):void
 		{
 			notifyEvent(evt.type);
-		}
-		
-		private var isMousePositionChanged:Boolean;
-		
-		private function __onMouseMove(evt:MouseEvent):void
-		{
-			isMousePositionChanged = true;
 		}
 	}
 }

@@ -19,7 +19,7 @@ package snjdck.g3d.core
 	{
 		public var projection:Projection3D;
 		public var viewFrusum:ViewFrustum;
-		public var zOffset:Number = 0;
+//		public var zOffset:Number = 0;
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
@@ -40,7 +40,7 @@ package snjdck.g3d.core
 			if(bindTarget != null){
 				_worldMatrix.append(bindTarget.prevWorldMatrix);
 			}
-			_worldMatrix.prependTranslation(0, 0, zOffset);
+//			_worldMatrix.prependTranslation(0, 0, zOffset);
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
 			

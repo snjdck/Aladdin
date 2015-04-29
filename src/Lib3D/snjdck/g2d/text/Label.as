@@ -19,7 +19,9 @@ package snjdck.g2d.text
 		{
 			width = 100;
 			height = 100;
+			textColor[0] = 1;
 			textColor[1] = 1;
+			textColor[2] = 1;
 		}
 		
 		override public function hasVisibleArea():Boolean
