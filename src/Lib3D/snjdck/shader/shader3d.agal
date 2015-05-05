@@ -56,10 +56,8 @@ vt0.w = va0
 @objectImp.vs
 vt0.xyz = m34: vt0, vc5	#本地 -> 世界
 vt0.xyz = m34: vt0, vc2	#世界 -> 相机
-vt0 = vt0.xyzz * vc0
-vt0.zw = vt0 + vc1
-vt0.xyw = vt0 / vt0.w
-vt0.xy = vt0 + vc1
+vt0.xyz *= vc0
+vt0.xyz += vc1
 op = vt0
 
 @objectImp.agal

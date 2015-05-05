@@ -4,21 +4,16 @@ package snjdck.g3d.support
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.core.Camera3D;
-	import snjdck.g3d.projection.OrthoProjection3D;
-//	import snjdck.g3d.projection.PerspectiveProjection3D;
-	import snjdck.g3d.viewfrustum.OrthoViewFrustum;
-//	import snjdck.g3d.viewfrustum.PerspectiveViewFrustum;
-	
-	import stdlib.constant.Unit;
 
 	final public class Camera3DFactory
 	{
 		static public function NewIsoCamera(screenWidth:int, screenHeight:int, zNear:Number, zFar:Number):Camera3D
 		{
-			var proj:OrthoProjection3D = new OrthoProjection3D();
+			/*
+			var proj:Projection3D = new Projection3D();
 			proj.setDepthCliping(zNear, zFar);
 			proj.resize(screenWidth, screenHeight);
-			
+			*/
 			var camera:Camera3D = new Camera3D();
 			
 //			camera.rotationX = 120 * Unit.RADIAN;
@@ -27,8 +22,9 @@ package snjdck.g3d.support
 			matrix.appendRotation(120, Vector3D.X_AXIS);
 			matrix.appendRotation(-45, Vector3D.Z_AXIS);
 			
-			camera.projection = proj;
-			camera.viewFrusum = new OrthoViewFrustum(screenWidth, screenHeight, zNear, zFar);
+			camera.projection.setDepthCliping(zNear, zFar);
+			camera.projection.resize(screenWidth, screenHeight);
+			camera.viewFrusum.update(screenWidth, screenHeight, zNear, zFar);
 			
 			return camera;
 		}

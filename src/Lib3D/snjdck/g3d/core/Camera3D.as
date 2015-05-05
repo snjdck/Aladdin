@@ -8,18 +8,15 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.projection.Projection3D;
 	import snjdck.g3d.render.IDrawUnit3D;
-	import snjdck.g3d.viewfrustum.ViewFrustum;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
 
 	final public class Camera3D
 	{
-		public var projection:Projection3D;
-		public var viewFrusum:ViewFrustum;
-//		public var zOffset:Number = 0;
+		public const projection:Projection3D = new Projection3D();
+		public const viewFrusum:ViewFrustum = new ViewFrustum();
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();

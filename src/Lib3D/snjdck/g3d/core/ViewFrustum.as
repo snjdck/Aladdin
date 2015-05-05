@@ -1,4 +1,4 @@
-package snjdck.g3d.viewfrustum
+package snjdck.g3d.core
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
@@ -12,7 +12,7 @@ package snjdck.g3d.viewfrustum
 	
 	import stdlib.constant.Unit;
 
-	public class OrthoViewFrustum implements ViewFrustum
+	internal class ViewFrustum
 	{
 		private var zNear:Number;
 		private var zFar:Number;
@@ -24,7 +24,11 @@ package snjdck.g3d.viewfrustum
 		private const obb2:OBB2 = new OBB2();
 		public const sphere:Sphere = new Sphere();
 		
-		public function OrthoViewFrustum(width:Number, height:Number, zNear:Number, zFar:Number)
+		public function ViewFrustum()
+		{
+		}
+		
+		public function update(width:Number, height:Number, zNear:Number, zFar:Number):void
 		{
 			obb3.setCenterAndSize(new Vector3D(0, 0, 0.5 * (zFar + zNear)), new Vector3D(width, height, zFar - zNear));
 			obb2.center = new Vector3D();
