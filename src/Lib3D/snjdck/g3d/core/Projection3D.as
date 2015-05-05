@@ -11,32 +11,27 @@ package snjdck.g3d.core
 	 */
 	internal class Projection3D
 	{
+		static public const zNear:Number = -10000;
+		static public const zFar:Number = 10000;
+		
 		private const transform:Vector.<Number> = new Vector.<Number>(8, true);
 		
 		private var scaleX:Number;
 		private var scaleY:Number;
 		
-		private var _zNear:Number;
-		
-		public var viewFrustum:ViewFrustum;
 		private var offsetX:Number = 0;
 		private var offsetY:Number = 0;
 		
 		public function Projection3D()
 		{
+			transform[2] = 1.0 / (zFar - zNear);
+			transform[6] = transform[2] * -zNear;
 		}
 		
 		public function resize(width:int, height:int):void
 		{
 			scaleX = 2 / width;
 			scaleY = 2 / height;
-		}
-		
-		final public function setDepthCliping(zNear:Number, zFar:Number):void
-		{
-			_zNear = zNear;
-			transform[2] = 1.0 / (zFar - zNear);
-			transform[6] = transform[2] * -zNear;
 		}
 		
 		final public function upload(context3d:GpuContext):void
@@ -64,7 +59,7 @@ package snjdck.g3d.core
 			var viewX:Number = (screenX - transform[4]) / transform[0];
 			var viewY:Number = (screenY - transform[5]) / transform[1];
 			
-			ray.pos.setTo(viewX, viewY, _zNear);
+			ray.pos.setTo(viewX, viewY, zNear);
 			ray.dir.setTo(0, 0, 1);
 		}
 		

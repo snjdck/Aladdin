@@ -14,7 +14,7 @@ package snjdck.g3d
 	public class Scene3D implements IScene
 	{
 		public const root:Object3D = new Object3D();
-		public var camera:Camera3D;
+		public const camera:Camera3D = new Camera3D();
 		
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
 		

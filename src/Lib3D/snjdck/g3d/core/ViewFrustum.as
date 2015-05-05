@@ -28,8 +28,11 @@ package snjdck.g3d.core
 		{
 		}
 		
-		public function update(width:Number, height:Number, zNear:Number, zFar:Number):void
+		public function update(width:Number, height:Number):void
 		{
+			zNear = Projection3D.zNear;
+			zFar = Projection3D.zFar;
+			
 			obb3.setCenterAndSize(new Vector3D(0, 0, 0.5 * (zFar + zNear)), new Vector3D(width, height, zFar - zNear));
 			obb2.center = new Vector3D();
 			obb2.rotation = 45 * Unit.RADIAN;

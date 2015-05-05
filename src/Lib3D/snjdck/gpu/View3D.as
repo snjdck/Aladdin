@@ -13,7 +13,6 @@ package snjdck.gpu
 	import snjdck.g3d.Scene3D;
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.support.Camera3DFactory;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g2d;
@@ -42,7 +41,8 @@ package snjdck.gpu
 			this._height = stage.stageHeight;
 			this.stage2d = stage;
 			
-			scene3d.camera = Camera3DFactory.NewIsoCamera(_width, _height, -1000, 4000);
+			scene3d.camera.setScreenSize(_width, _height);
+			scene3d.camera.ortho = true;
 			
 			init();
 		}

@@ -25,10 +25,25 @@ package snjdck.g3d.core
 		public var bindTarget:Object3D;
 		
 		public function Camera3D(){}
-		
+		//*
+		public function setScreenSize(width:int, height:int):void
+		{
+			projection.resize(width, height);
+			viewFrusum.update(width, height);
+		}
+		//*/
 		public function containsAABB(bound:AABB):Boolean
 		{
 			return false;
+		}
+		
+		public function set ortho(value:Boolean):void
+		{
+			localMatrix.identity();
+			if(value){
+				localMatrix.appendRotation(120, Vector3D.X_AXIS);
+				localMatrix.appendRotation(-45, Vector3D.Z_AXIS);
+			}
 		}
 		
 		public function update():void
@@ -46,6 +61,7 @@ package snjdck.g3d.core
 		
 		public function uploadMVP(context3d:GpuContext):void
 		{
+			projection.resize(context3d.bufferWidth, context3d.bufferHeight);
 			projection.upload(context3d);
 			context3d.setVcM(2, _worldMatrixInvert);
 		}
