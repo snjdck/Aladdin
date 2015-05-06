@@ -10,8 +10,8 @@ package snjdck.gpu
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
 	import snjdck.g2d.Scene2D;
-	import snjdck.g3d.Scene3D;
 	import snjdck.g2d.ns_g2d;
+	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -47,20 +47,11 @@ package snjdck.gpu
 			init();
 		}
 		
-		public function get screenX():Number
-		{
-			return 2 * (stage2d.mouseX - stage3d.x) / _width - 1;
-		}
-		
-		public function get screenY():Number
-		{
-			return 1 - 2 * (stage2d.mouseY - stage3d.y) / _height;
-		}
-		
 		private function init():void
 		{
 			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,	__onStageEvent);
 			stage2d.addEventListener(MouseEvent.MOUSE_UP,	__onStageEvent);
+			stage2d.addEventListener(Event.RESIZE, __onResize);
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
 			stage3d.requestContext3D();
@@ -118,20 +109,26 @@ package snjdck.gpu
 		{
 			var stageX:Number = stage2d.mouseX - stage3d.x;
 			var stageY:Number = stage2d.mouseY - stage3d.y;
-			
-			if(scene2d.notifyEvent(evtType, stageX, stageY)){
-				return;
+			if(!scene2d.notifyEvent(evtType, stageX, stageY)){
+				scene3d.notifyEvent(evtType,
+					(stageX - 0.5 * _width),
+					(0.5 * _height - stageY)
+				);
 			}
-			
-			var screenX:Number = 2 * stageX / _width - 1;
-			var screenY:Number = 1 - 2 * stageY / _height;
-			
-			scene3d.notifyEvent(evtType, screenX, screenY);
 		}
 		
 		private function __onStageEvent(evt:MouseEvent):void
 		{
 			notifyEvent(evt.type);
+		}
+		
+		private function __onResize(evt:Event):void
+		{
+			this._width = stage2d.stageWidth;
+			this._height = stage2d.stageHeight;
+			
+			scene3d.camera.setScreenSize(_width, _height);
+			onDeviceLost();
 		}
 	}
 }
