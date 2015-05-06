@@ -43,6 +43,7 @@ package snjdck.gpu
 			
 			scene3d.camera.setScreenSize(_width, _height);
 			scene3d.camera.ortho = true;
+			scene3d.camera.enableViewFrusum = true;
 			
 			init();
 		}
