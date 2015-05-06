@@ -34,7 +34,7 @@ package snjdck.g2d.obj2d
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			context3d.clearDepth();
-			scene3d.camera.projection.setViewport(prevWorldMatrix, width, height);
+			scene3d.camera.projection.setViewport(prevWorldMatrix.tx, prevWorldMatrix.ty, width, height);
 			scene3d.draw(context3d);
 			render2d.drawBegin(context3d);
 		}
