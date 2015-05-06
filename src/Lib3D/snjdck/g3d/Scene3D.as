@@ -31,7 +31,9 @@ package snjdck.g3d
 			collector.clear();
 			root.collectDrawUnit(collector);
 			camera.update();
-			collector.cullInvisibleUnits(camera);
+			if(camera.enableViewFrusum){
+				collector.cullInvisibleUnits(camera);
+			}
 		}
 		
 		public function draw(context3d:GpuContext):void
@@ -50,17 +52,17 @@ package snjdck.g3d
 			}
 		}
 		
-		public function pickup(screenX:Number, screenY:Number, result:Vector.<Object3D>):void
+		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void
 		{
-			camera.getSceneRay(screenX, screenY, ray);
+			camera.getSceneRay(stageX, stageY, ray);
 			root.hitTest(ray, result);
 		}
 		
-		public function notifyEvent(evtType:String, screenX:Number, screenY:Number):Boolean
+		public function notifyEvent(evtType:String, stageX:Number, stageY:Number):Boolean
 		{
 			var result:Vector.<Object3D> = new Vector.<Object3D>();
 			
-			pickup(screenX, screenY, result);
+			pickup(stageX, stageY, result);
 			
 			for each(var target:Object3D in result){
 				switch(evtType){
