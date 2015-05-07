@@ -22,6 +22,8 @@ package snjdck.g3d.obj3d
 		
 		public function BillBoard()
 		{
+			blendMode = BlendMode.NORMAL;
+			
 			var s:int = 15 * 128;
 			aabb.setMinMax(-s, -s, 0, s, s, 0);
 		}
@@ -59,9 +61,7 @@ package snjdck.g3d.obj3d
 			*/
 			var count:int = 30;
 			var tex:IGpuTexture = AssetMgr.Instance.getTexture("terrain");
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.BILLBOARD);
 			context3d.texture = tex;
-			context3d.blendMode = BlendMode.NORMAL;
 			context3d.setVcM(5, prevWorldMatrix);
 			context3d.setVc(8, new <Number>[
 				count * tex.width, count * tex.height, -0.5, 0,

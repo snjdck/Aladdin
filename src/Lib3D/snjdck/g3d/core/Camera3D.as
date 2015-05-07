@@ -97,5 +97,10 @@ package snjdck.g3d.core
 		{
 			projection.setViewport(x, y, width, height);
 		}
+		
+		public function getViewFrustum():ViewFrustum
+		{
+			return viewFrusum;
+		}
 	}
 }

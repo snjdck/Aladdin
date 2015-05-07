@@ -75,13 +75,16 @@ package snjdck.g3d.obj3d
 		{
 			super.collectDrawUnit(collector);
 			
-			collector.pushMatrix(transform);
-			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
-			collector.popMatrix();
+			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
+				collector.pushMatrix(transform);
+				boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
+				collector.popMatrix();
+			}
 			
 			for each(var subEntity:SubEntity in subEntityList){
 				subEntity.updateBound(prevWorldMatrix);
 			}
+			
 			if(subEntityList.length > 0){
 				collector.addDrawUnit(this);
 			}

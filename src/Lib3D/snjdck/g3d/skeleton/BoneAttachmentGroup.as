@@ -10,7 +10,7 @@ package snjdck.g3d.skeleton
 
 	use namespace ns_g3d;
 	
-	public class BoneAttachmentGroup
+	final public class BoneAttachmentGroup
 	{
 		private var boneAttachmentList:Array;
 		private var numAttachments:int;
@@ -19,6 +19,11 @@ package snjdck.g3d.skeleton
 		{
 			boneAttachmentList = [];
 			numAttachments = 0;
+		}
+		
+		public function hasAttachments():Boolean
+		{
+			return numAttachments > 0;
 		}
 		
 		public function addAttachment(boneId:int, attachment:Object3D):void
@@ -85,9 +90,6 @@ package snjdck.g3d.skeleton
 		
 		public function collectDrawUnits(collector:DrawUnitCollector3D, boneStateGroup:BoneStateGroup):void
 		{
-			if(numAttachments <= 0){
-				return;
-			}
 			const boneCount:int = boneAttachmentList.length;
 			for(var boneId:int=0; boneId<boneCount; ++boneId){
 				var list:Vector.<Object3D> = boneAttachmentList[boneId];
