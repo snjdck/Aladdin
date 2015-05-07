@@ -30,9 +30,7 @@ package snjdck.g3d.core
 		public function setScreenSize(width:int, height:int):void
 		{
 			projection.resize(width, height);
-			if(enableViewFrusum){
-				viewFrusum.resize(width, height);
-			}
+			viewFrusum.resize(0.5 * width, height);
 		}
 		
 		public function set ortho(value:Boolean):void
@@ -74,7 +72,6 @@ package snjdck.g3d.core
 			for(var i:int=list.length-1; i>=0; --i){
 				var drawUnit:IDrawUnit3D = list[i];
 				if(!drawUnit.isInSight(this)){
-					//trace(drawUnit["name"], "is culled");
 					list.splice(i, 1);
 				}
 			}
