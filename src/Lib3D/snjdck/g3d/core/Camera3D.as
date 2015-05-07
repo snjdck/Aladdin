@@ -66,7 +66,7 @@ package snjdck.g3d.core
 		{
 			return enableViewFrusum ? viewFrusum.containsAABB(bound) : true;
 		}
-		
+		/*
 		public function cullInvisibleUnits(list:Vector.<IDrawUnit3D>):void
 		{
 			for(var i:int=list.length-1; i>=0; --i){
@@ -76,7 +76,7 @@ package snjdck.g3d.core
 				}
 			}
 		}
-		
+		*/
 		/**
 		 * @param screenX [-w/2, w/2]
 		 * @param screenY [-h/2, h/2]

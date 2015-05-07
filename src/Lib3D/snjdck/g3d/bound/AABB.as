@@ -63,37 +63,37 @@ package snjdck.g3d.bound
 		}
 		
 		[Inline]
-		private function get minX():Number
+		public function get minX():Number
 		{
 			return center.x - halfSize.x;
 		}
 		
 		[Inline]
-		private function get maxX():Number
+		public function get maxX():Number
 		{
 			return center.x + halfSize.x;
 		}
 		
 		[Inline]
-		private function get minY():Number
+		public function get minY():Number
 		{
 			return center.y - halfSize.y;
 		}
 		
 		[Inline]
-		private function get maxY():Number
+		public function get maxY():Number
 		{
 			return center.y + halfSize.y;
 		}
 		
 		[Inline]
-		private function get minZ():Number
+		public function get minZ():Number
 		{
 			return center.z - halfSize.z;
 		}
 		
 		[Inline]
-		private function get maxZ():Number
+		public function get maxZ():Number
 		{
 			return center.z + halfSize.z;
 		}
@@ -195,6 +195,26 @@ package snjdck.g3d.bound
 			}
 			
 			result.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
+		}
+		
+		public function copyFrom(other:AABB):void
+		{
+			center.copyFrom(other.center);
+			halfSize.copyFrom(other.halfSize);
+			radius = other.radius;
+		}
+		
+		public function merge(other:AABB):void
+		{
+			var minX:Number = this.minX < other.minX ? this.minX : other.minX;
+			var minY:Number = this.minY < other.minY ? this.minY : other.minY;
+			var minZ:Number = this.minZ < other.minZ ? this.minZ : other.minZ;
+			
+			var maxX:Number = this.maxX > other.maxX ? this.maxX : other.maxX;
+			var maxY:Number = this.maxY > other.maxY ? this.maxY : other.maxY;
+			var maxZ:Number = this.maxZ > other.maxZ ? this.maxZ : other.maxZ;
+			
+			setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
 		}
 	}
 }

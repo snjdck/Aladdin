@@ -7,6 +7,7 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.MatrixStack3D;
 	import snjdck.gpu.BlendMode;
 	
 	use namespace ns_g3d;
@@ -78,29 +79,23 @@ package snjdck.g3d.core
 			return localMatrix;
 		}
 		
-		public function onUpdate(timeElapsed:int):void
+		public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
 		{
-			/*
-			prevWorldMatrix.copyFrom(transform);
-			if(parent != null){
-				prevWorldMatrix.append(parent.prevWorldMatrix);
-			}
-			*/
+			matrixStack.pushMatrix(transform);
+			prevWorldMatrix.copyFrom(matrixStack.worldMatrix);
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				child.onUpdate(timeElapsed);
+				child.onUpdate(matrixStack, timeElapsed);
 			}
+			matrixStack.popMatrix();
 		}
 		
-		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
-			collector.pushMatrix(transform);
-			prevWorldMatrix.copyFrom(collector.worldMatrix);
 			for(var child:Object3D=firstChild; child; child=child.nextSibling){
 				if(child.hasVisibleArea()){
-					child.collectDrawUnit(collector);
+					child.collectDrawUnit(collector, camera3d);
 				}
 			}
-			collector.popMatrix();
 		}
 		
 		final public function hitTest(ray:Ray, result:Vector.<Object3D>):void
