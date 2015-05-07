@@ -56,15 +56,6 @@ package snjdck.g3d.render
 			return count > 0;
 		}
 		
-		public function cullInvisibleUnits(camera:Camera3D):void
-		{
-			camera.cullInvisibleUnits(staticObjectList);
-			camera.cullInvisibleUnits(terrainList);
-			for each(var drawUnitList:Vector.<IDrawUnit3D> in drawUnitDict){
-				camera.cullInvisibleUnits(drawUnitList);
-			}
-		}
-		
 		public function addDrawUnit(drawUnit:IDrawUnit3D):void
 		{
 			switch(drawUnit.shaderName)

@@ -1,7 +1,6 @@
 package snjdck.g3d.render
 {
 	import flash.display3D.Context3DCompareMode;
-	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Camera3D;
@@ -14,8 +13,6 @@ package snjdck.g3d.render
 
 	final public class DrawUnitCollector3D
 	{
-		private const matrixStack:MatrixStack3D = new MatrixStack3D();
-		
 		private const opaqueDrawUnits:DrawUnitGroup = new DrawUnitGroup();
 		private const blendDrawUnits:DrawUnitGroup = new DrawUnitGroup();
 		
@@ -39,27 +36,6 @@ package snjdck.g3d.render
 			}else{
 				blendDrawUnits.addDrawUnit(drawUnit);
 			}
-		}
-		
-		public function pushMatrix(matrix:Matrix3D):void
-		{
-			matrixStack.pushMatrix(matrix);
-		}
-		
-		public function popMatrix():void
-		{
-			matrixStack.popMatrix();
-		}
-		
-		public function get worldMatrix():Matrix3D
-		{
-			return matrixStack.worldMatrix;
-		}
-		
-		public function cullInvisibleUnits(camera3d:Camera3D):void
-		{
-			opaqueDrawUnits.cullInvisibleUnits(camera3d);
-			blendDrawUnits.cullInvisibleUnits(camera3d);
 		}
 		
 		public function render(context3d:GpuContext, camera3d:Camera3D):void

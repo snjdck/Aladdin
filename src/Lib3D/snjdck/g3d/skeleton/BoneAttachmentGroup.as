@@ -5,8 +5,10 @@ package snjdck.g3d.skeleton
 	import array.delAt;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.MatrixStack3D;
 
 	use namespace ns_g3d;
 	
@@ -71,24 +73,7 @@ package snjdck.g3d.skeleton
 			numAttachments = 0;
 		}
 		
-		public function onUpdate(timeElapsed:int):void
-		{
-			if(numAttachments <= 0){
-				return;
-			}
-			const boneCount:int = boneAttachmentList.length;
-			for(var boneId:int=0; boneId<boneCount; ++boneId){
-				var list:Vector.<Object3D> = boneAttachmentList[boneId];
-				if(null == list || list.length <= 0){
-					continue;
-				}
-				for each(var attachment:Object3D in list){
-					attachment.onUpdate(timeElapsed);
-				}
-			}
-		}
-		
-		public function collectDrawUnits(collector:DrawUnitCollector3D, boneStateGroup:BoneStateGroup):void
+		public function onUpdate(matrixStack:MatrixStack3D, boneStateGroup:BoneStateGroup, timeElapsed:int):void
 		{
 			const boneCount:int = boneAttachmentList.length;
 			for(var boneId:int=0; boneId<boneCount; ++boneId){
@@ -97,11 +82,25 @@ package snjdck.g3d.skeleton
 					continue;
 				}
 				boneStateGroup.getBoneStateLocal(boneId).toMatrix(matrix);
-				collector.pushMatrix(matrix);
+				matrixStack.pushMatrix(matrix);
 				for each(var attachment:Object3D in list){
-					attachment.collectDrawUnit(collector);
+					attachment.onUpdate(matrixStack, timeElapsed);
 				}
-				collector.popMatrix();
+				matrixStack.popMatrix();
+			}
+		}
+		
+		public function collectDrawUnits(collector:DrawUnitCollector3D, camera3d:Camera3D):void
+		{
+			const boneCount:int = boneAttachmentList.length;
+			for(var boneId:int=0; boneId<boneCount; ++boneId){
+				var list:Vector.<Object3D> = boneAttachmentList[boneId];
+				if(null == list || list.length <= 0){
+					continue;
+				}
+				for each(var attachment:Object3D in list){
+					attachment.collectDrawUnit(collector, camera3d);
+				}
 			}
 		}
 		

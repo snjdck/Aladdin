@@ -13,10 +13,16 @@ package snjdck.g3d.terrain
 	
 	import snjdck.fileformat.bmd.BmdParser;
 	import snjdck.fileformat.image.BmpParser;
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.render.MatrixStack3D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuAssetFactory;
@@ -25,10 +31,13 @@ package snjdck.g3d.terrain
 	import snjdck.gpu.geom.OBB2;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.quadtree.QuadTree;
+	import snjdck.shader.ShaderName;
 	
 	import stdlib.constant.Unit;
 	
-	internal class Terrain extends Object3D
+	use namespace ns_g3d;
+	
+	public class Terrain extends Object3D implements IDrawUnit3D
 	{
 		static private var _ins:Terrain;
 		static public function get ins():Terrain
@@ -44,12 +53,14 @@ package snjdck.g3d.terrain
 		
 		public function Terrain()
 		{
+			blendMode = BlendMode.NORMAL;
 			name = "ground";
+			/*
 			area.center = new Vector3D();
 			area.rotation = -45 * Unit.RADIAN;
 			area.halfWidth = 640;
 			area.halfHeight = 720;
-			
+			*/
 			readMapObj();
 			
 			var picList:Array = [
@@ -96,7 +107,7 @@ package snjdck.g3d.terrain
 					item.tex1 = texList[layer2[index]];
 					item.alpha = layer2[index] / 0xFF;
 					item.setLight(lightData.getPixel32(i, j));
-					quadTree.insert(item);
+//					quadTree.insert(item);
 				}
 			}
 		}
@@ -153,21 +164,15 @@ package snjdck.g3d.terrain
 		[Embed(source="C:/Users/Alex/MU1_03H_full(Chs)/data/世界地图/World1/TileWood01.jpg")]
 		static private const PIC_9:Class;
 		
-		public function draw(context3d:GpuContext):void
+		public function draw(context3d:GpuContext, camera3d:Camera3D):void
 		{
-			context3d.blendMode = BlendMode.NORMAL;
-			context3d.program = AssetMgr.Instance.getProgram("terrain_quad");
 			var defaultTex:IGpuTexture = AssetMgr.Instance.getTexture("terrain");
 			QuadRender.Instance.drawBegin(context3d);
 			
-			result.length = 0;
-			quadTree.getObjectsInArea(area, result);
-			trace("quad count:",result.length);
-			
+			fcConst[1] = 0.5;
 			for each(var quad:TerrainQuad in result)
 			{
 				fcConst[0] = 1 - quad.alpha;
-				fcConst[1] = 0.5;
 				quad.light.copyTo(fcConst, 4);
 				context3d.setFc(0, fcConst);
 				context3d.setTextureAt(0, quad.tex0 || defaultTex);
@@ -176,9 +181,10 @@ package snjdck.g3d.terrain
 			}
 		}
 		
-		public const area:OBB2 = new OBB2();
+		//public const area:OBB2 = new OBB2();
 		private const result:Array = [];
 		private const mapSize:Rectangle = new Rectangle(-0x4000, -0x4000, 0x8000, 0x8000);
+//		private const mapSize:Rectangle = new Rectangle(0, -0x8000, 0x8000, 0x8000);
 		
 		private const fcConst:Vector.<Number> = new Vector.<Number>(8);
 		
@@ -197,7 +203,9 @@ package snjdck.g3d.terrain
 		[Embed(source="C:/Users/Alex/MU1_03H_full(Chs)/data/世界地图/World1/Terrain.obj", mimeType="application/octet-stream")]
 		static private const BIN_MAP_OBJ:Class;
 		
-		public function readMapObj():void
+		private const itemList:Vector.<Entity> = new Vector.<Entity>();
+		
+		private function readMapObj():void
 		{
 			var ba:ByteArray = new BIN_MAP_OBJ();
 			ba.endian = Endian.LITTLE_ENDIAN;
@@ -228,11 +236,11 @@ package snjdck.g3d.terrain
 				
 				//				trace("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", objId, px, py, pz, rx, ry, rz, scale);
 				
-				var temp:Object3D = new MuModelLoader(objId);
-				addChild(temp);
+				var temp:MuModelLoader = new MuModelLoader(objId, __onEntityLoad);
 				
 				temp.x = px;
 				temp.y = py;
+				temp.z = pz;
 				//				temp.z = pz;
 				temp.rotationX = rx * Unit.RADIAN;
 				temp.rotationY = ry * Unit.RADIAN;
@@ -240,11 +248,70 @@ package snjdck.g3d.terrain
 				temp.scale = scale;
 				
 			}
-//			trace(objIdlist.length);
+			trace("场景内物体数量:",itemList.length);
 //			trace(objIdlist);
 //			trace(minX, maxX);
 //			trace(minY, maxY);
 //			trace(minZ, maxZ);
+		}
+		
+		private var min:Vector3D = new Vector3D(int.MAX_VALUE, int.MAX_VALUE, int.MAX_VALUE);
+		private var max:Vector3D = new Vector3D(int.MIN_VALUE, int.MIN_VALUE, int.MIN_VALUE);
+		
+		private function __onEntityLoad(entity:Entity):void
+		{
+			var sceneItem:SceneItem = new SceneItem(entity);
+			quadTree.insert(sceneItem);
+			itemList.push(entity);
+			if(sceneItem.bound.minX < min.x){
+				min.x = sceneItem.bound.minX;
+			}
+			if(sceneItem.bound.minY < min.y){
+				min.y = sceneItem.bound.minY;
+			}
+			if(sceneItem.bound.minZ < min.z){
+				min.z = sceneItem.bound.minZ;
+			}
+			if(sceneItem.bound.maxX > max.x){
+				max.x = sceneItem.bound.maxX;
+			}
+			if(sceneItem.bound.maxY > max.y){
+				max.y = sceneItem.bound.maxY;
+			}
+			if(sceneItem.bound.maxZ > max.z){
+				max.z = sceneItem.bound.maxZ;
+			}
+		}
+		
+		public function get shaderName():String
+		{
+			return ShaderName.TERRAIN;
+		}
+		
+		override public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
+		{
+			for each(var item:Entity in itemList){
+				item.updateBoneState(timeElapsed);
+			}
+		}
+		
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
+		{
+			result.length = 0;
+			quadTree.getObjectsInArea(camera3d.getViewFrustum(), result);
+//			trace("quad count:",result.length);
+			
+			for(var i:int=result.length-1; i>=0; --i){
+				var sceneItem:SceneItem = result[i] as SceneItem;
+				if(sceneItem != null){
+					result.splice(i, 1);
+					if(sceneItem.entity.isInSight(camera3d)){
+						collector.addDrawUnit(sceneItem.entity);
+					}
+				}
+			}
+//			collector.addDrawUnit(this);
+//			trace(min, max);
 		}
 	}
 }

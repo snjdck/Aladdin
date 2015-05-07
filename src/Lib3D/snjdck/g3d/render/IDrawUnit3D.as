@@ -6,8 +6,6 @@ package snjdck.g3d.render
 
 	public interface IDrawUnit3D
 	{
-		function isInSight(camera3d:Camera3D):Boolean;
-		
 		/** camera3d用于billboard修正方向和判断subMesh可见性  */
 		function draw(context3d:GpuContext, camera3d:Camera3D):void;
 		

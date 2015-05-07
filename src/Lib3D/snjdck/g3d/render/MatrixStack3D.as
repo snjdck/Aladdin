@@ -2,7 +2,7 @@ package snjdck.g3d.render
 {
 	import flash.geom.Matrix3D;
 
-	final internal class MatrixStack3D
+	final public class MatrixStack3D
 	{
 		private var matrixStack:Vector.<Matrix3D>;
 		private var matrixIndex:int;
