@@ -1,25 +1,28 @@
 package mu
 {
-	import flash.debugger.enterDebugger;
-	import flash.http.loadData;
-	import flash.support.Http;
-	import flash.utils.ByteArray;
-	
-	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.obj3d.Entity;
-	import snjdck.gpu.asset.AssetMgr;
-	
-	public class MuModelLoader extends Object3D
+
+	public class MuModelLoader
 	{
 		public var prefix:String = "data/世界地图/Object1/";
 		public var objId:int;
 		public var mapId:int;
 		
-		public function MuModelLoader(objId:int)
+		private var callback:Function;
+		
+		public var x:Number;
+		public var y:Number;
+		public var z:Number;
+		
+		public var rotationX:Number;
+		public var rotationY:Number;
+		public var rotationZ:Number;
+		public var scale:Number;
+		
+		public function MuModelLoader(objId:int, callback:Function)
 		{
 			this.objId = objId;
-			
+			this.callback = callback;
 			MuLoad.Instance.load(fullPath, __onLoad);
 		}
 		
@@ -28,9 +31,16 @@ package mu
 			return prefix + MuMapUtil.getObjById(objId) + ".bmd";
 		}
 		
-		private function __onLoad(obj:Entity):void
+		private function __onLoad(entity:Entity):void
 		{
-			addChild(obj);
+			entity.x = x;
+			entity.y = -y;
+			entity.rotationX = rotationX;
+			entity.rotationY = rotationY;
+			entity.rotationZ = rotationZ;
+			entity.scale = scale;
+			entity.calculateBound();
+			callback(entity);
 		}
 	}
 }
