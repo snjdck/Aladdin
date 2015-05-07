@@ -3,8 +3,8 @@
 	import flash.debugger.enterDebugger;
 	import flash.geom.Vector3D;
 	
+	import snjdck.g3d.bound.Rect45;
 	import snjdck.gpu.geom.AABB2;
-	import snjdck.gpu.geom.OBB2;
 
 	/**
 	 * 00 01
@@ -77,25 +77,27 @@
 		public function insert(node:IQuadTreeNode):void
 		{
 			var targetTree:QuadTree = findTargetTree(node);
+			/*
 			if(targetTree.objectList.length > 1){
 				enterDebugger();
 			}
+			*/
 			targetTree.objectList.push(node);
 		}
 		
-		public function getObjectsInArea(rect:OBB2, result:Array):void
+		public function getObjectsInArea(rect:Rect45, result:Array):void
 		{
 			var stack:Array = [this];
 			while(stack.length > 0){
 				var currentNode:QuadTree = stack.pop();
-				switch(rect.hitTestAABB(currentNode)){
-				case OBB2.INTERECT:
+				switch(rect.classify(currentNode.center, currentNode.halfWidth, currentNode.halfHeight)){
+				case Rect45.INTERECT:
 					result.push.apply(null, currentNode.objectList);
 					if(currentNode.nodeList != null){
 						stack.push.apply(null, currentNode.nodeList);
 					}
 					break;
-				case OBB2.CONTAINS:
+				case Rect45.CONTAINS:
 					currentNode.collectObjsRecursively(result);
 					break;
 				}
