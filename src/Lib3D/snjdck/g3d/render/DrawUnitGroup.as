@@ -12,12 +12,11 @@ package snjdck.g3d.render
 	internal class DrawUnitGroup
 	{
 		private const staticObjectList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
+		private const terrainList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
 		private const drawUnitDict:Object = {};
 		private var count:int;
 		
-		public function DrawUnitGroup()
-		{
-		}
+		public function DrawUnitGroup(){}
 		
 		public function draw(context3d:GpuContext, camera3d:Camera3D, updateBlendMode:Boolean):void
 		{
@@ -35,15 +34,20 @@ package snjdck.g3d.render
 					drawUnit.draw(context3d, camera3d);
 				}
 			}
-			if(staticObjectList.length <= 0){
-				return;
-			}
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.STATIC_OBJECT);
-			for each(drawUnit in staticObjectList){
-				if(updateBlendMode){
-					context3d.blendMode = drawUnit.blendMode;
+			if(staticObjectList.length > 0){
+				context3d.program = AssetMgr.Instance.getProgram(ShaderName.STATIC_OBJECT);
+				for each(drawUnit in staticObjectList){
+					if(updateBlendMode){
+						context3d.blendMode = drawUnit.blendMode;
+					}
+					drawUnit.draw(context3d, camera3d);
 				}
-				drawUnit.draw(context3d, camera3d);
+			}
+			if(terrainList.length > 0){
+				context3d.program = AssetMgr.Instance.getProgram(ShaderName.TERRAIN);
+				for each(drawUnit in terrainList){
+					drawUnit.draw(context3d, camera3d);
+				}
 			}
 		}
 		
@@ -55,6 +59,7 @@ package snjdck.g3d.render
 		public function cullInvisibleUnits(camera:Camera3D):void
 		{
 			camera.cullInvisibleUnits(staticObjectList);
+			camera.cullInvisibleUnits(terrainList);
 			for each(var drawUnitList:Vector.<IDrawUnit3D> in drawUnitDict){
 				camera.cullInvisibleUnits(drawUnitList);
 			}
@@ -62,10 +67,16 @@ package snjdck.g3d.render
 		
 		public function addDrawUnit(drawUnit:IDrawUnit3D):void
 		{
-			if(drawUnit.shaderName == ShaderName.STATIC_OBJECT){
-				push(staticObjectList, drawUnit);
-			}else{
-				push(getDrawUnits(drawUnit.shaderName), drawUnit);
+			switch(drawUnit.shaderName)
+			{
+				case ShaderName.STATIC_OBJECT:
+					push(staticObjectList, drawUnit);
+					break;
+				case ShaderName.TERRAIN:
+					push(terrainList, drawUnit);
+					break;
+				default:
+					push(getDrawUnits(drawUnit.shaderName), drawUnit);
 			}
 			++count;
 		}
@@ -73,6 +84,7 @@ package snjdck.g3d.render
 		public function clear():void
 		{
 			staticObjectList.length = 0;
+			terrainList.length = 0;
 			for each(var drawUnitList:Vector.<IDrawUnit3D> in drawUnitDict){
 				drawUnitList.length = 0;
 			}
