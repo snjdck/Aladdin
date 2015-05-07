@@ -6,6 +6,7 @@ package snjdck.g3d
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.MatrixStack3D;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -17,6 +18,7 @@ package snjdck.g3d
 		public const camera:Camera3D = new Camera3D();
 		
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
+		private const matrixStack:MatrixStack3D = new MatrixStack3D();
 		
 		private const ray:Ray = new Ray();
 		
@@ -27,13 +29,10 @@ package snjdck.g3d
 		
 		public function update(timeElapsed:int):void
 		{
-			root.onUpdate(timeElapsed);
-			collector.clear();
-			root.collectDrawUnit(collector);
+			root.onUpdate(matrixStack, timeElapsed);
 			camera.update();
-			if(camera.enableViewFrusum){
-				collector.cullInvisibleUnits(camera);
-			}
+			collector.clear();
+			root.collectDrawUnit(collector, camera);
 		}
 		
 		public function draw(context3d:GpuContext):void
