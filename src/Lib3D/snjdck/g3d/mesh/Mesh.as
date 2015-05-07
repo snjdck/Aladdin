@@ -18,6 +18,11 @@ package snjdck.g3d.mesh
 			subMeshes = [];
 		}
 		
+		public function hasSubMesh():Boolean
+		{
+			return subMeshes.length > 0;
+		}
+		
 		final public function createSubMesh():SubMesh
 		{
 			var subMesh:SubMesh = new SubMesh();

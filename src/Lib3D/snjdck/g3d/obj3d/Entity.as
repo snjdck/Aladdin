@@ -89,7 +89,9 @@ package snjdck.g3d.obj3d
 			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
 			collector.popMatrix();
 			
-			collector.addDrawUnit(this);
+			if(mesh.hasSubMesh()){
+				collector.addDrawUnit(this);
+			}
 		}
 		
 		override protected function onHitTest(localRay:Ray):Boolean
