@@ -4,6 +4,10 @@ package snjdck.g3d.bound
 
 	public class Rect45
 	{
+		static public const CONTAINS:int = 1;
+		static public const AWAY:int = 2;
+		static public const INTERECT:int = 3;
+		
 		public const center:Vector3D = new Vector3D();
 		public var halfWidth:Number;
 		public var halfHeight:Number;
@@ -20,20 +24,28 @@ package snjdck.g3d.bound
 		
 		public function hitTestRect(rectCenter:Vector3D, rectHalfSize:Vector3D):Boolean
 		{
-			var rectHalfSize45:Number = rectHalfSize.x + rectHalfSize.y;
-			if(Math.abs(rectCenter.x - rectCenter.y + center.z) >= rectHalfSize45 + halfWidth * Math.SQRT2){
-				return false;
+			return classify(rectCenter, rectHalfSize.x, rectHalfSize.y) != AWAY;
+		}
+		
+		public function classify(rectCenter:Vector3D, rectHalfWidth:Number, rectHalfHeight:Number):int
+		{
+			var rectHalfSize45:Number = rectHalfWidth + rectHalfHeight;
+			var dx:Number = Math.abs(rectCenter.x - rectCenter.y + center.z) - Math.SQRT2 * halfWidth;
+			var dy:Number = Math.abs(rectCenter.x + rectCenter.y + center.w) - Math.SQRT2 * halfHeight
+			
+			if(-dx >= rectHalfSize45 && -dy >= rectHalfSize45){
+				return CONTAINS;
 			}
-			if(Math.abs(rectCenter.x + rectCenter.y + center.w) >= rectHalfSize45 + halfHeight * Math.SQRT2){
-				return false;
+			if(dx >= rectHalfSize45 || dy >= rectHalfSize45){
+				return AWAY;
 			}
-			if(Math.abs(center.x - rectCenter.x) >= rectHalfSize.x + halfSize45){
-				return false;
+			if(Math.abs(center.x - rectCenter.x) >= rectHalfWidth + halfSize45){
+				return AWAY;
 			}
-			if(Math.abs(center.y - rectCenter.y) >= rectHalfSize.y + halfSize45){
-				return false;
+			if(Math.abs(center.y - rectCenter.y) >= rectHalfHeight + halfSize45){
+				return AWAY;
 			}
-			return true;
+			return INTERECT;
 		}
 	}
 }
