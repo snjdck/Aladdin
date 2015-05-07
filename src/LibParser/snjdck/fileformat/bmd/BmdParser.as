@@ -290,7 +290,7 @@ package snjdck.fileformat.bmd
 			geometry.calculateBound();
 			
 			subMesh.geometry = geometry;
-			subMesh.onInit();
+			trace("骨骼数量:", geometry.numBones, "材质名称:", subMesh.materialName);
 		}
 	}
 }

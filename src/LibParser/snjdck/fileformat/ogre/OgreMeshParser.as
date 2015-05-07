@@ -179,7 +179,7 @@ package snjdck.fileformat.ogre
 				boneData.adjustBoneWeight();
 			}
 			
-			subMesh.onInit();
+			trace("骨骼数量:", subMesh.geometry.numBones, "材质名称:", subMesh.materialName);
 		}
 	}
 }
