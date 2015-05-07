@@ -10,9 +10,9 @@ package snjdck.g3d.bound
 	
 	use namespace ns_g3d;
 
-	public class AABB extends Sphere implements IBoundingBox
+	final public class AABB extends Sphere
 	{
-		private var halfSize:Vector3D;
+		public const halfSize:Vector3D = new Vector3D();
 		
 		private var isDirty:Boolean;
 		private var sourceAABB:AABB;
@@ -20,7 +20,6 @@ package snjdck.g3d.bound
 		
 		public function AABB()
 		{
-			halfSize = new Vector3D();
 			radius = 0;
 		}
 		
@@ -46,10 +45,10 @@ package snjdck.g3d.bound
 			radius = halfSize.length;
 		}
 		
-		public function setCenterAndSize(center:Vector3D, size:Vector3D):void
+		public function setCenterAndSize($center:Vector3D, size:Vector3D):void
 		{
-			this.center.copyFrom(center);
-			halfSize = size;
+			center.copyFrom($center);
+			halfSize.copyFrom(size);
 			halfSize.scaleBy(0.5);
 			radius = halfSize.length;
 		}
@@ -113,7 +112,7 @@ package snjdck.g3d.bound
 		{
 			return center.z + halfSize.z;
 		}
-		
+		/*
 		public function getProjectLen(axis:Vector3D):Number
 		{
 			return halfSize.x * Math.abs(axis.x) + halfSize.y * Math.abs(axis.y) + halfSize.z * Math.abs(axis.z);
@@ -125,7 +124,8 @@ package snjdck.g3d.bound
 				&& (Math.abs(ab.y) - other.getProjectLen(Vector3D.Y_AXIS) < halfSize.y)
 				&& (Math.abs(ab.z) - other.getProjectLen(Vector3D.Z_AXIS) < halfSize.z);
 		}
-		/*
+		*/
+		//*
 		private function transform(matrix:Matrix3D, result:AABB):void
 		{
 			var rawData:Vector.<Number> = matrix.rawData;
@@ -208,9 +208,8 @@ package snjdck.g3d.bound
 				minZ += factor * this.maxZ;
 				maxZ += factor * this.minZ;
 			}
-			result.halfSize.x = 0.5 * (maxX - minX);
-			result.halfSize.y = 0.5 * (maxY - minY);
-			result.halfSize.z = 0.5 * (maxZ - minZ);
+			
+			result.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
 		}
 		
 		ns_g3d function updateSize():void
@@ -220,6 +219,5 @@ package snjdck.g3d.bound
 				isDirty = false;
 			}
 		}
-		*/
 	}
 }

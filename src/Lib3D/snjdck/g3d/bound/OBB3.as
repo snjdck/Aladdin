@@ -16,8 +16,11 @@ package snjdck.g3d.bound
 	import vec3.subtract;
 	
 	use namespace ns_g3d;
-
-	public class OBB3 extends Sphere implements IBoundingBox
+	
+	/**
+	 * 计算开销太大
+	 */
+	internal class OBB3 extends Sphere implements IBoundingBox
 	{
 		private var xAxis:Vector3D;
 		private var yAxis:Vector3D;
@@ -55,7 +58,7 @@ package snjdck.g3d.bound
 			result.halfSize.copyFrom(halfSize);
 			result.radius = radius;
 		}
-		
+		/*
 		public function hitTest(other:OBB3):Boolean
 		{
 			vec3.subtract(other.center, center, ab);
@@ -75,7 +78,7 @@ package snjdck.g3d.bound
 				&& test2(other, zAxis, other.yAxis)
 				&& test2(other, zAxis, other.zAxis);
 		}
-		
+		*/
 		public function hitTestAxis(other:IBoundingBox, ab:Vector3D):Boolean
 		{
 			return (absDot(ab, xAxis) - other.getProjectLen(xAxis) < halfSize.x)

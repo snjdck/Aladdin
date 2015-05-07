@@ -15,26 +15,24 @@ package snjdck.g3d.core
 
 	final public class Camera3D
 	{
-		public const projection:Projection3D = new Projection3D();
-		public const viewFrusum:ViewFrustum = new ViewFrustum();
+		private const projection:Projection3D = new Projection3D();
+		public var enableViewFrusum:Boolean;
+		private const viewFrusum:ViewFrustum = new ViewFrustum();
 		
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
 		
-		public const localMatrix:Matrix3D = new Matrix3D();
+		private const localMatrix:Matrix3D = new Matrix3D();
 		public var bindTarget:Object3D;
 		
 		public function Camera3D(){}
-		//*
+		
 		public function setScreenSize(width:int, height:int):void
 		{
 			projection.resize(width, height);
-			viewFrusum.update(width, height);
-		}
-		//*/
-		public function containsAABB(bound:AABB):Boolean
-		{
-			return false;
+			if(enableViewFrusum){
+				viewFrusum.resize(width, height);
+			}
 		}
 		
 		public function set ortho(value:Boolean):void
@@ -52,11 +50,11 @@ package snjdck.g3d.core
 			if(bindTarget != null){
 				_worldMatrix.append(bindTarget.prevWorldMatrix);
 			}
-//			_worldMatrix.prependTranslation(0, 0, zOffset);
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
-			
-			viewFrusum.updateAABB(_worldMatrix);
+			if(enableViewFrusum){
+				viewFrusum.updateAABB(_worldMatrix);
+			}
 		}
 		
 		public function uploadMVP(context3d:GpuContext):void
@@ -68,7 +66,7 @@ package snjdck.g3d.core
 		
 		public function isInSight(bound:AABB):Boolean
 		{
-			return viewFrusum.containsAABB(bound);
+			return enableViewFrusum ? viewFrusum.containsAABB(bound) : true;
 		}
 		
 		public function cullInvisibleUnits(list:Vector.<IDrawUnit3D>):void
@@ -83,12 +81,13 @@ package snjdck.g3d.core
 		}
 		
 		/**
-		 * @param screenX [-1, 1]
-		 * @param screenY [-1, 1]
+		 * @param screenX [-w/2, w/2]
+		 * @param screenY [-h/2, h/2]
 		 */		
-		public function getSceneRay(screenX:Number, screenY:Number, ray:Ray):void
+		public function getSceneRay(stageX:Number, stageY:Number, ray:Ray):void
 		{
-			projection.getViewRay(screenX, screenY, ray);
+			ray.pos.setTo(stageX, stageY, Projection3D.zNear);
+			ray.dir.setTo(0, 0, 1);
 			ray.transform(_worldMatrix, ray);
 		}
 		
@@ -97,10 +96,9 @@ package snjdck.g3d.core
 			matrix44.transformVector(_worldMatrixInvert, input, output);
 		}
 		
-		public function world2screen(input:Vector3D, output:Vector3D):void
+		public function setViewport(x:Number, y:Number, width:int, height:int):void
 		{
-			matrix44.transformVector(_worldMatrixInvert, input, output);
-			projection.scene2screen(output, output);
+			projection.setViewport(x, y, width, height);
 		}
 	}
 }

@@ -7,7 +7,7 @@ package snjdck.g3d.bound
 	import vec3.dotProd;
 	import vec3.subtract;
 
-	public class Cone extends Sphere
+	internal class Cone extends Sphere
 	{
 		public const axis:Vector3D = new Vector3D(0, 0, 1);
 		public const vertex:Vector3D = new Vector3D();
@@ -61,7 +61,5 @@ package snjdck.g3d.bound
 			}
 			return false;
 		}
-		
-		static private const ab:Vector3D = new Vector3D();
 	}
 }

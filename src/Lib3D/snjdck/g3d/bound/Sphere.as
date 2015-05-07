@@ -21,8 +21,6 @@ package snjdck.g3d.bound
 			var totalRadius:Number = radius + other.radius;
 			return ab.lengthSquared < totalRadius * totalRadius;
 		}
-		
-		static private const ab:Vector3D = new Vector3D();
 
 		public function set radius(value:Number):void
 		{
@@ -39,5 +37,7 @@ package snjdck.g3d.bound
 		{
 			return _radiusSqr;
 		}
+		
+		static protected const ab:Vector3D = new Vector3D();
 	}
 }
