@@ -1,6 +1,7 @@
 package snjdck.g3d.obj3d
 {
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
@@ -9,6 +10,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.render.MatrixStack3D;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.BoneAttachmentGroup;
 	import snjdck.g3d.skeleton.BoneStateGroup;
@@ -70,21 +72,19 @@ package snjdck.g3d.obj3d
 			return hasSkeleton ? ShaderName.DYNAMIC_OBJECT : ShaderName.STATIC_OBJECT;
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
-			super.collectDrawUnit(collector);
+			super.collectDrawUnit(collector, camera3d);
 			
 			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
-				collector.pushMatrix(transform);
-				boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
-				collector.popMatrix();
+				boneAttachmentGroup.collectDrawUnits(collector, camera3d);
 			}
 			
 			for each(var subEntity:SubEntity in subEntityList){
 				subEntity.updateBound(prevWorldMatrix);
 			}
 			
-			if(subEntityList.length > 0){
+			if(subEntityList.length > 0 && isInSight(camera3d)){
 				collector.addDrawUnit(this);
 			}
 		}
@@ -134,20 +134,48 @@ package snjdck.g3d.obj3d
 			boneStateGroup = entity.boneStateGroup;
 		}
 		
-		override public function onUpdate(timeElapsed:int):void
+		override public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed);
-			boneAttachmentGroup.onUpdate(timeElapsed);
-			if(null == skeleton){
-				return;
+			super.onUpdate(matrixStack, timeElapsed);
+			updateBoneState(timeElapsed);
+			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
+				matrixStack.pushMatrix(transform);
+				boneAttachmentGroup.onUpdate(matrixStack, boneStateGroup, timeElapsed);
+				matrixStack.popMatrix();
 			}
-			
-			boneStateGroup.advanceTime(timeElapsed * 0.001);
 		}
 		
 		public function set aniName(value:String):void
 		{
 			boneStateGroup.animation = skeleton.getAnimationByName(value);
+		}
+		
+		public function updateBoneState(timeElapsed:int):void
+		{
+			if(skeleton != null){
+				boneStateGroup.advanceTime(timeElapsed * 0.001);
+			}
+		}
+		
+		public function calculateBound():void
+		{
+			prevWorldMatrix.copyFrom(transform);
+			for each(var subEntity:SubEntity in subEntityList){
+				subEntity.updateBound(prevWorldMatrix);
+			}
+		}
+		
+		public function getEntityBound(bound:AABB):void
+		{
+			if(subEntityList.length < 1){
+				return;
+			}
+			var subEntity:SubEntity = subEntityList[0];
+			bound.copyFrom(subEntity.worldBound);
+			for(var i:int=subEntityList.length-1; i > 0; --i){
+				subEntity = subEntityList[i];
+				bound.merge(subEntity.worldBound);
+			}
 		}
 	}
 }

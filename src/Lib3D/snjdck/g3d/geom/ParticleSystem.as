@@ -6,11 +6,12 @@ package snjdck.g3d.geom
 	import flash.support.Range;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.render.MatrixStack3D;
+	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
-	import snjdck.gpu.BlendMode;
-	import snjdck.g3d.core.Object3D;
 	
 	use namespace ns_g3d;
 
@@ -101,9 +102,9 @@ package snjdck.g3d.geom
 			gpuIndexBuffer = GpuAssetFactory.CreateQuadBuffer(maxParticles);
 		}
 		
-		override public function onUpdate(timeElapsed:int):void
+		override public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed);
+			super.onUpdate(matrixStack, timeElapsed);
 			globalTime += timeElapsed * 0.001;
 		}
 		/*

@@ -24,7 +24,7 @@ package snjdck.g3d.obj3d
 		{
 			blendMode = BlendMode.NORMAL;
 			
-			var s:int = 15 * 128;
+			var s:int = 128 * 128;
 			aabb.setMinMax(-s, -s, 0, s, s, 0);
 		}
 		
@@ -38,18 +38,19 @@ package snjdck.g3d.obj3d
 			return aabb.hitRay(localRay, mouseLocation);
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
-			super.collectDrawUnit(collector);
-			collector.addDrawUnit(this);
+			super.collectDrawUnit(collector, camera3d);
+			if(camera3d.isInSight(aabb)){
+				collector.addDrawUnit(this);
+			}
 		}
-		
+		/*
 		public function isInSight(camera3d:Camera3D):Boolean
 		{
-			// TODO Auto Generated method stub
 			return camera3d.isInSight(aabb);
 		}
-		
+		*/
 		
 		public function draw(context3d:GpuContext, camera3d:Camera3D):void
 		{
@@ -59,7 +60,7 @@ package snjdck.g3d.obj3d
 			t2[1] = t1[1];
 			worldMatrix.recompose(t2);
 			*/
-			var count:int = 30;
+			var count:int = 256;
 			var tex:IGpuTexture = AssetMgr.Instance.getTexture("terrain");
 			context3d.texture = tex;
 			context3d.setVcM(5, prevWorldMatrix);
