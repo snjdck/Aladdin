@@ -9,9 +9,7 @@ package snjdck.g3d.bound
 		public var halfHeight:Number;
 		public var halfSize45:Number;
 		
-		public function Rect45()
-		{
-		}
+		public function Rect45(){}
 		
 		public function resize($halfWidth:Number, $halfHeight:Number):void
 		{

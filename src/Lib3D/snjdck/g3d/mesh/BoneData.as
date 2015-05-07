@@ -102,7 +102,7 @@ package snjdck.g3d.mesh
 		}
 		
 		//todo rename?
-		public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
+		public function uploadBoneData(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);

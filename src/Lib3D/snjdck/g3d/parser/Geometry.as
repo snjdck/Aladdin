@@ -1,15 +1,12 @@
 package snjdck.g3d.parser
 {
 	import flash.display3D.Context3DVertexBufferFormat;
-	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 	
 	import array.copy;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.mesh.BoneData;
-	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
@@ -62,16 +59,6 @@ package snjdck.g3d.parser
 			return posData;
 		}
 		
-		public function getUvData():Vector.<Number>
-		{
-			return uvData;
-		}
-		
-		public function getIndexData():Vector.<uint>
-		{
-			return indexData;
-		}
-		
 		public function dispose():void
 		{
 			if(gpuPosBuffer){
@@ -97,60 +84,6 @@ package snjdck.g3d.parser
 		public function get vertexCount():uint
 		{
 			return _vertexCount;
-		}
-		/*
-		public function setVertex(vertexIndex:int, vx:Number, vy:Number, vz:Number, u:Number, v:Number):void
-		{
-			setPos(vertexIndex, vx, vy, vz);
-			setUV(vertexIndex, u, v);
-		}
-		
-		public function setPos(vertexIndex:int, vx:Number, vy:Number, vz:Number):void
-		{
-			const offset:int = vertexIndex * 3;
-			posData[offset] = vx;
-			posData[offset+1] = vy;
-			posData[offset+2] = vz;
-		}
-		
-		public function setUV(vertexIndex:int, u:Number, v:Number):void
-		{
-			const offset:int = vertexIndex * 2;
-			uvData[offset] = u;
-			uvData[offset+1] = v;
-		}
-		*/
-		
-		protected function testRayImp(ray:Ray, mouseLocation:Vector3D, vertexBuffer:Vector.<Number>):Boolean
-		{
-			/*
-			var v0:Vector3D = new Vector3D();
-			var v1:Vector3D = new Vector3D();
-			var v2:Vector3D = new Vector3D();
-			
-			for(var i:int=0, n:int=indexData.length; i<n; i+=3){
-				getVertex(indexData[i],  v0, vertexBuffer);
-				getVertex(indexData[i+1],v1, vertexBuffer);
-				getVertex(indexData[i+2],v2, vertexBuffer);
-				
-				if(ray.testTriangle(v0, v1, v2, result)){
-					return true;
-				}
-			}
-			*/
-			return false;
-		}
-		
-		public function testRay(ray:Ray, mouseLocation:Vector3D, boneStateGroup:BoneStateGroup):Boolean
-		{
-			return testRayImp(ray, mouseLocation, posData);
-		}
-		
-		public function getVertex(vertexIndex:uint, result:Vector3D, buffer:Vector.<Number>=null):void
-		{
-			const offset:int = vertexIndex * 3;
-			buffer ||= posData;
-			result.setTo(buffer[offset], buffer[offset+1], buffer[offset+2]);
 		}
 		
 		public function calculateBound():void
@@ -184,12 +117,7 @@ package snjdck.g3d.parser
 		{
 			return boneData ? boneData.numBones : 0;
 		}
-		/*
-		protected function uploadVertexData(data:Vector.<Number>):void
-		{
-			gpuPosBuffer.upload(data);
-		}
-		*/
+		
 		final public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuPosBuffer){
@@ -206,7 +134,7 @@ package snjdck.g3d.parser
 				context3d.setVertexBufferAt(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 			}
 			if(boneData != null){
-				boneData.draw(context3d, boneStateGroup);
+				boneData.uploadBoneData(context3d, boneStateGroup);
 			}
 			context3d.drawTriangles(gpuIndexBuffer);
 		}

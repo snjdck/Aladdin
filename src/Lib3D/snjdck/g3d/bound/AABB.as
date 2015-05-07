@@ -3,8 +3,6 @@ package snjdck.g3d.bound
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import matrix44.transformVector;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	
@@ -14,22 +12,9 @@ package snjdck.g3d.bound
 	{
 		public const halfSize:Vector3D = new Vector3D();
 		
-		private var isDirty:Boolean;
-		private var sourceAABB:AABB;
-		private var matrix:Matrix3D;
-		
 		public function AABB()
 		{
 			radius = 0;
-		}
-		
-		public function bind(other:AABB, worldMatrix:Matrix3D):void
-		{
-			transformVector(worldMatrix, other.center, center);
-			radius = other.radius;
-			isDirty = true;
-			sourceAABB = other;
-			matrix = worldMatrix;
 		}
 		
 		public function setMinMax(minX:Number, minY:Number, minZ:Number, maxX:Number, maxY:Number, maxZ:Number):void
@@ -126,7 +111,7 @@ package snjdck.g3d.bound
 		}
 		*/
 		//*
-		private function transform(matrix:Matrix3D, result:AABB):void
+		public function transform(matrix:Matrix3D, result:AABB):void
 		{
 			var rawData:Vector.<Number> = matrix.rawData;
 			var minX:Number = rawData[12], maxX:Number = minX;
@@ -210,14 +195,6 @@ package snjdck.g3d.bound
 			}
 			
 			result.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
-		}
-		
-		ns_g3d function updateSize():void
-		{
-			if(isDirty){
-				sourceAABB.transform(matrix, this);
-				isDirty = false;
-			}
 		}
 	}
 }

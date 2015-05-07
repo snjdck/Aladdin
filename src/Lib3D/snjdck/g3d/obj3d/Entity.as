@@ -15,7 +15,6 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.shader.ShaderName;
 	
@@ -23,33 +22,34 @@ package snjdck.g3d.obj3d
 
 	public class Entity extends Object3D implements IDrawUnit3D
 	{
-		ns_g3d var mesh:Mesh;
-		ns_g3d var skeleton:Skeleton;
+		private var subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
+		private var hasSkeleton:Boolean;
+		private var skeleton:Skeleton;
 		
 		private var boneStateGroup:BoneStateGroup = new BoneStateGroup();
 		private const boneAttachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup();
 		
 		public function Entity(mesh:Mesh)
 		{
-			this.mesh = mesh;
 			blendMode = BlendMode.NORMAL;
 			
-			if(mesh.skeleton){
+			for each(var subMesh:SubMesh in mesh.subMeshes){
+				subEntityList.push(new SubEntity(subMesh));
+			}
+			
+			hasSkeleton = (mesh.skeleton != null);
+			
+			if(hasSkeleton){
 				skeleton = mesh.skeleton;
 				aniName = skeleton.getAnimationNames()[0];
 				boneStateGroup.skeleton = skeleton;
 			}
 		}
 		
-		private var aabb:AABB = new AABB();
-		
 		public function isInSight(camera3d:Camera3D):Boolean
 		{
-			for each(var subMesh:SubMesh in mesh.subMeshes)
-			{
-				aabb.bind(subMesh.geometry.bound, prevWorldMatrix);
-				
-				if(camera3d.isInSight(aabb)){
+			for each(var subEntity:SubEntity in subEntityList){
+				if(camera3d.isInSight(subEntity.worldBound)){
 					return true;
 				}
 			}
@@ -59,26 +59,16 @@ package snjdck.g3d.obj3d
 		public function draw(context3d:GpuContext, camera3d:Camera3D):void
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, prevWorldMatrix);
-			
-			for each(var subMesh:SubMesh in mesh.subMeshes)
-			{
-				aabb.bind(subMesh.geometry.bound, prevWorldMatrix);
-				
-				if(!camera3d.isInSight(aabb)){
-					return;
+			for each(var subEntity:SubEntity in subEntityList){
+				if(camera3d.isInSight(subEntity.worldBound)){
+					subEntity.draw(context3d, boneStateGroup);
 				}
-				
-				if(context3d.isFsSlotInUse(0)){
-					context3d.texture = AssetMgr.Instance.getTexture(subMesh.materialName);
-				}
-				
-				subMesh.geometry.draw(context3d, boneStateGroup);
 			}
 		}
 		
 		public function get shaderName():String
 		{
-			return mesh.skeleton ? ShaderName.DYNAMIC_OBJECT : ShaderName.STATIC_OBJECT;
+			return hasSkeleton ? ShaderName.DYNAMIC_OBJECT : ShaderName.STATIC_OBJECT;
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
@@ -89,15 +79,18 @@ package snjdck.g3d.obj3d
 			boneAttachmentGroup.collectDrawUnits(collector, boneStateGroup);
 			collector.popMatrix();
 			
-			if(mesh.hasSubMesh()){
+			for each(var subEntity:SubEntity in subEntityList){
+				subEntity.updateBound(prevWorldMatrix);
+			}
+			if(subEntityList.length > 0){
 				collector.addDrawUnit(this);
 			}
 		}
 		
 		override protected function onHitTest(localRay:Ray):Boolean
 		{
-			for each(var subMesh:SubMesh in mesh.subMeshes){
-				if(subMesh.testRay(localRay, boneStateGroup, mouseLocation)){
+			for each(var subEntity:SubEntity in subEntityList){
+				if(subEntity.testRay(localRay, mouseLocation)){
 					return true;
 				}
 			}
