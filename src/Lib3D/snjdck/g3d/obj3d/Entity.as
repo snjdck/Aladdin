@@ -23,6 +23,8 @@ package snjdck.g3d.obj3d
 
 	public class Entity extends Object3D implements IDrawUnit3D
 	{
+		public var enableXRay:Boolean;
+		
 		private var subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
@@ -74,6 +76,10 @@ package snjdck.g3d.obj3d
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
+			if(enableXRay){
+				collector.xrayFlag = true;
+			}
+			
 			super.collectDrawUnit(collector, camera3d);
 			
 			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
@@ -86,6 +92,9 @@ package snjdck.g3d.obj3d
 			
 			if(subEntityList.length > 0 && isInSight(camera3d)){
 				collector.addDrawUnit(this);
+			}
+			if(enableXRay){
+				collector.xrayFlag = false;
 			}
 		}
 		

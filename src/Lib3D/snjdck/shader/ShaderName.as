@@ -5,6 +5,8 @@ package snjdck.shader
 	 */	
 	public class ShaderName
 	{
+		static public const TERRAIN:String = "terrain_quad";
+		
 		static public const DYNAMIC_OBJECT:String = "bone_ani";
 		static public const STATIC_OBJECT:String = "object";
 		static public const BILLBOARD:String = "billboard";
