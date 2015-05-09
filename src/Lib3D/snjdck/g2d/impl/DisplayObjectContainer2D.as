@@ -14,7 +14,7 @@ package snjdck.g2d.impl
 	public class DisplayObjectContainer2D extends DisplayObject2D
 	{
 		private var _childList:Vector.<DisplayObject2D>;
-		private var _mouseChildren:Boolean;
+		public var mouseChildren:Boolean;
 		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
@@ -22,22 +22,12 @@ package snjdck.g2d.impl
 		public function DisplayObjectContainer2D()
 		{
 			_childList = new <DisplayObject2D>[];
-			_mouseChildren = true;
+			mouseChildren = true;
 		}
 		
 		public function get numChildren():int
 		{
 			return _childList.length;
-		}
-		
-		public function get mouseChildren():Boolean
-		{
-			return _mouseChildren;
-		}
-		
-		public function set mouseChildren(value:Boolean):void
-		{
-			_mouseChildren = value;
 		}
 		
 		private function isIndexValid(index:int):Boolean
