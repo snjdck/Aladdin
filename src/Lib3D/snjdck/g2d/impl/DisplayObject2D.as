@@ -275,6 +275,16 @@ package snjdck.g2d.impl
 			_height = value;
 		}
 		
+		public function get scaleWidth():Number
+		{
+			return _scaleX * _width;
+		}
+		
+		public function get scaleHeight():Number
+		{
+			return _scaleY * _height;
+		}
+		
 		public function get clipRect():Rectangle
 		{
 			return _clipRect;

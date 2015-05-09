@@ -37,3 +37,8 @@ oc = tex: v0, fs0<clamp,linear,${0}>
 @image<rgba>			${image.raw}
 @image_dxt5<dxt5>		${image.raw}
 #========================
+@color_quad
+${image.vs}
+v0.xy = vc3.zw
+v0.zw = vc4
+oc = v0

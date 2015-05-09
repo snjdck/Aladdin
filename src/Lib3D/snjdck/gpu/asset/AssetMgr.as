@@ -3,9 +3,6 @@ package snjdck.gpu.asset
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.filesystem.FileIO;
-//	import flash.filesystem.File;
-//	import flash.filesystem.FileMode;
-//	import flash.filesystem.FileStream;
 	import flash.http.loadMedia;
 	import flash.system.isAdobeAir;
 	import flash.utils.ByteArray;
@@ -62,6 +59,9 @@ package snjdck.gpu.asset
 		
 		[Embed(source="/snjdck/shader/shader2d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_2D:Class;
+		
+		[Embed(source="/snjdck/shader/filter2d.agal", mimeType="application/octet-stream")]
+		static private const CLS_SHADER_FILTER_2D:Class;
 		
 		[Embed(source="/snjdck/shader/particle2d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_PARTICLE:Class;
@@ -149,6 +149,7 @@ package snjdck.gpu.asset
 				programDict = {};
 				initShaderData(new CLS_SHADER_DATA_2D().toString());
 				initShaderData(new CLS_SHADER_DATA_3D().toString());
+				initShaderData(new CLS_SHADER_FILTER_2D().toString());
 				initShaderData(new CLS_SHADER_DATA_PARTICLE().toString());
 				initShaderData(new CLS_SHADER_DATA_TERRAIN().toString());
 				initShaderData(new CLS_SHADER_DATA_TEXT_2D().toString());
@@ -161,6 +162,7 @@ package snjdck.gpu.asset
 //			if(hasTexture(name)){
 //				trace("texture '" + name + "' has reg!");
 //			}else{
+			var isOpaque:Boolean = FileIO.GetExt(name) == "tga";
 			if(texture is Class){
 				texture = new texture();
 			}
@@ -172,6 +174,7 @@ package snjdck.gpu.asset
 			}
 			if(texture is IGpuTexture){
 //				textureDict.add(name, texture);
+				texture.isOpaque = isOpaque;
 				textureDict[name] = texture;
 			}else{
 				throw new Error("error input!");

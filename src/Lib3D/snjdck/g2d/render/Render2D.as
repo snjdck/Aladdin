@@ -12,6 +12,7 @@ package snjdck.g2d.render
 	import snjdck.g2d.core.ITexture2D;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
@@ -126,6 +127,25 @@ package snjdck.g2d.render
 		{
 			context3d.texture = texture;
 			drawWorldRect(context3d, textureX, textureY, texture.width, texture.height);
+		}
+		
+		public function drawColorQuad(context3d:GpuContext, target:DisplayObject2D, color:GpuColor):void
+		{
+			copyProjectData(constData);
+			matrix33.toBuffer(target.prevWorldMatrix, constData, 4);
+			
+			constData[12] = constData[13] = 1;
+			constData[16] = constData[17] = 0;
+			constData[14] = color.red;
+			constData[15] = color.green;
+			constData[18] = color.blue;
+			constData[19] = color.alpha;
+			constData[20] = constData[21] = target.width;
+			constData[22] = constData[23] = target.height;
+			constData[24] = constData[25] = constData[26] = constData[27] = 0;
+			
+			context3d.setVc(0, constData, 7);
+			QuadRender.Instance.drawTriangles(context3d);
 		}
 		
 		public function copyProjectData(output:Vector.<Number>):void
