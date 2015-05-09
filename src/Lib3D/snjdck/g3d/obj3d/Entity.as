@@ -1,5 +1,8 @@
 package snjdck.g3d.obj3d
 {
+	import array.del;
+	import array.pushIfNotHas;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Camera3D;
@@ -23,8 +26,6 @@ package snjdck.g3d.obj3d
 
 	public class Entity extends Object3D implements IDrawUnit3D
 	{
-		public var enableXRay:Boolean;
-		
 		private var subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
@@ -49,11 +50,20 @@ package snjdck.g3d.obj3d
 			}
 		}
 		
-		public function isInSight(camera3d:Camera3D):Boolean
+		private function isInSight(camera3d:Camera3D):Boolean
 		{
 			for each(var subEntity:SubEntity in subEntityList){
+				subEntity.updateWorldBound(prevWorldMatrix);
 				if(camera3d.isInSight(subEntity.worldBound)){
 					return true;
+				}
+			}
+			for each(var mesh:Mesh in _meshList){
+				for each(var subMesh:SubMesh in mesh.subMeshes){
+					subMesh.calcWorldBound(prevWorldMatrix, tempBound);
+					if(camera3d.isInSight(tempBound)){
+						return true;
+					}
 				}
 			}
 			return false;
@@ -63,8 +73,11 @@ package snjdck.g3d.obj3d
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, prevWorldMatrix);
 			for each(var subEntity:SubEntity in subEntityList){
-				if(camera3d.isInSight(subEntity.worldBound)){
-					subEntity.draw(context3d, boneStateGroup);
+				subEntity.draw(context3d, boneStateGroup);
+			}
+			for each(var mesh:Mesh in _meshList){
+				for each(var subMesh:SubMesh in mesh.subMeshes){
+					subMesh.draw(context3d, boneStateGroup);
 				}
 			}
 		}
@@ -76,25 +89,11 @@ package snjdck.g3d.obj3d
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
-			if(enableXRay){
-				collector.xrayFlag = true;
-			}
-			
-			super.collectDrawUnit(collector, camera3d);
-			
 			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
 				boneAttachmentGroup.collectDrawUnits(collector, camera3d);
 			}
-			
-			for each(var subEntity:SubEntity in subEntityList){
-				subEntity.updateBound(prevWorldMatrix);
-			}
-			
-			if(subEntityList.length > 0 && isInSight(camera3d)){
+			if(isInSight(camera3d)){
 				collector.addDrawUnit(this);
-			}
-			if(enableXRay){
-				collector.xrayFlag = false;
 			}
 		}
 		
@@ -145,13 +144,13 @@ package snjdck.g3d.obj3d
 		
 		override public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
 		{
-			super.onUpdate(matrixStack, timeElapsed);
 			updateBoneState(timeElapsed);
+			matrixStack.pushMatrix(transform);
+			prevWorldMatrix.copyFrom(matrixStack.worldMatrix);
 			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
-				matrixStack.pushMatrix(transform);
 				boneAttachmentGroup.onUpdate(matrixStack, boneStateGroup, timeElapsed);
-				matrixStack.popMatrix();
 			}
+			matrixStack.popMatrix();
 		}
 		
 		public function set aniName(value:String):void
@@ -170,7 +169,7 @@ package snjdck.g3d.obj3d
 		{
 			prevWorldMatrix.copyFrom(transform);
 			for each(var subEntity:SubEntity in subEntityList){
-				subEntity.updateBound(prevWorldMatrix);
+				subEntity.updateWorldBound(prevWorldMatrix);
 			}
 		}
 		
@@ -186,5 +185,19 @@ package snjdck.g3d.obj3d
 				bound.merge(subEntity.worldBound);
 			}
 		}
+		
+		private const _meshList:Vector.<Mesh> = new Vector.<Mesh>();
+		
+		public function addChild(child:Mesh):void
+		{
+			pushIfNotHas(_meshList, child);
+		}
+		
+		public function removeChild(child:Mesh):void
+		{
+			array.del(_meshList, child);
+		}
+		
+		static private const tempBound:AABB = new AABB();
 	}
 }
