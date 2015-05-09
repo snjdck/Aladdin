@@ -37,26 +37,3 @@ oc = tex: v0, fs0<clamp,linear,${0}>
 @image<rgba>			${image.raw}
 @image_dxt5<dxt5>		${image.raw}
 #========================
-@blur
-${image.vs}
-v0 = vt1.zw
-v1 = vt1.zwzw - vc7.zwxy
-v2 = vt1.zwzw + vc7
-ft0 = tex: v0, fs0<clamp,linear>
-ft1 = ft0 * fc0.x
-ft0 = tex: v1, fs0<clamp,linear>
-ft1 += ft0 * fc0.z
-ft0 = tex: v1.zw, fs0<clamp,linear>
-ft1 += ft0 * fc0.y
-ft0 = tex: v2, fs0<clamp,linear>
-ft1 += ft0 * fc0.y
-ft0 = tex: v2.zw, fs0<clamp,linear>
-oc = ft1 + ft0 * fc0.z
-#========================
-@color_matrix
-${image.vs}
-v0 = vt1.zw
-ft0 = tex: v0, fs0<clamp,linear>
-ft0 = m44: ft0, fc0
-oc = ft0 + fc4
-#========================
