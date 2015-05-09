@@ -7,7 +7,6 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.skeleton.BoneStateGroup;
-	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 
 	internal class SubEntity
@@ -20,22 +19,19 @@ package snjdck.g3d.obj3d
 			this.subMesh = subMesh;
 		}
 		
-		public function updateBound(worldMatrix:Matrix3D):void
+		public function updateWorldBound(worldMatrix:Matrix3D):void
 		{
-			subMesh.geometry.bound.transform(worldMatrix, worldBound);
+			subMesh.calcWorldBound(worldMatrix, worldBound);
 		}
 		
 		public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
-			if(context3d.isFsSlotInUse(0)){
-				context3d.texture = AssetMgr.Instance.getTexture(subMesh.materialName);
-			}
-			subMesh.geometry.draw(context3d, boneStateGroup);
+			subMesh.draw(context3d, boneStateGroup);
 		}
 		
 		public function testRay(ray:Ray, mouseLocation:Vector3D):Boolean
 		{
-			return true;
+			return worldBound.hitRay(ray, mouseLocation);
 		}
 	}
 }

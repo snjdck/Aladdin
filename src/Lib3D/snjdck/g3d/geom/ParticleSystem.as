@@ -50,7 +50,7 @@ package snjdck.g3d.geom
 		
 		public function ParticleSystem(count:int)
 		{
-			mouseEnabled = mouseChildren = false;
+			mouseEnabled = false;
 			this.maxParticles = count;
 			blendMode = new BlendMode(Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE);
 //			blendFactor = BlendFactor.NORMAL;

@@ -3,6 +3,7 @@ package snjdck.g3d
 	import flash.events.MouseEvent;
 	
 	import snjdck.g3d.core.Camera3D;
+	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
@@ -14,7 +15,7 @@ package snjdck.g3d
 
 	public class Scene3D implements IScene
 	{
-		public const root:Object3D = new Object3D();
+		public const root:DisplayObjectContainer3D = new DisplayObjectContainer3D();
 		public const camera:Camera3D = new Camera3D();
 		
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
