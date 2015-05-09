@@ -305,9 +305,7 @@ package snjdck.g3d.terrain
 				var sceneItem:SceneItem = result[i] as SceneItem;
 				if(sceneItem != null){
 					result.splice(i, 1);
-					if(sceneItem.entity.isInSight(camera3d)){
-						collector.addDrawUnit(sceneItem.entity);
-					}
+					sceneItem.entity.collectDrawUnit(collector, camera3d);
 				}
 			}
 //			collector.addDrawUnit(this);
