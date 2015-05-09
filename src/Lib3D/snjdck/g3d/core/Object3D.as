@@ -14,9 +14,7 @@ package snjdck.g3d.core
 	
 	public class Object3D
 	{
-		private var _parent:Object3D;
-		private var _nextSibling:Object3D;
-		private var _firstChild:Object3D;
+		ns_g3d var _parent:DisplayObjectContainer3D;
 		
 		private const _position:Vector3D = new Vector3D();
 		private const _rotation:Vector3D = new Vector3D();
@@ -28,13 +26,10 @@ package snjdck.g3d.core
 		
 		ns_g3d const prevWorldMatrix:Matrix3D = new Matrix3D();
 		
-//		public var width:Number, height:Number, length:Number;
-		public var layer:uint;
 		public var visible:Boolean;
 		public var name:String;
 		
 		public var mouseEnabled:Boolean;
-		public var mouseChildren:Boolean;
 		
 		private var _blendMode:BlendMode;
 		
@@ -45,29 +40,6 @@ package snjdck.g3d.core
 		{
 			visible = true;
 			mouseEnabled = true;
-			mouseChildren = true;
-		}
-
-		public function get nextSibling():Object3D
-		{
-			return _nextSibling;
-		}
-		
-		public function get firstChild():Object3D
-		{
-			return _firstChild;
-		}
-		
-		private function get lastChild():Object3D
-		{
-			if(null == _firstChild){
-				return null;
-			}
-			var child:Object3D = _firstChild;
-			while(child.nextSibling != null){
-				child = child.nextSibling;
-			}
-			return child;
 		}
 		
 		public function get transform():Matrix3D
@@ -83,36 +55,17 @@ package snjdck.g3d.core
 		{
 			matrixStack.pushMatrix(transform);
 			prevWorldMatrix.copyFrom(matrixStack.worldMatrix);
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				child.onUpdate(matrixStack, timeElapsed);
-			}
 			matrixStack.popMatrix();
 		}
 		
-		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
-		{
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.hasVisibleArea()){
-					child.collectDrawUnit(collector, camera3d);
-				}
-			}
-		}
+		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void{}
 		
-		final public function hitTest(ray:Ray, result:Vector.<Object3D>):void
+		public function hitTest(ray:Ray, result:Vector.<Object3D>):void
 		{
-			if(!(mouseEnabled || mouseChildren)){
-				return;
-			}
-			ray.transformInv(transform, tempRay);
-			if(mouseEnabled && onHitTest(tempRay)){
-				result.push(this);
-			}
-			if(false == mouseChildren){
-				return;
-			}
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.hasVisibleArea()){
-					child.hitTest(tempRay, result);
+			if(mouseEnabled){
+				ray.transformInv(transform, tempRay);
+				if(onHitTest(tempRay)){
+					result.push(this);
 				}
 			}
 		}
@@ -127,76 +80,14 @@ package snjdck.g3d.core
 			return visible && (_scale.x != 0) && (_scale.y != 0) && (_scale.z != 0);
 		}
 		
-		public function addChild(child:Object3D):void
-		{
-			if(null == child || this == child || this == child.parent){
-				return;
-			}
-			
-			if(child.parent){
-				child.parent.removeChild(child);
-			}
-			
-			child._parent = this;
-			
-			if(null == _firstChild){
-				_firstChild = child;
-			}else{
-				lastChild._nextSibling = child;
-			}
-		}
 		
-		public function removeChild(child:Object3D):void
-		{
-			if(null == child || this != child.parent){
-				return;
-			}
-			
-			if(child == firstChild){
-				_firstChild = child.nextSibling;
-			}else{
-				var prevChild:Object3D = firstChild;
-				while(prevChild.nextSibling != child){
-					prevChild = prevChild.nextSibling;
-				}
-				prevChild._nextSibling = child.nextSibling;
-			}
-			
-			child._parent = null;
-			child._nextSibling = null;
-		}
-		
-		public function getChild(childName:String):Object3D
-		{
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				if(child.name == childName){
-					return child;
-				}
-			}
-			return null;
-		}
-		
-		public function findChild(childName:String):Object3D
-		{
-			var result:Object3D = getChild(childName);
-			if(result != null){
-				return result;
-			}
-			for(var child:Object3D=firstChild; child; child=child.nextSibling){
-				result = child.findChild(childName);
-				if(result != null){
-					return result;
-				}
-			}
-			return null;
-		}
 		/*
 		public function get scene():Scene3D
 		{
 			return parent ? parent.scene : null;
 		}
 		*/
-		public function get parent():Object3D
+		public function get parent():DisplayObjectContainer3D
 		{
 			return _parent;
 		}
@@ -344,46 +235,6 @@ package snjdck.g3d.core
 			_position.z = tempPoint.z;
 		}
 		//--------------------------util methods---------------------
-		
-		public function removeAllChildren():void
-		{
-			while(firstChild != null){
-				removeChild(firstChild);
-			}
-		}
-		
-		public function removeChildByName(childName:String):void
-		{
-			removeChild(getChild(childName));
-		}
-		
-		public function traverse(handler:Function, includeSelf:Boolean=true):void
-		{
-			if(includeSelf){
-				handler(this);
-			}
-			for(var child:Object3D=firstChild; child != null; child=child.nextSibling){
-				child.traverse(handler, true);
-			}
-		}
-		
-		public function get numChildren():int
-		{
-			var count:int = 0;
-			for(var child:Object3D=firstChild; child != null; child=child.nextSibling){
-				count++;
-			}
-			return count;
-		}
-		
-		public function createChild(childName:String=null):Object3D
-		{
-			var child:Object3D = new Object3D();
-			child.name = childName;
-			addChild(child);
-			return child;
-		}
-		
 		public function getPosition():Vector3D
 		{
 			return new Vector3D(x, y, z);
@@ -431,12 +282,8 @@ package snjdck.g3d.core
 			translateLocal(Vector3D.X_AXIS, distance);
 		}
 		
-		private const tempRay:Ray = new Ray();
+		protected const tempRay:Ray = new Ray();
+		static private const tempPoint:Vector3D = new Vector3D();
+		static private const tempMatrix:Matrix3D = new Matrix3D();
 	}
 }
-
-import flash.geom.Matrix3D;
-import flash.geom.Vector3D;
-
-const tempPoint:Vector3D = new Vector3D();
-const tempMatrix:Matrix3D = new Matrix3D();
