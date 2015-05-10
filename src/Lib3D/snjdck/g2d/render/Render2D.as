@@ -2,6 +2,7 @@ package snjdck.g2d.render
 {
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DTriangleFace;
+	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	
 	import array.copy;
@@ -62,7 +63,7 @@ package snjdck.g2d.render
 			QuadRender.Instance.drawBegin(context3d);
 		}
 		
-		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D):void
+		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D, colorTransform:ColorTransform=null):void
 		{
 			copyProjectData(constData);
 			matrix33.toBuffer(target.prevWorldMatrix, constData, 4);
@@ -81,6 +82,8 @@ package snjdck.g2d.render
 			}
 			
 			context3d.setVc(0, constData, 7);
+			copyColorTransform(colorTransform);
+			context3d.setFc(0, constData, 2);
 			context3d.texture = texture.gpuTexture;
 			QuadRender.Instance.drawTriangles(context3d, texture.scale9 != null);
 		}
@@ -159,6 +162,23 @@ package snjdck.g2d.render
 			constData[toIndex+1] = matrix.d;
 			constData[toIndex+4] = matrix.tx;
 			constData[toIndex+5] = matrix.ty;
+		}
+		
+		private function copyColorTransform(colorTransform:ColorTransform, toIndex:int=0):void
+		{
+			if(null == colorTransform){
+				constData[toIndex  ] = constData[toIndex+1] = constData[toIndex+2] = constData[toIndex+3] = 1;
+				constData[toIndex+4] = constData[toIndex+5] = constData[toIndex+6] = constData[toIndex+7] = 0;
+			}else{
+				constData[toIndex  ] = colorTransform.redMultiplier;
+				constData[toIndex+1] = colorTransform.greenMultiplier;
+				constData[toIndex+2] = colorTransform.blueMultiplier;
+				constData[toIndex+3] = colorTransform.alphaMultiplier;
+				constData[toIndex+4] = colorTransform.redOffset;
+				constData[toIndex+5] = colorTransform.greenOffset;
+				constData[toIndex+6] = colorTransform.blueOffset;
+				constData[toIndex+7] = colorTransform.alphaOffset;
+			}
 		}
 	}
 }

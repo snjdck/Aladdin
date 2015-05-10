@@ -1,11 +1,13 @@
 package snjdck.g2d.obj2d
 {
+	import flash.geom.ColorTransform;
 	import flash.geom.Rectangle;
 	
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.impl.Texture2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g2d;
@@ -15,6 +17,8 @@ package snjdck.g2d.obj2d
 		private var _texture:Texture2D;
 		private var _opaque:Boolean;
 		private const opaqueArea:Rectangle = new Rectangle();
+		
+		public const colorTransform:ColorTransform = new ColorTransform();
 		
 		public function Image(texture:Texture2D)
 		{
@@ -60,7 +64,7 @@ package snjdck.g2d.obj2d
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			render2d.drawImage(context3d, this, texture);
+			render2d.drawImage(context3d, this, texture, colorTransform);
 		}
 		
 		public function set opaque(value:Boolean):void
@@ -73,5 +77,22 @@ package snjdck.g2d.obj2d
 			_opaque = false;
 			opaqueArea.setTo(leftMargin, topMargin, rightMargin, bottomMargin);
 		}
+		
+		public function setForegroundColor(color:uint, alpha:Number):void
+		{
+			gpuColor.rgb = color;
+			colorTransform.redMultiplier = colorTransform.greenMultiplier = colorTransform.blueMultiplier = 1 - alpha;
+			colorTransform.redOffset = gpuColor.red * alpha;
+			colorTransform.greenOffset = gpuColor.green * alpha;
+			colorTransform.blueOffset = gpuColor.blue * alpha;
+		}
+		
+		public function clearForegroundColor():void
+		{
+			colorTransform.redMultiplier = colorTransform.greenMultiplier = colorTransform.blueMultiplier = 1;
+			colorTransform.redOffset = colorTransform.greenOffset = colorTransform.blueOffset = 0;
+		}
+		
+		static private const gpuColor:GpuColor = new GpuColor();
 	}
 }

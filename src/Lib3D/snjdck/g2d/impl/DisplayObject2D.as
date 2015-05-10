@@ -117,6 +117,16 @@ package snjdck.g2d.impl
 			return containsPt ? this : null;
 		}
 		
+		/** 舞台坐标系下px,py */
+		public function hitTestPt(px:Number, py:Number):Boolean
+		{
+			transformCoordsInv(prevWorldMatrix, px, py, tempPt);
+			if(clipContent && !clipRect.containsPoint(tempPt)){
+				return false;
+			}
+			return (0 <= tempPt.x) && (tempPt.x < width) && (0 <= tempPt.y) && (tempPt.y < height);
+		}
+		
 		final public function removeFromParent():void
 		{
 			if(parent != null){
@@ -199,6 +209,7 @@ package snjdck.g2d.impl
 
 		public function set x(value:Number):void
 		{
+			mouseX += _x - value;
 			_x = value;
 			isLocalMatrixDirty = true;
 		}
@@ -210,6 +221,7 @@ package snjdck.g2d.impl
 
 		public function set y(value:Number):void
 		{
+			mouseY += _y - value;
 			_y = value;
 			isLocalMatrixDirty = true;
 		}
