@@ -32,8 +32,6 @@ package snjdck.g2d.impl
 		public const mouseDownSignal:Signal = new Signal(DisplayObject2D);
 		public const mouseUpSignal:Signal = new Signal(DisplayObject2D);
 		
-		public var alpha:Number = 1;
-		
 		public var visible:Boolean = true;
 		public var filter:IFilter2D;
 		
@@ -292,7 +290,7 @@ package snjdck.g2d.impl
 		
 		public function hasVisibleArea():Boolean
 		{
-			return visible && (alpha > 0) && (scaleX != 0) && (scaleY != 0);
+			return visible && (scaleX != 0) && (scaleY != 0);
 		}
 		
 		public function getBounds(targetSpace:DisplayObject2D, result:Rectangle):void
