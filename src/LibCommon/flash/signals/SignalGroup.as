@@ -2,15 +2,11 @@ package flash.signals
 {
 	import dict.hasKey;
 
-	final public class SignalGroup
+	public class SignalGroup
 	{
 		private const signalDict:Object = {};
-		private var paramType:Class;
 		
-		public function SignalGroup(paramType:Class)
-		{
-			this.paramType = paramType;
-		}
+		public function SignalGroup(){}
 		
 		public function addListener(evtName:String, handler:Function, once:Boolean=false):void
 		{
@@ -32,10 +28,10 @@ package flash.signals
 			return false;
 		}
 		
-		private function getSignal(evtName:String):Signal
+		public function getSignal(evtName:String):Signal
 		{
 			if(!dict.hasKey(signalDict, evtName)){
-				signalDict[evtName] = new Signal(paramType);
+				signalDict[evtName] = new Signal(Object);
 			}
 			return signalDict[evtName];
 		}
