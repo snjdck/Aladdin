@@ -7,9 +7,10 @@ package snjdck.g2d.impl
 	import array.insert;
 	
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.viewport.IViewPortLayer;
 	import snjdck.gpu.asset.GpuContext;
 	
-	public class DisplayObjectContainer2D extends DisplayObject2D
+	public class DisplayObjectContainer2D extends DisplayObject2D implements IViewPortLayer
 	{
 		private var _childList:Vector.<DisplayObject2D>;
 		public var mouseChildren:Boolean;

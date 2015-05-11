@@ -10,7 +10,6 @@ package snjdck.g2d.text
 	
 	import dict.hasKey;
 	
-	import snjdck.gpu.App3D;
 	import snjdck.gpu.asset.GpuTexture;
 	import snjdck.gpu.asset.IGpuTexture;
 
@@ -37,7 +36,7 @@ package snjdck.g2d.text
 			texture = new BitmapData(2048, 2048, true, 0);
 			_gpuTexture = new GpuTexture(texture.width, texture.height);
 			
-			App3D.app.stage.addChild(new Bitmap(texture)).y = 200;
+//			App3D.app.stage.addChild(new Bitmap(texture)).y = 200;
 			
 			format = new TextFormat("宋体", 16, 0xFF0000);
 			tf = new TextField();

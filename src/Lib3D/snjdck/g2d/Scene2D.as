@@ -5,6 +5,8 @@ package snjdck.g2d
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.viewport.IViewPort;
+	import snjdck.g2d.viewport.IViewPortLayer;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
@@ -13,7 +15,7 @@ package snjdck.g2d
 	
 	use namespace ns_g2d;
 	
-	public class Scene2D implements IScene
+	public class Scene2D implements IScene, IViewPort
 	{
 		public const root:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
@@ -79,7 +81,7 @@ package snjdck.g2d
 		
 		private function notifyEventImpl(target:DisplayObject2D, evtType:String, finalNode:DisplayObject2D=null):void
 		{
-			while(target != finalNode){
+			while(target != finalNode && target.mouseEnabled){
 				target.notify(evtType, target);
 				target = target.parent;
 			}
@@ -108,6 +110,24 @@ package snjdck.g2d
 				a = a.parent;
 			}
 			return null;
+		}
+		
+		private const layerDict:Object = {};
+		
+		public function createLayer(name:String, parentName:String=null):void
+		{
+			var parent:DisplayObjectContainer2D = parentName ? layerDict[parentName] : root;
+			
+			var layer:DisplayObjectContainer2D = new DisplayObjectContainer2D();
+			layer.mouseEnabled = false;
+			parent.addChild(layer);
+			
+			layerDict[name] = layer;
+		}
+		
+		public function getLayer(name:String):IViewPortLayer
+		{
+			return layerDict[name];
 		}
 	}
 }

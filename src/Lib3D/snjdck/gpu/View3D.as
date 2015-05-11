@@ -26,8 +26,8 @@ package snjdck.gpu
 		public var timeScale:Number = 1;
 		public var enableErrorChecking:Boolean;
 		
-		internal var stage2d:Stage;
-		internal var stage3d:Stage3D;
+		private var stage2d:Stage;
+		private var stage3d:Stage3D;
 		
 		private var context3d:GpuContext;
 		
