@@ -81,8 +81,10 @@ package snjdck.g2d
 		
 		private function notifyEventImpl(target:DisplayObject2D, evtType:String, finalNode:DisplayObject2D=null):void
 		{
-			while(target != finalNode && target.mouseEnabled){
-				target.notify(evtType, target);
+			while(target != finalNode){
+				if(target.mouseEnabled){
+					target.notify(evtType, target);
+				}
 				target = target.parent;
 			}
 		}

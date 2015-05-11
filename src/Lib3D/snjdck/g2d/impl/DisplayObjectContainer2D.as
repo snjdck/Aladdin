@@ -258,30 +258,21 @@ package snjdck.g2d.impl
 				return null;
 			}
 			var result:DisplayObject2D;
-			var hasChildUnderMouse:Boolean;
 			for(var i:int=_childList.length-1; i>=0; --i){
 				var child:DisplayObject2D = _childList[i];
 				if(!child.hasVisibleArea()){
 					continue;
 				}
 				var target:DisplayObject2D = child.findTargetUnderMouse();
-				if(null == target){
-					continue;
-				}
-				hasChildUnderMouse = true;
-				if(target.mouseEnabled){
+				if(target != null){
 					result = target;
 					break;
 				}
 			}
-			if(hasChildUnderMouse){
-				if(mouseChildren){
-					return result || this;
-				}else{
-					return this;
-				}
+			if(result != null && !mouseChildren){
+				return this;
 			}
-			return null;
+			return result;
 		}
 	}
 }
