@@ -42,8 +42,8 @@ package snjdck.gpu
 			this.stage2d = stage;
 			
 			scene3d.camera.enableViewFrusum = true;
-			scene3d.camera.setScreenSize(_width, _height);
 			scene3d.camera.ortho = true;
+			scene3d.setScreenSize(_width, _height);
 			
 			init();
 		}
@@ -52,7 +52,7 @@ package snjdck.gpu
 		{
 			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,	__onStageEvent);
 			stage2d.addEventListener(MouseEvent.MOUSE_UP,	__onStageEvent);
-			stage2d.addEventListener(Event.RESIZE, __onResize);
+//			stage2d.addEventListener(Event.RESIZE, __onResize);
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
 			stage3d.requestContext3D();
@@ -91,8 +91,8 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			scene3d._mouseX = scene2d._mouseX = stage2d.mouseX;
-			scene3d._mouseY = scene2d._mouseY = stage2d.mouseY;
+			scene3d._mouseX = scene2d._mouseX = (stage2d.mouseX - stage3d.x);
+			scene3d._mouseY = scene2d._mouseY = (stage2d.mouseY - stage3d.y);
 			scene3d.update(timeElapsed * timeScale);
 			scene2d.update(timeElapsed);
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
@@ -106,21 +106,11 @@ package snjdck.gpu
 			context3d.present();
 		}
 		
-		public function notifyEvent(evtType:String):void
-		{
-			var stageX:Number = stage2d.mouseX - stage3d.x;
-			var stageY:Number = stage2d.mouseY - stage3d.y;
-			if(!scene2d.notifyEvent(evtType, stageX, stageY)){
-				scene3d.notifyEvent(evtType,
-					(stageX - 0.5 * _width),
-					(0.5 * _height - stageY)
-				);
-			}
-		}
-		
 		private function __onStageEvent(evt:MouseEvent):void
 		{
-			notifyEvent(evt.type);
+			if(!scene2d.notifyEvent(evt.type)){
+				scene3d.notifyEvent(evt.type);
+			}
 		}
 		
 		private function __onResize(evt:Event):void
@@ -128,7 +118,7 @@ package snjdck.gpu
 			this._width = stage2d.stageWidth;
 			this._height = stage2d.stageHeight;
 			
-			scene3d.camera.setScreenSize(_width, _height);
+			scene3d.setScreenSize(_width, _height);
 			onDeviceLost();
 		}
 	}
