@@ -43,7 +43,7 @@ package snjdck.gpu
 			
 			scene3d.camera.enableViewFrusum = true;
 			scene3d.camera.ortho = true;
-			scene3d.setScreenSize(_width, _height);
+			scene3d.camera.setScreenSize(_width, _height);
 			
 			init();
 		}
@@ -91,8 +91,7 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			scene3d._mouseX = scene2d._mouseX = (stage2d.mouseX - stage3d.x);
-			scene3d._mouseY = scene2d._mouseY = (stage2d.mouseY - stage3d.y);
+			updateMouseXY();
 			scene3d.update(timeElapsed * timeScale);
 			scene2d.update(timeElapsed);
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
@@ -104,6 +103,16 @@ package snjdck.gpu
 			scene3d.draw(context3d);
 			scene2d.draw(context3d);
 			context3d.present();
+		}
+		
+		private function updateMouseXY():void
+		{
+			var px:Number = stage2d.mouseX - stage3d.x;
+			var py:Number = stage2d.mouseY - stage3d.y;
+			scene2d._mouseX = px;
+			scene2d._mouseY = py;
+			scene3d._mouseX = px - 0.5 * _width;
+			scene3d._mouseY = 0.5 * _height - py;
 		}
 		
 		private function __onStageEvent(evt:MouseEvent):void
@@ -118,7 +127,7 @@ package snjdck.gpu
 			this._width = stage2d.stageWidth;
 			this._height = stage2d.stageHeight;
 			
-			scene3d.setScreenSize(_width, _height);
+			scene3d.camera.setScreenSize(_width, _height);
 			onDeviceLost();
 		}
 	}
