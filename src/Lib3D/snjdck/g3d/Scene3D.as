@@ -1,6 +1,7 @@
 package snjdck.g3d
 {
 	import flash.events.MouseEvent;
+	import flash.utils.getTimer;
 	
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
@@ -30,18 +31,24 @@ package snjdck.g3d
 		
 		public function update(timeElapsed:int):void
 		{
+//			var t1:int = getTimer();
 			root.onUpdate(matrixStack, timeElapsed);
 			camera.update();
 			collector.clear();
 			root.collectDrawUnit(collector, camera);
+//			var t2:int = getTimer();
+//			trace("update:",t2-t1);
 		}
 		
 		public function draw(context3d:GpuContext):void
 		{
+//			var t1:int = getTimer();
 			if(collector.hasDrawUnits()){
 				camera.uploadMVP(context3d);
 				collector.render(context3d, camera);
 			}
+//			var t2:int = getTimer();
+//			trace("render:",t2-t1);
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void
@@ -58,11 +65,11 @@ package snjdck.g3d
 			root.hitTest(ray, result);
 		}
 		
-		public function notifyEvent(evtType:String, stageX:Number, stageY:Number):Boolean
+		public function notifyEvent(evtType:String):Boolean
 		{
 			var result:Vector.<Object3D> = new Vector.<Object3D>();
 			
-			pickup(stageX, stageY, result);
+			pickup(_mouseX, _mouseY, result);
 			
 			for each(var target:Object3D in result){
 				switch(evtType){
