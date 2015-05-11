@@ -70,7 +70,10 @@ package flash.ds
 		
 		public function getValueAt(x:int, y:int=0):*
 		{
-			return dock[getIndex(x, y)];
+			if(isIndexInRange(x, y)){
+				return dock[getIndex(x, y)];
+			}
+			return null;
 		}
 		
 		public function setValueAt(x:int, y:int, val:Object):void
