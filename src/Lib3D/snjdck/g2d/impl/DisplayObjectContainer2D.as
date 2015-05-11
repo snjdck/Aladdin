@@ -6,8 +6,6 @@ package snjdck.g2d.impl
 	import array.delAt;
 	import array.insert;
 	
-	import matrix33.transformCoordsInv;
-	
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
 	
