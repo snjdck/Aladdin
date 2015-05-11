@@ -1,10 +1,8 @@
 package snjdck.g2d.impl
 {
-	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.signals.Signal;
 	import flash.signals.SignalGroup;
 	
 	import matrix33.compose;
@@ -440,16 +438,6 @@ package snjdck.g2d.impl
 		public function stopDrag():void
 		{
 			isDraging = false;
-		}
-		
-		public function get mouseDownSignal():Signal
-		{
-			return getSignal(MouseEvent.MOUSE_DOWN);
-		}
-		
-		public function get mouseUpSignal():Signal
-		{
-			return getSignal(MouseEvent.MOUSE_UP);
 		}
 	}
 }
