@@ -1,5 +1,6 @@
 package snjdck.g2d.impl
 {
+	import flash.events.Event;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -93,6 +94,7 @@ package snjdck.g2d.impl
 			if(parent != null){
 				prevWorldMatrix.concat(parent.prevWorldMatrix);
 			}
+			notify(Event.ENTER_FRAME, this);
 		}
 		
 		virtual public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void{}
