@@ -1,9 +1,11 @@
 package snjdck.g2d.impl
 {
+	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.signals.Signal;
+	import flash.signals.SignalGroup;
 	
 	import matrix33.compose;
 	import matrix33.prependTranslation;
@@ -20,7 +22,7 @@ package snjdck.g2d.impl
 	
 	use namespace ns_g2d;
 
-	public class DisplayObject2D
+	public class DisplayObject2D extends SignalGroup
 	{
 		private var _x:Number, _scaleX:Number, _pivotX:Number;
 		private var _y:Number, _scaleY:Number, _pivotY:Number;
@@ -29,8 +31,6 @@ package snjdck.g2d.impl
 		
 		public var mouseEnabled:Boolean = true;
 		public var mouseX:Number, mouseY:Number;
-		public const mouseDownSignal:Signal = new Signal(DisplayObject2D);
-		public const mouseUpSignal:Signal = new Signal(DisplayObject2D);
 		
 		public var visible:Boolean = true;
 		public var filter:IFilter2D;
@@ -78,12 +78,18 @@ package snjdck.g2d.impl
 			return _localMatrix;
 		}
 		
+		public function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
+		{
+			transformCoordsInv(transform, parentMouseX, parentMouseY, tempPt);
+			mouseX = tempPt.x;
+			mouseY = tempPt.y;
+		}
+		
 		public function onUpdate(timeElapsed:int):void
 		{
 			if(isDraging){
-				parent.globalToLocal(scene.mouseX, scene.mouseY, tempPt);
-				x = tempPt.x - dragOffsetX;
-				y = tempPt.y - dragOffsetY;
+				x = parent.mouseX - dragOffsetX;
+				y = parent.mouseY - dragOffsetY;
 			}
 			prevWorldMatrix.copyFrom(transform);
 			if(parent != null){
@@ -105,26 +111,24 @@ package snjdck.g2d.impl
 		
 		virtual protected function onDraw(render2d:Render2D, context3d:GpuContext):void{}
 		
-		virtual public function pickup(px:Number, py:Number):DisplayObject2D
+		public function findTargetUnderMouse():DisplayObject2D
 		{
-			transformCoordsInv(transform, px, py, tempPt);
-			mouseX = tempPt.x;
-			mouseY = tempPt.y;
-			if(clipContent && !clipRect.containsPoint(tempPt)){
-				return null;
+			return isPtIn(mouseX, mouseY) ? this : null;
+		}
+		
+		private function isPtIn(localX:Number, localY:Number):Boolean
+		{
+			if(clipContent && !clipRect.contains(localX, localY)){
+				return false;
 			}
-			var containsPt:Boolean = (0 <= mouseX) && (mouseX < width) && (0 <= mouseY) && (mouseY < height);
-			return containsPt ? this : null;
+			return (0 <= localX) && (localX < width) && (0 <= localY) && (localY < height);
 		}
 		
 		/** 舞台坐标系下px,py */
 		public function hitTestPt(px:Number, py:Number):Boolean
 		{
 			transformCoordsInv(prevWorldMatrix, px, py, tempPt);
-			if(clipContent && !clipRect.containsPoint(tempPt)){
-				return false;
-			}
-			return (0 <= tempPt.x) && (tempPt.x < width) && (0 <= tempPt.y) && (tempPt.y < height);
+			return isPtIn(tempPt.x, tempPt.y);
 		}
 		
 		final public function removeFromParent():void
@@ -392,14 +396,34 @@ package snjdck.g2d.impl
 			parent.swapChildToBottom(this);
 		}
 		
-		public function get scene():IScene
+		final public function get scene():IScene
 		{
-			return _scene || (parent ? parent.scene : null);
+			var target:DisplayObject2D = this;
+			for(;;){
+				if(target._scene != null){
+					return target._scene;
+				}
+				if(null == target._parent){
+					return null;
+				}
+				target = target._parent;
+			}
+			return null;
 		}
 		
-		public function get root():DisplayObjectContainer2D
+		final public function get root():DisplayObjectContainer2D
 		{
-			return _root || (parent ? parent.root : null);
+			var target:DisplayObject2D = this;
+			for(;;){
+				if(target._root != null){
+					return target._root;
+				}
+				if(null == target._parent){
+					return null;
+				}
+				target = target._parent;
+			}
+			return null;
 		}
 		
 		private var isDraging:Boolean;
@@ -416,6 +440,16 @@ package snjdck.g2d.impl
 		public function stopDrag():void
 		{
 			isDraging = false;
+		}
+		
+		public function get mouseDownSignal():Signal
+		{
+			return getSignal(MouseEvent.MOUSE_DOWN);
+		}
+		
+		public function get mouseUpSignal():Signal
+		{
+			return getSignal(MouseEvent.MOUSE_UP);
 		}
 	}
 }

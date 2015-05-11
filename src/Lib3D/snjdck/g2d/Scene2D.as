@@ -30,7 +30,9 @@ package snjdck.g2d
 		
 		public function update(timeElapsed:int):void
 		{
+			root.updateMouseXY(_mouseX, _mouseY);
 			root.onUpdate(timeElapsed);
+			onMouseMove();
 		}
 		
 		public function draw(context3d:GpuContext):void
@@ -56,27 +58,31 @@ package snjdck.g2d
 			root.addChild(child);
 		}
 		
-		public function notifyEvent(evtType:String, stageX:Number, stageY:Number):Boolean
+		private var prevMouseTarget:DisplayObject2D;
+		
+		private function onMouseMove():void
 		{
-			var result:Boolean = true;
-			var target:DisplayObject2D = root.pickup(stageX, stageY);
+			var mouseTarget:DisplayObject2D = root.findTargetUnderMouse() || root;
+			var shareParent:DisplayObject2D = findShareParent(mouseTarget, prevMouseTarget);
 			
-			if(null == target){
-				target = root;
-				result = false;
-			}
-			while(target != null && target.mouseEnabled){
-				switch(evtType){
-					case MouseEvent.MOUSE_DOWN:
-						target.mouseDownSignal.notify(target);
-						break;
-					case MouseEvent.MOUSE_UP:
-						target.mouseUpSignal.notify(target);
-						break;
-				}
+			notifyEventImpl(prevMouseTarget, MouseEvent.MOUSE_OUT, shareParent);
+			notifyEventImpl(mouseTarget, MouseEvent.MOUSE_OVER, shareParent);
+			
+			prevMouseTarget = mouseTarget;
+		}
+		
+		public function notifyEvent(evtType:String):Boolean
+		{
+			notifyEventImpl(prevMouseTarget, evtType);
+			return prevMouseTarget != root;
+		}
+		
+		private function notifyEventImpl(target:DisplayObject2D, evtType:String, finalNode:DisplayObject2D=null):void
+		{
+			while(target != finalNode){
+				target.notify(evtType, target);
 				target = target.parent;
 			}
-			return result;
 		}
 		
 		public function get mouseX():Number
@@ -87,6 +93,21 @@ package snjdck.g2d
 		public function get mouseY():Number
 		{
 			return _mouseY;
+		}
+		
+		private function findShareParent(a:DisplayObject2D, b:DisplayObject2D):DisplayObject2D
+		{
+			while(a != null){
+				var tb:DisplayObject2D = b;
+				while(tb != null){
+					if(a == tb){
+						return a;
+					}
+					tb = tb.parent;
+				}
+				a = a.parent;
+			}
+			return null;
 		}
 	}
 }

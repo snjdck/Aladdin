@@ -154,31 +154,12 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override public function pickup(px:Number, py:Number):DisplayObject2D
+		override public function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
 		{
-			if(!mouseChildren || numChildren <= 0){
-				return null;
+			super.updateMouseXY(parentMouseX, parentMouseY);
+			for each(var child:DisplayObject2D in _childList){
+				child.updateMouseXY(mouseX, mouseY);
 			}
-			var result:DisplayObject2D = null;
-			transformCoordsInv(transform, px, py, tempPt);
-			mouseX = tempPt.x;
-			mouseY = tempPt.y;
-			if(clipContent && !clipRect.containsPoint(tempPt)){
-				return null;
-			}
-			for(var i:int=_childList.length-1; i>=0; --i){
-				var child:DisplayObject2D = _childList[i];
-				if(!(child.hasVisibleArea() && child.mouseEnabled)){
-					continue;
-				}
-				var target:DisplayObject2D = child.pickup(mouseX, mouseY);
-				if(target != null){
-					result = target;
-					break;
-				}
-			}
-			
-			return result;
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
@@ -267,6 +248,41 @@ package snjdck.g2d.impl
 			if(childIndex > 0){
 				swapChildrenAt(childIndex, 0);
 			}
+		}
+		
+		override public function findTargetUnderMouse():DisplayObject2D
+		{
+			if(numChildren <= 0){
+				return null;
+			}
+			if(clipContent && !clipRect.contains(mouseX, mouseY)){
+				return null;
+			}
+			var result:DisplayObject2D;
+			var hasChildUnderMouse:Boolean;
+			for(var i:int=_childList.length-1; i>=0; --i){
+				var child:DisplayObject2D = _childList[i];
+				if(!child.hasVisibleArea()){
+					continue;
+				}
+				var target:DisplayObject2D = child.findTargetUnderMouse();
+				if(null == target){
+					continue;
+				}
+				hasChildUnderMouse = true;
+				if(target.mouseEnabled){
+					result = target;
+					break;
+				}
+			}
+			if(hasChildUnderMouse){
+				if(mouseChildren){
+					return result || this;
+				}else{
+					return this;
+				}
+			}
+			return null;
 		}
 	}
 }
