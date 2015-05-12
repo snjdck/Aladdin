@@ -86,16 +86,6 @@ package snjdck.g3d
 			return result.length > 0;
 		}
 		
-		public function addChild(child:Object3D):void
-		{
-			root.addChild(child);
-		}
-		
-		public function findChild(childName:String):Object3D
-		{
-			return root.findChild(childName);
-		}
-		
 		public function get mouseX():Number
 		{
 			return _mouseX;

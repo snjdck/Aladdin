@@ -22,7 +22,7 @@ package snjdck.g2d.obj2d
 		
 		public function addChild(child:Object3D):void
 		{
-			scene3d.addChild(child);
+			scene3d.root.addChild(child);
 		}
 		
 		override public function onUpdate(timeElapsed:int):void

@@ -58,11 +58,6 @@ package snjdck.g2d
 			render2d.popScreen();
 		}
 		
-		public function addChild(child:DisplayObject2D):void
-		{
-			root.addChild(child);
-		}
-		
 		private var prevMouseTarget:DisplayObject2D;
 		
 		private function onMouseMove():void
