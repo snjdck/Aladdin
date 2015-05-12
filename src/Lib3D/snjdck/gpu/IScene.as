@@ -10,5 +10,9 @@ package snjdck.gpu
 		function notifyEvent(evtType:String):Boolean;
 		function get mouseX():Number;
 		function get mouseY():Number;
+		
+		function resize(width:int, height:int):void;
+		function get stageWidth():int;
+		function get stageHeight():int;
 	}
 }

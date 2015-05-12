@@ -24,6 +24,9 @@ package snjdck.g2d
 		ns_g2d var _mouseX:Number;
 		ns_g2d var _mouseY:Number;
 		
+		private var _width:int;
+		private var _height:int;
+		
 		public function Scene2D()
 		{
 			root._scene = this;
@@ -135,6 +138,22 @@ package snjdck.g2d
 		public function getLayer(name:String):IViewPortLayer
 		{
 			return layerDict[name];
+		}
+		
+		public function resize(width:int, height:int):void
+		{
+			_width = width;
+			_height = height;
+		}
+		
+		public function get stageWidth():int
+		{
+			return _width;
+		}
+		
+		public function get stageHeight():int
+		{
+			return _height;
 		}
 	}
 }

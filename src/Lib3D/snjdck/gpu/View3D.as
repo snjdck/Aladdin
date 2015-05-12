@@ -37,13 +37,12 @@ package snjdck.gpu
 		
 		public function View3D(stage:Stage)
 		{
-			this._width = stage.stageWidth;
-			this._height = stage.stageHeight;
 			this.stage2d = stage;
+			
+			resize(stage2d.stageWidth, stage2d.stageHeight);
 			
 			scene3d.camera.enableViewFrusum = true;
 			scene3d.camera.ortho = true;
-			scene3d.camera.setScreenSize(_width, _height);
 			
 			init();
 		}
@@ -56,16 +55,6 @@ package snjdck.gpu
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
 			stage3d.requestContext3D();
-		}
-		
-		public function get height():int
-		{
-			return _height;
-		}
-		
-		public function get width():int
-		{
-			return _width;
 		}
 		
 		public function set backgroundColor(color:uint):void
@@ -83,7 +72,7 @@ package snjdck.gpu
 			Clock.getInstance().add(this);
 		}
 		
-		protected function onDeviceLost():void
+		private function onDeviceLost():void
 		{
 			context3d.configureBackBuffer(_width, _height, 4);
 			context3d.setFc(27, new <Number>[0.004, 0, 0, 0.6]);
@@ -115,6 +104,14 @@ package snjdck.gpu
 			scene3d._mouseY = 0.5 * _height - py;
 		}
 		
+		private function resize(width:int, height:int):void
+		{
+			_width = width;
+			_height = height;
+			scene3d.resize(_width, _height);
+			scene2d.resize(_width, _height);
+		}
+		
 		private function __onStageEvent(evt:MouseEvent):void
 		{
 			if(!scene2d.notifyEvent(evt.type)){
@@ -124,10 +121,7 @@ package snjdck.gpu
 		
 		private function __onResize(evt:Event):void
 		{
-			this._width = stage2d.stageWidth;
-			this._height = stage2d.stageHeight;
-			
-			scene3d.camera.setScreenSize(_width, _height);
+			resize(stage2d.stageWidth, stage2d.stageHeight);
 			onDeviceLost();
 		}
 	}

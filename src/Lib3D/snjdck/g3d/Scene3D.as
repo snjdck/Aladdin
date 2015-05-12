@@ -27,6 +27,9 @@ package snjdck.g3d
 		ns_g3d var _mouseX:Number;
 		ns_g3d var _mouseY:Number;
 		
+		private var _width:int;
+		private var _height:int;
+		
 		public function Scene3D(){}
 		
 		public function update(timeElapsed:int):void
@@ -101,6 +104,23 @@ package snjdck.g3d
 		public function get mouseY():Number
 		{
 			return _mouseY;
+		}
+		
+		public function resize(width:int, height:int):void
+		{
+			_width = width;
+			_height = height;
+			camera.setScreenSize(_width, _height);
+		}
+		
+		public function get stageWidth():int
+		{
+			return _width;
+		}
+		
+		public function get stageHeight():int
+		{
+			return _height;
 		}
 	}
 }
