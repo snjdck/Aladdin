@@ -78,6 +78,16 @@ package snjdck.g2d.obj2d
 			opaqueArea.setTo(leftMargin, topMargin, rightMargin, bottomMargin);
 		}
 		
+		public function get alpha():Number
+		{
+			return colorTransform.alphaMultiplier;
+		}
+		
+		public function set alpha(value:Number):void
+		{
+			colorTransform.alphaMultiplier = value;
+		}
+		
 		public function setForegroundColor(color:uint, alpha:Number):void
 		{
 			gpuColor.rgb = color;

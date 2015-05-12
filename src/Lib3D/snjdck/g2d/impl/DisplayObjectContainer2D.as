@@ -261,6 +261,7 @@ package snjdck.g2d.impl
 				return null;
 			}
 			var result:DisplayObject2D;
+			var hasChildUnderMouse:Boolean;
 			for(var i:int=_childList.length-1; i>=0; --i){
 				var child:DisplayObject2D = _childList[i];
 				if(!child.hasVisibleArea()){
@@ -268,11 +269,18 @@ package snjdck.g2d.impl
 				}
 				var target:DisplayObject2D = child.findTargetUnderMouse();
 				if(target != null){
-					result = target;
-					break;
+					hasChildUnderMouse = true;
+					if(target.mouseEnabled){
+						result = target;
+						break;
+					}
 				}
 			}
-			if(result != null && !mouseChildren){
+			if(result != null){
+				if(!mouseChildren){
+					return this;
+				}
+			}else if(hasChildUnderMouse){
 				return this;
 			}
 			return result;
