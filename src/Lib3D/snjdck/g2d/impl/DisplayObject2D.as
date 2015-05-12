@@ -97,8 +97,8 @@ package snjdck.g2d.impl
 			notify(Event.ENTER_FRAME, this);
 		}
 		
-		virtual public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void{}
-		final public function draw(render2d:Render2D, context3d:GpuContext):void
+		ns_g2d function preDrawDepth(render2d:Render2D, context3d:GpuContext):void{}
+		ns_g2d function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){
 				_clipRect.drawBegin(render2d, context3d);
@@ -113,22 +113,15 @@ package snjdck.g2d.impl
 		
 		public function findTargetUnderMouse():DisplayObject2D
 		{
-			return isPtIn(mouseX, mouseY) ? this : null;
+			return containsPt(mouseX, mouseY) ? this : null;
 		}
 		
-		private function isPtIn(localX:Number, localY:Number):Boolean
+		public function containsPt(localX:Number, localY:Number):Boolean
 		{
 			if(clipContent && !clipRect.contains(localX, localY)){
 				return false;
 			}
 			return (0 <= localX) && (localX < width) && (0 <= localY) && (localY < height);
-		}
-		
-		/** 舞台坐标系下px,py */
-		public function hitTestPt(px:Number, py:Number):Boolean
-		{
-			transformCoordsInv(prevWorldMatrix, px, py, tempPt);
-			return isPtIn(tempPt.x, tempPt.y);
 		}
 		
 		final public function removeFromParent():void

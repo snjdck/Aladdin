@@ -2,6 +2,7 @@ package snjdck.g2d.filter
 {
 	import flash.geom.Rectangle;
 	
+	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
@@ -9,6 +10,8 @@ package snjdck.g2d.filter
 	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
+	
+	use namespace ns_g2d;
 
 	/**
 	 * 

@@ -6,9 +6,12 @@ package snjdck.g2d.impl
 	import array.delAt;
 	import array.insert;
 	
+	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.viewport.IViewPortLayer;
 	import snjdck.gpu.asset.GpuContext;
+	
+	use namespace ns_g2d;
 	
 	public class DisplayObjectContainer2D extends DisplayObject2D implements IViewPortLayer
 	{
@@ -127,7 +130,7 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		override public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
+		override ns_g2d function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){
 				return;

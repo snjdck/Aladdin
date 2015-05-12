@@ -47,7 +47,7 @@ package snjdck.g2d.obj2d
 			return super.hasVisibleArea() && (texture != null);
 		}
 		
-		override public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
+		override ns_g2d function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){
 				return;

@@ -1,14 +1,17 @@
 package snjdck.g2d.filter
 {
+	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
-	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.shader.ShaderName;
+	
+	use namespace ns_g2d;
 
 	public class FilterGroup2D extends Filter2D
 	{
