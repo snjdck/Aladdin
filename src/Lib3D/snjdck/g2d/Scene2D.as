@@ -65,6 +65,11 @@ package snjdck.g2d
 		private function onMouseMove():void
 		{
 			var mouseTarget:DisplayObject2D = root.findTargetUnderMouse() || root;
+			
+			if(mouseTarget == prevMouseTarget){
+				return;
+			}
+			
 			var shareParent:DisplayObject2D = findShareParent(mouseTarget, prevMouseTarget);
 			
 			notifyEventImpl(prevMouseTarget, MouseEvent.MOUSE_OUT, shareParent);
