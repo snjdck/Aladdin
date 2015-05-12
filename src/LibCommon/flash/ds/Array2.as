@@ -110,9 +110,14 @@ package flash.ds
 			swapValueAt(pos1.x, pos1.y, pos2.x, pos2.y);
 		}
 		
-		private function isIndexInRange(x:int, y:int):Boolean
+		public function isIndexInRange(x:int, y:int):Boolean
 		{
 			return x < width && y < height && x >= 0 && y >=0;
+		}
+		
+		public function isRectInRange(x:int, y:int, w:int, h:int):Boolean
+		{
+			return x >= 0 && y >= 0 && (x + w) <= width && (y + h) <= height;
 		}
 		
 		public function getCol(x:int):Array2
