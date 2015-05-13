@@ -37,7 +37,7 @@ package snjdck.g3d.parser
 		
 		ns_g3d var boneData:BoneData;
 		
-		public function Geometry(vertexData:Vector.<Number>, indexData:Vector.<uint>, boneData:BoneData=null)
+		public function Geometry(vertexData:Vector.<Number>, indexData:Vector.<uint>)
 		{
 			this._vertexCount = vertexData.length / 5;
 			this._faceCount = indexData.length / 3;
@@ -50,8 +50,6 @@ package snjdck.g3d.parser
 				array.copy(vertexData, posData, 3, i*5, i*3);
 				array.copy(vertexData, uvData, 2, i*5+3, i*2);
 			}
-			
-			this.boneData = boneData || new BoneData(vertexCount);
 		}
 		
 		public function getPosData():Vector.<Number>

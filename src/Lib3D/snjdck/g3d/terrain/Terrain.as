@@ -39,15 +39,6 @@ package snjdck.g3d.terrain
 	
 	public class Terrain extends Object3D implements IDrawUnit3D
 	{
-		static private var _ins:Terrain;
-		static public function get ins():Terrain
-		{
-			if(null == _ins){
-				_ins = new Terrain();
-			}
-			return _ins;
-		}
-		
 		private var quadTree:QuadTree;
 		private var texList:Array = [];
 		
@@ -236,7 +227,7 @@ package snjdck.g3d.terrain
 				
 				//				trace("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", objId, px, py, pz, rx, ry, rz, scale);
 				
-				var temp:MuModelLoader = new MuModelLoader(objId, __onEntityLoad);
+				var temp:MuModelLoader = new MuModelLoader(objId, addEntity);
 				
 				temp.x = px;
 				temp.y = py;
@@ -255,6 +246,13 @@ package snjdck.g3d.terrain
 //			trace(minZ, maxZ);
 		}
 		
+		public function addEntity(entity:Entity):void
+		{
+			var sceneItem:SceneItem = new SceneItem(entity);
+			quadTree.insert(sceneItem);
+			itemList.push(entity);
+		}
+		/*
 		private var min:Vector3D = new Vector3D(int.MAX_VALUE, int.MAX_VALUE, int.MAX_VALUE);
 		private var max:Vector3D = new Vector3D(int.MIN_VALUE, int.MIN_VALUE, int.MIN_VALUE);
 		
@@ -263,6 +261,7 @@ package snjdck.g3d.terrain
 			var sceneItem:SceneItem = new SceneItem(entity);
 			quadTree.insert(sceneItem);
 			itemList.push(entity);
+			
 			if(sceneItem.bound.minX < min.x){
 				min.x = sceneItem.bound.minX;
 			}
@@ -281,8 +280,9 @@ package snjdck.g3d.terrain
 			if(sceneItem.bound.maxZ > max.z){
 				max.z = sceneItem.bound.maxZ;
 			}
+			
 		}
-		
+		*/
 		public function get shaderName():String
 		{
 			return ShaderName.TERRAIN;
