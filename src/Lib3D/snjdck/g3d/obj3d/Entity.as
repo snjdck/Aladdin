@@ -217,9 +217,21 @@ package snjdck.g3d.obj3d
 			skeleton = null;
 		}
 		
+		public function showSubMeshAt(index:int):void
+		{
+			setSubMeshVisible(index, true);
+		}
+		
 		public function hideSubMeshAt(index:int):void
 		{
-			subEntityList[index].visible = false;
+			setSubMeshVisible(index, false);
+		}
+		
+		public function setSubMeshVisible(index:int, value:Boolean):void
+		{
+			if(0 <= index && index < subEntityList.length){
+				subEntityList[index].visible = value;
+			}
 		}
 	}
 }
