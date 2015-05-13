@@ -63,7 +63,7 @@ op = vt0
 @objectImp.agal
 ${objectImp.vs}
 v0 = va1				#uv
-ft0 = tex: v0, fs0<clamp>
+ft0 = tex: v0, fs0<clamp,${0}>
 ft1.x = ft0.w - fc27.x
 kil:ft1.x
 oc = ft0
@@ -73,11 +73,19 @@ vt0 = va0
 ${objectImp.vs}
 oc = fc0
 
-@bone_ani
+@bone_ani<rgba>
 ${bone_ani_pos.vs}
 ${objectImp.agal}
 
-@object
+@bone_ani_dxt5<dxt5>
+${bone_ani_pos.vs}
+${objectImp.agal}
+
+@object<rgba>
+vt0 = va0
+${objectImp.agal}
+
+@object_dxt5<dxt5>
 vt0 = va0
 ${objectImp.agal}
 
