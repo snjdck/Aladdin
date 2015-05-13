@@ -26,7 +26,7 @@ package snjdck.g3d.obj3d
 
 	public class Entity extends Object3D implements IDrawUnit3D
 	{
-		private var subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
+		private const subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
 		
@@ -53,6 +53,9 @@ package snjdck.g3d.obj3d
 		private function isInSight(camera3d:Camera3D):Boolean
 		{
 			for each(var subEntity:SubEntity in subEntityList){
+				if(!subEntity.visible){
+					continue;
+				}
 				subEntity.updateWorldBound(prevWorldMatrix);
 				if(camera3d.isInSight(subEntity.worldBound)){
 					return true;
@@ -73,7 +76,9 @@ package snjdck.g3d.obj3d
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, prevWorldMatrix);
 			for each(var subEntity:SubEntity in subEntityList){
-				subEntity.draw(context3d, boneStateGroup);
+				if(subEntity.visible){
+					subEntity.draw(context3d, boneStateGroup);
+				}
 			}
 			for each(var mesh:Mesh in _meshList){
 				for each(var subMesh:SubMesh in mesh.subMeshes){
@@ -100,7 +105,7 @@ package snjdck.g3d.obj3d
 		override protected function onHitTest(localRay:Ray):Boolean
 		{
 			for each(var subEntity:SubEntity in subEntityList){
-				if(subEntity.testRay(localRay, mouseLocation)){
+				if(subEntity.visible && subEntity.testRay(localRay, mouseLocation)){
 					return true;
 				}
 			}
@@ -199,5 +204,22 @@ package snjdck.g3d.obj3d
 		}
 		
 		static private const tempBound:AABB = new AABB();
+		
+		public function bindBoneStateGroup(value:BoneStateGroup):void
+		{
+			skeleton = null;
+			boneStateGroup = value;
+		}
+		
+		public function clearSkeleton():void
+		{
+			hasSkeleton = false;
+			skeleton = null;
+		}
+		
+		public function hideSubMeshAt(index:int):void
+		{
+			subEntityList[index].visible = false;
+		}
 	}
 }

@@ -13,6 +13,7 @@ package snjdck.g3d.obj3d
 	{
 		private var subMesh:SubMesh;
 		public const worldBound:AABB = new AABB();
+		public var visible:Boolean = true;
 		
 		public function SubEntity(subMesh:SubMesh)
 		{
