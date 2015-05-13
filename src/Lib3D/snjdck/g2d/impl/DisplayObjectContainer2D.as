@@ -166,6 +166,9 @@ package snjdck.g2d.impl
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
+			if(!hasVisibleArea()){
+				return;
+			}
 			super.onUpdate(timeElapsed);
 			for each(var child:DisplayObject2D in _childList){
 				child.onUpdate(timeElapsed);

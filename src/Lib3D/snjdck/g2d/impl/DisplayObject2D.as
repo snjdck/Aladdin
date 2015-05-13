@@ -86,6 +86,9 @@ package snjdck.g2d.impl
 		
 		public function onUpdate(timeElapsed:int):void
 		{
+			if(!hasVisibleArea()){
+				return;
+			}
 			if(isDraging){
 				x = parent.mouseX - dragOffsetX;
 				y = parent.mouseY - dragOffsetY;
