@@ -1,5 +1,7 @@
 package snjdck.fileformat.max3ds
 {
+	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
@@ -8,7 +10,9 @@ package snjdck.fileformat.max3ds
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.Geometry;
 	
+	import stream.readMatrix34;
 	import stream.readString;
+	import stream.readVector3;
 	
 	use namespace ns_g3d;
 
@@ -30,6 +34,8 @@ package snjdck.fileformat.max3ds
 		private var vertexData:Vector.<Number>;
 		private var indexData:Vector.<uint>;
 		
+		private var meshName:String;
+		
 		public function Max3DS(ba:ByteArray)
 		{
 			ba.endian = Endian.LITTLE_ENDIAN;
@@ -39,48 +45,76 @@ package snjdck.fileformat.max3ds
 		
 		private function readChunk():void
 		{
-			const prevPosition:uint = buffer.position;
+			while(buffer.bytesAvailable > 0){
+				readChunkImpl();
+			}
+		}
+		
+		private function readChunkImpl():void
+		{
 			const chunkId:uint = buffer.readUnsignedShort();
-			const chunkSize:uint = buffer.readUnsignedInt();
+			const chunkSize:uint = buffer.readUnsignedInt() - 6;
+			const prevPosition:uint = buffer.position;
 			
 			switch(chunkId)
 			{
 				case ChunkID.HEADER:
 				case ChunkID.EDITOR:
 				case ChunkID.KEYFRAME:
-					readChunk();
+				case ChunkID.MAT_AMBIENT:
+				case ChunkID.MAT_DIFFUSE:
+				case ChunkID.MAT_SPECULAR:
+				case ChunkID.MAT_SHININESS:
+				case ChunkID.MAT_TEXMAP:
 					break;
 				case ChunkID.VERSION:
 					buffer.readInt();
-					readChunk();
 					break;
 				case ChunkID.OBJECTS:
-					trace("mesh", readString(buffer));
-					readChunk();
+					meshName = readString(buffer);
 					break;
 				case ChunkID.MESH:
-					if(subMesh){
-						subMesh.geometry = new Geometry(vertexData, indexData);
-					}
 					subMesh = mesh.createSubMesh();
-					subMesh.materialName = "shaokai";
-					readChunk();
 					break;
 				case ChunkID.VERTICES:
 					readVertices(buffer.readUnsignedShort());
 					break;
 				case ChunkID.INDICES:
 					readIndices(buffer.readUnsignedShort());
+					subMesh.geometry = new Geometry(vertexData, indexData);
+					break;
+				case ChunkID.MESH_MATER:
+					subMesh.materialName = readString(buffer);
+					var n:int = buffer.readUnsignedShort();
+					buffer.position += n * 2;
 					break;
 				case ChunkID.UVS:
 					readUvs(buffer.readUnsignedShort());
 					break;
+				case ChunkID.MATERIAL_LIST:
+					break;
+				case ChunkID.MATERIAL_NAME:
+					readString(buffer);
+					break;
+				case ChunkID.TRI_LOCAL:
+					var t:Matrix3D = new Matrix3D();
+					readMatrix34(buffer, t);
+					break;
+				case ChunkID.KEYF_FRAME_COUNT:
+					var fromIndex:uint = buffer.readUnsignedInt();
+					var toIndex:uint = buffer.readUnsignedInt();
+					break;
+				case 0xb010:
+					readString(buffer);
+					buffer.readUnsignedShort();
+					buffer.readUnsignedShort();
+					buffer.readUnsignedShort();
+					break;
+				case ChunkID.KEYF_OBJDES:
+					break;
 				default:
-					trace("unknow chunk", chunkId, chunkSize);
+//					trace("unknow chunk",chunkId, "\t\t0x"+chunkId.toString(16), "\t", chunkSize);
 					buffer.position = prevPosition + chunkSize;
-					if(buffer.bytesAvailable > 0){
-						readChunk();
-					}
 			}
 		}
 			
@@ -103,6 +137,7 @@ package snjdck.fileformat.max3ds
 				indexData[index] = buffer.readUnsignedShort();
 				indexData[index+1] = buffer.readUnsignedShort();
 				indexData[index+2] = buffer.readUnsignedShort();
+				buffer.readUnsignedShort();
 			}
 		}
 		
