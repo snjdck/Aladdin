@@ -1,7 +1,6 @@
 package snjdck.fileformat.max3ds
 {
 	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
@@ -12,7 +11,6 @@ package snjdck.fileformat.max3ds
 	
 	import stream.readMatrix34;
 	import stream.readString;
-	import stream.readVector3;
 	
 	use namespace ns_g3d;
 
@@ -34,7 +32,8 @@ package snjdck.fileformat.max3ds
 		private var vertexData:Vector.<Number>;
 		private var indexData:Vector.<uint>;
 		
-		private var meshName:String;
+		private const materialDict:Object = {};
+		private var materialName:String;
 		
 		public function Max3DS(ba:ByteArray)
 		{
@@ -71,7 +70,7 @@ package snjdck.fileformat.max3ds
 					buffer.readInt();
 					break;
 				case ChunkID.OBJECTS:
-					meshName = readString(buffer);
+					readString(buffer);
 					break;
 				case ChunkID.MESH:
 					subMesh = mesh.createSubMesh();
@@ -84,7 +83,7 @@ package snjdck.fileformat.max3ds
 					subMesh.geometry = new Geometry(vertexData, indexData);
 					break;
 				case ChunkID.MESH_MATER:
-					subMesh.materialName = readString(buffer);
+					subMesh.materialName = materialDict[readString(buffer)];
 					var n:int = buffer.readUnsignedShort();
 					buffer.position += n * 2;
 					break;
@@ -94,7 +93,15 @@ package snjdck.fileformat.max3ds
 				case ChunkID.MATERIAL_LIST:
 					break;
 				case ChunkID.MATERIAL_NAME:
-					readString(buffer);
+					materialName = readString(buffer);
+					break;
+				case ChunkID.MAT_TEXFLNM:
+					var textureName:String = readString(buffer).toLowerCase();
+					var index:int = textureName.indexOf(".");
+					if(index < 0){
+						index = textureName.length;
+					}
+					materialDict[materialName] = textureName.slice(0, index);
 					break;
 				case ChunkID.TRI_LOCAL:
 					var t:Matrix3D = new Matrix3D();

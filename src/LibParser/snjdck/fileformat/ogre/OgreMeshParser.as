@@ -171,12 +171,13 @@ package snjdck.fileformat.ogre
 			}
 			
 			if(MeshChunkID.SUBMESH_BONE_ASSIGNMENT == getChunkId()){
-				var boneData:BoneData = subMesh.geometry.boneData;
+				var boneData:BoneData = new BoneData(subMesh.geometry.vertexCount);
 				while(MeshChunkID.SUBMESH_BONE_ASSIGNMENT == getChunkId()){
 					seekToData();
 					boneData.assignBone(buffer.readUnsignedInt(), buffer.readUnsignedShort(), buffer.readFloat());
 				}
 				boneData.adjustBoneWeight();
+				subMesh.geometry.boneData = boneData;
 			}
 			
 			trace("骨骼数量:", subMesh.geometry.numBones, "材质名称:", subMesh.materialName);

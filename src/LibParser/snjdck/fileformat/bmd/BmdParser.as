@@ -286,7 +286,8 @@ package snjdck.fileformat.bmd
 			}
 			
 			boneData.adjustBoneWeight();
-			var geometry:Geometry = new Geometry(vertexData, indexBuffer, boneData);
+			var geometry:Geometry = new Geometry(vertexData, indexBuffer);
+			geometry.boneData = boneData;
 			geometry.calculateBound();
 			
 			subMesh.geometry = geometry;
