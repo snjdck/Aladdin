@@ -4,22 +4,22 @@ package array
 
 	public function traverseByGroup(list:Object, keys:Array, callbacks:Array, index:int=0):Object
 	{
-		var dict:Object = groupByKey(list, keys[index]);
+		var hashMap:Object = groupByKey(list, keys[index]);
 		var key:* = null, value:* = null;
 		
 		const flag:Boolean = index + 1 < keys.length;
-		for(key in dict){
+		for(key in hashMap){
 			callbacks[index](key);
 			if(flag){
-				dict[key] = traverseByGroup(dict[key], keys, callbacks, index+1);
+				hashMap[key] = traverseByGroup(hashMap[key], keys, callbacks, index+1);
 			}else{
-				for each(value in dict[key]){
+				for each(value in hashMap[key]){
 					callbacks[index+1](value);
 				}
 			}
 		}
 		
-		return dict;
+		return hashMap;
 	}
 }
 
@@ -29,16 +29,16 @@ import dict.hasKey;
 
 function groupByKey(list:Object, key:String):Object
 {
-	var dict:Object = new Dictionary();
+	var hashMap:Object = new Dictionary();
 	
 	for each(var item:Object in list){
 		var value:Object = item[key];
-		if(hasKey(dict, value)){
-			(dict[value] as Array).push(item);
+		if(hasKey(hashMap, value)){
+			(hashMap[value] as Array).push(item);
 		}else{
-			dict[value] = [item];
+			hashMap[value] = [item];
 		}
 	}
 	
-	return dict;
+	return hashMap;
 }

@@ -2,11 +2,10 @@ package flash.bitmap
 {
 	import flash.display.BitmapData;
 	import flash.display.BitmapDataChannel;
+	import flash.display.JPEGEncoderOptions;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.ByteArray;
-	
-	import mx.graphics.codec.JPEGEncoder;
 
 	public class ToolSupport
 	{
@@ -15,8 +14,8 @@ package flash.bitmap
 			var colorData:BitmapData = generateColorImage(sourceData);
 			var alphaData:BitmapData = generateAlphaImage(sourceData);
 			
-			var colorBytes:ByteArray = new JPEGEncoder(colorQuality).encode(colorData);
-			var alphaBytes:ByteArray = new JPEGEncoder(alphaQuality).encode(alphaData);
+			var colorBytes:ByteArray = colorData.encode(colorData.rect, new JPEGEncoderOptions(colorQuality));
+			var alphaBytes:ByteArray = alphaData.encode(colorData.rect, new JPEGEncoderOptions(colorQuality))
 			
 			colorData.dispose();
 			alphaData.dispose();

@@ -11,7 +11,7 @@ package flash.ioc
 
 	public class Injector implements IInjector
 	{
-		private const dict:Object = {};
+		private const ruleDict:Object = {};
 		private var _parent:IInjector;
 		
 		public function Injector()
@@ -39,35 +39,44 @@ package flash.ioc
 			if(value != null){
 				assert(value is keyCls, "type don't match!");
 			}
-			var rule:IInjectionType = new InjectionTypeValue(value, needInject, realInjector || this);
+			if(null == realInjector){
+				realInjector = this;
+			}
+			var rule:IInjectionType = new InjectionTypeValue(value, needInject, realInjector);
 			mapRule(keyCls, rule, id);
 		}
 		
 		public function mapClass(keyCls:Class, valueCls:Class=null, id:String=null, realInjector:IInjector=null):void
 		{
-			var rule:IInjectionType = new InjectionTypeClass(realInjector || this, valueCls || keyCls);
+			if(null == realInjector){
+				realInjector = this;
+			}
+			var rule:IInjectionType = new InjectionTypeClass(realInjector, valueCls || keyCls);
 			mapRule(keyCls, rule, id);
 		}
 		
 		public function mapSingleton(keyCls:Class, valueCls:Class=null, id:String=null, realInjector:IInjector=null):void
 		{
-			var rule:IInjectionType = new InjectionTypeSingleton(realInjector || this, valueCls || keyCls);
+			if(null == realInjector){
+				realInjector = this;
+			}
+			var rule:IInjectionType = new InjectionTypeSingleton(realInjector, valueCls || keyCls);
 			mapRule(keyCls, rule, id);
 		}
 		
 		public function mapRule(keyCls:Class, rule:IInjectionType, id:String=null):void
 		{
-			dict[getKey(keyCls, id)] = rule;
+			ruleDict[getKey(keyCls, id)] = rule;
 		}
 		
 		public function unmap(keyCls:Class, id:String=null):void
 		{
-			deleteKey(dict, getKey(keyCls, id));
+			deleteKey(ruleDict, getKey(keyCls, id));
 		}
 		
 		public function getMapping(key:String):IInjectionType
 		{
-			return dict[key];
+			return ruleDict[key];
 		}
 		
 		private function getInjectionType(key:String):IInjectionType
