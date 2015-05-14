@@ -28,22 +28,14 @@ package flash.ioc.ip
 		public function InjectionPoint(clsRef:Class)
 		{
 			var clsInfo:TypeInfo = getTypeInfo(clsRef);
-			
 			for each(var varNode:VariableInfo in clsInfo.variables){
 				if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite()){
 					addPropertyPoint(varNode);
 				}
 			}
-			
 			for each(var methodNode:MethodInfo in clsInfo.methods){
-				if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length > 0){
-					addMethodPoint(methodNode);
-				}
-			}
-			
-			for each(var methodNode:MethodInfo in clsInfo.methods){
-				if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length == 0){
-					addMethodPoint(methodNode);
+				if(methodNode.hasMetaTag(TAG_INJECT)){
+					addMethodPoint(methodNode, methodNode.parameters.length > 0);
 				}
 			}
 		}
@@ -57,12 +49,17 @@ package flash.ioc.ip
 			));
 		}
 		
-		private function addMethodPoint(methodNode:MethodInfo):void
+		private function addMethodPoint(methodNode:MethodInfo, toHeadFlag:Boolean):void
 		{
-			injectionPointList.push(new InjectionPointMethod(
+			var injectionPoint:IInjectionPoint = new InjectionPointMethod(
 				methodNode.name,
 				methodNode.parameters
-			));
+			);
+			if(toHeadFlag){
+				injectionPointList.unshift(injectionPoint);
+			}else{
+				injectionPointList.push(injectionPoint);
+			}
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
