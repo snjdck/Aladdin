@@ -3,6 +3,33 @@ import zlib
 import struct
 import sys
 import os
+import math
+
+def removeTags(rawData):
+	nBit = rawData[0] >> 3
+	offset = math.ceil((nBit*4+5) / 8.0) + 4
+	result = rawData[:offset]
+	rawDataSize = len(rawData)
+	while offset < rawDataSize:
+		flag = struct.unpack("H", rawData[offset:offset+2])[0]
+		tagType = flag >> 6
+		tagBodySize = flag & 0x3F
+		if 0x3F == tagBodySize:
+			tagBodySize = struct.unpack("I", rawData[offset+2:offset+6])[0]
+			tagSize = tagBodySize + 6
+		else:
+			tagSize = tagBodySize + 2
+		#remove Metadata and ProductInfo
+		if not (tagType == 41 or tagType == 77):
+			#hasMetadata = false
+			if tagType == 69:
+				tagBody = struct.unpack("I", rawData[offset+2:offset+6])[0]
+				tagBody &= 0xEF
+				result += rawData[offset:offset+2] + struct.pack("I", tagBody)
+			else:
+				result += rawData[offset:offset+tagSize]
+		offset += tagSize
+	return result
 
 def main(filePath):
 	if not os.path.exists(filePath):
@@ -13,8 +40,6 @@ def main(filePath):
 
 	sign, version, dataSize = struct.unpack("3sBI", fileData[:8])
 
-	print(sign, version, dataSize)
-
 	if version < 13:
 		version = 13
 
@@ -23,9 +48,13 @@ def main(filePath):
 	elif sign == b"FWS":
 		rawData = fileData[8:]
 	elif sign == b"ZWS":
-		return "input file is already ZWS compressed."
+		rawData = fileData[12:17] + struct.pack("2I",0xFFFFFFFF,0xFFFFFFFF) + fileData[17:]
+		rawData = lzma.decompress(rawData, lzma.FORMAT_ALONE)
 	else:
 		return "invalid swf file."
+	
+	rawData = removeTags(rawData)
+	dataSize = len(rawData) + 8
 	
 	lzmaData = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, 7)
 	lzmaSize = len(lzmaData) - 13
