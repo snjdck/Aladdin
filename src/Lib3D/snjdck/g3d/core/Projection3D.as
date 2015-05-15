@@ -10,12 +10,12 @@ package snjdck.g3d.core
 		static public const zNear	:Number = -10000;
 		static public const zFar	:Number =  10000;
 		
-		private const transform:Vector.<Number> = new Vector.<Number>(8, true);
+		private const transform:Vector.<Number> = new Vector.<Number>(4, true);
 		
 		public function Projection3D()
 		{
 			transform[2] = 1.0 / (zFar - zNear);
-			transform[6] = transform[2] * -zNear;
+			transform[3] = -zNear;
 		}
 		
 		public function resize(width:int, height:int):void
@@ -26,18 +26,7 @@ package snjdck.g3d.core
 		
 		public function upload(context3d:GpuContext):void
 		{
-			context3d.setVc(0, transform, 2);
-		}
-		
-		public function setViewport(x:Number, y:Number, width:int, height:int):void
-		{
-			transform[4] = (x + width * 0.5) * transform[0] - 1;
-			transform[5] = 1 - (y + height * 0.5) * transform[1];
-		}
-		
-		public function resetViewport():void
-		{
-			transform[4] = transform[5] = 0;
+			context3d.setVc(0, transform, 1);
 		}
 	}
 }

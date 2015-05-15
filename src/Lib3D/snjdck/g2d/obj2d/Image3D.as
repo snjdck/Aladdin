@@ -15,7 +15,7 @@ package snjdck.g2d.obj2d
 		
 		public function Image3D(w:int, h:int)
 		{
-			scene3d.camera.setScreenSize(1000, 600);
+			scene3d.resize(1000, 600);
 			this.width = w;
 			this.height = h;
 		}
@@ -28,13 +28,14 @@ package snjdck.g2d.obj2d
 		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
+			scene3d.root.x = prevWorldMatrix.tx + 0.5 * (width - scene.stageWidth);
+			scene3d.root.y = 0.5 * (scene.stageHeight - height) - prevWorldMatrix.ty;
 			scene3d.update(timeElapsed);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			context3d.clearDepth();
-			scene3d.camera.setViewport(prevWorldMatrix.tx, prevWorldMatrix.ty, width, height);
 			scene3d.draw(context3d);
 			render2d.drawBegin(context3d);
 		}

@@ -89,11 +89,6 @@ package snjdck.g3d.core
 			matrix44.transformVector(_worldMatrixInvert, input, output);
 		}
 		
-		public function setViewport(x:Number, y:Number, width:int, height:int):void
-		{
-			projection.setViewport(x, y, width, height);
-		}
-		
 		public function getViewFrustum():ViewFrustum
 		{
 			return viewFrusum;
