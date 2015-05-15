@@ -37,7 +37,7 @@ package snjdck.g2d.obj2d
 		{
 			context3d.clearDepth();
 			scene3d.draw(context3d);
-			render2d.drawBegin(context3d);
+			render2d.prepareToDraw();
 		}
 	}
 }
