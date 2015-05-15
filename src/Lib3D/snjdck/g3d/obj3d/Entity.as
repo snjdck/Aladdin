@@ -56,6 +56,9 @@ package snjdck.g3d.obj3d
 				if(!subEntity.visible){
 					continue;
 				}
+				if(!camera3d.enableViewFrusum){
+					return true;
+				}
 				subEntity.updateWorldBound(prevWorldMatrix);
 				if(camera3d.isInSight(subEntity.worldBound)){
 					return true;
@@ -63,6 +66,9 @@ package snjdck.g3d.obj3d
 			}
 			for each(var mesh:Mesh in _meshList){
 				for each(var subMesh:SubMesh in mesh.subMeshes){
+					if(!camera3d.enableViewFrusum){
+						return true;
+					}
 					subMesh.calcWorldBound(prevWorldMatrix, tempBound);
 					if(camera3d.isInSight(tempBound)){
 						return true;

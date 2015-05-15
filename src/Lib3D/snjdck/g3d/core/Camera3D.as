@@ -8,7 +8,6 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
@@ -19,6 +18,7 @@ package snjdck.g3d.core
 		public var enableViewFrusum:Boolean;
 		private const viewFrusum:ViewFrustum = new ViewFrustum();
 		
+		private var isWorldMatrixDirty:Boolean = true;
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
 		
@@ -44,6 +44,13 @@ package snjdck.g3d.core
 		
 		public function update():void
 		{
+			if(bindTarget != null){
+				isWorldMatrixDirty = true;
+			}
+			if(!isWorldMatrixDirty){
+				return;
+			}
+			isWorldMatrixDirty = false;
 			_worldMatrix.copyFrom(localMatrix);
 			if(bindTarget != null){
 				_worldMatrix.append(bindTarget.prevWorldMatrix);
@@ -66,17 +73,6 @@ package snjdck.g3d.core
 		{
 			return enableViewFrusum ? viewFrusum.containsAABB(bound) : true;
 		}
-		/*
-		public function cullInvisibleUnits(list:Vector.<IDrawUnit3D>):void
-		{
-			for(var i:int=list.length-1; i>=0; --i){
-				var drawUnit:IDrawUnit3D = list[i];
-				if(!drawUnit.isInSight(this)){
-					list.splice(i, 1);
-				}
-			}
-		}
-		*/
 		/**
 		 * @param screenX [-w/2, w/2]
 		 * @param screenY [-h/2, h/2]
