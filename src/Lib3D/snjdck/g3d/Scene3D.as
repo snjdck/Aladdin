@@ -56,10 +56,7 @@ package snjdck.g3d
 		
 		public function preDrawDepth(context3d:GpuContext):void
 		{
-			if(collector.hasDrawUnits()){
-				camera.uploadMVP(context3d);
-				collector.preDrawDepth(context3d, camera);
-			}
+			collector.preDrawDepth(context3d, camera);
 		}
 		
 		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void

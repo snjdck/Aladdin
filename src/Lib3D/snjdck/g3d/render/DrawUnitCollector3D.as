@@ -57,6 +57,7 @@ package snjdck.g3d.render
 			if(staticDrawUnits.length <= 0){
 				return;
 			}
+			camera3d.uploadMVP(context3d);
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.G3D_PRE_DRAW_DEPTH);
 			for each(var drawUnit:IDrawUnit3D in staticDrawUnits){
 				drawUnit.draw(context3d, camera3d);
