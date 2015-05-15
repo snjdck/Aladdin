@@ -57,7 +57,7 @@ package snjdck.gpu.asset
 			_backBufferWidth = width;
 			_backBufferHeight = height;
 		}
-		[Inline]
+		
 		public function clear(red:Number=0.0, green:Number=0.0, blue:Number=0.0, alpha:Number=1.0, depth:Number=1.0, stencil:uint=0, mask:uint=0xFFFFFFFF):void
 		{
 			context3d.clear(red, green, blue, alpha, depth, stencil, mask);
@@ -65,7 +65,7 @@ package snjdck.gpu.asset
 				_renderTarget._hasCleared = true;
 			}
 		}
-		[Inline]
+		
 		public function present():void
 		{
 			context3d.present();
@@ -217,7 +217,7 @@ package snjdck.gpu.asset
 		{
 			context3d.setVertexBufferAt(slotIndex, buffer.getRawGpuAsset(context3d), bufferOffset, format);
 		}
-		[Inline]
+		
 		public function set texture(value:IGpuTexture):void
 		{
 			setTextureAt(0, value);
@@ -249,17 +249,17 @@ package snjdck.gpu.asset
 		{
 			return (fsUseInfo & (1 << slotIndex)) != 0;
 		}
-		[Inline]
+		
 		public function clearDepthAndStencil(depth:Number=1.0, stencil:uint=0):void
 		{
 			clear(0.0, 0.0, 0.0, 1.0, depth, stencil, Context3DClearMask.DEPTH | Context3DClearMask.STENCIL);
 		}
-		[Inline]
+		
 		public function clearDepth(depth:Number=1.0):void
 		{
 			clear(0.0, 0.0, 0.0, 1.0, depth, 0, Context3DClearMask.DEPTH);
 		}
-		[Inline]
+		
 		public function clearStencil(stencil:uint=0):void
 		{
 			clear(0.0, 0.0, 0.0, 1.0, 1.0, stencil, Context3DClearMask.STENCIL);

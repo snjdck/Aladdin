@@ -200,6 +200,7 @@ package snjdck.g3d.geom
 		/**
 		 * multiply(new Quaternion(v.x, v.y, v.z, 0)).multiply(getConjugate());
 		 */
+		[Inline]
 		public function rotateVector(v:Vector3D, result:Vector3D):void
 		{
 			//复制区域--begin
