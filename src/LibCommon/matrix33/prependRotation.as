@@ -5,7 +5,7 @@ package matrix33
 	/**
 	 * @param angle The rotation angle in radians
 	 */	
-	public function prependRotation(matrix:Matrix, angle:Number):void
+	internal function prependRotation(matrix:Matrix, angle:Number):void
 	{
 		var sin:Number = Math.sin(angle);
 		var cos:Number = Math.cos(angle);

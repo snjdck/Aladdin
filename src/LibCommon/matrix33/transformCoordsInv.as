@@ -3,7 +3,7 @@ package matrix33
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 
-	public function transformCoordsInv(matrix:Matrix, x:Number, y:Number, output:Point):void
+	internal function transformCoordsInv(matrix:Matrix, x:Number, y:Number, output:Point):void
 	{
 		var a:Number    = matrix.a;
 		var b:Number    = matrix.b;

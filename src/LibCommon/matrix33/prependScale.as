@@ -2,7 +2,7 @@ package matrix33
 {
 	import flash.geom.Matrix;
 
-	public function prependScale(matrix:Matrix, sx:Number, sy:Number):void
+	internal function prependScale(matrix:Matrix, sx:Number, sy:Number):void
 	{
 		matrix.a *= sx;
 		matrix.b *= sx;

@@ -7,7 +7,7 @@ package matrix33
 	 * 2.旋转
 	 * 3.位移
 	 */
-	public function compose(matrix:Matrix, scaleX:Number, scaleY:Number, rotation:Number=0, tx:Number=0, ty:Number=0, isScaleFirst:Boolean=true):void
+	internal function compose(matrix:Matrix, scaleX:Number, scaleY:Number, rotation:Number=0, tx:Number=0, ty:Number=0, isScaleFirst:Boolean=true):void
 	{
 		matrix.tx = tx;
 		matrix.ty = ty;
@@ -27,15 +27,15 @@ package matrix33
 		matrix.a = scaleX * cos;
 		matrix.d = scaleY * cos;
 		
-		if(isScaleFirst)
-		{
+//		if(isScaleFirst)
+//		{
 			matrix.b = scaleX * sin;
 			matrix.c = scaleY * -sin;
-		}
-		else//rotation first
-		{
-			matrix.b = scaleY * sin;
-			matrix.c = scaleX * -sin;
-		}
+//		}
+//		else//rotation first
+//		{
+//			matrix.b = scaleY * sin;
+//			matrix.c = scaleX * -sin;
+//		}
 	}
 }

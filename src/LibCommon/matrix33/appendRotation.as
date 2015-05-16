@@ -2,7 +2,7 @@ package matrix33
 {
 	import flash.geom.Matrix;
 
-	public function appendRotation(matrix:Matrix, angle:Number):void
+	internal function appendRotation(matrix:Matrix, angle:Number):void
 	{
 		var sin:Number = Math.sin(angle);
 		var cos:Number = Math.cos(angle);

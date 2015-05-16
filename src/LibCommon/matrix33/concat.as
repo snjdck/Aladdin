@@ -2,7 +2,7 @@ package matrix33
 {
 	import flash.geom.Matrix;
 
-	public function concat(left:Matrix, right:Matrix, output:Matrix):void
+	internal function concat(left:Matrix, right:Matrix, output:Matrix):void
 	{
 		var a1:Number    = left.a;
 		var b1:Number    = left.b;

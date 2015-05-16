@@ -2,7 +2,7 @@ package matrix33
 {
 	import flash.geom.Matrix;
 
-	public function invert(matrix:Matrix, output:Matrix):void
+	internal function invert(matrix:Matrix, output:Matrix):void
 	{
 		var a:Number    = matrix.a;
 		var b:Number    = matrix.b;

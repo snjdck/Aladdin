@@ -5,7 +5,7 @@ package matrix33
 	/**
 	 * prepend a skew transformation to a matrix, with angles in radians.
 	 */
-	public function prependSkew(matrix:Matrix, skewX:Number, skewY:Number):void
+	internal function prependSkew(matrix:Matrix, skewX:Number, skewY:Number):void
 	{
 		var sinX:Number = Math.sin(skewX);
 		var cosX:Number = Math.cos(skewX);
