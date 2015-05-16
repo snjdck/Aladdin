@@ -6,10 +6,7 @@ package snjdck.g2d.impl
 	import flash.geom.Rectangle;
 	import flash.signals.SignalGroup;
 	
-	import matrix33.compose;
-	import matrix33.prependTranslation;
 	import matrix33.transformCoords;
-	import matrix33.transformCoordsInv;
 	
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.IFilter2D;
@@ -40,6 +37,7 @@ package snjdck.g2d.impl
 		
 		private var isLocalMatrixDirty:Boolean;
 		private const _localMatrix:Matrix = new Matrix();
+		private const _localMatrixInv:Matrix = new Matrix();
 		
 		ns_g2d const prevWorldMatrix:Matrix = new Matrix();
 		
@@ -63,9 +61,13 @@ package snjdck.g2d.impl
 		/** 1.缩放, 2.旋转, 3.位移 */
 		private function calcTransform():void
 		{
-			compose(_localMatrix, _scaleX, _scaleY, _rotation * Unit.RADIAN, _x, _y);
-			if(0 == _pivotX && 0 == _pivotY) return;
-			prependTranslation(_localMatrix, -_pivotX, -_pivotY);
+			_localMatrix.identity();
+			if(_pivotX != 0 || _pivotY != 0){
+				_localMatrix.translate(_pivotX, _pivotY);
+			}
+			_localMatrix.scale(_scaleX, _scaleY);
+			_localMatrix.rotate(_rotation * Unit.RADIAN);
+			_localMatrix.translate(_x, _y);
 		}
 		
 		public function get transform():Matrix
@@ -79,7 +81,9 @@ package snjdck.g2d.impl
 		
 		public function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
 		{
-			transformCoordsInv(transform, parentMouseX, parentMouseY, tempPt);
+			_localMatrixInv.copyFrom(transform);
+			_localMatrixInv.invert();
+			transformCoords(_localMatrixInv, parentMouseX, parentMouseY, tempPt);
 			mouseX = tempPt.x;
 			mouseY = tempPt.y;
 		}
@@ -136,7 +140,9 @@ package snjdck.g2d.impl
 		
 		public function globalToLocal(globalX:Number, globalY:Number, output:Point):void
 		{
-			transformCoordsInv(prevWorldMatrix, globalX, globalY, output);;
+			tempMatrix1.copyFrom(prevWorldMatrix);
+			tempMatrix1.invert();
+			transformCoords(tempMatrix1, globalX, globalY, output);
 		}
 		
 		public function globalToLocal2(globalPt:Point, output:Point):void
