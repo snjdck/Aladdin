@@ -7,7 +7,7 @@ package matrix33
 	 * 2.旋转
 	 * 3.位移
 	 */
-	internal function compose(matrix:Matrix, scaleX:Number, scaleY:Number, rotation:Number=0, tx:Number=0, ty:Number=0, isScaleFirst:Boolean=true):void
+	internal function compose(matrix:Matrix, scaleX:Number, scaleY:Number, rotation:Number=0, tx:Number=0, ty:Number=0):void
 	{
 		matrix.tx = tx;
 		matrix.ty = ty;
@@ -16,8 +16,7 @@ package matrix33
 		{
 			matrix.a = scaleX;
 			matrix.d = scaleY;
-			matrix.b = 0;
-			matrix.c = 0;
+			matrix.b = matrix.c = 0;
 			return;
 		}
 		
@@ -25,17 +24,8 @@ package matrix33
 		var sin:Number = Math.sin(rotation);
 		
 		matrix.a = scaleX * cos;
+		matrix.c = scaleY * -sin;
+		matrix.b = scaleX * sin;
 		matrix.d = scaleY * cos;
-		
-//		if(isScaleFirst)
-//		{
-			matrix.b = scaleX * sin;
-			matrix.c = scaleY * -sin;
-//		}
-//		else//rotation first
-//		{
-//			matrix.b = scaleY * sin;
-//			matrix.c = scaleX * -sin;
-//		}
 	}
 }
