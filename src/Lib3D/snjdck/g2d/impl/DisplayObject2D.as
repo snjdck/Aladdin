@@ -381,7 +381,7 @@ package snjdck.g2d.impl
 		
 		static private const tempMatrix1:Matrix = new Matrix();
 		static private const tempMatrix2:Matrix = new Matrix();
-		static private const tempPt:Point = new Point();
+		static protected const tempPt:Point = new Point();
 		static private const tempRect:Rectangle = new Rectangle();
 		
 		public function swapToTop():void

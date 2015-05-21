@@ -1,8 +1,11 @@
 package snjdck.g3d.core
 {
+	import flash.geom.Matrix;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.signals.Signal;
+	
+	import matrix33.decompose;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
@@ -285,5 +288,11 @@ package snjdck.g3d.core
 		protected const tempRay:Ray = new Ray();
 		static private const tempPoint:Vector3D = new Vector3D();
 		static private const tempMatrix:Matrix3D = new Matrix3D();
+		
+		ns_g3d function syncMatrix2D(matrix2d:Matrix):void
+		{
+			matrix33.decompose(matrix2d, _position, _scale, _rotation);
+			isLocalMatrixDirty = true;
+		}
 	}
 }

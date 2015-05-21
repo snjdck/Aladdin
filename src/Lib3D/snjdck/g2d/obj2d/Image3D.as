@@ -1,13 +1,17 @@
 package snjdck.g2d.obj2d
 {
+	import matrix33.transformCoordsDelta;
+	
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.Scene3D;
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g2d;
+	use namespace ns_g3d;
 	
 	public class Image3D extends DisplayObject2D
 	{
@@ -28,8 +32,11 @@ package snjdck.g2d.obj2d
 		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
-			scene3d.root.x = prevWorldMatrix.tx + 0.5 * (width - scene.stageWidth);
-			scene3d.root.y = 0.5 * (scene.stageHeight - height) - prevWorldMatrix.ty;
+			transformCoordsDelta(transform, width, height, tempPt);
+			scene3d.root.syncMatrix2D(prevWorldMatrix);
+			scene3d.root.x += 0.5 * (tempPt.x - scene.stageWidth);
+			scene3d.root.y = 0.5 * (scene.stageHeight - tempPt.y) - scene3d.root.y;
+			scene3d.root.rotationZ *= -1;
 			scene3d.update(timeElapsed);
 		}
 		
