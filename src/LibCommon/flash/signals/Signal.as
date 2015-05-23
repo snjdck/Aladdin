@@ -2,6 +2,7 @@ package flash.signals
 {
 	import flash.utils.Dictionary;
 	
+	import dict.clear;
 	import dict.deleteKey;
 	import dict.hasKey;
 	import dict.isEmpty;
@@ -42,6 +43,11 @@ package flash.signals
 		public function del(handler:Function):void
 		{
 			dict.deleteKey(handlerMap, handler);
+		}
+		
+		public function delAll():void
+		{
+			dict.clear(handlerMap);
 		}
 		
 		public function has(handler:Function):Boolean
