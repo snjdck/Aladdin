@@ -13,15 +13,13 @@ package snjdck.g3d.mesh
 		ns_g3d const subMeshes:Array = [];
 		ns_g3d var skeleton:Skeleton;
 		
-		public function Mesh()
+		public function Mesh(){}
+		
+		public function get subMeshCount():uint
 		{
+			return subMeshes.length;
 		}
-		/*
-		public function hasSubMesh():Boolean
-		{
-			return subMeshes.length > 0;
-		}
-		*/
+		
 		public function createSubMesh():SubMesh
 		{
 			var subMesh:SubMesh = new SubMesh();

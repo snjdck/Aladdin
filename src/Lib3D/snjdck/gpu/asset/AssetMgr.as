@@ -4,7 +4,6 @@ package snjdck.gpu.asset
 	import flash.display.BitmapData;
 	import flash.filesystem.FileIO;
 	import flash.http.loadMedia;
-	import flash.system.isAdobeAir;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
@@ -25,33 +24,6 @@ package snjdck.gpu.asset
 	import string.splitByLine;
 	import string.trim;
 
-	/**
-	 * va0 - pos
-	 * va1 - normal
-	 * va2 - uv
-	 * va4 - boneId1
-	 * va5 - boneWeight1
-	 * va6 - boneId2
-	 * va7 - boneWeight2
-	 * 
-	 * v0 - uv
-	 * v1 - world normal
-	 * v2 - light space pos
-	 * 
-	 * vt0 - 临时
-	 * vt1 - 局部pos
-	 * vt2 - 局部normal
-	 * vt3 - 世界pos
-	 * vt4 - 世界normal
-	 * vt5 - 投影pos
-	 * vt6 - 投影normal
-	 * 
-	 * vc0	#世界变换矩阵
-	 * vc4	#相机变换投影矩阵
-	 * vc8	#光照变换投影矩阵
-	 * 
-	 * vc20 - vc127 : 骨骼矩阵
-	 */
 	public class AssetMgr
 	{
 		[Embed(source="/snjdck/shader/shader3d.agal", mimeType="application/octet-stream")]
@@ -185,55 +157,20 @@ package snjdck.gpu.asset
 		public function delTexture(name:String):void
 		{
 			getTexture(name).dispose();
-//			textureDict.del(name);
 			deleteKey(textureDict, name);
 		}
 		
 		public function hasTexture(name:String):Boolean
 		{
-//			return textureDict.has(name);
 			return hasKey(textureDict, name);
 		}
 		
-//		private var fs:FileStream = new FileStream();
-		
 		public function getTexture(name:String):IGpuTexture
 		{
-			if(!hasTexture(name)){
-				showError(name);
-			/*
-				var file:File;
-				for each(var path:String in searchPathList){
-					file = new File(path + name);
-					if(file.exists){
-						var bin:ByteArray = new ByteArray();
-						fs.open(file, FileMode.READ);
-						fs.readBytes(bin);
-						fs.close();
-//						var bin:ByteArray = FileIO2.Read(file);
-						switch(FileIO.GetExt(file.name)){
-							case "tga":
-								regTexture(name, GpuAssetFactory.CreateGpuTexture2(new TgaParser(bin).decode()));
-								break;
-							case "bmp":
-								regTexture(name, GpuAssetFactory.CreateGpuTexture2(new BmpParser(bin).decode()));
-								break;
-							case "jpg":
-							case "png":
-							case "gif":
-								loadMedia(bin, [__onTextureDataLoad, name]);
-//								Http.LoadModule(bin, [__onTextureDataLoad, name]);
-								return GpuAssetFactory.DefaultGpuTexture;
-								break;
-								
-						}
-						return getTexture(name);
-					}
-				}
-			//*/
-				return GpuAssetFactory.DefaultGpuTexture;
+			if(hasTexture(name)){
+				return textureDict[name];
 			}
-			return textureDict[name];
+			return GpuAssetFactory.DefaultGpuTexture;
 		}
 		
 		public function regFile(name:String, binCls:*):void
@@ -286,6 +223,25 @@ package snjdck.gpu.asset
 		public function getMesh(name:String):Mesh
 		{
 			return fileDict[name];
+		}
+		
+		public function regTexture2(fileName:String, fileBytes:ByteArray):void
+		{
+			switch(FileIO.GetExt(fileName)){
+				case "tga":
+					regTexture(fileName, GpuAssetFactory.CreateGpuTexture2(new TgaParser(fileBytes).decode()));
+					break;
+				case "bmp":
+					regTexture(fileName, GpuAssetFactory.CreateGpuTexture2(new BmpParser(fileBytes).decode()));
+					break;
+				case "jpg":
+				case "png":
+				case "gif":
+					loadMedia(fileBytes, [__onTextureDataLoad, fileName]);
+					break;
+				default:
+					throw new Error("unsupport file format!");
+			}
 		}
 		
 		private function __onTextureDataLoad(ok:Boolean, data:Bitmap, name:String):void
