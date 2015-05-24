@@ -1,6 +1,5 @@
 package snjdck.g2d.text
 {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
@@ -20,7 +19,7 @@ package snjdck.g2d.text
 		
 		private var tf:TextField;
 		private var format:TextFormat;
-		private var matrix:Matrix = new Matrix();
+		private const matrix:Matrix = new Matrix();
 		
 		private const charDict:Object = {};
 		

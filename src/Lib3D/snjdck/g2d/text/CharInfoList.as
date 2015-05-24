@@ -1,5 +1,6 @@
 package snjdck.g2d.text
 {
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.support.ObjectPool;
 	
@@ -51,6 +52,20 @@ package snjdck.g2d.text
 				charInfo.x = offsetX;
 				charInfo.y = offsetY;
 				offsetX += charInfo.width;
+			}
+		}
+		
+		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void
+		{
+			var charInfo:CharInfo;
+			if(caretIndex < list.length){
+				charInfo = list[caretIndex];
+				result.x = charInfo.x;
+				result.y = charInfo.y;
+			}else{
+				charInfo = list[list.length - 1];
+				result.x = charInfo.x + charInfo.width;
+				result.y = charInfo.y;
 			}
 		}
 	}

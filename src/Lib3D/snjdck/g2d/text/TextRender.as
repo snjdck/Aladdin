@@ -1,6 +1,7 @@
 package snjdck.g2d.text
 {
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	
 	import matrix33.toBuffer;
 	
@@ -28,13 +29,13 @@ package snjdck.g2d.text
 		
 		public function drawText(context3d:GpuContext, text:String, maxWidth:int, maxHeight:int):void
 		{
+			charList.clear();
 			textFactory.getCharList(text, charList);
 			charList.arrange(maxWidth, maxHeight);
 			
 			var quadCount:int = charList.charCount;
 			
 			updateVertexData(quadCount);
-			charList.clear();
 			
 			context3d.texture = textFactory.gpuTexture;
 			
@@ -61,6 +62,21 @@ package snjdck.g2d.text
 				vertexData[offset+8] = vertexData[offset+18] = vertexData[offset+28] = vertexData[offset+38] = 2;
 				vertexData[offset+9] = vertexData[offset+19] = vertexData[offset+29] = vertexData[offset+39] = 0;
 			}
+		}
+		
+		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void
+		{
+			charList.calcPosition(text, caretIndex, maxWidth, result);
+		}
+		
+		public function moveCaretUp(caretIndex:int):int
+		{
+			return caretIndex;
+		}
+		
+		public function moveCaretDown(caretIndex:int):int
+		{
+			return caretIndex;
 		}
 	}
 }

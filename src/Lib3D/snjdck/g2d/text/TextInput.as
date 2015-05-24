@@ -31,13 +31,7 @@ package snjdck.g2d.text
 		
 		override public function hasVisibleArea():Boolean
 		{
-			var result:Boolean = visible;
-			if(ImeMgr.Instance.textInput == this){
-				result &&= Boolean(text) || ImeMgr.Instance.caret.visible;
-			}else{
-				result &&= Boolean(text);
-			}
-			return result;
+			return visible;
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
@@ -47,7 +41,9 @@ package snjdck.g2d.text
 			}
 			if(ImeMgr.Instance.textInput == this && ImeMgr.Instance.caret.visible){
 				var caret:Image = ImeMgr.Instance.caret;
-				caret.x = caretIndex * 12;
+				TextRender.Instance.calcPosition(text, caretIndex, width, tempPt);
+				caret.x = tempPt.x;
+				caret.y = tempPt.y;
 				caret.prevWorldMatrix.copyFrom(caret.transform);
 				caret.prevWorldMatrix.concat(prevWorldMatrix);
 				caret.draw(render2d, context3d);
@@ -92,6 +88,16 @@ package snjdck.g2d.text
 			if(caretIndex < text.length){
 				++caretIndex;
 			}
+		}
+		
+		ns_g2d function moveCaretUp():void
+		{
+			caretIndex = TextRender.Instance.moveCaretUp(caretIndex);
+		}
+		
+		ns_g2d function moveCaretDown():void
+		{
+			caretIndex = TextRender.Instance.moveCaretDown(caretIndex);
 		}
 	}
 }

@@ -87,6 +87,12 @@ package snjdck.g2d.text.ime
 				case Keyboard.RIGHT:
 					textInput.moveCaretRight();
 					break;
+				case Keyboard.UP:
+					textInput.moveCaretUp();
+					break;
+				case Keyboard.DOWN:
+					textInput.moveCaretDown();
+					break;
 			}
 		}
 	}
