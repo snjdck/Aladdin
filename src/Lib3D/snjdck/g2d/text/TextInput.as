@@ -1,53 +1,97 @@
 package snjdck.g2d.text
 {
 	import flash.events.MouseEvent;
+	import flash.text.ime.IIMEClient;
 	
 	import snjdck.g2d.ns_g2d;
-	import snjdck.g2d.impl.DisplayObjectContainer2D;
+	import snjdck.g2d.obj2d.Image;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.text.ime.IMEClient;
 	import snjdck.g2d.text.ime.ImeMgr;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g2d;
 
-	public class TextInput extends DisplayObjectContainer2D
+	public class TextInput extends Label
 	{
-		private var label:Label;
+		ns_g2d var imeClient:IIMEClient;
+		public var caretIndex:int;
 		
 		public function TextInput()
 		{
-			label = new Label();
-			addChild(label);
-			
-			width = label.width;
-			height = label.height;
-			mouseChildren = false;
+			imeClient = new IMEClient(prevWorldMatrix);
 			addListener(MouseEvent.MOUSE_DOWN, __onMouseDown);
 		}
 		
 		private function __onMouseDown(target:TextInput):void
 		{
-			ImeMgr.Instance.activeIME();
-			ImeMgr.Instance.updateSignal.add(updateText);
-			ImeMgr.Instance.caret.parent = this;
+			caretIndex = 0;
+			ImeMgr.Instance.activeIME(this);
 		}
 		
-		private function updateText(value:String):void
+		override public function hasVisibleArea():Boolean
 		{
-			label.text = value;
-		}
-		
-		override public function onUpdate(timeElapsed:int):void
-		{
-			if(ImeMgr.Instance.isActive){
-				ImeMgr.Instance.caret.x = ImeMgr.Instance.caretIndex * 12;
+			var result:Boolean = visible;
+			if(ImeMgr.Instance.textInput == this){
+				result &&= Boolean(text) || ImeMgr.Instance.caret.visible;
+			}else{
+				result &&= Boolean(text);
 			}
-			super.onUpdate(timeElapsed);
+			return result;
 		}
 		
-		public function set text(value:String):void
+		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			label.text = value;
+			if(Boolean(text)){
+				super.onDraw(render2d, context3d);
+			}
+			if(ImeMgr.Instance.textInput == this && ImeMgr.Instance.caret.visible){
+				var caret:Image = ImeMgr.Instance.caret;
+				caret.x = caretIndex * 12;
+				caret.prevWorldMatrix.copyFrom(caret.transform);
+				caret.prevWorldMatrix.concat(prevWorldMatrix);
+				caret.draw(render2d, context3d);
+			}
+		}
+		
+		ns_g2d function addChar(inputText:String):void
+		{
+			if(caretIndex <= 0){
+				text = inputText + text;
+			}else if(caretIndex >= text.length){
+				text += inputText;
+			}else{
+				text = text.slice(0, caretIndex) + inputText + text.slice(caretIndex);
+			}
+			caretIndex += inputText.length;
+		}
+		
+		ns_g2d function removeChar():void
+		{
+			if(caretIndex <= 0){
+				return;
+			}else if(caretIndex <= 1){
+				text = text.slice(1);
+			}else if(caretIndex >= text.length){
+				text = text.slice(0, -1);
+			}else{
+				text = text.slice(0, caretIndex-1) + text.slice(caretIndex);
+			}
+			--caretIndex;
+		}
+		
+		ns_g2d function moveCaretLeft():void
+		{
+			if(caretIndex > 0){
+				--caretIndex;
+			}
+		}
+		
+		ns_g2d function moveCaretRight():void
+		{
+			if(caretIndex < text.length){
+				++caretIndex;
+			}
 		}
 	}
 }
