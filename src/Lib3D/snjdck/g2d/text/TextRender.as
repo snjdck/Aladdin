@@ -13,8 +13,8 @@ package snjdck.g2d.text
 	{
 		static public const Instance:TextRender = new TextRender();
 		
-		private const textFactory:TextFactory = new TextFactory();
-		private const charList:CharInfoList = new CharInfoList();
+//		private const textFactory:TextFactory = new TextFactory();
+//		private const charList:CharInfoList = new CharInfoList();
 		
 		public function TextRender()
 		{
@@ -27,24 +27,20 @@ package snjdck.g2d.text
 			matrix33.toBuffer(worldMatrix, constData, 4);
 		}
 		
-		public function drawText(context3d:GpuContext, text:String, maxWidth:int, maxHeight:int):void
+		public function drawText(context3d:GpuContext, charList:CharInfoList):void
 		{
-			charList.clear();
-			textFactory.getCharList(text, charList);
-			charList.arrange(maxWidth, maxHeight);
-			
 			var quadCount:int = charList.charCount;
 			
-			updateVertexData(quadCount);
+			updateVertexData(charList, quadCount);
 			
-			context3d.texture = textFactory.gpuTexture;
+			context3d.texture = TextFactory.Instance.gpuTexture;
 			
-			constData[12] = textFactory.gpuTexture.width;
-			constData[13] = textFactory.gpuTexture.height;
+			constData[12] = TextFactory.textureWidth;
+			constData[13] = TextFactory.textureHeiht;
 			draw(context3d, quadCount);
 		}
 		
-		private function updateVertexData(quadCount:int):void
+		private function updateVertexData(charList:CharInfoList, quadCount:int):void
 		{
 			adjustData(quadCount);
 			for(var i:int=0; i<quadCount; ++i)
@@ -62,21 +58,6 @@ package snjdck.g2d.text
 				vertexData[offset+8] = vertexData[offset+18] = vertexData[offset+28] = vertexData[offset+38] = 2;
 				vertexData[offset+9] = vertexData[offset+19] = vertexData[offset+29] = vertexData[offset+39] = 0;
 			}
-		}
-		
-		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void
-		{
-			charList.calcPosition(text, caretIndex, maxWidth, result);
-		}
-		
-		public function moveCaretUp(caretIndex:int):int
-		{
-			return caretIndex;
-		}
-		
-		public function moveCaretDown(caretIndex:int):int
-		{
-			return caretIndex;
 		}
 	}
 }

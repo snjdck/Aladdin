@@ -13,6 +13,7 @@ package snjdck.g2d.text
 	
 	public class Label extends DisplayObject2D
 	{
+		protected const charList:CharInfoList = new CharInfoList();
 		public var text:String;
 		
 		public function Label()
@@ -36,7 +37,11 @@ package snjdck.g2d.text
 			
 			context3d.setFc(0, textColor);
 			TextRender.Instance.prepareVc(render2d, prevWorldMatrix);
-			TextRender.Instance.drawText(context3d, text, width, height);
+			
+			charList.clear();
+			TextFactory.Instance.getCharList(text, charList);
+			charList.arrange(width, height);
+			TextRender.Instance.drawText(context3d, charList);
 			
 			context3d.program = prevProgram;
 			QuadRender.Instance.drawBegin(context3d);

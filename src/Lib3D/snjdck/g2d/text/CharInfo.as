@@ -7,6 +7,9 @@ package snjdck.g2d.text
 		public var x:int;
 		public var y:int;
 		
+		/** 第几行  */
+		public var numRow:int;
+		
 		public var uv:Rectangle;
 		
 		public function CharInfo(){}

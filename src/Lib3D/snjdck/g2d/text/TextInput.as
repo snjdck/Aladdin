@@ -39,9 +39,9 @@ package snjdck.g2d.text
 			if(Boolean(text)){
 				super.onDraw(render2d, context3d);
 			}
-			if(ImeMgr.Instance.textInput == this && ImeMgr.Instance.caret.visible){
+			if(ImeMgr.Instance.isFocus(this) && ImeMgr.Instance.caret.visible){
 				var caret:Image = ImeMgr.Instance.caret;
-				TextRender.Instance.calcPosition(text, caretIndex, width, tempPt);
+				charList.calcPosition(text, caretIndex, width, tempPt);
 				caret.x = tempPt.x;
 				caret.y = tempPt.y;
 				caret.prevWorldMatrix.copyFrom(caret.transform);
@@ -92,12 +92,22 @@ package snjdck.g2d.text
 		
 		ns_g2d function moveCaretUp():void
 		{
-			caretIndex = TextRender.Instance.moveCaretUp(caretIndex);
+			caretIndex = charList.moveCaretUp(caretIndex);
 		}
 		
 		ns_g2d function moveCaretDown():void
 		{
-			caretIndex = TextRender.Instance.moveCaretDown(caretIndex);
+			caretIndex = charList.moveCaretDown(caretIndex);
+		}
+		
+		ns_g2d function moveCaretToBegin():void
+		{
+			caretIndex = 0;
+		}
+		
+		ns_g2d function moveCaretToEnd():void
+		{
+			caretIndex = text.length;
 		}
 	}
 }

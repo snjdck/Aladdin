@@ -17,6 +17,8 @@ package snjdck.g2d.text
 		static public const textureWidth:int = 2048;
 		static public const textureHeiht:int = 2048;
 		
+		static public const Instance:TextFactory = new TextFactory();
+		
 		private var tf:TextField;
 		private var format:TextFormat;
 		private const matrix:Matrix = new Matrix();
@@ -32,7 +34,7 @@ package snjdck.g2d.text
 		
 		public function TextFactory()
 		{
-			texture = new BitmapData(2048, 2048, true, 0);
+			texture = new BitmapData(textureWidth, textureHeiht, true, 0);
 			_gpuTexture = new GpuTexture(texture.width, texture.height);
 			
 //			App3D.app.stage.addChild(new Bitmap(texture)).y = 200;

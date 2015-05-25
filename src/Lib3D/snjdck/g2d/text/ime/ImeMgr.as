@@ -19,7 +19,7 @@ package snjdck.g2d.text.ime
 	{
 		static public const Instance:ImeMgr = new ImeMgr();
 		
-		public var textInput:TextInput;
+		private var textInput:TextInput;
 		private var root:InteractiveObject;
 		
 		public const caret:Image = new Caret();
@@ -36,9 +36,13 @@ package snjdck.g2d.text.ime
 		
 		public function activeIME(textInput:TextInput):void
 		{
-			this.textInput = textInput; 
+			this.textInput = textInput;
 			root.stage.focus = root;
-			caretTimerId = setInterval(updateCaret, 500);
+		}
+		
+		public function isFocus(textInput:TextInput):Boolean
+		{
+			return this.textInput == textInput;
 		}
 		
 		private function updateCaret():void
@@ -48,6 +52,7 @@ package snjdck.g2d.text.ime
 		
 		private function __onFocusIn(evt:FocusEvent):void
 		{
+			caretTimerId = setInterval(updateCaret, 500);
 			trace("focus in");
 			root.addEventListener(IMEEvent.IME_START_COMPOSITION, __onIME);
 			root.addEventListener(TextEvent.TEXT_INPUT, __onTextInput);
@@ -92,6 +97,12 @@ package snjdck.g2d.text.ime
 					break;
 				case Keyboard.DOWN:
 					textInput.moveCaretDown();
+					break;
+				case Keyboard.HOME:
+					textInput.moveCaretToBegin();
+					break;
+				case Keyboard.END:
+					textInput.moveCaretToEnd();
 					break;
 			}
 		}
