@@ -1,7 +1,6 @@
 package snjdck.g2d.text
 {
 	import flash.geom.Matrix;
-	import flash.geom.Point;
 	
 	import matrix33.toBuffer;
 	
@@ -12,9 +11,6 @@ package snjdck.g2d.text
 	public class TextRender extends QuadBatchRender
 	{
 		static public const Instance:TextRender = new TextRender();
-		
-//		private const textFactory:TextFactory = new TextFactory();
-//		private const charList:CharInfoList = new CharInfoList();
 		
 		public function TextRender()
 		{
