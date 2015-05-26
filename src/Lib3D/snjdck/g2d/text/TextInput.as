@@ -10,12 +10,20 @@ package snjdck.g2d.text
 	import snjdck.g2d.text.ime.ImeMgr;
 	import snjdck.gpu.asset.GpuContext;
 	
+	import string.isBlankStr;
+	
 	use namespace ns_g2d;
 
 	public class TextInput extends Label
 	{
 		ns_g2d var imeClient:IIMEClient;
 		public var caretIndex:int;
+		
+		public var displayAsPassword:Boolean;
+		public var maxChars:int;
+		public var multiline:Boolean;
+		public var wordWrap:Boolean;
+		public var _numLines:int;
 		
 		public function TextInput()
 		{
@@ -34,9 +42,17 @@ package snjdck.g2d.text
 			return visible;
 		}
 		
+		override public function set text(value:String):void
+		{
+			super.text = value;
+			if(caretIndex > text.length){
+				caretIndex = text.length;
+			}
+		}
+		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			if(Boolean(text)){
+			if(Boolean(text) && !isBlankStr(text)){
 				super.onDraw(render2d, context3d);
 			}
 			if(ImeMgr.Instance.isFocus(this) && ImeMgr.Instance.caret.visible){
@@ -52,6 +68,14 @@ package snjdck.g2d.text
 		
 		ns_g2d function addChar(inputText:String):void
 		{
+			if(!multiline){
+				switch(inputText){
+					case "\r":
+					case "\n":
+						return;
+				}
+			}
+			
 			if(caretIndex <= 0){
 				text = inputText + text;
 			}else if(caretIndex >= text.length){

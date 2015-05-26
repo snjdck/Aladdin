@@ -29,7 +29,7 @@ package snjdck.g2d.text.ime
 		public function init(root:InteractiveObject):void
 		{
 			this.root = root;
-			root.focusRect = false;
+			root.stage.stageFocusRect = false;
 		}
 		
 		public function activeIME(textInput:TextInput):void

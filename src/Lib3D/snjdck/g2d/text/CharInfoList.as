@@ -52,7 +52,10 @@ package snjdck.g2d.text
 					++numRows;
 				}
 				if(offsetY + charInfo.height > maxHeight){
-					list.splice(i, charCount);
+					var removedList:Vector.<CharInfo> = list.splice(i, charCount);
+					while(removedList.length > 0){
+						pool.setObjectIn(removedList.pop());
+					}
 					return;
 				}
 				charInfo.x = offsetX;
@@ -64,6 +67,10 @@ package snjdck.g2d.text
 		
 		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void
 		{
+			if(list.length <= 0){
+				result.setTo(2, 2);
+				return;
+			}
 			var charInfo:CharInfo;
 			if(caretIndex < list.length){
 				charInfo = list[caretIndex];
@@ -78,6 +85,9 @@ package snjdck.g2d.text
 		
 		private function getCharInfo(caretIndex:int):CharInfo
 		{
+			if(list.length <= 0){
+				return null;
+			}
 			if(caretIndex < list.length){
 				return list[caretIndex];
 			}
@@ -87,6 +97,9 @@ package snjdck.g2d.text
 		ns_g2d function moveCaretUp(caretIndex:int):int
 		{
 			var caretCharInfo:CharInfo = getCharInfo(caretIndex);
+			if(null == caretCharInfo){
+				return caretIndex;
+			}
 			var numRow:int = caretCharInfo.numRow - 1;
 			if(numRow < 0){
 				return caretIndex;
@@ -106,6 +119,9 @@ package snjdck.g2d.text
 		ns_g2d function moveCaretDown(caretIndex:int):int
 		{
 			var caretCharInfo:CharInfo = getCharInfo(caretIndex);
+			if(null == caretCharInfo){
+				return caretIndex;
+			}
 			var numRow:int = caretCharInfo.numRow + 1;
 			if(numRow > numRows){
 				return caretIndex;
