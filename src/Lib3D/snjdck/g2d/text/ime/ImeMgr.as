@@ -30,14 +30,13 @@ package snjdck.g2d.text.ime
 		{
 			this.root = root;
 			root.focusRect = false;
-			root.addEventListener(FocusEvent.FOCUS_IN, __onFocusIn);
-			root.addEventListener(FocusEvent.FOCUS_OUT, __onFocusOut);
 		}
 		
 		public function activeIME(textInput:TextInput):void
 		{
 			this.textInput = textInput;
 			root.stage.focus = root;
+			__onFocusIn();
 		}
 		
 		public function isFocus(textInput:TextInput):Boolean
@@ -50,17 +49,19 @@ package snjdck.g2d.text.ime
 			caret.visible = !caret.visible;
 		}
 		
-		private function __onFocusIn(evt:FocusEvent):void
+		private function __onFocusIn():void
 		{
 			caretTimerId = setInterval(updateCaret, 500);
 			trace("focus in");
 			root.addEventListener(IMEEvent.IME_START_COMPOSITION, __onIME);
 			root.addEventListener(TextEvent.TEXT_INPUT, __onTextInput);
 			root.addEventListener(KeyboardEvent.KEY_DOWN, __onKeyDown);
+			root.addEventListener(FocusEvent.FOCUS_OUT, __onFocusOut);
 		}
 		
 		private function __onFocusOut(evt:FocusEvent):void
 		{
+			root.removeEventListener(FocusEvent.FOCUS_OUT, __onFocusOut);
 			root.removeEventListener(IMEEvent.IME_START_COMPOSITION, __onIME);
 			root.removeEventListener(TextEvent.TEXT_INPUT, __onTextInput);
 			root.removeEventListener(KeyboardEvent.KEY_DOWN, __onKeyDown);
