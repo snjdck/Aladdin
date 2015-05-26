@@ -9,12 +9,16 @@ package snjdck.g2d.text
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
+	import string.isBlankStr;
+	
 	use namespace ns_g2d;
 	
 	public class Label extends DisplayObject2D
 	{
 		protected const charList:CharInfoList = new CharInfoList();
-		public var text:String;
+		private var _text:String = "";
+		
+		public var selectable:Boolean;
 		
 		public function Label()
 		{
@@ -25,9 +29,23 @@ package snjdck.g2d.text
 			textColor[2] = 1;
 		}
 		
+		public function get text():String
+		{
+			return _text;
+		}
+
+		public function set text(value:String):void
+		{
+			if(Boolean(value)){
+				_text = value;
+			}else{
+				_text = "";
+			}
+		}
+
 		override public function hasVisibleArea():Boolean
 		{
-			return super.hasVisibleArea() && Boolean(text);
+			return super.hasVisibleArea() && Boolean(text) && !isBlankStr(text);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
