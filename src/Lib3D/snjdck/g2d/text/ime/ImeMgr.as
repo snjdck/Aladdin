@@ -1,6 +1,7 @@
 package snjdck.g2d.text.ime
 {
 	import flash.display.InteractiveObject;
+	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.events.IMEEvent;
 	import flash.events.KeyboardEvent;
@@ -25,6 +26,7 @@ package snjdck.g2d.text.ime
 		public const caret:Image = new Caret();
 		
 		private var caretTimerId:uint;
+		private var prevFocus:TextInput;
 		
 		public function init(root:InteractiveObject):void
 		{
@@ -57,10 +59,27 @@ package snjdck.g2d.text.ime
 			root.addEventListener(TextEvent.TEXT_INPUT, __onTextInput);
 			root.addEventListener(KeyboardEvent.KEY_DOWN, __onKeyDown);
 			root.addEventListener(FocusEvent.FOCUS_OUT, __onFocusOut);
+			root.addEventListener(Event.DEACTIVATE, __onDeactive);
+		}
+		
+		private function __onDeactive(evt:Event):void
+		{
+			root.addEventListener(Event.ACTIVATE, __onActive);
+			trace("de active");
+			prevFocus = textInput;
+		}
+		
+		private function __onActive(evt:Event):void
+		{
+			root.removeEventListener(Event.ACTIVATE, __onActive);
+			trace("active");
+			activeIME(prevFocus);
+			prevFocus = null;
 		}
 		
 		private function __onFocusOut(evt:FocusEvent):void
 		{
+			root.removeEventListener(Event.DEACTIVATE, __onDeactive);
 			root.removeEventListener(FocusEvent.FOCUS_OUT, __onFocusOut);
 			root.removeEventListener(IMEEvent.IME_START_COMPOSITION, __onIME);
 			root.removeEventListener(TextEvent.TEXT_INPUT, __onTextInput);
