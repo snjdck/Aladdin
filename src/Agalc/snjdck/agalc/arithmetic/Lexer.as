@@ -5,6 +5,8 @@ package snjdck.agalc.arithmetic
 	import snjdck.agalc.arithmetic.node.NodeType;
 	import snjdck.agalc.arithmetic.node.impl.NodeFactory;
 	import snjdck.agalc.arithmetic.rule.ILexRule;
+	
+	import string.isBlankChar;
 
 	final public class Lexer
 	{
@@ -16,7 +18,7 @@ package snjdck.agalc.arithmetic
 			{
 				var char:String = input.charAt(index);
 				
-				if(isBlank(char)){
+				if(isBlankChar(char)){
 					index++;
 					continue;
 				}
@@ -31,19 +33,6 @@ package snjdck.agalc.arithmetic
 			}
 			
 			outputNodeList.add(NodeFactory.Create(NodeType.EOF));
-		}
-		
-		static private function isBlank(char:String):Boolean
-		{
-			switch(char)
-			{
-				case " ":
-				case "\t":
-				case "\r":
-				case "\n":
-					return true;
-			}
-			return false;
 		}
 	}
 }
