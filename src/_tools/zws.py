@@ -56,7 +56,7 @@ def main(filePath):
 	rawData = removeTags(rawData)
 	dataSize = len(rawData) + 8
 	
-	lzmaData = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, 7)
+	lzmaData = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, 9)
 	lzmaSize = len(lzmaData) - 13
 
 	dotIndex = filePath.rfind(".")
