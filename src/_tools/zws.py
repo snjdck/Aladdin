@@ -11,11 +11,11 @@ def removeTags(rawData):
 	result = rawData[:offset]
 	rawDataSize = len(rawData)
 	while offset < rawDataSize:
-		flag = struct.unpack("H", rawData[offset:offset+2])[0]
+		flag = struct.unpack_from("H", rawData, offset)[0]
 		tagType = flag >> 6
 		tagBodySize = flag & 0x3F
 		if 0x3F == tagBodySize:
-			tagBodySize = struct.unpack("I", rawData[offset+2:offset+6])[0]
+			tagBodySize = struct.unpack_from("I", rawData, offset+2)[0]
 			tagSize = tagBodySize + 6
 		else:
 			tagSize = tagBodySize + 2
@@ -23,7 +23,7 @@ def removeTags(rawData):
 		if not (tagType == 41 or tagType == 77):
 			#hasMetadata = false
 			if tagType == 69:
-				tagBody = struct.unpack("I", rawData[offset+2:offset+6])[0]
+				tagBody = struct.unpack_from("I", rawData, offset+2)[0]
 				tagBody &= 0xEF
 				result += rawData[offset:offset+2] + struct.pack("I", tagBody)
 			else:
@@ -38,7 +38,7 @@ def main(filePath):
 	with open(filePath, "rb") as f:
 		fileData = f.read()
 
-	sign, version, dataSize = struct.unpack("3sBI", fileData[:8])
+	sign, version, dataSize = struct.unpack_from("3sBI", fileData)
 
 	if version < 13:
 		version = 13
