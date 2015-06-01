@@ -37,7 +37,7 @@ package flash.tcp.impl
 		
 		public function readHead(buffer:IDataInput):void
 		{
-			_bodySize = buffer.readUnsignedShort();
+			_bodySize = buffer.readUnsignedShort() - headSize;
 			_msgId = buffer.readUnsignedShort();
 		}
 		
@@ -52,14 +52,14 @@ package flash.tcp.impl
 		public function write(buffer:IDataOutput):void
 		{
 			if(null == _msgData || _msgData.length <= 0){
-				buffer.writeShort(0);
+				buffer.writeShort(headSize);
 				buffer.writeShort(msgId);
 				return;
 			}
 			
-			assert(_msgData.length <= 0xFFFF, "发送的数据大小不能超过64K!");
+			assert(_msgData.length <= 0xFFFF - headSize, "发送的数据大小不能超过64K!");
 			
-			buffer.writeShort(_msgData.length);
+			buffer.writeShort(headSize + _msgData.length);
 			buffer.writeShort(msgId);
 			buffer.writeBytes(_msgData);
 		}

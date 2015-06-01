@@ -2,6 +2,7 @@ package flash.support
 {
 	import flash.reflection.getTypeName;
 	import flash.utils.ByteArray;
+	import flash.utils.IDataInput;
 	
 	import string.execRegExp;
 
@@ -54,6 +55,24 @@ package flash.support
 				result[result.length] = item;
 			}
 			return result;
+		}
+		
+		static public function CastJsonToBytes(value:Object):ByteArray
+		{
+			if(null == value){
+				return null;
+			}
+			var result:ByteArray = new ByteArray();
+			result.writeUTFBytes(JSON.stringify(value));
+			return result;
+		}
+		
+		static public function CastBytesToJson(value:IDataInput):Object
+		{
+			if(null == value || value.bytesAvailable <= 0){
+				return null;
+			}
+			return JSON.parse(value.readUTFBytes(value.bytesAvailable));
 		}
 	}
 }
