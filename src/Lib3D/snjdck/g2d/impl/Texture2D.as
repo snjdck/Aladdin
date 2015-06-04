@@ -123,5 +123,38 @@ package snjdck.g2d.impl
 			_scale9[2] = value.y;
 			_scale9[3] = gpuTexture.height - value.bottom;
 		}
+		
+		public function clone():Texture2D
+		{
+			var copy:Texture2D = new Texture2D(_gpuTexture);
+			copy.hasFrame = hasFrame;
+			copy._frameMatrix.copyFrom(_frameMatrix);
+			copy.hasRegion = hasRegion;
+			copy._regionMatrix.copyFrom(_regionMatrix);
+			if(_scale9 != null){
+				copy._scale9 = _scale9.slice();
+			}
+			copy._width = _width;
+			copy._height = _height;
+			return copy;
+		}
+		
+		public function flipX():void
+		{
+			_regionMatrix.tx += _regionMatrix.a;
+			_regionMatrix.a *= -1;
+		}
+		
+		public function flipY():void
+		{
+			_regionMatrix.ty += _regionMatrix.d;
+			_regionMatrix.d *= -1;
+		}
+		
+		public function flipXY():void
+		{
+			flipX();
+			flipY();
+		}
 	}
 }
