@@ -1,6 +1,5 @@
 package flash.mvc
 {
-	import flash.display.DisplayObject;
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
 	import flash.mvc.controller.Controller;

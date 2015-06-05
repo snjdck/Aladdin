@@ -1,11 +1,11 @@
 package flash.mvc.view
 {
-	import flash.display.DisplayObject;
 	import flash.ioc.IInjector;
 	import flash.mvc.Module;
 	import flash.mvc.ns_mvc;
 	import flash.mvc.kernel.IView;
 	import flash.mvc.notification.Msg;
+	import flash.reflection.getTypeName;
 	import flash.utils.Dictionary;
 	
 	import dict.deleteKey;
@@ -60,6 +60,9 @@ package flash.mvc.view
 		
 		public function mapView(viewComponent:Object, mediatorCls:Class):void
 		{
+			if(null == viewComponent.name){
+				viewComponent.name = getTypeName(viewComponent, true);
+			}
 			var mediator:Mediator = new mediatorCls(viewComponent);
 			injector.injectInto(mediator);
 			regMediator(mediator);
