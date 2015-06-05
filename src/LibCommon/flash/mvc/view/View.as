@@ -63,6 +63,7 @@ package flash.mvc.view
 			if(null == viewComponent.name){
 				viewComponent.name = getTypeName(viewComponent, true);
 			}
+			injector.injectInto(viewComponent);
 			var mediator:Mediator = new mediatorCls(viewComponent);
 			injector.injectInto(mediator);
 			regMediator(mediator);
