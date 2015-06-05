@@ -246,7 +246,6 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		
 		public function swapChildToBottom(child:DisplayObject2D):void
 		{
 			var childIndex:int = getChildIndex(child);
@@ -287,6 +286,35 @@ package snjdck.g2d.impl
 				return this;
 			}
 			return result;
+		}
+		
+		public function getChild(childName:String):DisplayObject2D
+		{
+			for each(var child:DisplayObject2D in _childList){
+				if(child.name == childName){
+					return child;
+				}
+			}
+			return null;
+		}
+		
+		public function findChild(childName:String):DisplayObject2D
+		{
+			var result:DisplayObject2D = getChild(childName);
+			if(result != null){
+				return result;
+			}
+			for each(var child:DisplayObject2D in _childList){
+				var container:DisplayObjectContainer2D = child as DisplayObjectContainer2D;
+				if(null == container){
+					continue;
+				}
+				result = container.findChild(childName);
+				if(result != null){
+					return result;
+				}
+			}
+			return null;
 		}
 	}
 }

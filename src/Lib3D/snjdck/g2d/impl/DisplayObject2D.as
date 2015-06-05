@@ -21,6 +21,8 @@ package snjdck.g2d.impl
 
 	public class DisplayObject2D extends SignalGroup
 	{
+		public var name:String;
+		
 		private var _x:Number, _scaleX:Number, _pivotX:Number;
 		private var _y:Number, _scaleY:Number, _pivotY:Number;
 		private var _rotation:Number;
