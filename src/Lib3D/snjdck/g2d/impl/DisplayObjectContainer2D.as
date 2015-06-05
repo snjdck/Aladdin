@@ -316,5 +316,17 @@ package snjdck.g2d.impl
 			}
 			return null;
 		}
+		
+		public function findParent(parentName:String):DisplayObjectContainer2D
+		{
+			var target:DisplayObjectContainer2D = parent;
+			while(target != null){
+				if(target.name == parentName){
+					return target;
+				}
+				target = target.parent;
+			}
+			return null;
+		}
 	}
 }
