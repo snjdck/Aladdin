@@ -28,21 +28,21 @@ package flash.ioc.ip
 		public function InjectionPoint(clsRef:Class)
 		{
 			var clsInfo:TypeInfo = getTypeInfo(clsRef);
-			for each(var varNode:VariableInfo in clsInfo.variables){
-				if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite()){
-					addPropertyPoint(varNode);
-				}
-			}
 			for each(var methodNode:MethodInfo in clsInfo.methods){
 				if(methodNode.hasMetaTag(TAG_INJECT)){
 					addMethodPoint(methodNode, methodNode.parameters.length > 0);
+				}
+			}
+			for each(var varNode:VariableInfo in clsInfo.variables){
+				if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite()){
+					addPropertyPoint(varNode);
 				}
 			}
 		}
 		
 		private function addPropertyPoint(varNode:VariableInfo):void
 		{
-			injectionPointList.push(new InjectionPointProperty(
+			injectionPointList.unshift(new InjectionPointProperty(
 				varNode.name,
 				varNode.getMetaTagValue(TAG_INJECT),
 				varNode.type
