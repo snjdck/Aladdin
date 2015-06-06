@@ -58,6 +58,8 @@ package snjdck.g2d.text
 			
 			charList.clear();
 			TextFactory.Instance.getCharList(text, charList);
+			TextFactory.Instance.setTexture(context3d);
+			
 			charList.arrange(width, height);
 			TextRender.Instance.drawText(context3d, charList);
 			

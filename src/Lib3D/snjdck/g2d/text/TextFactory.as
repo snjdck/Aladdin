@@ -1,14 +1,12 @@
 package snjdck.g2d.text
 {
 	import flash.display.BitmapData;
-	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
 	
 	import dict.hasKey;
 	
+	import snjdck.g2d.text.drawer.TextDrawer;
+	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuTexture;
 	import snjdck.gpu.asset.IGpuTexture;
 
@@ -19,9 +17,7 @@ package snjdck.g2d.text
 		
 		static public const Instance:TextFactory = new TextFactory();
 		
-		private var tf:TextField;
-		private var format:TextFormat;
-		private const matrix:Matrix = new Matrix();
+		private const tf:TextDrawer = new TextDrawer();
 		
 		private const charDict:Object = {};
 		
@@ -38,24 +34,15 @@ package snjdck.g2d.text
 			_gpuTexture = new GpuTexture(texture.width, texture.height);
 			
 //			App3D.app.stage.addChild(new Bitmap(texture)).y = 200;
-			
-			format = new TextFormat("宋体", 16, 0xFF0000);
-			tf = new TextField();
-			tf.autoSize = TextFieldAutoSize.LEFT;
-			tf.defaultTextFormat = format;
 		}
 		
-		public function get gpuTexture():IGpuTexture
+		public function setTexture(context3d:GpuContext):void
 		{
-			return _gpuTexture;
-		}
-		
-		private function drawChar(offsetX:int, offsetY:int):void
-		{
-			matrix.tx = offsetX - 2;
-			matrix.ty = offsetY - 2;
-			texture.draw(tf, matrix);
-			isTextureDirty = true;
+			if(isTextureDirty){
+				_gpuTexture.upload(texture);
+				isTextureDirty = false;
+			}
+			context3d.texture = _gpuTexture;
 		}
 		
 		public function getCharList(text:String, output:CharInfoList):void
@@ -70,22 +57,20 @@ package snjdck.g2d.text
 					charInfo = new Rectangle();
 					charDict[char] = charInfo;
 					
-					tf.text = char;
+					tf.setText(char);
 					charInfo.x = nextX;
 					charInfo.y = nextY;
 					charInfo.width = tf.textWidth;
 					charInfo.height = tf.textHeight;
 					
-					drawChar(charInfo.x, charInfo.y);
+					tf.draw(texture, charInfo.x, charInfo.y);
+					isTextureDirty = true;
 					
 					nextX += charInfo.width;
 				}
 				output.push(charInfo);
 			}
-			if(isTextureDirty){
-				_gpuTexture.upload(texture);
-				isTextureDirty = false;
-			}
+			
 		}
 	}
 }

@@ -29,8 +29,6 @@ package snjdck.g2d.text
 			
 			updateVertexData(charList, quadCount);
 			
-			context3d.texture = TextFactory.Instance.gpuTexture;
-			
 			constData[12] = TextFactory.textureWidth;
 			constData[13] = TextFactory.textureHeiht;
 			draw(context3d, quadCount);
