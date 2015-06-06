@@ -38,6 +38,16 @@ package snjdck.g2d.text
 			list.push(charInfo);
 		}
 		
+		public function newline():void
+		{
+			
+		}
+		
+		public function eof():void
+		{
+			
+		}
+		
 		public function arrange(maxWidth:int, maxHeight:int):void
 		{
 			var offsetX:int = 2;

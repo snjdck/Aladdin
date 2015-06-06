@@ -15,6 +15,8 @@ package snjdck.g2d.text
 	
 	public class Label extends DisplayObject2D
 	{
+		static protected const textFactory:TextFactory = new TextFactory();
+		
 		protected const charList:CharInfoList = new CharInfoList();
 		private var _text:String = "";
 		
@@ -57,8 +59,8 @@ package snjdck.g2d.text
 			TextRender.Instance.prepareVc(render2d, prevWorldMatrix);
 			
 			charList.clear();
-			TextFactory.Instance.getCharList(text, charList);
-			TextFactory.Instance.setTexture(context3d);
+			textFactory.getCharList(text, charList);
+			textFactory.setTexture(context3d);
 			
 			charList.arrange(width, height);
 			TextRender.Instance.drawText(context3d, charList);
