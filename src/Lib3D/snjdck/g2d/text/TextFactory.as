@@ -54,7 +54,6 @@ package snjdck.g2d.text
 						output.push(getChar(char));
 				}
 			}
-			output.eof();
 		}
 		
 		private function getChar(char:String):Rectangle

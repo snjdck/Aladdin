@@ -6,13 +6,22 @@ package snjdck.g2d.text
 	
 	import snjdck.g2d.ns_g2d;
 	
+	use namespace ns_g2d;
+	
 	internal class CharInfoList
 	{
-		static private const pool:ObjectPool = new ObjectPool(CharInfo);
+		private const pool:ObjectPool = new ObjectPool(CharInfo);
 		private const list:Vector.<CharInfo> = new Vector.<CharInfo>();
-		private var numRows:int;
+		private var label:Label;
 		
-		public function CharInfoList(){}
+		private var numRows:int;
+		private var offsetX:int;
+		private var offsetY:int;
+		
+		public function CharInfoList(label:Label)
+		{
+			this.label = label;
+		}
 		
 		public function get charCount():int
 		{
@@ -26,6 +35,9 @@ package snjdck.g2d.text
 		
 		public function clear():void
 		{
+			offsetX = 2;
+			offsetY = 2 - label.scrollV * label.fontSize;
+			numRows = 0;
 			while(list.length > 0){
 				pool.setObjectIn(list.pop());
 			}
@@ -35,44 +47,34 @@ package snjdck.g2d.text
 		{
 			var charInfo:CharInfo = pool.getObjectOut();
 			charInfo.uv = info;
-			list.push(charInfo);
-		}
-		
-		public function newline():void
-		{
 			
-		}
-		
-		public function eof():void
-		{
-			
-		}
-		
-		public function arrange(maxWidth:int, maxHeight:int):void
-		{
-			var offsetX:int = 2;
-			var offsetY:int = 2;
-			numRows = 0;
-			var charCount:int = list.length;
-			for(var i:int=0; i<charCount; ++i){
-				var charInfo:CharInfo = list[i];
-				if(offsetX + charInfo.width > maxWidth){
-					offsetY += charInfo.height + 4;
-					offsetX = 2;
-					++numRows;
-				}
-				if(offsetY + charInfo.height > maxHeight){
-					var removedList:Vector.<CharInfo> = list.splice(i, charCount);
-					while(removedList.length > 0){
-						pool.setObjectIn(removedList.pop());
-					}
+			if(offsetX + charInfo.width > label.width){
+				newline();
+			}
+			label._numLines = numRows + 1;
+			label._maxScrollV = numRows + 1 - label.visibleLines;
+			if(offsetY + charInfo.height > label.height){
+				pool.setObjectIn(charInfo);
+			}else{
+				label._bottomScrollV = numRows;
+				charInfo.numRow = numRows - label.scrollV;
+				
+				if(charInfo.numRow < 0){
+					pool.setObjectIn(charInfo);
 					return;
 				}
 				charInfo.x = offsetX;
 				charInfo.y = offsetY;
-				charInfo.numRow = numRows;
-				offsetX += charInfo.width;
+				list.push(charInfo);
 			}
+			offsetX += charInfo.width;
+		}
+		
+		public function newline():void
+		{
+			++numRows;
+			offsetY += label.fontSize;
+			offsetX = 2;
 		}
 		
 		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void
