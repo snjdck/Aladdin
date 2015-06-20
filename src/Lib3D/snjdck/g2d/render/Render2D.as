@@ -25,7 +25,6 @@ package snjdck.g2d.render
 	{
 		private const projectionStack:Projection2DStack = new Projection2DStack();
 		private const constData:Vector.<Number> = new Vector.<Number>(28, true);
-		private var prepareToDrawFlag:Boolean;
 		
 		public function Render2D(){}
 		
@@ -54,21 +53,13 @@ package snjdck.g2d.render
 			projectionStack.popScreen();
 		}
 		
-		public function prepareToDraw():void
+		public function drawBegin(context3d:GpuContext):void
 		{
-			prepareToDrawFlag = true;
-		}
-		
-		private function drawBegin(context3d:GpuContext):void
-		{
-			if(prepareToDrawFlag){
-				context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
-				context3d.blendMode = BlendMode.ALPHAL;
-				context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
-				context3d.setCulling(Context3DTriangleFace.NONE);
-				QuadRender.Instance.drawBegin(context3d);
-				prepareToDrawFlag = false;
-			}
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.IMAGE);
+			context3d.blendMode = BlendMode.ALPHAL;
+			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
+			context3d.setCulling(Context3DTriangleFace.NONE);
+			QuadRender.Instance.drawBegin(context3d);
 		}
 		
 		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D, colorTransform:ColorTransform=null):void
@@ -93,7 +84,7 @@ package snjdck.g2d.render
 			copyColorTransform(colorTransform);
 			context3d.setFc(0, constData, 2);
 			context3d.texture = texture.gpuTexture;
-			drawBegin(context3d);
+			
 			QuadRender.Instance.drawTriangles(context3d, texture.scale9 != null);
 		}
 		

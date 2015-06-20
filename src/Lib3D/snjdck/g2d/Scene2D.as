@@ -42,7 +42,7 @@ package snjdck.g2d
 		
 		public function draw(context3d:GpuContext):void
 		{
-			render2d.prepareToDraw();
+			render2d.drawBegin(context3d);
 			render2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			root.draw(render2d, context3d);
 			render2d.popScreen();
