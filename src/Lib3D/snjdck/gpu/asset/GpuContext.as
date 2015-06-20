@@ -11,7 +11,7 @@ package snjdck.gpu.asset
 	
 	import snjdck.gpu.BlendMode;
 
-	final public class GpuContext
+	public class GpuContext
 	{
 		private var context3d:Context3D;
 		
@@ -20,15 +20,15 @@ package snjdck.gpu.asset
 		
 		private var _blendMode:BlendMode;
 		
-		private var depthWriteMask:Boolean;
-		private var depthPassCompareMode:String;
+		protected var depthWriteMask:Boolean;
+		protected var depthPassCompareMode:String;
+		
+		protected var culling:String;
 		
 		/** readMask, writeMask, refValue */
 		private var stencilRefValue:int;
 		
 		private var _program:GpuProgram;
-		private var vaUseInfo:uint;
-		private var fsUseInfo:uint;
 		
 		private var _texture:IGpuTexture;
 		
@@ -42,6 +42,8 @@ package snjdck.gpu.asset
 			
 			depthWriteMask = true;
 			depthPassCompareMode = Context3DCompareMode.LESS_EQUAL;
+			
+			culling = Context3DTriangleFace.NONE;
 			
 			stencilRefValue = 0xFFFF00;
 		}
@@ -78,7 +80,10 @@ package snjdck.gpu.asset
 		
 		public function setCulling(triangleFaceToCull:String):void
 		{
-			context3d.setCulling(triangleFaceToCull);
+			if(triangleFaceToCull != culling){
+				context3d.setCulling(triangleFaceToCull);
+				culling = triangleFaceToCull;
+			}
 		}
 		
 		public function get blendMode():BlendMode
@@ -187,29 +192,13 @@ package snjdck.gpu.asset
 				return;
 			}
 			
+			value.unsetInputs(_program, context3d);
+			
 			_program = value;
 			context3d.setProgram(_program.getRawGpuAsset(context3d));
 			
-			unsetInputs(vaUseInfo & ~_program.getVaUseInfo(), "setVertexBufferAt");
-			unsetInputs(fsUseInfo & ~_program.getFsUseInfo(), "setTextureAt");
-			
-			vaUseInfo = _program.getVaUseInfo();
-			fsUseInfo = _program.getFsUseInfo();
-			
 			if(!isFsSlotInUse(0) && _texture != null){
 				_texture = null;
-			}
-		}
-		
-		private function unsetInputs(useInfo:uint, methodName:String):void
-		{
-			var slotIndex:int = 0;
-			while(useInfo > 0){
-				if(useInfo & 1){
-					context3d[methodName](slotIndex, null);
-				}
-				useInfo >>>= 1;
-				++slotIndex;
 			}
 		}
 		
@@ -242,12 +231,12 @@ package snjdck.gpu.asset
 		
 		public function isVaSlotInUse(slotIndex:int):Boolean
 		{
-			return (vaUseInfo & (1 << slotIndex)) != 0;
+			return _program.isVaSlotInUse(slotIndex);
 		}
 		
 		public function isFsSlotInUse(slotIndex:int):Boolean
 		{
-			return (fsUseInfo & (1 << slotIndex)) != 0;
+			return _program.isFsSlotInUse(slotIndex);
 		}
 		
 		public function clearDepthAndStencil(depth:Number=1.0, stencil:uint=0):void

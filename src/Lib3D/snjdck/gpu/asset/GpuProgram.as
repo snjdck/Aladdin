@@ -1,5 +1,6 @@
 package snjdck.gpu.asset
 {
+	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.utils.ByteArray;
 	
@@ -10,6 +11,18 @@ package snjdck.gpu.asset
 	
 	final public class GpuProgram extends GpuAsset
 	{
+		static private function UnsetInputs(useInfo:uint, method:Function):void
+		{
+			var slotIndex:int = 0;
+			while(useInfo > 0){
+				if(useInfo & 1){
+					method(slotIndex, null);
+				}
+				useInfo >>>= 1;
+				++slotIndex;
+			}
+		}
+		
 		static public var AgalVersion:int = 1;
 		
 		private var vsData:AgalCompiler;
@@ -48,14 +61,22 @@ package snjdck.gpu.asset
 			uploadImp("upload", [vertexProgram, fragmentProgram]);
 		}
 		
-		public function getVaUseInfo():uint
+		public function isVaSlotInUse(slotIndex:int):Boolean
 		{
-			return vaUseInfo;
+			return (vaUseInfo & (1 << slotIndex)) != 0;
 		}
 		
-		public function getFsUseInfo():uint
+		public function isFsSlotInUse(slotIndex:int):Boolean
 		{
-			return fsUseInfo;
+			return (fsUseInfo & (1 << slotIndex)) != 0;
+		}
+		
+		public function unsetInputs(prevProgram:GpuProgram, context3d:Context3D):void
+		{
+			if(prevProgram != null){
+				UnsetInputs(prevProgram.vaUseInfo & ~vaUseInfo, context3d.setVertexBufferAt);
+				UnsetInputs(prevProgram.fsUseInfo & ~fsUseInfo, context3d.setTextureAt);
+			}
 		}
 	}
 }
