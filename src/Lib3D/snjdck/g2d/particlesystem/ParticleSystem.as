@@ -97,8 +97,9 @@ package snjdck.g2d.particlesystem
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			const prevProgram:GpuProgram = context3d.program;
-			const prevBlendMode:BlendMode = context3d.blendMode;
+//			const prevProgram:GpuProgram = context3d.program;
+//			const prevBlendMode:BlendMode = context3d.blendMode;
+			context3d.save();
 			
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.PARTICLE_2D);
 			context3d.blendMode = blendMode;
@@ -107,8 +108,9 @@ package snjdck.g2d.particlesystem
 			ParticleRender.Instance.prepareVc(render2d, prevWorldMatrix, mTexture);
 			ParticleRender.Instance.drawParticles(context3d, mParticles, mNumParticles);
 			
-			context3d.blendMode = prevBlendMode;
-			context3d.program = prevProgram;
+//			context3d.blendMode = prevBlendMode;
+//			context3d.program = prevProgram;
+			context3d.restore();
 			QuadRender.Instance.drawBegin(context3d);
 		}
 		

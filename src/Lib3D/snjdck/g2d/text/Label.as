@@ -80,7 +80,8 @@ package snjdck.g2d.text
 				return;
 			}
 			
-			const prevProgram:GpuProgram = context3d.program;
+//			const prevProgram:GpuProgram = context3d.program;
+			context3d.save();
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
 			
 			context3d.setFc(0, textColor);
@@ -89,7 +90,8 @@ package snjdck.g2d.text
 			textFactory.setTexture(context3d);
 			TextRender.Instance.drawText(context3d, charList);
 			
-			context3d.program = prevProgram;
+//			context3d.program = prevProgram;
+			context3d.restore();
 			QuadRender.Instance.drawBegin(context3d);
 		}
 		

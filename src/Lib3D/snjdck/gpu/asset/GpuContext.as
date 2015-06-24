@@ -10,6 +10,7 @@ package snjdck.gpu.asset
 	import flash.geom.Rectangle;
 	
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.state.GpuStateStack;
 
 	public class GpuContext
 	{
@@ -34,6 +35,8 @@ package snjdck.gpu.asset
 		
 		private var _renderTarget:GpuRenderTarget;
 		
+		private var stateStack:GpuStateStack;
+		
 		public function GpuContext(context3d:Context3D)
 		{
 			this.context3d = context3d;
@@ -46,6 +49,8 @@ package snjdck.gpu.asset
 			culling = Context3DTriangleFace.NONE;
 			
 			stencilRefValue = 0xFFFF00;
+			
+			stateStack = new GpuStateStack(this);
 		}
 		
 		public function dispose():void
@@ -78,6 +83,7 @@ package snjdck.gpu.asset
 			context3d.setColorMask(red, green, blue, alpha);
 		}
 		
+		/** 顺时针为front */
 		public function setCulling(triangleFaceToCull:String):void
 		{
 			if(triangleFaceToCull != culling){
@@ -283,6 +289,16 @@ package snjdck.gpu.asset
 		public function isRectInBuffer(rect:Rectangle):Boolean
 		{
 			return !(rect.x >= bufferWidth || rect.y >= bufferHeight || rect.right <= 0 || rect.bottom <= 0);
+		}
+		
+		public function save():void
+		{
+			stateStack.save();
+		}
+		
+		public function restore():void
+		{
+			stateStack.restore();
 		}
 	}
 }
