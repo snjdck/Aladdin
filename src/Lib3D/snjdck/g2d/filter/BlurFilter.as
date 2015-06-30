@@ -17,14 +17,17 @@ package snjdck.g2d.filter
 		public var blurX:Number;
 		public var blurY:Number;
 		
-		private var frontBuffer:GpuRenderTarget;
-		private var backBuffer:GpuRenderTarget;
+		private var frontBuffer:RenderRegion;
+		private var backBuffer:RenderRegion;
 		private var numPasses:int;
+		
+		private var renderTargetFactory:RenderTargetFactory;
 		
 		public function BlurFilter(blurX:Number=1, blurY:Number=1)
 		{
 			this.blurX = blurX;
 			this.blurY = blurY;
+			renderTargetFactory = new RenderTargetFactory();
 		}
 		
 		override public function draw(target:DisplayObject2D, render:Render2D, context3d:GpuContext):void
@@ -39,8 +42,6 @@ package snjdck.g2d.filter
 		
 		override public function renderFilter(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
 		{
-			render.pushScreen(texture.width, texture.height);
-			
 			const prevBlendMode:BlendMode = context3d.blendMode;
 			
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.BLUR);
@@ -56,15 +57,11 @@ package snjdck.g2d.filter
 				
 				swapBuffer();
 				
-				var gpuTexture:IGpuTexture = (0 == i ? texture : backBuffer);
+				var gpuTexture:IGpuTexture = (0 == i ? texture : backBuffer.renderTarget);
 				if(i + 1 < numPasses){
-					context3d.renderTarget = frontBuffer;
-					if(!frontBuffer.hasCleared()){
-						context3d.clearStencil();
-					}
-					render.drawTexture(context3d, gpuTexture);
+					frontBuffer.drawToSelf(gpuTexture, render, context3d);
 				}else{
-					render.popScreen();
+					context3d.setScissorRect(null);
 					context3d.renderTarget = output;
 					context3d.blendMode = prevBlendMode;
 					render.drawTexture(context3d, gpuTexture, textureX, textureY);
@@ -86,7 +83,7 @@ package snjdck.g2d.filter
 		private function onDrawBegin(textureWidth:int, textureHeight:int):void
 		{
 			numPasses = Math.ceil(blurX) + Math.ceil(blurY);
-			
+			/*
 			frontBuffer = new GpuRenderTarget(textureWidth, textureHeight);
 			
 			if(numPasses < 2){
@@ -94,22 +91,23 @@ package snjdck.g2d.filter
 			}
 			
 			backBuffer = new GpuRenderTarget(textureWidth, textureHeight);
+			*/
+			renderTargetFactory.createList(textureWidth, textureHeight, numPasses < 2 ? 1 : 2);
+			frontBuffer = renderTargetFactory.getRectAt(0);
+			backBuffer = renderTargetFactory.getRectAt(1);
 		}
 		
 		private function onDrawEnd():void
 		{
-			if(frontBuffer != null){
-				frontBuffer.dispose();
-				frontBuffer = null;
-			}
+			renderTargetFactory.destroy();
 			
-			backBuffer.dispose();
+			frontBuffer = null;
 			backBuffer = null;
 		}
 		
 		private function swapBuffer():void
 		{
-			var temp:GpuRenderTarget = frontBuffer;
+			var temp:RenderRegion = frontBuffer;
 			frontBuffer = backBuffer;
 			backBuffer = temp;
 		}
