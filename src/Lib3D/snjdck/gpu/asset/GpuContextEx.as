@@ -27,7 +27,7 @@ package snjdck.gpu.asset
 			super(context3d);
 		}
 		
-		override public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
+		private function applyChange():void
 		{
 			if(isProgramDirty){
 				super.program = programToSet;
@@ -56,6 +56,11 @@ package snjdck.gpu.asset
 				super.setCulling(cullingToSet);
 				isCullingDirty = false;
 			}
+		}
+		
+		override public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
+		{
+			applyChange();
 			super.drawTriangles(indexBuffer, firstIndex, numTriangles);
 		}
 		

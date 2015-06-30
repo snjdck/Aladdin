@@ -9,6 +9,8 @@ package snjdck.gpu.asset
 	/** cube texture需要上传所有level的mipmap */
 	final public class GpuTexture extends GpuAsset implements IGpuTexture
 	{
+		static public const MAX_SIZE:int = 2048;
+		
 		public var isOpaque:Boolean;
 		
 		private const uploadParams:Array = [];

@@ -50,7 +50,7 @@ package snjdck.gpu.asset
 			
 			stencilRefValue = 0xFFFF00;
 			
-			stateStack = new GpuStateStack(this);
+			stateStack = new GpuStateStack();
 		}
 		
 		public function dispose():void
@@ -293,12 +293,12 @@ package snjdck.gpu.asset
 		
 		public function save():void
 		{
-			stateStack.save();
+			stateStack.save(this);
 		}
 		
 		public function restore():void
 		{
-			stateStack.restore();
+			stateStack.restore(this);
 		}
 	}
 }

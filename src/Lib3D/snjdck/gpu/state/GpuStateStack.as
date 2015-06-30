@@ -6,14 +6,10 @@ package snjdck.gpu.state
 	{
 		private var stateStack:Vector.<GpuState> = new Vector.<GpuState>();
 		private var stateIndex:int = -1;
-		private var context3d:GpuContext;
 		
-		public function GpuStateStack(context3d:GpuContext)
-		{
-			this.context3d = context3d;
-		}
+		public function GpuStateStack(){}
 		
-		public function save():void
+		public function save(context3d:GpuContext):void
 		{
 			++stateIndex;
 			if(stateStack.length <= stateIndex){
@@ -22,7 +18,7 @@ package snjdck.gpu.state
 			gpuState.copyFrom(context3d);
 		}
 		
-		public function restore():void
+		public function restore(context3d:GpuContext):void
 		{
 			gpuState.applyTo(context3d);
 			gpuState.clear();
