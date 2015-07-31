@@ -54,7 +54,7 @@ package snjdck.gpu.asset
 			isDataDirty = true;
 		}
 		
-		final public function getRawGpuAsset(context3d:Context3D):*
+		public function getRawGpuAsset(context3d:Context3D):*
 		{
 			if(prevContext3d != context3d){
 				rawAsset = null;
