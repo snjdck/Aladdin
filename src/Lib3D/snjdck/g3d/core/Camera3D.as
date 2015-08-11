@@ -93,5 +93,10 @@ package snjdck.g3d.core
 		{
 			return viewFrusum;
 		}
+		
+		public function getCameraZ(result:Vector3D):void
+		{
+			_worldMatrix.copyColumnTo(2, result);
+		}
 	}
 }

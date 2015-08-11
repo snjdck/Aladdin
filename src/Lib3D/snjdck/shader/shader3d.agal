@@ -95,3 +95,11 @@ vt0.xy = vt0 * vc8		#图片宽高
 ${objectImp.vs}
 v0 = va0 * vc9			#调整uv
 oc = tex: v0, fs0<repeat>
+
+@line3d
+vt1.xyz = crs: va1, vc8
+vt1.xyz *= vc8.w
+vt0.xyz = va0 + vt1.xyz
+vt0.w = va0
+${objectImp.vs}
+oc = fc0
