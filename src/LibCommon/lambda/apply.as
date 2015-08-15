@@ -13,25 +13,21 @@ package lambda
 		if (funcData is Class)			return newObject(funcData, args);
 		if (funcData is String)			return apply(getType(funcData), args);
 		if (funcData is Array == false)	return funcData;
-		
-		var firstItem:Object = funcData[0];
-		if(firstItem is Array){
-			firstItem = apply(firstItem);
-		}
-		if(firstItem is Function || firstItem is Class || firstItem is String){
-			return apply(firstItem, prepend(funcData.slice(1), args));
-		}
-		return apply(firstItem[funcData[1]], prepend(funcData.slice(2), args));
+		return apply(funcData[0], prepend(funcData.slice(1), args));
 	}
 }
 function newObject(cls:Class, args:Array):*{
-	var n:int = args ? args.length : 0;
-	return this["apply"+n](cls, args);
+	switch(args != null ? args.length : 0){
+		case 0:return new cls();
+		case 1:return new cls(args[0]);
+		case 2:return new cls(args[0],args[1]);
+		case 3:return new cls(args[0],args[1],args[2]);
+		case 4:return new cls(args[0],args[1],args[2],args[3]);
+		case 5:return new cls(args[0],args[1],args[2],args[3],args[4]);
+		case 6:return new cls(args[0],args[1],args[2],args[3],args[4],args[5]);
+		case 7:return new cls(args[0],args[1],args[2],args[3],args[4],args[5],args[6]);
+		case 8:return new cls(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7]);
+		case 9:return new cls(args[0],args[1],args[2],args[3],args[4],args[5],args[6],args[7],args[8]);
+	}
+	throw new Error();
 }
-function apply0(cls:Class,args:Array):*{return new cls();}
-function apply1(cls:Class,args:Array):*{return new cls(args[0]);}
-function apply2(cls:Class,args:Array):*{return new cls(args[0],args[1]);}
-function apply3(cls:Class,args:Array):*{return new cls(args[0],args[1],args[2]);}
-function apply4(cls:Class,args:Array):*{return new cls(args[0],args[1],args[2],args[3]);}
-function apply5(cls:Class,args:Array):*{return new cls(args[0],args[1],args[2],args[3],args[4]);}
-function apply6(cls:Class,args:Array):*{return new cls(args[0],args[1],args[2],args[3],args[4],args[5]);}
