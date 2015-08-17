@@ -2,8 +2,6 @@
 {
 	import flash.utils.ByteArray;
 	
-	import stdlib.constant.Char;
-	
 	final public class Base64
 	{
 		static public function Encode(normalString:String):String
@@ -38,7 +36,7 @@
 				if (i+1 >= n) t3 = 64;
 				if (i+2 >= n) t4 = 64;
 				
-				output.push(charList[t1], charList[t2], charList[t3], charList[t4]);
+				output.push(charList.charAt(t1), charList.charAt(t2), charList.charAt(t3), charList.charAt(t4));
 			}
 			return output.join("");
 		}
@@ -64,6 +62,6 @@
 		}
 		
 		static private const buffer:ByteArray = new ByteArray();
-		static private const charList:Array = Char.Base64;
+		static private const charList:String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 	}
 }
