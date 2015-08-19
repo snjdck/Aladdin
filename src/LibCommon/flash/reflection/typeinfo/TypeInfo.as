@@ -6,6 +6,8 @@ package flash.reflection.typeinfo
 	{
 		public const variables:Object = {};
 		public const methods:Object = {};
+		public const staticVariables:Object = {};
+		public const staticMethods:Object = {};
 		public var ctor:Array;
 		private var bases:Array;
 		private var interfaces:Array;
@@ -25,6 +27,9 @@ package flash.reflection.typeinfo
 			parseImp(obj.traits.accessors, variables, VariableInfo);
 			parseImp(obj.traits.variables, variables, VariableInfo);
 			parseImp(obj.traits.methods, methods, MethodInfo);
+			parseImp(obj.traitsStatic.accessors, staticVariables, VariableInfo);
+			parseImp(obj.traitsStatic.variables, staticVariables, VariableInfo);
+			parseImp(obj.traitsStatic.methods, staticMethods, MethodInfo);
 		}
 		
 		static private function parseImp(list:Array, dict:Object, cls:Class):void
