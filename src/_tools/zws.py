@@ -5,6 +5,26 @@ import sys
 import os
 import math
 
+def findBestZlib(rawData):
+	result = rawData
+	for i in range(10):
+		tempData = zlib.compress(rawData, i)
+		print("zlib", i, len(tempData))
+		if len(tempData) < len(result):
+			result = tempData
+	print(hex(len(result)), len(result))
+	return result
+
+def findBestLzma(rawData):
+	result = rawData
+	for i in range(10):
+		tempData = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, i)
+		print("lzma", i, hex(tempData[3]), hex(tempData[4]), len(tempData))
+		if len(tempData) < len(result):
+			result = tempData
+	print(hex(len(result)), len(result))
+	return result
+
 def removeTags(rawData):
 	nBit = rawData[0] >> 3
 	offset = math.ceil((nBit*4+5) / 8.0) + 4
@@ -55,15 +75,14 @@ def main(filePath):
 	
 	rawData = removeTags(rawData)
 	dataSize = len(rawData) + 8
-	
-	lzmaData = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, 9)
-	lzmaSize = len(lzmaData) - 13
+
+	lzmaData = findBestLzma(rawData)
 
 	dotIndex = filePath.rfind(".")
 	outputPath = filePath[:dotIndex] + "Compressed" + filePath[dotIndex:]
 	
 	with open(outputPath, "wb") as f:
-		f.write(struct.pack("3sB2I", b"ZWS", version, dataSize, lzmaSize))
+		f.write(struct.pack("3sB2I", b"ZWS", version, dataSize, len(lzmaData)-13))
 		f.write(lzmaData[:5])
 		f.write(lzmaData[13:])
 	
