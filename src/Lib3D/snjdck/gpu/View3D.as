@@ -84,11 +84,12 @@ package snjdck.gpu
 			scene3d.update(timeElapsed * timeScale);
 			scene2d.update(timeElapsed);
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
-			context3d.setDepthTest(true, Context3DCompareMode.LESS);
-			context3d.setColorMask(false, false, false, false);
-			scene2d.preDrawDepth(context3d);
-			scene3d.preDrawDepth(context3d);
-			context3d.setColorMask(true, true, true, true);
+			if(scene3d.needDraw()){
+				context3d.setDepthTest(true, Context3DCompareMode.LESS);
+				context3d.setColorMask(false, false, false, false);
+				scene2d.preDrawDepth(context3d);
+				context3d.setColorMask(true, true, true, true);
+			}
 			scene3d.draw(context3d);
 			scene2d.draw(context3d);
 			context3d.present();

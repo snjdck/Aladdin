@@ -50,7 +50,7 @@ package snjdck.g3d.render
 				blendDrawUnits.draw(context3d, camera3d, true);
 			}
 		}
-		
+		/*
 		public function preDrawDepth(context3d:GpuContext, camera3d:Camera3D):void
 		{
 			var staticDrawUnits:Vector.<IDrawUnit3D> = opaqueDrawUnits.getStaticDrawUnits();
@@ -63,5 +63,6 @@ package snjdck.g3d.render
 				drawUnit.draw(context3d, camera3d);
 			}
 		}
+		//*/
 	}
 }

@@ -40,6 +40,11 @@ package snjdck.g2d
 			onMouseMove();
 		}
 		
+		public function needDraw():Boolean
+		{
+			return true;
+		}
+		
 		public function draw(context3d:GpuContext):void
 		{
 			render2d.drawBegin(context3d);

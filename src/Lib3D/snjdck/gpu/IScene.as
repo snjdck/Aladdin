@@ -6,6 +6,7 @@ package snjdck.gpu
 	{
 		function update(timeElapsed:int):void;
 		function preDrawDepth(context3d:GpuContext):void;
+		function needDraw():Boolean;
 		function draw(context3d:GpuContext):void;
 		function notifyEvent(evtType:String):Boolean;
 		function get mouseX():Number;

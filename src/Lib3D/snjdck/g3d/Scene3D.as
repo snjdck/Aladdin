@@ -43,6 +43,11 @@ package snjdck.g3d
 //			trace("update:",t2-t1);
 		}
 		
+		public function needDraw():Boolean
+		{
+			return collector.hasDrawUnits();
+		}
+		
 		public function draw(context3d:GpuContext):void
 		{
 //			var t1:int = getTimer();
@@ -56,7 +61,7 @@ package snjdck.g3d
 		
 		public function preDrawDepth(context3d:GpuContext):void
 		{
-			collector.preDrawDepth(context3d, camera);
+			//collector.preDrawDepth(context3d, camera);
 		}
 		
 		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void

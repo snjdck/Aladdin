@@ -81,12 +81,12 @@ package snjdck.g3d.render
 			}
 			count = 0;
 		}
-		
+		/*
 		public function getStaticDrawUnits():Vector.<IDrawUnit3D>
 		{
 			return staticObjectList;
 		}
-		
+		*/
 		private function getDrawUnits(shaderName:String):Vector.<IDrawUnit3D>
 		{
 			if(!hasKey(drawUnitDict, shaderName)){
