@@ -14,7 +14,7 @@ package snjdck.g3d
 	
 	use namespace ns_g3d;
 
-	public class Scene3D implements IScene
+	final public class Scene3D implements IScene
 	{
 		public const root:DisplayObjectContainer3D = new DisplayObjectContainer3D();
 		public const camera:Camera3D = new Camera3D();
@@ -51,10 +51,8 @@ package snjdck.g3d
 		public function draw(context3d:GpuContext):void
 		{
 //			var t1:int = getTimer();
-			if(collector.hasDrawUnits()){
-				camera.uploadMVP(context3d);
-				collector.render(context3d, camera);
-			}
+			camera.uploadMVP(context3d);
+			collector.render(context3d, camera);
 //			var t2:int = getTimer();
 //			trace("render:",t2-t1);
 		}

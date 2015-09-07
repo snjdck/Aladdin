@@ -42,9 +42,11 @@ package snjdck.g2d.obj2d
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			context3d.clearDepth();
-			scene3d.draw(context3d);
-			render2d.drawBegin(context3d);
+			if(scene3d.needDraw()){
+				context3d.clearDepth();
+				scene3d.draw(context3d);
+				render2d.drawBegin(context3d);
+			}
 		}
 	}
 }

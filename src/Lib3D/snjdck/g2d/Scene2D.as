@@ -15,7 +15,7 @@ package snjdck.g2d
 	
 	use namespace ns_g2d;
 	
-	public class Scene2D implements IScene, IViewPort
+	final public class Scene2D implements IScene, IViewPort
 	{
 		public const root:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
@@ -51,6 +51,11 @@ package snjdck.g2d
 			render2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			root.draw(render2d, context3d);
 			render2d.popScreen();
+		}
+		
+		public function needPreDrawDepth():Boolean
+		{
+			return true;
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void
