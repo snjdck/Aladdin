@@ -49,7 +49,7 @@ package snjdck.g2d.text
 			charInfo.uv = info;
 			
 			if(offsetX + charInfo.width > label.width){
-				newline();
+				pushNewline();
 			}
 			label._numLines = numRows + 1;
 			label._maxScrollV = numRows + 1 - label.visibleLines;
@@ -68,13 +68,6 @@ package snjdck.g2d.text
 				list.push(charInfo);
 			}
 			offsetX += charInfo.width;
-		}
-		
-		public function newline():void
-		{
-			++numRows;
-			offsetY += label.fontSize;
-			offsetX = 2;
 		}
 		
 		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void
@@ -148,6 +141,23 @@ package snjdck.g2d.text
 				}
 			}
 			return list.length;
+		}
+		
+		public function pushNewline():void
+		{
+			++numRows;
+			offsetY += label.fontSize;
+			offsetX = 2;
+		}
+		
+		public function pushTab():void
+		{
+			offsetX += label.fontSize << 1;
+		}
+		
+		public function pushBlank():void
+		{
+			offsetX += label.fontSize >> 1;
 		}
 	}
 }

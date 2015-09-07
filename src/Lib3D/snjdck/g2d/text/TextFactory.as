@@ -45,10 +45,15 @@ package snjdck.g2d.text
 				var char:String = text.charAt(i);
 				switch(char){
 					case "\n":
-						output.newline();
+						output.pushNewline();
 						break;
 					case "\r":
+						break;
 					case "\t":
+						output.pushTab();
+						break;
+					case " ":
+						output.pushBlank();
 						break;
 					default:
 						output.push(getChar(char));

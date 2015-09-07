@@ -7,7 +7,6 @@ package snjdck.g2d.text
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
@@ -80,7 +79,6 @@ package snjdck.g2d.text
 				return;
 			}
 			
-//			const prevProgram:GpuProgram = context3d.program;
 			context3d.save();
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
 			
@@ -90,7 +88,6 @@ package snjdck.g2d.text
 			textFactory.setTexture(context3d);
 			TextRender.Instance.drawText(context3d, charList);
 			
-//			context3d.program = prevProgram;
 			context3d.restore();
 			QuadRender.Instance.drawBegin(context3d);
 		}
