@@ -2,6 +2,7 @@ package snjdck.g2d.text.drawer
 {
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
@@ -18,6 +19,11 @@ package snjdck.g2d.text.drawer
 			tf.defaultTextFormat = new TextFormat("宋体", 16, 0xFF0000);
 		}
 		
+		public function clear():void
+		{
+			tf.text = "";
+		}
+		
 		public function get textWidth():int
 		{
 			return tf.textWidth;
@@ -28,9 +34,37 @@ package snjdck.g2d.text.drawer
 			return tf.textHeight;
 		}
 		
+		public function removeLastChar():void
+		{
+			var index:int = tf.text.length;
+			tf.replaceText(index-1, index, "");
+		}
+		
+		
+		/*
+		public function insertText(index:int, value:String):void
+		{
+			if(index < 0){
+				index += tf.text.length;
+			}
+			tf.replaceText(index, index, value);
+		}
+		//*/
 		public function setText(value:String):void
 		{
 			tf.text = value;
+		}
+		
+		public function appendText(value:String):void
+		{
+			tf.appendText(value);
+		}
+		
+		public function getCharBoundaries(charIndex:int):Rectangle
+		{
+			var rect:Rectangle = tf.getCharBoundaries(charIndex);
+			rect.offset(-2, -2);
+			return rect;
 		}
 		
 		public function draw(output:BitmapData, offsetX:int, offsetY:int):void

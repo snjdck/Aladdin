@@ -1,7 +1,11 @@
 package snjdck.g2d.text
 {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
+	import flash.utils.getDefinitionByName;
+	
+	import array.has;
 	
 	import snjdck.g2d.text.drawer.TextDrawer;
 	import snjdck.gpu.asset.GpuContext;
@@ -15,6 +19,7 @@ package snjdck.g2d.text
 		private const tf:TextDrawer = new TextDrawer();
 		
 		private const charDict:Object = {};
+		private const charList:Array = [];
 		
 		private var nextX:int;
 		private var nextY:int;
@@ -26,6 +31,7 @@ package snjdck.g2d.text
 		public function TextFactory()
 		{
 			texture = new BitmapData(textureWidth, textureHeiht, true, 0);
+			getDefinitionByName("TestText").app.addChild(new Bitmap(texture));
 			gpuTexture = new GpuTexture(texture.width, texture.height);
 		}
 		
@@ -40,6 +46,7 @@ package snjdck.g2d.text
 		
 		public function getCharList(text:String, output:CharInfoList):void
 		{
+			calcCharList(text);
 			var charCount:int = text.length;
 			for(var i:int=0; i<charCount; ++i){
 				var char:String = text.charAt(i);
@@ -56,11 +63,62 @@ package snjdck.g2d.text
 						output.pushBlank();
 						break;
 					default:
-						output.push(getChar(char));
+						output.push(charDict[char]);
 				}
 			}
 		}
 		
+		private function calcCharList(text:String):void
+		{
+			tf.clear();
+			var charCount:int = text.length;
+			for(var i:int=0; i<charCount; ++i){
+				var char:String = text.charAt(i);
+				switch(char){
+					case "\n":
+					case "\r":
+					case "\t":
+					case " ":
+						break;
+					default:
+						if(charDict.hasOwnProperty(char) || has(charList, char)){
+							break;
+						}
+						tf.appendText(char);
+						if(tf.textWidth > textureWidth - nextX){
+							tf.removeLastChar();
+							generateChar();
+							nextX = 0;
+							nextY += tf.textHeight;
+							tf.setText(char);
+						}
+						charList.push(char);
+				}
+			}
+			generateChar();
+		}
+		
+		private function generateChar():void
+		{
+			var charCount:int = charList.length;
+			if(charCount <= 0){
+				return;
+			}
+			trace(charList);
+			
+			for(var i:int=0; i<charCount; ++i){
+				var charInfo:Rectangle = tf.getCharBoundaries(i);
+				charInfo.offset(nextX, nextY);
+				charDict[charList[i]] = charInfo;
+			}
+			
+			tf.draw(texture, nextX, nextY);
+			isTextureDirty = true;
+			
+			nextX += tf.textWidth;
+			charList.length = 0;
+		}
+		/*
 		private function getChar(char:String):Rectangle
 		{
 			if(charDict.hasOwnProperty(char)){
@@ -87,5 +145,6 @@ package snjdck.g2d.text
 			
 			return charInfo;
 		}
+		//*/
 	}
 }
