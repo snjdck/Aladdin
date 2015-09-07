@@ -4,6 +4,7 @@ package snjdck.g2d
 	
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
+	import snjdck.g2d.impl.OpaqueAreaCollector;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g2d.viewport.IViewPort;
 	import snjdck.g2d.viewport.IViewPortLayer;
@@ -19,6 +20,7 @@ package snjdck.g2d
 	{
 		public const root:DisplayObjectContainer2D = new DisplayObjectContainer2D();
 		
+		private const collector:OpaqueAreaCollector = new OpaqueAreaCollector();
 		private const render2d:Render2D = new Render2D();
 		
 		ns_g2d var _mouseX:Number;
@@ -37,6 +39,8 @@ package snjdck.g2d
 		{
 			root.updateMouseXY(_mouseX, _mouseY);
 			root.onUpdate(timeElapsed);
+			collector.clear();
+			root.collectOpaqueArea(collector);
 			onMouseMove();
 		}
 		
@@ -55,7 +59,7 @@ package snjdck.g2d
 		
 		public function needPreDrawDepth():Boolean
 		{
-			return true;
+			return collector.hasOpaqueArea();
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void
@@ -64,7 +68,7 @@ package snjdck.g2d
 			QuadRender.Instance.drawBegin(context3d);
 			
 			render2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
-			root.preDrawDepth(render2d, context3d);
+			collector.preDrawDepth(render2d, context3d);
 			render2d.popScreen();
 		}
 		

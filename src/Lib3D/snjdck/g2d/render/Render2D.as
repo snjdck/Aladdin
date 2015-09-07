@@ -4,6 +4,7 @@ package snjdck.g2d.render
 	import flash.display3D.Context3DTriangleFace;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
+	import flash.geom.Rectangle;
 	
 	import array.copy;
 	
@@ -124,6 +125,29 @@ package snjdck.g2d.render
 			
 			context3d.setVc(0, constData, 7);
 			QuadRender.Instance.drawTriangles(context3d);
+		}
+		
+		public function drawWorldRectList(context3d:GpuContext, rectList:Vector.<Rectangle>):void
+		{
+			copyProjectData(constData);
+			
+			constData[4] = constData[9] = 
+				constData[12] = constData[13] = constData[14] = constData[15] = 1;
+			constData[5] = constData[6] = constData[7] = 
+				constData[8] = constData[10] = constData[11] = 
+				constData[18] = constData[19] = 
+				constData[24] = constData[25] = constData[26] = constData[27] = 0;
+			
+			for each(var rect:Rectangle in rectList){
+				constData[16] = rect.x;
+				constData[17] = rect.y;
+				
+				constData[20] = constData[21] = rect.width;
+				constData[22] = constData[23] = rect.height;
+				
+				context3d.setVc(0, constData, 7);
+				QuadRender.Instance.drawTriangles(context3d);
+			}
 		}
 		
 		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
