@@ -130,14 +130,14 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		override ns_g2d function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
+		override ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void
 		{
 			if(clipContent){
 				return;
 			}
 			for each(var child:DisplayObject2D in _childList){
 				if(child.hasVisibleArea()){
-					child.preDrawDepth(render2d, context3d);
+					child.collectOpaqueArea(collector);
 				}
 			}
 		}

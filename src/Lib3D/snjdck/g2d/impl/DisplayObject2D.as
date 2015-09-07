@@ -104,8 +104,7 @@ package snjdck.g2d.impl
 			notify(Event.ENTER_FRAME, this);
 		}
 		
-		ns_g2d function preDrawDepth(render2d:Render2D, context3d:GpuContext):void{}
-		ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void{};
+		ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void{}
 		ns_g2d function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){

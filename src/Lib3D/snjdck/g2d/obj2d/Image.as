@@ -5,6 +5,7 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.impl.DisplayObject2D;
+	import snjdck.g2d.impl.OpaqueAreaCollector;
 	import snjdck.g2d.impl.Texture2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.GpuColor;
@@ -47,14 +48,14 @@ package snjdck.g2d.obj2d
 			return super.hasVisibleArea() && (texture != null);
 		}
 		
-		override ns_g2d function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
+		override ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void
 		{
 			if(clipContent){
 				return;
 			}
 			if(texture.scale9 != null){
 				var v:Vector.<Number> = texture.scale9;
-				render2d.drawLocalRect(context3d, prevWorldMatrix,
+				collector.add(prevWorldMatrix,
 					v[0],v[1],
 					width - (v[0] + v[2]),
 					height - (v[1] + v[3])
