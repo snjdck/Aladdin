@@ -1,11 +1,8 @@
 package snjdck.arithmetic.impl
 {
-	import flash.utils.Proxy;
-	import flash.utils.flash_proxy;
-	
 	import snjdck.arithmetic.IScriptContext;
 	
-	final internal class ScriptContext extends Proxy implements IScriptContext
+	final internal class ScriptContext implements IScriptContext
 	{
 		private const dataDict:Object = {};
 		private var parent:IScriptContext;
@@ -39,8 +36,7 @@ package snjdck.arithmetic.impl
 		
 		public function hasKey(key:String, searchParent:Boolean):Boolean
 		{
-			var result:Boolean = dataDict.hasOwnProperty(key);
-			if(result){
+			if(dataDict.hasOwnProperty(key)){
 				return true;
 			}
 			if(searchParent && parent){
