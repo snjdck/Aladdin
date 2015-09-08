@@ -1,5 +1,6 @@
 package flash.tcp
 {
+	import flash.net.Socket;
 	import flash.tcp.error.PacketErrorDict;
 	import flash.tcp.io.PacketReader;
 	import flash.tcp.io.PacketWriter;
@@ -15,8 +16,9 @@ package flash.tcp
 		private var packetErrorDict:PacketErrorDict;
 		private var packetFactory:IPacket;
 		
-		public function PacketSocket(packet:IPacket)
+		public function PacketSocket(packet:IPacket, sock:Socket=null)
 		{
+			super(sock);
 			packetFactory = packet.create();
 			packetReader = new PacketReader(socket, packet);
 			packetWriter = new PacketWriter(socket);

@@ -20,9 +20,9 @@ package flash.tcp
 		private var host:String;
 		private var port:int;
 		
-		public function TCPSocket()
+		public function TCPSocket(sock:Socket)
 		{
-			socket = new Socket();
+			socket = sock || new Socket();
 			init();
 		}
 		
