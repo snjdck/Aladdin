@@ -25,7 +25,8 @@ package snjdck.g2d.render
 	final public class Render2D
 	{
 		private const projectionStack:Projection2DStack = new Projection2DStack();
-		private const constData:Vector.<Number> = new Vector.<Number>(28, true);
+		private const rawData:Vector.<Number> = new Vector.<Number>(28, true);
+		private const constData:ConstData = new ConstData(rawData);
 		
 		public function Render2D(){}
 		
@@ -65,25 +66,25 @@ package snjdck.g2d.render
 		
 		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D, colorTransform:ColorTransform=null):void
 		{
-			copyProjectData(constData);
-			matrix33.toBuffer(target.prevWorldMatrix, constData, 4);
+			copyProjectData(rawData);
+			matrix33.toBuffer(target.prevWorldMatrix, rawData, 4);
 			
-			copyMatrix(texture.frameMatrix, 12);
-			copyMatrix(texture.uvMatrix, 14);
+			constData.copyMatrix(texture.frameMatrix, 12);
+			constData.copyMatrix(texture.uvMatrix, 14);
 			
-			constData[20] = target.width;
-			constData[21] = texture.width;
-			constData[22] = target.height;
-			constData[23] = texture.height;
+			rawData[20] = target.width;
+			rawData[21] = texture.width;
+			rawData[22] = target.height;
+			rawData[23] = texture.height;
 			if(null == texture.scale9){
-				constData[24] = constData[25] = constData[26] = constData[27] = 0;
+				constData.resetScale9();
 			}else{
-				copy(texture.scale9, constData, 4, 0, 24);
+				copy(texture.scale9, rawData, 4, 0, 24);
 			}
 			
-			context3d.setVc(0, constData, 7);
-			copyColorTransform(colorTransform);
-			context3d.setFc(0, constData, 2);
+			context3d.setVc(0, rawData, 7);
+			constData.copyColorTransform(colorTransform);
+			context3d.setFc(0, rawData, 2);
 			context3d.texture = texture.gpuTexture;
 			
 			QuadRender.Instance.drawTriangles(context3d, texture.scale9 != null);
@@ -91,61 +92,36 @@ package snjdck.g2d.render
 		
 		public function drawLocalRect(context3d:GpuContext, worldMatrix:Matrix, x:Number, y:Number, width:Number, height:Number):void
 		{
-			copyProjectData(constData);
-			matrix33.toBuffer(worldMatrix, constData, 4);
+			copyProjectData(rawData);
+			if(null == worldMatrix){
+				constData.resetWorldMatrix();
+			}else{
+				matrix33.toBuffer(worldMatrix, rawData, 4);
+			}
+			constData.resetFrameMatrix();
+			constData.resetUvMatrix();
+			constData.resetScale9();
+			constData.setRect(x, y, width, height);
 			
-			constData[12] = constData[13] = 1;
-			constData[16] = x;
-			constData[17] = y;
-			
-			constData[20] = constData[21] = width;
-			constData[22] = constData[23] = height;
-			constData[24] = constData[25] = constData[26] = constData[27] = 0;
-			
-			context3d.setVc(0, constData, 7);
+			context3d.setVc(0, rawData, 7);
 			QuadRender.Instance.drawTriangles(context3d);
 		}
 		
 		public function drawWorldRect(context3d:GpuContext, x:Number, y:Number, width:Number, height:Number):void
 		{
-			copyProjectData(constData);
-			
-			constData[4] = constData[9] = 
-			constData[12] = constData[13] = constData[14] = constData[15] = 1;
-			constData[5] = constData[6] = constData[7] = 
-			constData[8] = constData[10] = constData[11] = 
-			constData[18] = constData[19] = 
-			constData[24] = constData[25] = constData[26] = constData[27] = 0;
-			
-			constData[16] = x;
-			constData[17] = y;
-			
-			constData[20] = constData[21] = width;
-			constData[22] = constData[23] = height;
-			
-			context3d.setVc(0, constData, 7);
-			QuadRender.Instance.drawTriangles(context3d);
+			drawLocalRect(context3d, null, x, y, width, height);
 		}
 		
 		public function drawWorldRectList(context3d:GpuContext, rectList:Vector.<Rectangle>):void
 		{
-			copyProjectData(constData);
-			
-			constData[4] = constData[9] = 
-				constData[12] = constData[13] = constData[14] = constData[15] = 1;
-			constData[5] = constData[6] = constData[7] = 
-				constData[8] = constData[10] = constData[11] = 
-				constData[18] = constData[19] = 
-				constData[24] = constData[25] = constData[26] = constData[27] = 0;
-			
+			copyProjectData(rawData);
+			constData.resetWorldMatrix();
+			constData.resetFrameMatrix();
+			constData.resetUvMatrix();
+			constData.resetScale9();
 			for each(var rect:Rectangle in rectList){
-				constData[16] = rect.x;
-				constData[17] = rect.y;
-				
-				constData[20] = constData[21] = rect.width;
-				constData[22] = constData[23] = rect.height;
-				
-				context3d.setVc(0, constData, 7);
+				constData.setRect(rect.x, rect.y, rect.width, rect.height);
+				context3d.setVc(0, rawData, 7);
 				QuadRender.Instance.drawTriangles(context3d);
 			}
 		}
@@ -159,31 +135,6 @@ package snjdck.g2d.render
 		public function copyProjectData(output:Vector.<Number>):void
 		{
 			projectionStack.projection.upload(output);
-		}
-		
-		private function copyMatrix(matrix:Matrix, toIndex:int):void
-		{
-			constData[toIndex  ] = matrix.a;
-			constData[toIndex+1] = matrix.d;
-			constData[toIndex+4] = matrix.tx;
-			constData[toIndex+5] = matrix.ty;
-		}
-		
-		private function copyColorTransform(colorTransform:ColorTransform, toIndex:int=0):void
-		{
-			if(null == colorTransform){
-				constData[toIndex  ] = constData[toIndex+1] = constData[toIndex+2] = constData[toIndex+3] = 1;
-				constData[toIndex+4] = constData[toIndex+5] = constData[toIndex+6] = constData[toIndex+7] = 0;
-			}else{
-				constData[toIndex  ] = colorTransform.redMultiplier;
-				constData[toIndex+1] = colorTransform.greenMultiplier;
-				constData[toIndex+2] = colorTransform.blueMultiplier;
-				constData[toIndex+3] = colorTransform.alphaMultiplier;
-				constData[toIndex+4] = colorTransform.redOffset;
-				constData[toIndex+5] = colorTransform.greenOffset;
-				constData[toIndex+6] = colorTransform.blueOffset;
-				constData[toIndex+7] = colorTransform.alphaOffset;
-			}
 		}
 	}
 }
