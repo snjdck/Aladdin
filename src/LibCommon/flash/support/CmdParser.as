@@ -40,7 +40,11 @@ package flash.support
 			if(null == handler){
 				return;
 			}
-			handler.apply(null, list);
+			try{
+				handler.apply(null, list);
+			}catch(e:Error){
+				trace(e.getStackTrace());
+			}
 		}
 	}
 }
