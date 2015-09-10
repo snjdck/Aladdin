@@ -1,5 +1,6 @@
 package flash.tcp
 {
+	import flash.lang.ISerializable;
 	import flash.net.Socket;
 	import flash.tcp.error.PacketErrorDict;
 	import flash.tcp.io.PacketReader;
@@ -27,11 +28,23 @@ package flash.tcp
 			socket.endian = packet.endian;
 		}
 		
-		public function send(msgId:uint, msgData:ByteArray):void
+		public function writeRaw(msgId:uint, msgData:ByteArray):void
 		{
 			var packet:IPacket = packetFactory.create(msgId, msgData);
 			packetWriter.addPacket(packet);
 			packetRouter.checkTimeout();
+		}
+		
+		public function writeMsg(msgId:uint, message:ISerializable):void
+		{
+			if(null == message){
+				writeRaw(msgId, null);
+			}else{
+				var msgData:ByteArray = new ByteArray();
+				msgData.endian = socket.endian;
+				message.writeTo(msgData);
+				writeRaw(msgId, msgData);
+			}
 		}
 		
 		public function flush():void
@@ -67,16 +80,10 @@ package flash.tcp
 			packetRouter.regNotice(noticeId, noticeType, handler);
 		}
 		
-		public function request(message:Object, onSuccess:Object=null, onError:Object=null):void
+		public function request(msgId:uint, message:ISerializable, onSuccess:Object=null, onError:Object=null):void
 		{
-			var requestId:uint = packetRouter.fetchRequestId(message);
-			packetRouter.listenResponse(requestId, onSuccess, onError);
-			
-			var msgData:ByteArray = new ByteArray();
-			msgData.endian = socket.endian;
-			message.writeTo(msgData);
-			send(requestId, msgData);
-			
+			packetRouter.listenResponse(msgId, onSuccess, onError);
+			writeMsg(msgId, message);
 			flush();
 		}
 		
