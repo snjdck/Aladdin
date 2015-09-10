@@ -91,5 +91,17 @@ package flash.tcp
 		{
 			packetErrorDict.register(errorId, message);
 		}
+		
+		public function sendRaw(msgId:uint, msgData:ByteArray):void
+		{
+			writeRaw(msgId, msgData);
+			flush();
+		}
+		
+		public function sendMsg(msgId:uint, message:ISerializable):void
+		{
+			writeMsg(msgId, message);
+			flush();
+		}
 	}
 }

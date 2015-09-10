@@ -10,8 +10,9 @@ package flash.tcp.impl
 	{
 		public var data:Object;
 		
-		public function JsonPacket()
+		public function JsonPacket(data:Object=null)
 		{
+			this.data = data;
 		}
 		
 		public function readFrom(buffer:IDataInput):void
