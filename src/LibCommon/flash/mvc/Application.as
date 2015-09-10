@@ -42,6 +42,7 @@ package flash.mvc
 				module.initAllServices();
 				module.initAllViews();
 				module.initAllControllers();
+				module.onStartup();
 			}
 		}
 		

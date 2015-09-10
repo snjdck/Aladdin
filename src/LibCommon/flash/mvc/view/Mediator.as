@@ -87,7 +87,7 @@ package flash.mvc.view
 			evtMgr.delEvt(target, evtType, listener);
 		}
 		
-		protected function onReg():void{}
-		protected function onDel():void{}
+		virtual protected function onReg():void{}
+		virtual protected function onDel():void{}
 	}
 }
