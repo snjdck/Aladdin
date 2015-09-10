@@ -1,6 +1,9 @@
 package flash.reflection.typeinfo
 {
+	import flash.support.TypeCast;
+	
 	import array.getField;
+	import array.has;
 
 	public class TypeInfo extends PropInfo
 	{
@@ -30,6 +33,16 @@ package flash.reflection.typeinfo
 			parseImp(obj.traitsStatic.accessors, staticVariables, VariableInfo);
 			parseImp(obj.traitsStatic.variables, staticVariables, VariableInfo);
 			parseImp(obj.traitsStatic.methods, staticMethods, MethodInfo);
+		}
+		
+		public function isExtends(classNameOrRef:Object):Boolean
+		{
+			return array.has(bases, TypeCast.CastClsToStr(classNameOrRef));
+		}
+		
+		public function isImplements(interfaceNameOrRef:Object):Boolean
+		{
+			return array.has(interfaces, TypeCast.CastClsToStr(interfaceNameOrRef));
 		}
 		
 		static private function parseImp(list:Array, dict:Object, cls:Class):void
