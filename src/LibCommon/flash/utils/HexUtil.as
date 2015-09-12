@@ -1,6 +1,9 @@
 package flash.utils
 {
-	import flash.factory.newBuffer;
+	import avm2.intrinsics.memory.li8;
+	import avm2.intrinsics.memory.sf32;
+	import avm2.intrinsics.memory.sf64;
+	import avm2.intrinsics.memory.si32;
 	
 	import string.formatInt;
 
@@ -21,26 +24,64 @@ package flash.utils
 			}
 			return str;
 		}
-		
+		/** 低字节序 */
 		static public function FormatInt(val:uint):String
 		{
-			var ba:ByteArray = newBuffer();
-			ba.writeUnsignedInt(val);
-			return FormatBin(ba);
+			si32(val, 0);
+			return ReadString(4);
 		}
-		
+		/** 低字节序 */
 		static public function FormatFloat(val:Number):String
 		{
-			var ba:ByteArray = newBuffer();
-			ba.writeFloat(val);
-			return FormatBin(ba);
+			sf32(val, 0);
+			return ReadString(4);
 		}
-		
+		/** 低字节序 */
 		static public function FormatDouble(val:Number):String
 		{
-			var ba:ByteArray = newBuffer();
-			ba.writeDouble(val);
-			return FormatBin(ba);
+			sf64(val, 0);
+			return ReadString(8);
+		}
+		
+		static private function ReadString(count:int):String
+		{
+			var result:Array = [];
+			for(var i:int=0; i<count; ++i){
+				result[i] = formatInt(li8(i), 2, 16);
+			}
+			return result.join("");
+		}
+		
+		static public function BytesToString(bytes:ByteArray):String
+		{
+			var n:int = bytes.length;
+			var list:Array = [];
+			for(var i:int=0; i<n; ++i){
+				list[i] = formatInt(bytes[i], 2, 16);
+			}
+			return list.join(" ");
+		}
+		
+		static private const blankExp:RegExp = /\s+/;
+		
+		public static function StringToBytes(str:String):ByteArray
+		{
+			var result:ByteArray = new ByteArray();
+			var list:Array = str.split(blankExp);
+			for each(var item:String in list){
+				if(!Boolean(item)){
+					continue;
+				}
+				while(item.length > 2){
+					result.writeByte(parseInt(item.slice(0, 2),16));
+					item = item.slice(2);
+				}
+				if(item.length > 0){
+					result.writeByte(parseInt(item,16));
+				}
+			}
+			result.position = 0;
+			return result;
 		}
 	}
 }
