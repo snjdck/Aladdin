@@ -5,6 +5,6 @@ package matrix33
 	[Inline]
 	public function hasRotation(matrix:Matrix):Boolean
 	{
-		return !(0 == matrix.b && 0 == matrix.c);
+		return (matrix.b != 0) || (matrix.c != 0);
 	}
 }
