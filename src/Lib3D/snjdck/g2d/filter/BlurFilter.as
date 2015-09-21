@@ -3,6 +3,7 @@ package snjdck.g2d.filter
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.render.SwapChain;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
@@ -17,8 +18,7 @@ package snjdck.g2d.filter
 		public var blurX:Number;
 		public var blurY:Number;
 		
-		private var frontBuffer:GpuRenderTarget;
-		private var backBuffer:GpuRenderTarget;
+		private var swapChain:SwapChain;
 		private var numPasses:int;
 		
 		public function BlurFilter(blurX:Number=1, blurY:Number=1)
@@ -54,12 +54,12 @@ package snjdck.g2d.filter
 				context3d.setVc(7, mOffsets, 1);
 				context3d.setFc(0, mWeights, 1);
 				
-				swapBuffer();
+				swapChain.swap();
 				
-				var gpuTexture:IGpuTexture = (0 == i ? texture : backBuffer);
+				var gpuTexture:IGpuTexture = (0 == i ? texture : swapChain.backBuffer);
 				if(i + 1 < numPasses){
-					context3d.renderTarget = frontBuffer;
-					if(!frontBuffer.hasCleared()){
+					context3d.renderTarget = swapChain.frontBuffer;
+					if(!swapChain.frontBuffer.hasCleared()){
 						context3d.clearStencil();
 					}
 					render.drawTexture(context3d, gpuTexture);
@@ -86,32 +86,12 @@ package snjdck.g2d.filter
 		private function onDrawBegin(textureWidth:int, textureHeight:int):void
 		{
 			numPasses = Math.ceil(blurX) + Math.ceil(blurY);
-			
-			frontBuffer = new GpuRenderTarget(textureWidth, textureHeight);
-			
-			if(numPasses < 2){
-				return;
-			}
-			
-			backBuffer = new GpuRenderTarget(textureWidth, textureHeight);
+			swapChain = new SwapChain(textureWidth, textureHeight, numPasses);
 		}
 		
 		private function onDrawEnd():void
 		{
-			if(frontBuffer != null){
-				frontBuffer.dispose();
-				frontBuffer = null;
-			}
-			
-			backBuffer.dispose();
-			backBuffer = null;
-		}
-		
-		private function swapBuffer():void
-		{
-			var temp:GpuRenderTarget = frontBuffer;
-			frontBuffer = backBuffer;
-			backBuffer = temp;
+			swapChain.dispose();
 		}
 		
 		static private const MAX_SIGMA:Number = 2.0;
