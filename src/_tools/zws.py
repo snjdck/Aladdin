@@ -39,8 +39,8 @@ def removeTags(rawData):
 			tagSize = tagBodySize + 6
 		else:
 			tagSize = tagBodySize + 2
-		#remove Metadata and ProductInfo
-		if not (tagType == 41 or tagType == 77):
+		#remove ProductInfo, FrameLabel, ScriptLimits, Metadata
+		if tagType not in [41, 43, 65, 77]:
 			#hasMetadata = false
 			if tagType == 69:
 				tagBody = struct.unpack_from("I", rawData, offset+2)[0]
