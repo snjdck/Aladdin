@@ -89,7 +89,8 @@ package snjdck.agalc
 			"+":["add"], "-":["sub"], "*":["mul"], "/":["div"], "^":["pow"],
 			"<":["slt"], ">":["slt",true],
 			">=":["sge"], "<=":["sge",true],
-			"==":["seq"], "!=":["sne"]
+			"==":["seq"], "!=":["sne"],
+			"=":["mov"]
 		};
 		
 		static private const SlotPattern:RegExp = /([a-z]{1,2})(\d{0,3})(?:\.([xyzw]{1,4}))?/;
@@ -180,44 +181,17 @@ package snjdck.agalc
 			test = execRegExp(/(\w{3}):([^,]+)(?:,(.+))?/, rest);//函数
 			if(test){
 				writeTokenImp(test[1], dest, test[2], test[3]);
-				return;
-			}
-			
-			if(execRegExp(/[+\-*\/^<>=]/, rest)){//运算符
+			}else{
 				tempRegFactory.reset();
-				if(extraOp){
-					var tempReg:String = tempRegFactory.retrieveTempReg();
-					writeArithmetic3(tempReg, rest);
-					writeArithmetic(extraOp, dest, dest, tempReg);
-				}else{
-					writeArithmetic3(dest, rest);
+				var codeList:Array = [];
+				arith.parse(token).visit(codeList, tempRegFactory);
+				for each(var code:Array in codeList){
+					lambda.apply(writeArithmetic, code);
 				}
-				return;
-			}
-			
-			if(execRegExp(SlotPattern, rest)){//mov
-				if(extraOp){
-					writeArithmetic(extraOp, dest, dest, rest);
-				}else{
-					writeTokenImp("mov", dest, rest);
-				}
-				return;
-			}
-			
-			throw new Error("format error!" + token);
-		}
-		
-		private function writeArithmetic3(dest:String, input:String):void
-		{
-			var codeList:Array = [];
-			arith.parse(input).visit(codeList, tempRegFactory);
-			codeList[codeList.length-1][1] = dest;
-			for each(var code:Array in codeList){
-				lambda.apply(writeArithmetic, code);
 			}
 		}
 		
-		private function writeArithmetic(symbol:String, dest:String, source1:String, source2:String):void
+		private function writeArithmetic(symbol:String, dest:String, source1:String, source2:String=null):void
 		{
 			const info:Array = OpDict[symbol];
 			const op:String = info[0];

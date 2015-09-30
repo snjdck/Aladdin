@@ -1,7 +1,6 @@
 package snjdck.agalc
 {
 	import snjdck.agalc.arithmetic.Arithmetic;
-	import snjdck.agalc.arithmetic.Lexer;
 	import snjdck.agalc.arithmetic.node.Node;
 	import snjdck.agalc.arithmetic.node.NodeType;
 	import snjdck.agalc.arithmetic.node.impl.NodeFactory;
@@ -14,19 +13,16 @@ package snjdck.agalc
 			super(LexRuleFactory.CreateShaderArithmeticRuleList());
 		}
 		
-		public function parse(source:String):Node
+		override public function expression():Node
 		{
-			Lexer.Parse(source, ruleList, nodeList);
-			var node:Node = equ();
-			nodeList.accept(NodeType.EOF);
-			return node;
+			return assign();
 		}
-		/*
+		
 		private function assign():Node
 		{
 			return matchRight(equ, [NodeType.OP_ASSIGN]);
 		}
-		*/
+		
 		private function equ():Node{
 			return matchLeft(com, [NodeType.OP_EQUAL, NodeType.OP_NOT_EQUAL]);
 		}

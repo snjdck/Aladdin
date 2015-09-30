@@ -8,6 +8,7 @@ package snjdck.agalc.arithmetic.rule
 		{
 			var ruleList:LexRuleList = new LexRuleList();
 			
+			ruleList.addRule(/vc\[.+?\](\.[xyzw]{1,4})?/, NodeType.REG_ID);
 			ruleList.addRule(/([a-z]{1,2})(\d{0,3})(?:\.([xyzw]{1,4}))?/, NodeType.REG_ID);
 			ruleList.addRule(/0|[1-9]\d*/, NodeType.NUM);
 			
@@ -18,6 +19,8 @@ package snjdck.agalc.arithmetic.rule
 			ruleList.addRule(/>/, NodeType.OP_GREATER);
 			ruleList.addRule(/<=/, NodeType.OP_LESS_EQUAL);
 			ruleList.addRule(/</, NodeType.OP_LESS);
+			
+			ruleList.addRule(/[+\-*/^]?=/, NodeType.OP_ASSIGN);
 			
 			ruleList.addRule(/\+/, NodeType.OP_ADD);
 			ruleList.addRule(/-/, NodeType.OP_SUB);

@@ -19,13 +19,34 @@ package snjdck.agalc.arithmetic.rule
 		
 		public function exec(input:String):Node
 		{
+			var result:Array = [];
+			var node:Node;
 			for each(var rule:LexRule in list){
-				var node:Node = rule.exec(input);
-				if(node){
-					return node;
+				node = rule.exec(input);
+				if(node != null){
+					result.push(node);
 				}
 			}
-			return null;
+			if(result.length <= 0){
+				return null;
+			}
+			if(result.length > 1){
+				result.sort(__sortNode);
+			}
+			return result[0];
+		}
+		
+		static private function __sortNode(left:Node, right:Node):int
+		{
+			var a:int = left.value.length;
+			var b:int = right.value.length;
+			if(a > b){
+				return -1;
+			}
+			if(a < b){
+				return 1;
+			}
+			return 0;
 		}
 	}
 }

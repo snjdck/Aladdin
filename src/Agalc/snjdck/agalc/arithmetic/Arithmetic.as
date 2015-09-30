@@ -10,11 +10,19 @@ package snjdck.agalc.arithmetic
 	public class Arithmetic implements IArithmetic
 	{
 		protected const nodeList:INodeList = new NodeList();
-		protected var ruleList:ILexRule;
+		private var ruleList:ILexRule;
 		
 		public function Arithmetic(ruleList:ILexRule)
 		{
 			this.ruleList = ruleList;
+		}
+		
+		public function parse(source:String):Node
+		{
+			Lexer.Parse(source, ruleList, nodeList);
+			var node:Node = expression();
+			nodeList.accept(NodeType.EOF);
+			return node;
 		}
 		
 		virtual public function expression():Node
