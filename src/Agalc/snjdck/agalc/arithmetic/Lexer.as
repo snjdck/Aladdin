@@ -24,9 +24,7 @@ package snjdck.agalc.arithmetic
 				}
 				
 				var node:Node = ruleList.exec(input.slice(index));
-				if(null == node){
-					node = NodeFactory.Create(NodeType.UNKNOW, char);
-				}
+				assert(node != null, input.slice(index));
 				outputNodeList.add(node);
 				
 				index += node.value.length;

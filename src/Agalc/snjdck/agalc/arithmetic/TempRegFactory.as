@@ -20,10 +20,13 @@ package snjdck.agalc.arithmetic
 		
 		public function isTempReg(reg:String):Boolean
 		{
-			var result:Boolean = true;
-			result &&= (reg.indexOf("t") == 1);
-			result &&= array.has(allRegs, reg.split(".")[0]);
-			return result;
+			if(null == reg){
+				return false;
+			}
+			if(reg.indexOf("t") != 1){
+				return false;
+			}
+			return array.has(allRegs, reg.split(".")[0]);
 		}
 		
 		public function hasValidTempReg():Boolean

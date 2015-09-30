@@ -60,6 +60,11 @@ package snjdck.agalc
 				case NodeType.REG_ID:
 				case NodeType.NUM:
 					return nodeList.next();
+				case NodeType.VAR_ID:
+					var result:Node = nodeList.next();
+					nodeList.accept(NodeType.COLON);
+					result.firstChild = readValueList(NodeType.EOF, equ);
+					return result;
 				case NodeType.PARENTHESES_LEFT:
 					nodeList.accept(NodeType.PARENTHESES_LEFT);
 					var val:Node = equ();

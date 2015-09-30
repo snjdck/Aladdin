@@ -81,7 +81,7 @@ package snjdck.agalc.arithmetic.node
 			return value;
 		}
 		
-		private function getC(a:String, b:String, regFactory:TempRegFactory):String
+		protected function getC(a:String, b:String, regFactory:TempRegFactory):String
 		{
 			if(regFactory.isTempReg(a)){
 				if(regFactory.isTempReg(b)){

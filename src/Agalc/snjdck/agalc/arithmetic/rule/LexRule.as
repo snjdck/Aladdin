@@ -19,7 +19,7 @@ package snjdck.agalc.arithmetic.rule
 		{
 			var result:Array = pattern.exec(input);
 			if(result && (0 == result.index)){
-				return NodeFactory.Create(nodeType, result[0]);
+				return NodeFactory.Create(nodeType, result[1] || result[0]);
 			}
 			return null;
 		}

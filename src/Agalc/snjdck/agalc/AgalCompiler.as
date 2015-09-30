@@ -11,7 +11,6 @@ package snjdck.agalc
 	
 	import snjdck.agalc.arithmetic.TempRegFactory;
 	
-	import string.execRegExp;
 	import string.removeSpace;
 	import string.trim;
 	
@@ -173,27 +172,23 @@ package snjdck.agalc
 		
 		private function writeToken(token:String):void
 		{
-			var test:Array = execRegExp(/(?:(.+\w)([+\-*\/]?)=)?(.+)/, token);
-			const dest:String = test[1];
-			const extraOp:String = test[2];
-			const rest:String = test[3];
-			
-			test = execRegExp(/(\w{3}):([^,]+)(?:,(.+))?/, rest);//函数
-			if(test){
-				writeTokenImp(test[1], dest, test[2], test[3]);
-			}else{
-				tempRegFactory.reset();
-				var codeList:Array = [];
-				arith.parse(token).visit(codeList, tempRegFactory);
-				for each(var code:Array in codeList){
-					lambda.apply(writeArithmetic, code);
-				}
+			tempRegFactory.reset();
+			var codeList:Array = [];
+			arith.parse(token).visit(codeList, tempRegFactory);
+			for each(var code:Array in codeList){
+				lambda.apply(writeArithmetic, code);
 			}
 		}
 		
 		private function writeArithmetic(symbol:String, dest:String, source1:String, source2:String=null):void
 		{
 			const info:Array = OpDict[symbol];
+			
+			if(null == info){
+				writeTokenImp(symbol, dest, source1, source2);
+				return;
+			}
+			
 			const op:String = info[0];
 			
 			if(info[1]){

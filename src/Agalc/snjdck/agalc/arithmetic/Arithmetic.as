@@ -60,26 +60,19 @@ package snjdck.agalc.arithmetic
 			return op;
 		}
 		
-		final protected function readValueList(startNodeType:NodeType, endNodeType:NodeType, readHandler:Function=null):Node
+		final protected function readValueList(endNodeType:NodeType, readHandler:Function):Node
 		{
-			readHandler ||= expression;
-			
-			var firstNode:Node;
-			nodeList.accept(startNodeType);
-			
-			if(!nodeList.expect(endNodeType))
-			{
-				firstNode = readHandler();
-				var currentNode:Node = firstNode;
-				while(!nodeList.expect(endNodeType))
-				{
-					nodeList.accept(NodeType.COMMA);
-					currentNode.nextSibling = readHandler();
-					currentNode = currentNode.nextSibling;
-				}
+			if(nodeList.expect(endNodeType)){
+				return null;
 			}
-			
-			nodeList.accept(endNodeType);
+			var firstNode:Node = readHandler();
+			var currentNode:Node = firstNode;
+			while(!nodeList.expect(endNodeType))
+			{
+				nodeList.accept(NodeType.COMMA);
+				currentNode.nextSibling = readHandler();
+				currentNode = currentNode.nextSibling;
+			}
 			return firstNode;
 		}
 		
