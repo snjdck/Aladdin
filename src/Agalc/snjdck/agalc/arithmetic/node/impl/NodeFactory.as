@@ -9,9 +9,6 @@ package snjdck.agalc.arithmetic.node.impl
 		{
 			switch(nodeType)
 			{
-				case NodeType.STRING:
-				case NodeType.NUM:
-					return new BaseValueNode(nodeType, nodeValue);
 				case NodeType.VAR_ID:
 					return new VarNode(nodeType, nodeValue);
 				case NodeType.OP_ASSIGN:
