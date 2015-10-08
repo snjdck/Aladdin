@@ -20,12 +20,6 @@ package snjdck.agalc.arithmetic.node.impl
 		override public function visit(output:Array, regFactory:TempRegFactory):String
 		{
 			var a:String = leftChild.visit(output, regFactory);
-			
-			if(value == "kil"){
-				output.push([value, null, a]);
-				return null;
-			}
-			
 			var b:String;
 			if(rightChild != null){
 				b = rightChild.visit(output, regFactory);

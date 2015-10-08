@@ -4,6 +4,21 @@ package snjdck.agalc
 
 	internal class Register
 	{
+		Init();
+		static private function Init():void
+		{
+			new Register("va", TYPE_Attribute);
+			new Register("fs", TYPE_Sampler);
+			new Register("vc", TYPE_Constant);
+			new Register("fc", TYPE_Constant);
+			new Register("vt", TYPE_Temporary);
+			new Register("ft", TYPE_Temporary);
+			new Register("v",  TYPE_Varying);
+			new Register("op", TYPE_Output);
+			new Register("oc", TYPE_Output);
+			new Register("od", TYPE_DepthOutput);
+		}
+		
 		static public const TYPE_Attribute		:uint = 0x0;	//va
 		static public const TYPE_Constant		:uint = 0x1;	//vc, fc
 		static public const TYPE_Temporary		:uint = 0x2;	//vt, ft

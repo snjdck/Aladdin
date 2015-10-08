@@ -23,67 +23,6 @@ package snjdck.agalc
 	 */
 	final public class AgalCompiler
 	{
-		new Register("va", Register.TYPE_Attribute);
-		new Register("fs", Register.TYPE_Sampler);
-		new Register("vc", Register.TYPE_Constant);
-		new Register("fc", Register.TYPE_Constant);
-		new Register("vt", Register.TYPE_Temporary);
-		new Register("ft", Register.TYPE_Temporary);
-		new Register("v",  Register.TYPE_Varying);
-		new Register("op", Register.TYPE_Output);
-		new Register("oc", Register.TYPE_Output);
-		new Register("od", Register.TYPE_DepthOutput);
-		
-		new Operation("mov", 0x00, 2);	//		=
-		new Operation("add", 0x01, 3);	//		+
-		new Operation("sub", 0x02, 3);	//		-
-		new Operation("mul", 0x03, 3);	//		*
-		new Operation("div", 0x04, 3);	//		/
-		new Operation("rcp", 0x05, 2);	//		1 / n
-		new Operation("min", 0x06, 3);
-		new Operation("max", 0x07, 3);
-		new Operation("frc", 0x08, 2);	//		source1 - floor(source1)
-		new Operation("sqt", 0x09, 2);	//		sqrt(source1)
-		new Operation("rsq", 0x0a, 2);	//		1 / sqrt(source1)
-		new Operation("pow", 0x0b, 3);	//		^
-		new Operation("log", 0x0c, 2);	//		log2(source1)
-		new Operation("exp", 0x0d, 2);	//		2 ^ n
-		new Operation("nrm", 0x0e, 2);
-		new Operation("sin", 0x0f, 2);
-		new Operation("cos", 0x10, 2);
-		new Operation("crs", 0x11, 3);
-		new Operation("dp3", 0x12, 3);
-		new Operation("dp4", 0x13, 3);
-		new Operation("abs", 0x14, 2);
-		new Operation("neg", 0x15, 2);	//		-n
-		new Operation("sat", 0x16, 2);	//		max(min(source1,1),0)
-		new Operation("m33", 0x17, 3);
-		new Operation("m44", 0x18, 3);
-		new Operation("m34", 0x19, 3);
-		
-		//version 2
-		new Operation("ddx", 0x1a, 2);
-		new Operation("ddy", 0x1b, 2);
-		new Operation("ife", 0x1c, 2);	//		Jump if source1 is equal to source2
-		new Operation("ine", 0x1d, 2);	//		Jump if source1 is not equal to source2
-		new Operation("ifg", 0x1e, 2);	//		Jump if source1 is greater or equal than source2
-		new Operation("ifl", 0x1f, 2);	//		Jump if source1 is less than source2
-		new Operation("els", 0x20, 0);	//		else
-		new Operation("eif", 0x21, 0);	//		End an if or else block
-		
-		/*
-		new Operation("rep", 0x24, 1);	//		repeat vt0.x
-		new Operation("erp", 0x25, 0);	//		end repeat
-		//*/
-		new Operation("ted", 0x26, 3);
-		new Operation("kil", 0x27, 1);
-		new Operation("tex", 0x28, 3);
-		new Operation("sge", 0x29, 3);	//		>=
-		new Operation("slt", 0x2a, 3);	//		<
-		new Operation("sgn", 0x2b, 2);	//		(sign) destination = (source1 < 0) ? (-1) : (source1 > 0 ? 1 : 0) - 不支持
-		new Operation("seq", 0x2c, 3);	//		==
-		new Operation("sne", 0x2d, 3);	//		!=
-		
 		static private const OpDict:Object = {
 			"+":["add"], "-":["sub"], "*":["mul"], "/":["div"], "^":["pow"],
 			"<":["slt"], ">":["slt",true],
@@ -210,14 +149,20 @@ package snjdck.agalc
 			}
 		}
 		
-		private function writeTokenImp(op:String, dest:String, source1:String, source2:String=null):void
+		private function writeTokenImp(opName:String, dest:String, source1:String, source2:String=null):void
 		{
 //			trace("---------",arguments.join(" "));
-			writer.writeOP(Operation.FetchByName(op).code);
-			parser.writeDestination(dest);
+			
+			var op:Operation = Operation.FetchByName(opName);
+			writer.writeOP(op.code);
+			if(op.flags & Operation.OP_NO_DEST){
+				parser.writeDestination(null);
+			}else{
+				parser.writeDestination(dest);
+			}
 			parser.writeSource(source1);
 			
-			if("tex" == op){
+			if(op.flags & Operation.OP_SPECIAL_TEX){
 				parser.writeSampler(source2);
 			}else{
 				parser.writeSource(source2);
