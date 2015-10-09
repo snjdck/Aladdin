@@ -9,7 +9,14 @@ EXIT_FRAME (Event, FP10+)
 RENDER (Event, only if stage.invalidate() is called in this frame)
 
 
-sdks\4.6.0\frameworks\libs\player
+PLAYER_VERSION = (
+	"1.0.0", "2.0.0", "3.0.0", "4.0.0", "5.0.0",
+	"6.0.0", "7.0.0", "8.0.0", "9.0.0", "10.0.0",
+	"10.2.0","10.3.0","11.0.0","11.1.0","11.2.0",
+	"11.3.0","11.4.0","11.5.0","11.6.0","11.7.0",
+	"11.8.0","11.9.0","12.0.0","13.0.0","14.0.0",
+	"15.0.0","16.0.0","17.0.0","18.0.0","19.0.0",
+)
 
 <![CDATA[
 	|-------------------------------------------------------------------|
@@ -64,11 +71,6 @@ sdks\4.6.0\frameworks\libs\player
 [ExcludeClass] 在智能提示中隐藏该类
 [Deprecated] 类已弃用
 
-asdoc：
-@throws 类名 描述
-
-arthropod air调试输出工具
-
 var myString:String = <![CDATA[第一行 第二行 第三行]]>;
 
 编程字体:
@@ -116,103 +118,11 @@ Respond
 -include-libraries "${flexlib}/libs/automation.swc" "${flexlib}/libs/automation_agent.swc"
 -include-libraries D:\AsWing.swc D:\greensock.swc
 
+[SWF(width=550, height=400, backgroundColor=0xFFFFFF, frameRate=24)]
 -keep-as3-metadata Inject
--defaults-css-url "default.css"
-
-debug=true|false | 是否可以进行调试
-debug-password string | 远程调试用，设置密码
--define=CONFIG::debugging,true 定义常量,如果需要多个常量,定义多次即可
--define=CONFIG::release,false 可以接受的值为boolean,string或number,也可以为在编译时可计算出值的表达式
--define=CONFIG::DEBUG,true -define=CONFIG::RELEASE,"!CONFIG::DEBUG"
--define=CONFIG::SHAOKAI,false
-
-You can use inline constants in ActionScript. 
-Boolean values can be used to conditionalize top-level definitions of functions, classes, and variables
-
-
-CONFIG::debugging {
-    // Execute debugging code here.
-}
-
-
-// compilers/MyButton.as
-package  {
-    import mx.controls.Button;
-
-    CONFIG::debugging
-    public class MyButton extends Button {    
-        public function MyButton() {
-            super();
-            // Set the label text to blue.
-            setStyle("color", 0x0000FF);
-        }
-    }
-
-    CONFIG::release
-    public class MyButton extends Button {    
-        public function MyButton() {
-            super();
-            // Set the label text to red.
-            setStyle("color", 0xFF0000);
-        }
-    }
-}
-
 -default-size 800 600
 -default-frame-rate 24
 -default-background-color 0xCCCCFF
-
--default-size 960 600 -default-frame-rate 30 -default-background-color 0x669900
-
-[SWF(width=550, height=400, backgroundColor=0xFFFFFF, frameRate=24)]
-[Embed(source="data.xml", mimeType="application/octet-stream")]
-[Embed("pic/1.png")]
-[Embed(source='SWFFileName.swf', symbol='symbolName')]
-[Embed(source='SWFFileName.swf#symbolName')]
-[Event(name="change", type="flash.events.Event")]
-
-
-asdoc(外部工具)
-工作目录
-${project_loc}
-自变量
--source-path [path] [...] #代码源文件根目录,如-source-path src
--doc-sources [path] [...] #输出src目录下所有源文件的doc文档,如-doc-sources src
--doc-classes [cls] [...] #输出类A,类B的doc文档,如-doc-classes com.A com.B
--exclude-sources [path] [...]
--exclude-classes [cls] [...]
--library-path [path] [...] #swc路径
-
-
-About the MIME type
-
-application/octet-stream 
-application/x-font 
-application/x-font-truetype 
-application/x-shockwave-flash 
-audio/mpeg 
-image/gif 
-image/jpeg 
-image/png 
-image/svg 
-image/svg-xml 
-
-
-
-
-		[Embed(source='../assets/MyriadWebProEmbed.swf', 
-            fontName='Myriad Web Pro'
-        )] 
-        private static var plainFont:Class;
-
-        [Embed(source='../assets/MyriadWebProEmbedWithFontSymbols.swf', 
-            fontName='Myriad Web Pro', 
-            fontStyle='italic'
-        )] 
-        private static var italicFont:Class;
-
-        [Embed(source='../assets/MyriadWebProEmbedWithFontSymbols.swf', 
-            fontName='Myriad Web Pro', 
-            fontWeight='bold'
-        )] 
-        private static var boldFont:Class;
+-inline
+-external-library-path
+-remove-dead-code
