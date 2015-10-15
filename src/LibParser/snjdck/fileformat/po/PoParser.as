@@ -11,7 +11,6 @@ package snjdck.fileformat.po
 			var result:Object = {};
 			var keyMode:Boolean = false;
 			var key:String;
-			
 			for each(var line:String in lineList){
 				line = trim(line);
 				if(line.indexOf("msgid") == 0){
@@ -31,7 +30,9 @@ package snjdck.fileformat.po
 				}else if(Boolean(key) && Boolean(value)){
 					result[key] = value;
 				}else{
-					trace(line);
+					if(null == value || value.length > 0){
+						trace(line);
+					}
 				}
 			}
 			return result;

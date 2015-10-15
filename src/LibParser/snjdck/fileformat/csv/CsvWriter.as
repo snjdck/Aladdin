@@ -53,6 +53,7 @@ package snjdck.fileformat.csv
 			var result:Array = [];
 			var valList:Array = [];
 			for each(var row:Array in list){
+				valList.length = 0;
 				for(var i:int=0, n:int=row.length; i<n; ++i){
 					valList[i] = CastVal(row[i]);
 				}
