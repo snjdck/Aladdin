@@ -13,7 +13,10 @@ package snjdck.fileformat.csv
 					if(null == result[column]){
 						result[column] = {};
 					}
-					result[column][key] = line[j];
+					var value:String = line[j];
+					if(Boolean(value)){
+						result[column][key] = value;
+					}
 				}
 			}
 			return result;
