@@ -14,18 +14,16 @@ package snjdck.fileformat.csv
 			}
 		}
 		
-		static public function PrintRepeatLines(list:Array):void
+		static public function PrintRepeatLines(list:Array, keyModifier:Function=null):void
 		{
-			ForEach(list, _PrintRepeatLines);
-		}
-		
-		static private function _PrintRepeatLines(column:Object, key:String, value:String):void
-		{
-			if(key in column){
-				trace(key);
-			}else{
-				column[key] = true;
-			}
+			ForEach(list, function(column:Object, key:String, value:String):void{
+				var newKey:String = (keyModifier != null) ? keyModifier(key) : key;
+				if(newKey in column){
+					trace(key);
+				}else{
+					column[newKey] = true;
+				}
+			});
 		}
 		
 		static private function ForEach(list:Array, handler:Function):Object
