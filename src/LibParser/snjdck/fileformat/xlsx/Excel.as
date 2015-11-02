@@ -14,7 +14,9 @@ package snjdck.fileformat.xlsx
 			var excel:Array = [];
 			var fileDict:Object = Zip.Parse(excelBytes);
 			var fileList:Array = GetFileList(XML(fileDict["xl/workbook.xml"]));
+			XML.ignoreWhitespace = false;
 			var strList:Array = GetStrList(XML(fileDict["xl/sharedStrings.xml"]));
+			XML.ignoreWhitespace = true;
 			
 			for(var i:int=0; i<fileList.length; ++i)
 			{
@@ -44,7 +46,7 @@ package snjdck.fileformat.xlsx
 			var ns:Namespace = sharedStrings.namespace();
 			for each(var si:XML in sharedStrings.ns::si){
 				var text:String = "";
-				for each(var t:XML in si.ns::t){
+				for each(var t:XML in si..ns::t){
 					text += t.toString();
 				}
 				strList.push(text);
