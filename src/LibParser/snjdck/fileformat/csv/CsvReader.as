@@ -34,6 +34,9 @@ package snjdck.fileformat.csv
 			for(var i:int=1, n:int=list.length; i<n; ++i){
 				var line:Array = list[i];
 				var key:String = line[0];
+				if(!Boolean(key)){
+					continue;
+				}
 				for(var j:int=1, m:int=line.length; j<m; ++j){
 					var column:String = list[0][j];
 					if(null == result[column]){
