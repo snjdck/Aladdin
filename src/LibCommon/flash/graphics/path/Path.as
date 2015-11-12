@@ -33,8 +33,8 @@ package flash.graphics.path
 			return path;
 		}
 		
-		public var commands:Vector.<int>;
-		public var data:Vector.<Number>;
+		private var commands:Vector.<int>;
+		private var data:Vector.<Number>;
 		public var winding:String;
 		
 		public function Path(commands:Vector.<int>=null, data:Vector.<Number>=null)

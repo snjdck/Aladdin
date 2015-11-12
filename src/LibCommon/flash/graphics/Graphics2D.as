@@ -1,9 +1,6 @@
 package flash.graphics
 {
-	import flash.display.BitmapData;
 	import flash.display.Graphics;
-	import flash.geom.Matrix;
-	import flash.geom.Rectangle;
 	
 	final public class Graphics2D
 	{
