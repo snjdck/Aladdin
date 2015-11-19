@@ -72,10 +72,13 @@ package snjdck.gpu
 		{
 			var ctx:Context3D = stage3d.context3D;
 			ctx.enableErrorChecking = enableErrorChecking;
-			trace(ctx.driverInfo);
+			var isFirstTime:Boolean = (null == context3d);
 			context3d = new GpuContext(ctx);
 			onDeviceLost();
-			Clock.getInstance().add(this);
+			if(isFirstTime){
+				GpuInfo.Init(ctx.profile, ctx.driverInfo);
+				Clock.getInstance().add(this);
+			}
 		}
 		
 		private function onDeviceLost():void
