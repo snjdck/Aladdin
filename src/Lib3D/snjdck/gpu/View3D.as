@@ -4,6 +4,7 @@ package snjdck.gpu
 	import flash.display.Stage3D;
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DCompareMode;
+	import flash.display3D.Context3DProfile;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
@@ -54,7 +55,12 @@ package snjdck.gpu
 //			stage2d.addEventListener(Event.RESIZE, __onResize);
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
-			stage3d.requestContext3D();
+			
+			var profileList:Vector.<String> = new Vector.<String>();
+			profileList.push(Context3DProfile.STANDARD_EXTENDED);
+			profileList.push(Context3DProfile.BASELINE_EXTENDED);
+			profileList.push(Context3DProfile.BASELINE);
+			stage3d.requestContext3DMatchingProfiles(profileList);
 		}
 		
 		public function set backgroundColor(color:uint):void
