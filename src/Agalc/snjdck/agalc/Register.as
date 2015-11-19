@@ -17,6 +17,7 @@ package snjdck.agalc
 			new Register("op", TYPE_Output);
 			new Register("oc", TYPE_Output);
 			new Register("od", TYPE_DepthOutput);
+			new Register("iid",TYPE_InstanceID);
 		}
 		
 		static public const TYPE_Attribute		:uint = 0x0;	//va
@@ -26,6 +27,7 @@ package snjdck.agalc
 		static public const TYPE_Varying		:uint = 0x4;	//v
 		static public const TYPE_Sampler		:uint = 0x5;	//fs
 		static public const TYPE_DepthOutput	:uint = 0x6;	//fd
+		static public const TYPE_InstanceID		:uint = 0x7;	//iid
 		
 		static public function FetchByName(name:String):Register
 		{

@@ -20,6 +20,7 @@ package snjdck.agalc
 	 * 读取临时寄存器之前必须先写入
 	 * v在顶点程序中为只写,在片段程序中为只读
 	 * vc才能使用间接寻址,即使fc也不行!
+	 * iid为顶点程序只读
 	 */
 	final public class AgalCompiler
 	{
@@ -30,8 +31,6 @@ package snjdck.agalc
 			"==":["seq"], "!=":["sne"],
 			"=":["mov"]
 		};
-		
-		static private const SlotPattern:RegExp = /([a-z]{1,2})(\d{0,3})(?:\.([xyzw]{1,4}))?/;
 		
 		private var writer:AgalByteWriter;
 		private var parser:AgalCodeWriter;

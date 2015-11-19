@@ -8,7 +8,7 @@ package snjdck.agalc
 	
 	internal class AgalCodeWriter
 	{
-		static private const SlotPattern:RegExp = /^([a-z]{1,2})(\d{0,3})(?:|\.([xyzw]{1,4}))$/;
+		static private const SlotPattern:RegExp = /^([a-z]{1,3})(\d{0,3})(?:|\.([xyzw]{1,4}))$/;
 		
 		private var writer:AgalByteWriter;
 		

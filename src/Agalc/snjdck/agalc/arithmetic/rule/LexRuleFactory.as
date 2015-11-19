@@ -11,7 +11,7 @@ package snjdck.agalc.arithmetic.rule
 			ruleList.addRule(/([a-z]\w{2}):/, NodeType.VAR_ID);
 			ruleList.addRule(/fs\d{1,2}<[,\w]+>/, NodeType.REG_ID);
 			ruleList.addRule(/vc\[[^\]]+\](?:\.[xyzw]{1,4})?/, NodeType.REG_ID);
-			ruleList.addRule(/(?:va|fs|vc|fc|vt|ft|v|op|oc|od)\d{0,3}(?:\.[xyzw]{1,4})?/, NodeType.REG_ID);
+			ruleList.addRule(/[a-z]{1,3}\d{0,3}(?:\.[xyzw]{1,4})?/, NodeType.REG_ID);
 			ruleList.addRule(/0|[1-9]\d*/, NodeType.NUM);
 			
 			ruleList.addRule(/==/, NodeType.OP_EQUAL);
