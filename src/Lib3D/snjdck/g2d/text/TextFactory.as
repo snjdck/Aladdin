@@ -79,21 +79,20 @@ package snjdck.g2d.text
 					case "\r":
 					case "\t":
 					case " ":
-						break;
-					default:
-						if(charDict.hasOwnProperty(char) || has(charList, char)){
-							break;
-						}
-						tf.appendText(char);
-						if(tf.textWidth > textureWidth - nextX){
-							tf.removeLastChar();
-							generateChar();
-							nextX = 0;
-							nextY += tf.textHeight;
-							tf.setText(char);
-						}
-						charList.push(char);
+						continue;
 				}
+				if(charDict.hasOwnProperty(char) || has(charList, char)){
+					continue;
+				}
+				tf.appendText(char);
+				if(tf.textWidth > textureWidth - nextX){
+					tf.removeLastChar();
+					generateChar();
+					nextX = 0;
+					nextY += tf.textHeight;
+					tf.setText(char);
+				}
+				charList.push(char);
 			}
 			generateChar();
 		}
