@@ -230,13 +230,9 @@ package snjdck.gpu.asset
 			context3d.setTextureAt(slotIndex, texture.getRawGpuAsset(context3d));
 		}
 		
-		public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1, numInstances:int=1):void
+		public function drawTriangles(indexBuffer:GpuIndexBuffer, firstIndex:int=0, numTriangles:int=-1):void
 		{
-			if(numInstances > 1){
-				context3d["drawTrianglesInstanced"](indexBuffer.getRawGpuAsset(context3d), numInstances, firstIndex, numTriangles);
-			}else{
-				context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d), firstIndex, numTriangles);
-			}
+			context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d), firstIndex, numTriangles);
 		}
 		
 		public function isVaSlotInUse(slotIndex:int):Boolean
