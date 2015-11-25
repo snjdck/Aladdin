@@ -48,12 +48,12 @@ package snjdck.g2d.text
 			var charInfo:CharInfo = pool.getObjectOut();
 			charInfo.uv = info;
 			
-			if(offsetX + charInfo.width > label.width){
+			if(offsetX + label.fontSize > label.width){
 				pushNewline();
 			}
 			label._numLines = numRows + 1;
 			label._maxScrollV = numRows + 1 - label.visibleLines;
-			if(offsetY + charInfo.height > label.height){
+			if(offsetY + label.fontSize > label.height){
 				pool.setObjectIn(charInfo);
 			}else{
 				label._bottomScrollV = numRows;
@@ -67,7 +67,7 @@ package snjdck.g2d.text
 				charInfo.y = offsetY;
 				list.push(charInfo);
 			}
-			offsetX += charInfo.width;
+			offsetX += label.fontSize;
 		}
 		
 		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void

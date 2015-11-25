@@ -1,6 +1,8 @@
 package snjdck.g2d.text.drawer
 {
 	import flash.display.BitmapData;
+	import flash.filters.BitmapFilterType;
+	import flash.filters.GradientGlowFilter;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
@@ -9,6 +11,8 @@ package snjdck.g2d.text.drawer
 
 	public class TextDrawer
 	{
+		static public const FontSize:int = 16;
+		
 		private const matrix:Matrix = new Matrix();
 		private var tf:TextField;
 		
@@ -16,7 +20,10 @@ package snjdck.g2d.text.drawer
 		{
 			tf = new TextField();
 			tf.autoSize = TextFieldAutoSize.LEFT;
-			tf.defaultTextFormat = new TextFormat("宋体", 16, 0xFF0000);
+			tf.defaultTextFormat = new TextFormat("宋体", FontSize, 0xFFFFFF);
+			tf.filters = [
+				new GradientGlowFilter(0, 0, [0, 0xFFFFFF], [0, 1], [0, 128], 2, 2, 1, 1, BitmapFilterType.OUTER)
+			];
 		}
 		
 		public function clear():void
@@ -63,6 +70,7 @@ package snjdck.g2d.text.drawer
 		public function getCharBoundaries(charIndex:int):Rectangle
 		{
 			var rect:Rectangle = tf.getCharBoundaries(charIndex);
+			rect.width = rect.height;
 			rect.offset(-2, -2);
 			return rect;
 		}
@@ -71,7 +79,7 @@ package snjdck.g2d.text.drawer
 		{
 			matrix.tx = offsetX - 2;
 			matrix.ty = offsetY - 2;
-			output.draw(tf, matrix);
+			output.draw(tf, matrix, null, null, null, true);
 		}
 	}
 }

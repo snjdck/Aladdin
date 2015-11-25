@@ -6,6 +6,7 @@ package snjdck.g2d.text
 	import matrix33.toBuffer;
 	
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.text.drawer.TextDrawer;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
@@ -29,6 +30,7 @@ package snjdck.g2d.text
 		
 		public function TextRenderEx()
 		{
+			constData[13] = TextDrawer.FontSize / TextFactory.TextureSize;
 			constData[14] = 0;
 			constData[15] = 1;
 		}
@@ -99,10 +101,9 @@ package snjdck.g2d.text
 			matrix33.toBuffer(worldMatrix, constData, 4);
 		}
 		
-		public function drawText(context3d:GpuContext, charList:CharInfoList):void
+		public function drawText(context3d:GpuContext, charList:CharInfoList, fontSize:int):void
 		{
-			constData[12] = 16;
-			constData[13] = 2048;
+			constData[12] = fontSize;
 			
 			var nn:int = 124;
 			var quadCount:int = charList.charCount;

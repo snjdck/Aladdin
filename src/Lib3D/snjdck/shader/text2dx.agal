@@ -1,18 +1,30 @@
 #vc0 projection
 #vc1 world transform for x
 #vc2 world transform for y
-#vc3 charW, textureW, 0, 1
+#vc3 fontW, charW, 0, 1
 
 #vc[va0.z+4] x, y, ux, uy
 
+#Signed Distance Fields
+
 @text2dx
-vt0.xy = va0 * vc3.x
-vt0 = vt0.xyxy + vc[va0.z+4]
-v0 = vt0.zw / vc3.y
+vt0 = va0.xyxy * vc3.xxyy
+vt0 += vc[va0.z+4]
+v0 = vt0.zw
 vt0.zw = vc3
 
 ${mvp2d.vs}
 
 ft0 = tex: v0, fs0<2d,linear,clamp>
+
+ft0.y = ft0.x - fc1.x
+ft0.y /= fc1.y
+ft0.y = sat: ft0.y
+ft0.z = ft0.y * ft0.y #x*x
+ft0.w = fc1.z * ft0.y #2*x
+ft0.w = fc1.w - ft0.w #3-2x
+ft0.w *= ft0.z		  #x*x*(3-2x)
+
 ft0.xyz = fc0
+ft0.w *= fc0
 oc = ft0

@@ -14,12 +14,12 @@ package snjdck.g2d.text
 		
 		public function CharInfo(){}
 		
-		public function get uvX():int
+		public function get uvX():Number
 		{
 			return uv.x;
 		}
 		
-		public function get uvY():int
+		public function get uvY():Number
 		{
 			return uv.y;
 		}
