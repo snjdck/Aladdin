@@ -20,7 +20,7 @@ package snjdck.g2d.text
 		
 		protected var charList:CharInfoList;
 		private var _text:String = "";
-		public var fontSize:int = 16;
+		private var _fontSize:int;
 		
 		public var selectable:Boolean;
 		
@@ -31,12 +31,20 @@ package snjdck.g2d.text
 		
 		public function Label()
 		{
+			_fontSize = 12;
 			charList = new CharInfoList(this);
 			width = 100;
 			height = 100;
 			textColor[0] = 1;
 			textColor[1] = 1;
 			textColor[2] = 1;
+			textColor[3] = 1;
+			var smooth:Number = 1/16;//0-4
+			var buffer:Number = 0.5; //0.1 - 0.7
+			textColor[4] = buffer - smooth;
+			textColor[5] = smooth + smooth;
+			textColor[6] = 2;
+			textColor[7] = 3;
 		}
 		
 		public function get visibleLines():int
@@ -67,6 +75,20 @@ package snjdck.g2d.text
 			}
 			notify(Event.CHANGE, null);
 		}
+		
+		public function get fontSize():int
+		{
+			return _fontSize;
+		}
+		
+		public function set fontSize(value:int):void
+		{
+			if(_fontSize == value){
+				return;
+			}
+			_fontSize = value;
+			text = _text;
+		}
 
 		override public function hasVisibleArea():Boolean
 		{
@@ -80,19 +102,20 @@ package snjdck.g2d.text
 			}
 			
 			context3d.save();
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
+//			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
+			context3d.program = AssetMgr.Instance.getProgram("text2dx");
 			
 			context3d.setFc(0, textColor);
-			TextRender.Instance.prepareVc(render2d, prevWorldMatrix);
+			TextRenderEx.Instance.prepareVc(render2d, prevWorldMatrix);
 			
 			textFactory.setTexture(context3d);
-			TextRender.Instance.drawText(context3d, charList);
+			TextRenderEx.Instance.drawText(context3d, charList, fontSize);
 			
 			context3d.restore();
 			QuadRender.Instance.drawBegin(context3d);
 		}
 		
-		private const textColor:Vector.<Number> = new Vector.<Number>(4, true);
+		private const textColor:Vector.<Number> = new Vector.<Number>(8, true);
 		
 		public function get scrollV():int
 		{

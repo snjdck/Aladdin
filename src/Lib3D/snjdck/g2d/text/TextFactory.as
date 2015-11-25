@@ -13,8 +13,7 @@ package snjdck.g2d.text
 
 	internal class TextFactory
 	{
-		static public const textureWidth:int = 2048;
-		static public const textureHeiht:int = 2048;
+		static public const TextureSize:int = 2048;
 		
 		private const tf:TextDrawer = new TextDrawer();
 		
@@ -30,9 +29,18 @@ package snjdck.g2d.text
 		
 		public function TextFactory()
 		{
-			texture = new BitmapData(textureWidth, textureHeiht, true, 0);
-			getDefinitionByName("TestText").app.addChild(new Bitmap(texture));
+			texture = new BitmapData(TextureSize, TextureSize, true, 0);
+			var t = getDefinitionByName("TestText").app.addChild(new Bitmap(texture));
+			t.scaleX = t.scaleY = 3;
 			gpuTexture = new GpuTexture(texture.width, texture.height);
+		}
+		
+		private function init():void
+		{
+			for(var i:int=0x21; i<0x7F; ++i){
+				tf.appendText(String.fromCharCode(i, 0x20));
+			}
+			isTextureDirty = true;
 		}
 		
 		public function setTexture(context3d:GpuContext):void
@@ -85,7 +93,7 @@ package snjdck.g2d.text
 					continue;
 				}
 				tf.appendText(char);
-				if(tf.textWidth > textureWidth - nextX){
+				if(tf.textWidth > TextureSize - nextX){
 					tf.removeLastChar();
 					generateChar();
 					nextX = 0;
@@ -108,6 +116,8 @@ package snjdck.g2d.text
 			for(var i:int=0; i<charCount; ++i){
 				var charInfo:Rectangle = tf.getCharBoundaries(i);
 				charInfo.offset(nextX, nextY);
+				charInfo.x /= TextureSize;
+				charInfo.y /= TextureSize;
 				charDict[charList[i]] = charInfo;
 			}
 			
