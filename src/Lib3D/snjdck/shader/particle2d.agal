@@ -34,3 +34,33 @@ v1 = va2
 
 ft0 = tex: v0, fs0<2d,linear,clamp>
 oc = ft0 * v1
+
+@particle2dx
+
+vt3.x = va0.z + va0.z
+v1  = vc[vt3.x+5]
+vt3 = vc[vt3.x+4]
+
+vt0 = va0 - vc3.zzww		#pivot
+vt0.z = vc3.w
+vt1 = vt3.zzww
+
+vt1.xy *= vc3.xy
+vt1.z = sin: vt1.z
+vt1.w = cos: vt1.w
+
+vt2.zw = vt1.xxxy * vt1.zzzw
+vt1.z = neg: vt1.z
+vt2.xy = vt1.xy * vt1.wz
+
+vt1.x = dp3: vt0, vt2.xy	#rotation
+vt1.y = dp3: vt0, vt2.zw
+
+vt0.xy = vt1.xy + vt3.xy	#translation
+
+${mvp2d.vs}
+
+v0 = va0
+
+ft0 = tex: v0, fs0<2d,linear,clamp>
+oc = ft0 * v1
