@@ -9,6 +9,7 @@ package snjdck.g2d.particlesystem
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.gpu.render.instance.InstanceRender;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
@@ -75,6 +76,8 @@ package snjdck.g2d.particlesystem
 		internal const mEndColor:GpuColor = new GpuColor();                    // finishColor
 		internal const mEndColorVariance:GpuColor = new GpuColor();            // finishColorVariance
 		
+		private var particleInstanceData:ParticleInstanceData;
+		
 		public function ParticleSystem(config:XML, texture:IGpuTexture)
 		{
 			ParticleSystemSetter.Reset(this, config);
@@ -83,6 +86,8 @@ package snjdck.g2d.particlesystem
 			mParticles = new Vector.<Particle>();
 			mEmissionTime = Number.MAX_VALUE;
 			mFrameTime = 0;
+			
+			particleInstanceData = new ParticleInstanceData(mParticles, texture);
 		}
 		
 		private function advanceParticle(particle:Particle, passedTime:Number):void
@@ -104,9 +109,9 @@ package snjdck.g2d.particlesystem
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.PARTICLE_2D);
 			context3d.blendMode = blendMode;
 			context3d.texture = mTexture;
-			
-			ParticleRender.Instance.prepareVc(render2d, prevWorldMatrix, mTexture);
-			ParticleRender.Instance.drawParticles(context3d, mParticles, mNumParticles);
+			particleInstanceData.numParticles = mNumParticles;
+			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
+			InstanceRender.Instance.draw(context3d, particleInstanceData);
 			
 //			context3d.blendMode = prevBlendMode;
 //			context3d.program = prevProgram;

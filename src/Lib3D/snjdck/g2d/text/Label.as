@@ -7,6 +7,7 @@ package snjdck.g2d.text
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.instance.InstanceRender;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
@@ -29,6 +30,8 @@ package snjdck.g2d.text
 		ns_g2d var _maxScrollV:int;
 		ns_g2d var _numLines:int;
 		
+		private var textInstanceData:TextInstanceData;
+		
 		public function Label()
 		{
 			_fontSize = 12;
@@ -45,6 +48,8 @@ package snjdck.g2d.text
 			textColor[5] = smooth + smooth;
 			textColor[6] = 2;
 			textColor[7] = 3;
+			
+			textInstanceData = new TextInstanceData(charList);
 		}
 		
 		public function get visibleLines():int
@@ -88,6 +93,7 @@ package snjdck.g2d.text
 			}
 			_fontSize = value;
 			text = _text;
+			textInstanceData.fontSize = value;
 		}
 
 		override public function hasVisibleArea():Boolean
@@ -106,10 +112,10 @@ package snjdck.g2d.text
 			context3d.program = AssetMgr.Instance.getProgram("text2dx");
 			
 			context3d.setFc(0, textColor);
-			TextRenderEx.Instance.prepareVc(render2d, prevWorldMatrix);
+			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
 			
 			textFactory.setTexture(context3d);
-			TextRenderEx.Instance.drawText(context3d, charList, fontSize);
+			InstanceRender.Instance.draw(context3d, textInstanceData);
 			
 			context3d.restore();
 			QuadRender.Instance.drawBegin(context3d);
