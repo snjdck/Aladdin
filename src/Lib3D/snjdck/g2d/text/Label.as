@@ -108,8 +108,7 @@ package snjdck.g2d.text
 			}
 			
 			context3d.save();
-//			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
-			context3d.program = AssetMgr.Instance.getProgram("text2dx");
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
 			
 			context3d.setFc(0, textColor);
 			textFactory.setTexture(context3d);
