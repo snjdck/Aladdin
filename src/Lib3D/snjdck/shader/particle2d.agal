@@ -3,60 +3,34 @@
 #vc2 world transform for y
 #vc3 textureWidth, textureHeight, 0.5, 0
 
-#va1 x, y, scale, rotation
-#va2 color
-
 #vt0 position
 #vt1 tw*scale,th*scale,sin(rotation),cos(rotation)
+#vt2 w*cos,-h*sin,w*sin,h*cos
+#vt3 x, y, scale, rotation
+#v0 uv
+#v1 color
 
 @particle2d
-
-vt0 = va0 - vc3.zzww		#pivot
-vt1 = va1.zzww
-
-vt1.xy *= vc3.xy
-vt1.z = sin: vt1.z
-vt1.w = cos: vt1.w
-
-vt2.zw = vt1.xxxy * vt1.zzzw
-vt1.z = neg: vt1.z
-vt2.xy = vt1.xy * vt1.wz
-
-vt1.x = dp3: vt0, vt2.xy	#rotation
-vt1.y = dp3: vt0, vt2.zw
-
-vt0.xy = vt1.xy + va1.xy	#translation
-
-${mvp2d.vs}
-
-v0 = va0
-v1 = va2
-
-ft0 = tex: v0, fs0<2d,linear,clamp>
-oc = ft0 * v1
-
-@particle2dx
 
 vt3.x = va0.z + va0.z
 v1  = vc[vt3.x+5]
 vt3 = vc[vt3.x+4]
 
-vt0 = va0 - vc3.zzww		#pivot
+vt0.xyw = va0 - vc3.zzww	#pivot
 vt0.z = vc3.w
-vt1 = vt3.zzww
 
-vt1.xy *= vc3.xy
-vt1.z = sin: vt1.z
-vt1.w = cos: vt1.w
+vt1.xy = vc3.xy * vt3.z
+vt1.z = sin: vt3.w
+vt1.w = cos: vt3.w
 
 vt2.zw = vt1.xxxy * vt1.zzzw
 vt1.z = neg: vt1.z
 vt2.xy = vt1.xy * vt1.wz
 
-vt1.x = dp3: vt0, vt2.xy	#rotation
-vt1.y = dp3: vt0, vt2.zw
+vt1 = vt2 * vt0.xyxy		#rotation
+vt0.xy = vt1.xz + vt1.yw
 
-vt0.xy = vt1.xy + vt3.xy	#translation
+vt0.xy += vt3				#translation
 
 ${mvp2d.vs}
 
