@@ -49,7 +49,7 @@ package snjdck.g2d.text
 			textColor[6] = 2;
 			textColor[7] = 3;
 			
-			textInstanceData = new TextInstanceData(charList);
+			textInstanceData = new TextInstanceData(charList, _fontSize);
 		}
 		
 		public function get visibleLines():int
@@ -112,9 +112,9 @@ package snjdck.g2d.text
 			context3d.program = AssetMgr.Instance.getProgram("text2dx");
 			
 			context3d.setFc(0, textColor);
-			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
-			
 			textFactory.setTexture(context3d);
+			
+			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
 			InstanceRender.Instance.draw(context3d, textInstanceData);
 			
 			context3d.restore();

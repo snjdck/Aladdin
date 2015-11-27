@@ -99,10 +99,10 @@ package snjdck.gpu.render.instance
 		
 		public function draw(context3d:GpuContext, instanceData:IInstanceData):void
 		{
-			const numRegisterPerInstance:int = instanceData.numRegisterPerInstance;
-			const instanceCountPerBatch:int = (MAX_VC_COUNT - RESERVE_VC_COUNT) / numRegisterPerInstance;
-			const totalInstanceCount:int = instanceData.numInstances;
-			const batchCount:int = Math.ceil(totalInstanceCount / instanceCountPerBatch);
+			var numRegisterPerInstance:int = instanceData.numRegisterPerInstance;
+			var instanceCountPerBatch:int = (MAX_VC_COUNT - RESERVE_VC_COUNT) / numRegisterPerInstance;
+			var totalInstanceCount:int = instanceData.numInstances;
+			var batchCount:int = Math.ceil(totalInstanceCount / instanceCountPerBatch);
 			adjustData(Math.min(totalInstanceCount, instanceCountPerBatch));
 			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
 			instanceData.initConstData(constData);

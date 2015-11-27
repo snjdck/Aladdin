@@ -7,9 +7,10 @@ package snjdck.g2d.text
 		private var charList:CharInfoList;
 		public var fontSize:int;
 		
-		public function TextInstanceData(charList:CharInfoList)
+		public function TextInstanceData(charList:CharInfoList, fontSize:int)
 		{
 			this.charList = charList;
+			this.fontSize = fontSize;
 		}
 		
 		public function get numRegisterPerInstance():int
