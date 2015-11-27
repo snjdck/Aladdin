@@ -1,4 +1,4 @@
-package snjdck.gpu.support
+package snjdck.gpu.render.batch
 {
 	import flash.display3D.Context3DVertexBufferFormat;
 	
