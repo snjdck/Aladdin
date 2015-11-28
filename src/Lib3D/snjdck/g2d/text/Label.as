@@ -5,6 +5,7 @@ package snjdck.g2d.text
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
+	import snjdck.g2d.text.drawer.TextDrawer;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.instance.InstanceRender;
@@ -42,10 +43,6 @@ package snjdck.g2d.text
 			textColor[1] = 1;
 			textColor[2] = 1;
 			textColor[3] = 1;
-			var smooth:Number = 1/16;//0-4
-			var buffer:Number = 0.5; //0.1 - 0.7
-			textColor[4] = buffer - smooth;
-			textColor[5] = smooth + smooth;
 			textColor[6] = 2;
 			textColor[7] = 3;
 			
@@ -109,6 +106,11 @@ package snjdck.g2d.text
 			
 			context3d.save();
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
+			
+			var smooth:Number = TextDrawer.FONT_SIZE / (_fontSize * TextDrawer.spread);
+			var buffer:Number = 0.80; //0.1 - 0.7
+			textColor[4] = buffer - smooth;
+			textColor[5] = smooth + smooth;
 			
 			context3d.setFc(0, textColor);
 			textFactory.setTexture(context3d);

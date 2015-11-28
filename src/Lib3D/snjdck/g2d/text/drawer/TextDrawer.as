@@ -1,8 +1,6 @@
 package snjdck.g2d.text.drawer
 {
 	import flash.display.BitmapData;
-	import flash.filters.BitmapFilterType;
-	import flash.filters.GradientGlowFilter;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
@@ -11,19 +9,23 @@ package snjdck.g2d.text.drawer
 
 	public class TextDrawer
 	{
-		static public const FontSize:int = 16;
+		static public const FONT_SIZE:int = 32;
 		
 		private const matrix:Matrix = new Matrix();
 		private var tf:TextField;
+		private var format:TextFormat;
+		private var sdf:SignedDistanceField;
+		static public const spread:Number = 4;
 		
 		public function TextDrawer()
 		{
 			tf = new TextField();
 			tf.autoSize = TextFieldAutoSize.LEFT;
-			tf.defaultTextFormat = new TextFormat("宋体", FontSize, 0xFFFFFF);
-			tf.filters = [
-				new GradientGlowFilter(0, 0, [0, 0xFFFFFF], [0, 1], [0, 128], 2, 2, 1, 1, BitmapFilterType.OUTER)
-			];
+			format = new TextFormat("宋体", FONT_SIZE - spread * 2, 0xFFFFFF);
+			format.letterSpacing = spread;
+			tf.defaultTextFormat = format;
+			
+			sdf = new SignedDistanceField(spread);
 		}
 		
 		public function clear():void
@@ -47,16 +49,6 @@ package snjdck.g2d.text.drawer
 			tf.replaceText(index-1, index, "");
 		}
 		
-		
-		/*
-		public function insertText(index:int, value:String):void
-		{
-			if(index < 0){
-				index += tf.text.length;
-			}
-			tf.replaceText(index, index, value);
-		}
-		//*/
 		public function setText(value:String):void
 		{
 			tf.text = value;
@@ -70,16 +62,33 @@ package snjdck.g2d.text.drawer
 		public function getCharBoundaries(charIndex:int):Rectangle
 		{
 			var rect:Rectangle = tf.getCharBoundaries(charIndex);
-			rect.width = rect.height;
+			rect.width = rect.height = FONT_SIZE;
 			rect.offset(-2, -2);
+			trace(rect.x, rect.y, rect.width, format.size);
+			rect.x *= FONT_SIZE / int(format.size+format.letterSpacing);
+			rect.y *= FONT_SIZE / int(format.size+format.letterSpacing);
+			trace(rect.x, rect.y, rect.width, format.size);
 			return rect;
 		}
 		
 		public function draw(output:BitmapData, offsetX:int, offsetY:int):void
 		{
-			matrix.tx = offsetX - 2;
-			matrix.ty = offsetY - 2;
-			output.draw(tf, matrix, null, null, null, true);
+//			matrix.a = matrix.d = 1;
+			matrix.tx = matrix.ty = spread - 2;
+			var bmd:BitmapData = new BitmapData(spread * 2 + tf.textWidth, spread * 2 + tf.textHeight, false, 0);
+			trace(bmd.width, bmd.height);
+			bmd.draw(tf, matrix);
+			
+			var newBmd:BitmapData = sdf.gen(bmd);
+			
+//			matrix.a = matrix.d = 0.5;
+			matrix.tx = offsetX;
+			matrix.ty = offsetY;
+			output.draw(newBmd, matrix, null, null, null, true);
+//			output.draw(tf);
+			
+			bmd.dispose();
+			newBmd.dispose();
 		}
 	}
 }
