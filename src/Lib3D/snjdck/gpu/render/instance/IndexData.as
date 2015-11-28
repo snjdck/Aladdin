@@ -25,8 +25,8 @@ package snjdck.gpu.render.instance
 		
 		private function adjustData(quadCount:int):void
 		{
-			indexData.length = quadCount * 6;
 			var offset:int = indexData.length;
+			indexData.length = quadCount * 6;
 			for(var i:int=maxQuadCount; i<quadCount; ++i){
 				var index:int = i << 2;
 				indexData[offset++] = index;
