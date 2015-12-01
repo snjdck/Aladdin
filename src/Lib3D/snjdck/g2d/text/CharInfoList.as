@@ -67,7 +67,7 @@ package snjdck.g2d.text
 				charInfo.y = offsetY;
 				list.push(charInfo);
 			}
-			offsetX += label.fontSize;
+			offsetX += charInfo.width;
 		}
 		
 		public function calcPosition(text:String, caretIndex:int, maxWidth:int, result:Point):void

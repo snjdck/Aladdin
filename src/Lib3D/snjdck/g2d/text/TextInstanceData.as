@@ -1,12 +1,12 @@
 package snjdck.g2d.text
 {
-	import snjdck.g2d.text.drawer.TextDrawer;
 	import snjdck.gpu.render.instance.IInstanceData;
 
 	internal class TextInstanceData implements IInstanceData
 	{
 		private var charList:CharInfoList;
 		public var fontSize:int;
+		public var textureSize:int;
 		
 		public function TextInstanceData(charList:CharInfoList, fontSize:int)
 		{
@@ -27,7 +27,7 @@ package snjdck.g2d.text
 		public function initConstData(constData:Vector.<Number>):void
 		{
 			constData[12] = fontSize;
-			constData[13] = TextDrawer.FONT_SIZE / TextFactory.TextureSize;
+			constData[13] = fontSize / textureSize;
 			constData[14] = 0;
 			constData[15] = 1;
 		}

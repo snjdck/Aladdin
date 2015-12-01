@@ -1,11 +1,6 @@
 package snjdck.g2d.text
 {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.geom.Rectangle;
-	import flash.utils.getDefinitionByName;
-	
-	import array.has;
 	
 	import snjdck.g2d.text.drawer.TextDrawer;
 	import snjdck.gpu.asset.GpuContext;
@@ -13,34 +8,40 @@ package snjdck.g2d.text
 
 	internal class TextFactory
 	{
-		static public const TextureSize:int = 2048;
+		static private const MAX_TEXTURE_SIZE:int = 2048;
 		
-		private const tf:TextDrawer = new TextDrawer();
-		
-		private const charDict:Object = {};
-		private const charList:Array = [];
-		
-		private var nextX:int;
-		private var nextY:int;
+		private var tf:TextDrawer;
+		private var _textureSize:int;
 		
 		private var gpuTexture:GpuTexture;
 		private var texture:BitmapData;
 		private var isTextureDirty:Boolean;
 		
-		public function TextFactory()
+		private var textLocator:TextLocator;
+		private var fontSize:int;
+		
+		public function TextFactory(fontSize:int)
 		{
-			texture = new BitmapData(TextureSize, TextureSize, true, 0);
-			var t = getDefinitionByName("TestText").app.addChild(new Bitmap(texture));
-			t.scaleX = t.scaleY = 3;
-			gpuTexture = new GpuTexture(texture.width, texture.height);
+			this.fontSize = fontSize;
+			tf = new TextDrawer(fontSize);
+			changeTextureSize(128);
 		}
 		
-		private function init():void
+		public function get textureSize():int
 		{
-			for(var i:int=0x21; i<0x7F; ++i){
-				tf.appendText(String.fromCharCode(i, 0x20));
-			}
-			isTextureDirty = true;
+			return _textureSize;
+		}
+		
+		private function changeTextureSize(value:int):void
+		{
+			_textureSize = value;
+			if(texture != null)
+				texture.dispose();
+			if(gpuTexture != null)
+				gpuTexture.dispose();
+			textLocator = new TextLocator(_textureSize, fontSize);
+			texture = new BitmapData(_textureSize, _textureSize, true, 0);
+			gpuTexture = new GpuTexture(texture.width, texture.height);
 		}
 		
 		public function setTexture(context3d:GpuContext):void
@@ -52,11 +53,21 @@ package snjdck.g2d.text
 			context3d.texture = gpuTexture;
 		}
 		
+		private var charList:Array = [];
+		
 		public function getCharList(text:String, output:CharInfoList):void
 		{
-			calcCharList(text);
-			var charCount:int = text.length;
-			for(var i:int=0; i<charCount; ++i){
+			charList.length = 0;
+			getCharToDraw(text, charList);
+			if(!textLocator.canAdd(charList.length)){
+				if(_textureSize < MAX_TEXTURE_SIZE){
+					changeTextureSize(_textureSize << 1);
+					getCharList(text, output);
+				}
+				return;
+			}
+			calcCharList(charList);
+			for(var i:int=0, n:int=text.length; i<n; ++i){
 				var char:String = text.charAt(i);
 				switch(char){
 					case "\n":
@@ -71,14 +82,40 @@ package snjdck.g2d.text
 						output.pushBlank();
 						break;
 					default:
-						output.push(charDict[char]);
+						output.push(textLocator.getInfo(char));
 				}
 			}
 		}
 		
-		private function calcCharList(text:String):void
+		private function calcCharList(charList:Array):void
 		{
-			tf.clear();
+			textLocator.mark();
+			for(var i:int=0, n:int=charList.length; i<n; ++i){
+				var char:String = charList[i];
+				var isHalfChar:Boolean = tf.isHalfChar(char);
+				tf.appendText(char);
+				if(isHalfChar){
+					tf.appendText(" ");
+				}
+				if(textLocator.addChar(char, isHalfChar)){
+					generateChar();
+				}
+			}
+			generateChar();
+		}
+		
+		private function generateChar():void
+		{
+			if(textLocator.needUpdate){
+				tf.draw(texture, textLocator.markX, textLocator.markY);
+				isTextureDirty = true;
+				textLocator.mark();
+				tf.clear();
+			}
+		}
+		
+		private function getCharToDraw(text:String, result:Array):void
+		{
 			var charCount:int = text.length;
 			for(var i:int=0; i<charCount; ++i){
 				var char:String = text.charAt(i);
@@ -89,71 +126,13 @@ package snjdck.g2d.text
 					case " ":
 						continue;
 				}
-				if(charDict.hasOwnProperty(char) || has(charList, char)){
+				if(textLocator.hasInfo(char)){
 					continue;
 				}
-				tf.appendText(char);
-				if(tf.textWidth > TextureSize - nextX){
-					tf.removeLastChar();
-					generateChar();
-					nextX = 0;
-					nextY += tf.textHeight;
-					tf.setText(char);
+				if(result.indexOf(char) < 0){
+					result.push(char);
 				}
-				charList.push(char);
 			}
-			generateChar();
 		}
-		
-		private function generateChar():void
-		{
-			var charCount:int = charList.length;
-			if(charCount <= 0){
-				return;
-			}
-			trace(charList);
-			
-			for(var i:int=0; i<charCount; ++i){
-				var charInfo:Rectangle = tf.getCharBoundaries(i);
-				charInfo.offset(nextX, nextY);
-				charInfo.x /= TextureSize;
-				charInfo.y /= TextureSize;
-				charDict[charList[i]] = charInfo;
-			}
-			
-			tf.draw(texture, nextX, nextY);
-			isTextureDirty = true;
-			
-			nextX += tf.textWidth;
-			charList.length = 0;
-		}
-		/*
-		private function getChar(char:String):Rectangle
-		{
-			if(charDict.hasOwnProperty(char)){
-				return charDict[char];
-			}
-			return createChar(char);
-		}
-		
-		private function createChar(char:String):Rectangle
-		{
-			var charInfo:Rectangle = new Rectangle();
-			charDict[char] = charInfo;
-			
-			tf.setText(char);
-			charInfo.x = nextX;
-			charInfo.y = nextY;
-			charInfo.width = tf.textWidth;
-			charInfo.height = tf.textHeight;
-			
-			tf.draw(texture, charInfo.x, charInfo.y);
-			isTextureDirty = true;
-			
-			nextX += charInfo.width;
-			
-			return charInfo;
-		}
-		//*/
 	}
 }

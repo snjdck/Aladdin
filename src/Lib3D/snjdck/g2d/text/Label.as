@@ -18,7 +18,7 @@ package snjdck.g2d.text
 	
 	public class Label extends DisplayObject2D
 	{
-		static protected const textFactory:TextFactory = new TextFactory();
+		protected var textFactory:TextFactory;
 		
 		protected var charList:CharInfoList;
 		private var _text:String = "";
@@ -43,9 +43,8 @@ package snjdck.g2d.text
 			textColor[1] = 1;
 			textColor[2] = 1;
 			textColor[3] = 1;
-			textColor[6] = 2;
-			textColor[7] = 3;
 			
+			textFactory = TextFactoryMgr.Fetch(_fontSize);
 			textInstanceData = new TextInstanceData(charList, _fontSize);
 		}
 		
@@ -89,6 +88,7 @@ package snjdck.g2d.text
 				return;
 			}
 			_fontSize = value;
+			textFactory = TextFactoryMgr.Fetch(_fontSize);
 			text = _text;
 			textInstanceData.fontSize = value;
 		}
@@ -107,12 +107,8 @@ package snjdck.g2d.text
 			context3d.save();
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TEXT_2D);
 			
-			var smooth:Number = TextDrawer.FONT_SIZE / (_fontSize * TextDrawer.spread);
-			var buffer:Number = 0.80; //0.1 - 0.7
-			textColor[4] = buffer - smooth;
-			textColor[5] = smooth + smooth;
-			
 			context3d.setFc(0, textColor);
+			textInstanceData.textureSize = textFactory.textureSize;
 			textFactory.setTexture(context3d);
 			
 			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
@@ -122,7 +118,7 @@ package snjdck.g2d.text
 			QuadRender.Instance.drawBegin(context3d);
 		}
 		
-		private const textColor:Vector.<Number> = new Vector.<Number>(8, true);
+		private const textColor:Vector.<Number> = new Vector.<Number>(4, true);
 		
 		public function get scrollV():int
 		{
