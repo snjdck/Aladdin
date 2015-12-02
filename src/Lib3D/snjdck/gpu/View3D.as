@@ -15,6 +15,7 @@ package snjdck.gpu
 	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.GpuContextEx;
 	
 	use namespace ns_g2d;
 	use namespace ns_g3d;
@@ -50,15 +51,23 @@ package snjdck.gpu
 		
 		private function init():void
 		{
-			stage2d.addEventListener(MouseEvent.MOUSE_DOWN,	__onStageEvent);
-			stage2d.addEventListener(MouseEvent.MOUSE_UP,	__onStageEvent);
+			var eventList:Array = [
+				MouseEvent.RIGHT_CLICK,
+				MouseEvent.RIGHT_MOUSE_DOWN,
+				MouseEvent.RIGHT_MOUSE_UP,
+				MouseEvent.CLICK,
+				MouseEvent.MOUSE_DOWN,
+				MouseEvent.MOUSE_UP
+			];
+			for each(var evtName:String in eventList){
+				stage2d.addEventListener(evtName, __onStageEvent);
+			}
 //			stage2d.addEventListener(Event.RESIZE, __onResize);
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
 			
 			var profileList:Vector.<String> = new Vector.<String>();
-			profileList.push(Context3DProfile.STANDARD_EXTENDED);
-			profileList.push(Context3DProfile.BASELINE_EXTENDED);
+			profileList.push(Context3DProfile.STANDARD_CONSTRAINED);
 			profileList.push(Context3DProfile.BASELINE);
 			stage3d.requestContext3DMatchingProfiles(profileList);
 		}
@@ -73,7 +82,7 @@ package snjdck.gpu
 			var ctx:Context3D = stage3d.context3D;
 			ctx.enableErrorChecking = enableErrorChecking;
 			var isFirstTime:Boolean = (null == context3d);
-			context3d = new GpuContext(ctx);
+			context3d = new GpuContextEx(ctx);
 			onDeviceLost();
 			if(isFirstTime){
 				GpuInfo.Init(ctx.profile, ctx.driverInfo);

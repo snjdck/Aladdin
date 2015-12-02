@@ -26,7 +26,8 @@ package snjdck.gpu.state
 		
 		public function applyTo(context3d:GpuContext):void
 		{
-			context3d.program = program;
+			if(program != null)
+				context3d.program = program;
 			context3d.blendMode = blendMode;
 		}
 	}
