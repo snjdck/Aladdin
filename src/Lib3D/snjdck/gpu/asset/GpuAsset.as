@@ -28,9 +28,10 @@ package snjdck.gpu.asset
 		
 		final public function freeGpuMemory():void
 		{
-			if(rawAsset){
+			if(rawAsset != null){
 				rawAsset.dispose();
 				rawAsset = null;
+				isDataDirty = true;
 			}
 		}
 		

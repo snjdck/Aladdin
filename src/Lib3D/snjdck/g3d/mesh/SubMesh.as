@@ -7,6 +7,7 @@ package snjdck.g3d.mesh
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.IGpuTexture;
 
 	public class SubMesh
 	{
@@ -16,7 +17,9 @@ package snjdck.g3d.mesh
 		public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(context3d.isFsSlotInUse(0)){
-				context3d.texture = AssetMgr.Instance.getTexture(materialName);
+				var texture:IGpuTexture = AssetMgr.Instance.getTexture(materialName);
+				context3d.texture = texture;
+				context3d.markRecoverableGpuAsset(texture);
 			}
 			geometry.draw(context3d, boneStateGroup);
 		}

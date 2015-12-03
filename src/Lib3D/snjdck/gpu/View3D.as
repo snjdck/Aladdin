@@ -113,6 +113,7 @@ package snjdck.gpu
 			}
 			scene2d.draw(context3d);
 			context3d.present();
+			context3d.gc();
 		}
 		
 		private function updateMouseXY():void

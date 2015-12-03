@@ -37,6 +37,8 @@ package snjdck.gpu.asset
 		
 		private var stateStack:GpuStateStack;
 		
+		private const garbageCollector:AssetGC = new AssetGC();
+		
 		public function GpuContext(context3d:Context3D)
 		{
 			this.context3d = context3d;
@@ -299,6 +301,16 @@ package snjdck.gpu.asset
 		public function restore():void
 		{
 			stateStack.restore(this);
+		}
+		
+		public function markRecoverableGpuAsset(asset:IGpuAsset):void
+		{
+			garbageCollector.addRef(asset);
+		}
+		
+		public function gc():void
+		{
+			garbageCollector.gc();
 		}
 	}
 }

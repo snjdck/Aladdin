@@ -135,6 +135,10 @@ package snjdck.g3d.parser
 				boneData.uploadBoneData(context3d, boneStateGroup);
 			}
 			context3d.drawTriangles(gpuIndexBuffer);
+			
+			context3d.markRecoverableGpuAsset(gpuPosBuffer);
+			context3d.markRecoverableGpuAsset(gpuUvBuffer);
+			context3d.markRecoverableGpuAsset(gpuIndexBuffer);
 		}
 	}
 }

@@ -121,6 +121,8 @@ package snjdck.g3d.mesh
 				offset += 8;
 			}
 			context3d.setVc(Geometry.BONE_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
+			
+			context3d.markRecoverableGpuAsset(gpuBoneBuffer);
 		}
 		
 		ns_g3d function adjustBoneWeight():void

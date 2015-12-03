@@ -80,28 +80,38 @@ package snjdck.gpu.asset
 			return super.isVaSlotInUse(slotIndex);
 		}
 		
+		override public function get program():GpuProgram
+		{
+			return isProgramDirty ? programToSet : super.program;
+		}
+		
 		override public function set program(value:GpuProgram):void
 		{
 			if(isProgramDirty){
-				if(value == program){
+				if(value == super.program){
 					isProgramDirty = false;
 					programToSet = null;
 				}else if(value != programToSet){
 					programToSet = value;
 				}
-			}else if(value != program){
+			}else if(value != super.program){
 				isProgramDirty = true;
 				programToSet = value;
 			}
 		}
 		
+		override public function get blendMode():BlendMode
+		{
+			return isBlendModeDirty ? blendModeToSet : super.blendMode;
+		}
+		
 		override public function set blendMode(value:BlendMode):void
 		{
 			if(isBlendModeDirty){
-				if(value == blendMode){
+				if(value == super.blendMode){
 					isBlendModeDirty = false;
 				}
-			}else if(value != blendMode){
+			}else if(value != super.blendMode){
 				isBlendModeDirty = true;
 			}
 			blendModeToSet = value;
