@@ -8,15 +8,15 @@ package snjdck.g2d.impl
 	
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.instance.IInstanceData;
+	import snjdck.gpu.render.instance.InstanceRender;
 
-	final public class OpaqueAreaCollector
+	final public class OpaqueAreaCollector implements IInstanceData
 	{
 		private const rectPool:ObjectPool = new ObjectPool(Rectangle);
 		private const areaList:Vector.<Rectangle> = new Vector.<Rectangle>();
 		
-		public function OpaqueAreaCollector()
-		{
-		}
+		public function OpaqueAreaCollector(){}
 		
 		public function clear():void
 		{
@@ -36,26 +36,41 @@ package snjdck.g2d.impl
 			}
 			var rect:Rectangle = rectPool.getObjectOut();
 			rect.setTo(x + matrix.tx, y + matrix.ty, width * matrix.a, height * matrix.d);
-			if(isAreaAlreadyExist(rect)){
-				rectPool.setObjectIn(rect);
-			}else{
-				areaList.push(rect);
-			}
+			areaList.push(rect);
 		}
 		
 		public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
 		{
-			render2d.drawWorldRectList(context3d, areaList);
+			InstanceRender.Instance.setVc(render2d, null);
+			InstanceRender.Instance.draw(context3d, this);
 		}
 		
-		private function isAreaAlreadyExist(rect:Rectangle):Boolean
+		public function get numRegisterPerInstance():int
 		{
-			for each(var area:Rectangle in areaList){
-				if(area.containsRect(rect)){
-					return true;
-				}
+			return 1;
+		}
+		
+		public function get numInstances():int
+		{
+			return areaList.length;
+		}
+		
+		public function initConstData(constData:Vector.<Number>):void
+		{
+			constData[14] = 0;
+			constData[15] = 1;
+		}
+		
+		public function updateConstData(constData:Vector.<Number>, instanceOffset:int, instanceCount:int):void
+		{
+			var offset:int = 16;
+			for(var i:int=0; i<instanceCount; ++i){
+				var rect:Rectangle = areaList[instanceOffset+i];
+				constData[offset++] = rect.width;
+				constData[offset++] = rect.height;
+				constData[offset++] = rect.x;
+				constData[offset++] = rect.y;
 			}
-			return false;
 		}
 	}
 }

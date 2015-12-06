@@ -26,7 +26,8 @@ package snjdck.gpu.render.instance
 		public function setVc(render:Render2D, worldMatrix:Matrix):void
 		{
 			render.copyProjectData(constData);
-			matrix33.toBuffer(worldMatrix, constData, 4);
+			if(worldMatrix != null)
+				matrix33.toBuffer(worldMatrix, constData, 4);
 		}
 		
 		public function draw(context3d:GpuContext, instanceData:IInstanceData):void

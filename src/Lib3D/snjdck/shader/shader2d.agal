@@ -26,7 +26,13 @@ ${mvp2d.vs}
 
 #========================
 @g2d_preDrawDepth
-${image.vs}
+vt0 = vc[va0.z+4]
+vt0.xy *= va0
+vt0.xy += vt0.zw
+vt0.xy *= vc0		#screen matrix
+vt0.xy += vc0.zw
+vt0.zw = vc3
+op = vt0
 oc = fc0
 #========================
 @image.raw

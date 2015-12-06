@@ -4,7 +4,6 @@ package snjdck.g2d.render
 	import flash.display3D.Context3DTriangleFace;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
-	import flash.geom.Rectangle;
 	
 	import array.copy;
 	
@@ -111,7 +110,7 @@ package snjdck.g2d.render
 		{
 			drawLocalRect(context3d, null, x, y, width, height);
 		}
-		
+		/*
 		public function drawWorldRectList(context3d:GpuContext, rectList:Vector.<Rectangle>):void
 		{
 			copyProjectData(rawData);
@@ -125,7 +124,7 @@ package snjdck.g2d.render
 				QuadRender.Instance.drawTriangles(context3d);
 			}
 		}
-		
+		//*/
 		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
 		{
 			context3d.texture = texture;
