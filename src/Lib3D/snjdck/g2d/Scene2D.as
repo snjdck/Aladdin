@@ -65,7 +65,6 @@ package snjdck.g2d
 		public function preDrawDepth(context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.G2D_PRE_DRAW_DEPTH);
-			QuadRender.Instance.drawBegin(context3d);
 			
 			render2d.pushScreen(context3d.bufferWidth, context3d.bufferHeight);
 			collector.preDrawDepth(render2d, context3d);

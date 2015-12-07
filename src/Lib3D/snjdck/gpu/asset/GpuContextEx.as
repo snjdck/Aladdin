@@ -64,22 +64,6 @@ package snjdck.gpu.asset
 			super.drawTriangles(indexBuffer, firstIndex, numTriangles);
 		}
 		
-		override public function isFsSlotInUse(slotIndex:int):Boolean
-		{
-			if(isProgramDirty){
-				return programToSet.isFsSlotInUse(slotIndex);
-			}
-			return super.isFsSlotInUse(slotIndex);
-		}
-		
-		override public function isVaSlotInUse(slotIndex:int):Boolean
-		{
-			if(isProgramDirty){
-				return programToSet.isVaSlotInUse(slotIndex);
-			}
-			return super.isVaSlotInUse(slotIndex);
-		}
-		
 		override public function get program():GpuProgram
 		{
 			return isProgramDirty ? programToSet : super.program;

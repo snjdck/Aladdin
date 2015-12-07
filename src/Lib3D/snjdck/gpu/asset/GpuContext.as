@@ -239,12 +239,12 @@ package snjdck.gpu.asset
 		
 		public function isVaSlotInUse(slotIndex:int):Boolean
 		{
-			return _program.isVaSlotInUse(slotIndex);
+			return program.isVaSlotInUse(slotIndex);
 		}
 		
 		public function isFsSlotInUse(slotIndex:int):Boolean
 		{
-			return _program.isFsSlotInUse(slotIndex);
+			return program.isFsSlotInUse(slotIndex);
 		}
 		
 		public function clearDepthAndStencil(depth:Number=1.0, stencil:uint=0):void
