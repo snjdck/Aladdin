@@ -97,7 +97,7 @@ package snjdck.gpu.asset
 			}
 		}
 		
-		public function get blendMode():BlendMode
+		protected function getBlendMode():BlendMode
 		{
 			return _blendMode;
 		}
@@ -201,11 +201,16 @@ package snjdck.gpu.asset
 			context3d.setProgramConstantsFromMatrix(Context3DProgramType.FRAGMENT, firstRegister, matrix, true);
 		}
 		
+		protected function getProgram():GpuProgram
+		{
+			return _program;
+		}
+		/*
 		public function get program():GpuProgram
 		{
 			return _program;
 		}
-		
+		*/
 		public function set program(value:GpuProgram):void
 		{
 			if(value == _program){
@@ -311,18 +316,29 @@ package snjdck.gpu.asset
 		{
 			stateStack.push();
 			var gpuState:GpuState = stateStack.state;
-			gpuState.program = program;
-			gpuState.blendMode = blendMode;
+			
+			gpuState.program = getProgram();
+			gpuState.blendMode = getBlendMode();
 			gpuState.vertexRegister.copyFrom(vertexRegister);
 			gpuState.culling = getCulling();
-			gpuState.depthTest.copyFrom(depthTest);
+			gpuState.depthTest.copyFrom(getDepthTest());
 		}
 		
 		public function restore():void
 		{
-			vertexRegister.clear();
 			var gpuState:GpuState = stateStack.state;
-			gpuState.applyTo(this);
+			
+			if(gpuState.program != null){
+				program = gpuState.program;
+			}
+			blendMode = gpuState.blendMode;
+			if(!vertexRegister.equals(gpuState.vertexRegister)){
+				vertexRegister.clear();
+				gpuState.vertexRegister.upload(this);
+			}
+			setCulling(gpuState.culling);
+			setDepthTest2(gpuState.depthTest);
+			
 			gpuState.clear();
 			stateStack.pop();
 		}

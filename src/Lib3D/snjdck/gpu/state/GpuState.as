@@ -2,7 +2,6 @@ package snjdck.gpu.state
 {
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.DepthTest;
-	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.register.VertexRegister;
 
@@ -22,16 +21,6 @@ package snjdck.gpu.state
 		{
 			vertexRegister.clear();
 			program = null;
-		}
-		
-		public function applyTo(context3d:GpuContext):void
-		{
-			if(program != null)
-				context3d.program = program;
-			context3d.blendMode = blendMode;
-			vertexRegister.upload(context3d);
-			context3d.setCulling(culling);
-			context3d.setDepthTest2(depthTest);
 		}
 	}
 }

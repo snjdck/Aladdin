@@ -68,7 +68,7 @@ package snjdck.g2d.filter
 		private function renderFilterImpl(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void
 		{
 			const filterCount:int = _filterList.length;
-			const prevBlendMode:BlendMode = context3d.blendMode;
+//			const prevBlendMode:BlendMode = context3d.blendMode;
 			context3d.blendMode = BlendMode.NORMAL;
 			
 			var backBuffer:GpuRenderTarget = new GpuRenderTarget(texture.width, texture.height);
@@ -94,7 +94,7 @@ package snjdck.g2d.filter
 					filter.renderFilter(gpuTexture, render, context3d, frontBuffer, 0, 0);
 				}else{
 					render.popScreen();
-					context3d.blendMode = prevBlendMode;
+//					context3d.blendMode = prevBlendMode;
 					filter.renderFilter(backBuffer, render, context3d, output, textureX, textureY);
 				}
 			}

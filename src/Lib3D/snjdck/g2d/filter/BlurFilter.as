@@ -41,7 +41,7 @@ package snjdck.g2d.filter
 		{
 			render.pushScreen(texture.width, texture.height);
 			
-			const prevBlendMode:BlendMode = context3d.blendMode;
+//			const prevBlendMode:BlendMode = context3d.blendMode;
 			
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.BLUR);
 			context3d.blendMode = BlendMode.NORMAL;
@@ -66,7 +66,7 @@ package snjdck.g2d.filter
 				}else{
 					render.popScreen();
 					context3d.renderTarget = output;
-					context3d.blendMode = prevBlendMode;
+//					context3d.blendMode = prevBlendMode;
 					render.drawTexture(context3d, gpuTexture, textureX, textureY);
 				}
 			}

@@ -51,9 +51,9 @@ package snjdck.gpu.asset
 			super.drawTriangles(indexBuffer, firstIndex, numTriangles);
 		}
 		
-		override public function get program():GpuProgram
+		override protected function getProgram():GpuProgram
 		{
-			return isProgramDirty ? programToSet : super.program;
+			return isProgramDirty ? programToSet : super.getProgram();
 		}
 		
 		override public function set program(value:GpuProgram):void
@@ -72,9 +72,9 @@ package snjdck.gpu.asset
 			vertexRegister.onProgramChanged(value);
 		}
 		
-		override public function get blendMode():BlendMode
+		override protected function getBlendMode():BlendMode
 		{
-			return isBlendModeDirty ? blendModeToSet : super.blendMode;
+			return isBlendModeDirty ? blendModeToSet : super.getBlendMode();
 		}
 		
 		override public function set blendMode(value:BlendMode):void

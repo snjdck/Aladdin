@@ -28,7 +28,7 @@ package snjdck.g2d.filter
 		public function draw(target:DisplayObject2D, render:Render2D, context3d:GpuContext):void
 		{
 			const prevRenderTarget:GpuRenderTarget = context3d.renderTarget;
-			const prevProgram:GpuProgram = context3d.program;
+			context3d.save();
 			
 			target.getBounds(null, bounds);
 			var boundsX:Number = bounds.x;
@@ -49,7 +49,7 @@ package snjdck.g2d.filter
 			
 			imageBuffer.dispose();
 			
-			context3d.program = prevProgram;
+			context3d.restore();
 		}
 		
 		public function renderFilter(texture:IGpuTexture, render:Render2D, context3d:GpuContext, output:GpuRenderTarget, textureX:Number, textureY:Number):void{}

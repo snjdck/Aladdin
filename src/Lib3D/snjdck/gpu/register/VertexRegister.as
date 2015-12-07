@@ -77,5 +77,35 @@ package snjdck.gpu.register
 				slotFormat[i]	= other.slotFormat[i];
 			}
 		}
+		
+		public function equals(other:VertexRegister):Boolean
+		{
+			for(var i:int=0; i<slotCount; ++i){
+				if(!isSlotEquals(other, i)){
+					return false;
+				}
+			}
+			return true;
+		}
+		
+		private function isSlotEquals(other:VertexRegister, index:int):Boolean
+		{
+			if(slotUseInfo[index] != other.slotUseInfo[index]){
+				return false;
+			}
+			if(!slotUseInfo[index]){
+				return true;
+			}
+			if(slotData[index] != other.slotData[index]){
+				return false;
+			}
+			if(slotOffset[index] != other.slotOffset[index]){
+				return false;
+			}
+			if(slotFormat[index] != other.slotFormat[index]){
+				return false;
+			}
+			return true;
+		}
 	}
 }
