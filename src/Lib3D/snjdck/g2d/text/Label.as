@@ -5,11 +5,9 @@ package snjdck.g2d.text
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
-	import snjdck.g2d.text.drawer.TextDrawer;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.instance.InstanceRender;
-	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
 	import string.isBlankStr;
@@ -115,7 +113,6 @@ package snjdck.g2d.text
 			InstanceRender.Instance.draw(context3d, textInstanceData);
 			
 			context3d.restore();
-			QuadRender.Instance.drawBegin(context3d);
 		}
 		
 		private const textColor:Vector.<Number> = new Vector.<Number>(4, true);

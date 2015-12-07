@@ -10,7 +10,10 @@ package snjdck.gpu.asset
 	import flash.geom.Rectangle;
 	
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.state.GpuStateStack;
+	import snjdck.gpu.DepthTest;
+	import snjdck.gpu.register.VertexRegister;
+	import snjdck.gpu.state.GpuState;
+	import snjdck.gpu.state.StateStack;
 
 	public class GpuContext
 	{
@@ -21,10 +24,9 @@ package snjdck.gpu.asset
 		
 		private var _blendMode:BlendMode;
 		
-		protected var depthWriteMask:Boolean;
-		protected var depthPassCompareMode:String;
+		private const depthTest:DepthTest = new DepthTest();
 		
-		protected var culling:String;
+		private var culling:String;
 		
 		/** readMask, writeMask, refValue */
 		private var stencilRefValue:int;
@@ -35,8 +37,9 @@ package snjdck.gpu.asset
 		
 		private var _renderTarget:GpuRenderTarget;
 		
-		private var stateStack:GpuStateStack;
+		private const stateStack:StateStack = new StateStack(GpuState);
 		
+		protected const vertexRegister:VertexRegister = new VertexRegister();
 		private const garbageCollector:AssetGC = new AssetGC();
 		
 		public function GpuContext(context3d:Context3D)
@@ -45,14 +48,9 @@ package snjdck.gpu.asset
 			
 			_blendMode = BlendMode.NORMAL;
 			
-			depthWriteMask = true;
-			depthPassCompareMode = Context3DCompareMode.LESS_EQUAL;
-			
 			culling = Context3DTriangleFace.NONE;
 			
 			stencilRefValue = 0xFFFF00;
-			
-			stateStack = new GpuStateStack();
 		}
 		
 		public function dispose():void
@@ -85,6 +83,11 @@ package snjdck.gpu.asset
 			context3d.setColorMask(red, green, blue, alpha);
 		}
 		
+		protected function getCulling():String
+		{
+			return culling;
+		}
+		
 		/** 顺时针为front */
 		public function setCulling(triangleFaceToCull:String):void
 		{
@@ -113,12 +116,21 @@ package snjdck.gpu.asset
 			context3d.setScissorRectangle(rect);
 		}
 		
+		protected function getDepthTest():DepthTest
+		{
+			return depthTest;
+		}
+		
+		public function setDepthTest2(value:DepthTest):void
+		{
+			setDepthTest(value.writeMask, value.passCompareMode);
+		}
+		
 		public function setDepthTest(depthMask:Boolean, passCompareMode:String):void
 		{
-			if(depthMask != depthWriteMask || passCompareMode != depthPassCompareMode){
-				depthWriteMask = depthMask;
-				depthPassCompareMode = passCompareMode;
-				context3d.setDepthTest(depthWriteMask, depthPassCompareMode);
+			if(!depthTest.equals(depthMask, passCompareMode)){
+				depthTest.setTo(depthMask, passCompareMode);
+				context3d.setDepthTest(depthMask, passCompareMode);
 			}
 		}
 		
@@ -205,6 +217,7 @@ package snjdck.gpu.asset
 			_program = value;
 			context3d.setProgram(_program.getRawGpuAsset(context3d));
 			
+			vertexRegister.onProgramChanged(_program);
 			if(!isFsSlotInUse(0) && _texture != null){
 				_texture = null;
 			}
@@ -212,6 +225,7 @@ package snjdck.gpu.asset
 		
 		public function setVertexBufferAt(slotIndex:int, buffer:GpuVertexBuffer, bufferOffset:int, format:String):void
 		{
+			vertexRegister.setVa(slotIndex, buffer, bufferOffset, format);
 			context3d.setVertexBufferAt(slotIndex, buffer.getRawGpuAsset(context3d), bufferOffset, format);
 		}
 		
@@ -295,12 +309,22 @@ package snjdck.gpu.asset
 		
 		public function save():void
 		{
-			stateStack.save(this);
+			stateStack.push();
+			var gpuState:GpuState = stateStack.state;
+			gpuState.program = program;
+			gpuState.blendMode = blendMode;
+			gpuState.vertexRegister.copyFrom(vertexRegister);
+			gpuState.culling = getCulling();
+			gpuState.depthTest.copyFrom(depthTest);
 		}
 		
 		public function restore():void
 		{
-			stateStack.restore(this);
+			vertexRegister.clear();
+			var gpuState:GpuState = stateStack.state;
+			gpuState.applyTo(this);
+			gpuState.clear();
+			stateStack.pop();
 		}
 		
 		public function markRecoverableGpuAsset(asset:IGpuAsset):void

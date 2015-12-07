@@ -7,10 +7,8 @@ package snjdck.g2d.particlesystem
 	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.render.instance.InstanceRender;
-	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g2d;
@@ -102,8 +100,6 @@ package snjdck.g2d.particlesystem
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-//			const prevProgram:GpuProgram = context3d.program;
-//			const prevBlendMode:BlendMode = context3d.blendMode;
 			context3d.save();
 			
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.PARTICLE_2D);
@@ -113,10 +109,7 @@ package snjdck.g2d.particlesystem
 			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
 			InstanceRender.Instance.draw(context3d, particleInstanceData);
 			
-//			context3d.blendMode = prevBlendMode;
-//			context3d.program = prevProgram;
 			context3d.restore();
-			QuadRender.Instance.drawBegin(context3d);
 		}
 		
 		override public function onUpdate(timeElapsed:int):void

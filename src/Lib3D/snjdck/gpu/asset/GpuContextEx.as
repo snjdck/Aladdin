@@ -3,6 +3,7 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3D;
 	
 	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.DepthTest;
 	
 	public class GpuContextEx extends GpuContext
 	{
@@ -13,14 +14,10 @@ package snjdck.gpu.asset
 		private var blendModeToSet:BlendMode;
 		
 		private var isDepthTestDirty:Boolean;
-		private var depthWriteMaskToSet:Boolean;
-		private var depthPassCompareModeToSet:String;
+		private const depthTestToSet:DepthTest = new DepthTest();
 		
 		private var isCullingDirty:Boolean;
 		private var cullingToSet:String;
-		
-		private var isVertexBufferDirty:Boolean;
-		private var vertexBufferToSet:Array = [];
 		
 		public function GpuContextEx(context3d:Context3D)
 		{
@@ -34,22 +31,12 @@ package snjdck.gpu.asset
 				isProgramDirty = false;
 				programToSet = null;
 			}
-			if(isVertexBufferDirty){
-				for each(var argList:Array in vertexBufferToSet){
-					if(argList != null && isVaSlotInUse(argList[0])){
-						super.setVertexBufferAt.apply(this, argList);
-					}
-				}
-				isVertexBufferDirty = false;
-				vertexBufferToSet.length = 0;
-			}
 			if(isBlendModeDirty){
 				super.blendMode = blendModeToSet;
 				isBlendModeDirty = false;
-				blendModeToSet = null;
 			}
 			if(isDepthTestDirty){
-				super.setDepthTest(depthWriteMaskToSet, depthPassCompareModeToSet);
+				super.setDepthTest2(depthTestToSet);
 				isDepthTestDirty = false;
 			}
 			if(isCullingDirty){
@@ -82,6 +69,7 @@ package snjdck.gpu.asset
 				isProgramDirty = true;
 				programToSet = value;
 			}
+			vertexRegister.onProgramChanged(value);
 		}
 		
 		override public function get blendMode():BlendMode
@@ -101,35 +89,39 @@ package snjdck.gpu.asset
 			blendModeToSet = value;
 		}
 		
+		override protected function getDepthTest():DepthTest
+		{
+			return isDepthTestDirty ? depthTestToSet : super.getDepthTest();
+		}
+		
 		override public function setDepthTest(depthMask:Boolean, passCompareMode:String):void
 		{
+			var isEqual:Boolean = super.getDepthTest().equals(depthMask, passCompareMode);
 			if(isDepthTestDirty){
-				if(depthMask == depthWriteMask && passCompareMode == depthPassCompareMode){
+				if(isEqual){
 					isDepthTestDirty = false;
 				}
-			}else if(depthMask != depthWriteMask || passCompareMode != depthPassCompareMode){
+			}else if(!isEqual){
 				isDepthTestDirty = true;
 			}
-			depthWriteMaskToSet = depthMask;
-			depthPassCompareModeToSet = passCompareMode;
+			depthTestToSet.setTo(depthMask, passCompareMode);
+		}
+		
+		override protected function getCulling():String
+		{
+			return isCullingDirty ? cullingToSet : super.getCulling();
 		}
 		
 		override public function setCulling(value:String):void
 		{
 			if(isCullingDirty){
-				if(value == culling){
+				if(value == super.getCulling()){
 					isCullingDirty = false;
 				}
-			}else if(value != culling){
+			}else if(value != super.getCulling()){
 				isCullingDirty = true;
 			}
 			cullingToSet = value;
-		}
-		
-		override public function setVertexBufferAt(slotIndex:int, buffer:GpuVertexBuffer, bufferOffset:int, format:String):void
-		{
-			isVertexBufferDirty = true;
-			vertexBufferToSet[slotIndex] = arguments;
 		}
 	}
 }

@@ -1,38 +1,33 @@
 package snjdck.g3d.render
 {
 	import flash.geom.Matrix3D;
+	
+	import snjdck.gpu.state.StateStack;
 
 	final public class MatrixStack3D
 	{
-		private var matrixStack:Vector.<Matrix3D>;
-		private var matrixIndex:int;
+		private const stack:StateStack = new StateStack(Matrix3D);
 		
-		public function MatrixStack3D()
-		{
-			matrixStack = new Vector.<Matrix3D>();
-			matrixIndex = -1;
-		}
+		public function MatrixStack3D(){}
 		
 		public function pushMatrix(matrix:Matrix3D):void
 		{
-			++matrixIndex;
-			if(matrixStack.length <= matrixIndex){
-				matrixStack.push(new Matrix3D());
-			}
+			stack.push();
+			var worldMatrix:Matrix3D = stack.state;
 			worldMatrix.copyFrom(matrix);
-			if(matrixIndex > 0){
-				worldMatrix.append(matrixStack[matrixIndex-1]);
+			if(stack.count > 1){
+				worldMatrix.append(stack.prevState);
 			}
 		}
 		
 		public function popMatrix():void
 		{
-			--matrixIndex;
+			stack.pop();
 		}
 		
 		public function get worldMatrix():Matrix3D
 		{
-			return matrixStack[matrixIndex];
+			return stack.state;
 		}
 	}
 }
