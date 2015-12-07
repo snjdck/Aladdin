@@ -107,8 +107,8 @@ package snjdck.g3d.mesh
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);
 			}
-			context3d.setVertexBufferAt(6, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
-			context3d.setVertexBufferAt(7, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
+			context3d.setVertexBufferAt(2, gpuBoneBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
+			context3d.setVertexBufferAt(3, gpuBoneBuffer, 4, Context3DVertexBufferFormat.FLOAT_4);
 			
 			const boneCount:int = boneIds.length;
 			if(boneCount <= 0){

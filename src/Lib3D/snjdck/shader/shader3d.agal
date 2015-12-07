@@ -25,23 +25,23 @@ vt1.xyz += vt1.xyz					#乘以2
 vt1.xyz += vt2.xyz
 vt1.xyz = add: vt1, vc[${0}+1]		#偏移
 
-@bone1.vs<va6.x>
+@bone1.vs<va2.x>
 ${bone.vs}
-vt0.xyz = vt1 * va6.y				#骨骼权重
+vt0.xyz = vt1 * va2.y				#骨骼权重
 
-@bone2.vs<va6.z>
+@bone2.vs<va2.z>
 ${bone.vs}
-vt1.xyz *= va6.w					#骨骼权重
+vt1.xyz *= va2.w					#骨骼权重
 vt0.xyz += vt1
 
-@bone3.vs<va7.x>
+@bone3.vs<va3.x>
 ${bone.vs}
-vt1.xyz *= va7.y					#骨骼权重
+vt1.xyz *= va3.y					#骨骼权重
 vt0.xyz += vt1
 
-@bone4.vs<va7.z>
+@bone4.vs<va3.z>
 ${bone.vs}
-vt1.xyz *= va7.w					#骨骼权重
+vt1.xyz *= va3.w					#骨骼权重
 vt0.xyz += vt1
 
 @bone_ani_pos.vs

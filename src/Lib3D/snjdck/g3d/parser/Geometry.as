@@ -131,7 +131,7 @@ package snjdck.g3d.parser
 			if(context3d.isVaSlotInUse(1)){
 				context3d.setVertexBufferAt(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 			}
-			if(context3d.isVaSlotInUse(7) && boneData != null){
+			if(context3d.isVaSlotInUse(2) && boneData != null){
 				boneData.uploadBoneData(context3d, boneStateGroup);
 			}
 			context3d.drawTriangles(gpuIndexBuffer);
