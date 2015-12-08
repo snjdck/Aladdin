@@ -112,7 +112,9 @@ package snjdck.gpu.asset
 			var vertexProgram:Array = splitByLine(trim(shaderCode.slice(0, index)));
 			var fragmentProgram:Array = splitByLine(trim(shaderCode.slice(index)));
 			
-			programDict[shaderName] = GpuAssetFactory.CreateGpuProgram(vertexProgram, fragmentProgram);
+			var program:GpuProgram = GpuAssetFactory.CreateGpuProgram(vertexProgram, fragmentProgram);
+			program.name = shaderName;
+			programDict[shaderName] = program;
 		}
 		
 		public function getProgram(name:String):GpuProgram

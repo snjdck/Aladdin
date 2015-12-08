@@ -25,6 +25,8 @@ package snjdck.gpu.asset
 		
 		static public var AgalVersion:int = 1;
 		
+		public var name:String;
+		
 		private var vsData:AgalCompiler;
 		private var fsData:AgalCompiler;
 		
