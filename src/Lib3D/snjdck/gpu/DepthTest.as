@@ -1,6 +1,8 @@
 package snjdck.gpu
 {
 	import flash.display3D.Context3DCompareMode;
+	
+	import string.replace;
 
 	final public class DepthTest
 	{
@@ -33,6 +35,11 @@ package snjdck.gpu
 		public function equals(depthWriteMask:Boolean, depthPassCompareMode:String):Boolean
 		{
 			return writeMask == depthWriteMask && passCompareMode == depthPassCompareMode;
+		}
+		
+		public function toString():String
+		{
+			return replace("[DepthTest(writeMask=${0}, passCompareMode=${1})]", [writeMask, passCompareMode]);
 		}
 	}
 }

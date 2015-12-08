@@ -107,5 +107,21 @@ package snjdck.gpu.register
 			}
 			return true;
 		}
+		
+		public function toJSON(key:String=null):Object
+		{
+			var result:Array = [];
+			for(var i:int=0; i<slotCount; ++i){
+				if(!slotUseInfo[i]){
+					continue;
+				}
+				result.push({
+					"index":i,
+					"offset":slotOffset[i],
+					"format":slotFormat[i]
+				});
+			}
+			return result;
+		}
 	}
 }

@@ -39,7 +39,7 @@ package snjdck.gpu.asset
 		
 		private const stateStack:StateStack = new StateStack(GpuState);
 		
-		protected const vertexRegister:VertexRegister = new VertexRegister();
+		private const vertexRegister:VertexRegister = new VertexRegister();
 		private const garbageCollector:AssetGC = new AssetGC();
 		
 		public function GpuContext(context3d:Context3D)
@@ -83,11 +83,6 @@ package snjdck.gpu.asset
 			context3d.setColorMask(red, green, blue, alpha);
 		}
 		
-		protected function getCulling():String
-		{
-			return culling;
-		}
-		
 		/** 顺时针为front */
 		public function setCulling(triangleFaceToCull:String):void
 		{
@@ -95,11 +90,6 @@ package snjdck.gpu.asset
 				context3d.setCulling(triangleFaceToCull);
 				culling = triangleFaceToCull;
 			}
-		}
-		
-		protected function getBlendMode():BlendMode
-		{
-			return _blendMode;
 		}
 		
 		public function set blendMode(value:BlendMode):void
@@ -114,11 +104,6 @@ package snjdck.gpu.asset
 		public function setScissorRect(rect:Rectangle):void
 		{
 			context3d.setScissorRectangle(rect);
-		}
-		
-		protected function getDepthTest():DepthTest
-		{
-			return depthTest;
 		}
 		
 		public function setDepthTest2(value:DepthTest):void
@@ -201,16 +186,6 @@ package snjdck.gpu.asset
 			context3d.setProgramConstantsFromMatrix(Context3DProgramType.FRAGMENT, firstRegister, matrix, true);
 		}
 		
-		protected function getProgram():GpuProgram
-		{
-			return _program;
-		}
-		/*
-		public function get program():GpuProgram
-		{
-			return _program;
-		}
-		*/
 		public function set program(value:GpuProgram):void
 		{
 			if(value == _program){
@@ -319,7 +294,7 @@ package snjdck.gpu.asset
 			
 			gpuState.program = getProgram();
 			gpuState.blendMode = getBlendMode();
-			gpuState.vertexRegister.copyFrom(vertexRegister);
+			gpuState.vertexRegister.copyFrom(getVertexRegister());
 			gpuState.culling = getCulling();
 			gpuState.depthTest.copyFrom(getDepthTest());
 		}
@@ -332,8 +307,7 @@ package snjdck.gpu.asset
 				program = gpuState.program;
 			}
 			blendMode = gpuState.blendMode;
-			if(!vertexRegister.equals(gpuState.vertexRegister)){
-				vertexRegister.clear();
+			if(!getVertexRegister().equals(gpuState.vertexRegister)){
 				gpuState.vertexRegister.upload(this);
 			}
 			setCulling(gpuState.culling);
@@ -351,6 +325,31 @@ package snjdck.gpu.asset
 		public function gc():void
 		{
 			garbageCollector.gc();
+		}
+		
+		protected function getVertexRegister():VertexRegister
+		{
+			return vertexRegister;
+		}
+		
+		protected function getProgram():GpuProgram
+		{
+			return _program;
+		}
+		
+		protected function getBlendMode():BlendMode
+		{
+			return _blendMode;
+		}
+		
+		protected function getDepthTest():DepthTest
+		{
+			return depthTest;
+		}
+		
+		protected function getCulling():String
+		{
+			return culling;
 		}
 	}
 }

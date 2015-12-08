@@ -4,6 +4,7 @@ package snjdck.gpu.asset
 	
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.DepthTest;
+	import snjdck.gpu.register.VertexRegister;
 	
 	public class GpuContextEx extends GpuContext
 	{
@@ -19,6 +20,10 @@ package snjdck.gpu.asset
 		private var isCullingDirty:Boolean;
 		private var cullingToSet:String;
 		
+		private var isVertexRegisterDirty:Boolean;
+		private const vertexRegisterToSet:VertexRegister = new VertexRegister();
+		private var applyMode:Boolean;
+		
 		public function GpuContextEx(context3d:Context3D)
 		{
 			super(context3d);
@@ -30,6 +35,12 @@ package snjdck.gpu.asset
 				super.program = programToSet;
 				isProgramDirty = false;
 				programToSet = null;
+			}
+			if(isVertexRegisterDirty){
+				applyMode = true;
+				vertexRegisterToSet.upload(this);
+				applyMode = false;
+				isVertexRegisterDirty = false;
 			}
 			if(isBlendModeDirty){
 				super.blendMode = blendModeToSet;
@@ -69,7 +80,7 @@ package snjdck.gpu.asset
 				isProgramDirty = true;
 				programToSet = value;
 			}
-			vertexRegister.onProgramChanged(value);
+			vertexRegisterToSet.onProgramChanged(value);
 		}
 		
 		override protected function getBlendMode():BlendMode
@@ -122,6 +133,21 @@ package snjdck.gpu.asset
 				isCullingDirty = true;
 			}
 			cullingToSet = value;
+		}
+		
+		override protected function getVertexRegister():VertexRegister
+		{
+			return vertexRegisterToSet;
+		}
+		
+		override public function setVertexBufferAt(slotIndex:int, buffer:GpuVertexBuffer, bufferOffset:int, format:String):void
+		{
+			if(applyMode){
+				super.setVertexBufferAt(slotIndex, buffer, bufferOffset, format);
+			}else{
+				isVertexRegisterDirty = true;
+				vertexRegisterToSet.setVa(slotIndex, buffer, bufferOffset, format);
+			}
 		}
 	}
 }

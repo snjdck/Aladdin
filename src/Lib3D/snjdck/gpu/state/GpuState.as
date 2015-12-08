@@ -22,5 +22,21 @@ package snjdck.gpu.state
 			vertexRegister.clear();
 			program = null;
 		}
+		
+		public function toString():String
+		{
+			return JSON.stringify(this);
+		}
+		
+		public function toJSON(key:String=null):Object
+		{
+			return {
+				"program":program.name,
+				"blendMode":blendMode.toString(),
+				"culling":culling,
+				"depthTest":depthTest.toString(),
+				"va":vertexRegister.toJSON()
+			};
+		}
 	}
 }

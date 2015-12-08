@@ -2,6 +2,8 @@ package snjdck.gpu
 {
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DBlendFactor;
+	
+	import string.replace;
 
 	final public class BlendMode
 	{
@@ -36,6 +38,11 @@ package snjdck.gpu
 		public function isOpaque():Boolean
 		{
 			return equals(NORMAL);
+		}
+		
+		public function toString():String
+		{
+			return replace("[BlendMode(source=${0}, dest=${1})]", [sourceFactor, destinationFactor]);
 		}
 	}
 }
