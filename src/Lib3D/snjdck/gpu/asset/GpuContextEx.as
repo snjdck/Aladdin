@@ -36,7 +36,7 @@ package snjdck.gpu.asset
 				isBlendModeDirty = false;
 			}
 			if(isDepthTestDirty){
-				super.setDepthTest2(depthTestToSet);
+				super.setDepthTest(depthTestToSet.writeMask, depthTestToSet.passCompareMode);
 				isDepthTestDirty = false;
 			}
 			if(isCullingDirty){
@@ -59,13 +59,13 @@ package snjdck.gpu.asset
 		override public function set program(value:GpuProgram):void
 		{
 			if(isProgramDirty){
-				if(value == super.program){
+				if(value == super.getProgram()){
 					isProgramDirty = false;
 					programToSet = null;
 				}else if(value != programToSet){
 					programToSet = value;
 				}
-			}else if(value != super.program){
+			}else if(value != super.getProgram()){
 				isProgramDirty = true;
 				programToSet = value;
 			}
@@ -80,10 +80,10 @@ package snjdck.gpu.asset
 		override public function set blendMode(value:BlendMode):void
 		{
 			if(isBlendModeDirty){
-				if(value == super.blendMode){
+				if(value == super.getBlendMode()){
 					isBlendModeDirty = false;
 				}
-			}else if(value != super.blendMode){
+			}else if(value != super.getBlendMode()){
 				isBlendModeDirty = true;
 			}
 			blendModeToSet = value;
