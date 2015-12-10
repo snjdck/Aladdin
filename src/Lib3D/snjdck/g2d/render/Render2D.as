@@ -16,6 +16,7 @@ package snjdck.g2d.render
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
+	import snjdck.gpu.state.StateStack;
 	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
@@ -23,7 +24,8 @@ package snjdck.g2d.render
 
 	final public class Render2D
 	{
-		private const projectionStack:Projection2DStack = new Projection2DStack();
+		private const projectionStack:StateStack = new StateStack(Projection2D);
+		private var projection:Projection2D;
 		private const rawData:Vector.<Number> = new Vector.<Number>(28, true);
 		private const constData:ConstData = new ConstData(rawData);
 		
@@ -31,27 +33,31 @@ package snjdck.g2d.render
 		
 		public function offset(dx:Number=0, dy:Number=0):void
 		{
-			projectionStack.projection.offset(dx, dy);
+			projection.offset(dx, dy);
 		}
 		
 		public function get offsetX():Number
 		{
-			return projectionStack.projection.offsetX;
+			return projection.offsetX;
 		}
 		
 		public function get offsetY():Number
 		{
-			return projectionStack.projection.offsetY;
+			return projection.offsetY;
 		}
 		
 		public function pushScreen(width:int, height:int, offsetX:Number=0, offsetY:Number=0):void
 		{
-			projectionStack.pushScreen(width, height, offsetX, offsetY);
+			projectionStack.push();
+			projection = projectionStack.state;
+			projection.resize(width, height);
+			projection.offset(offsetX, offsetY);
 		}
 		
 		public function popScreen():void
 		{
-			projectionStack.popScreen();
+			projectionStack.pop();
+			projection = projectionStack.state;
 		}
 		
 		public function drawBegin(context3d:GpuContext):void
@@ -110,21 +116,7 @@ package snjdck.g2d.render
 		{
 			drawLocalRect(context3d, null, x, y, width, height);
 		}
-		/*
-		public function drawWorldRectList(context3d:GpuContext, rectList:Vector.<Rectangle>):void
-		{
-			copyProjectData(rawData);
-			constData.resetWorldMatrix();
-			constData.resetFrameMatrix();
-			constData.resetUvMatrix();
-			constData.resetScale9();
-			for each(var rect:Rectangle in rectList){
-				constData.setRect(rect.x, rect.y, rect.width, rect.height);
-				context3d.setVc(0, rawData, 7);
-				QuadRender.Instance.drawTriangles(context3d);
-			}
-		}
-		//*/
+		
 		public function drawTexture(context3d:GpuContext, texture:IGpuTexture, textureX:Number=0, textureY:Number=0):void
 		{
 			context3d.texture = texture;
@@ -133,7 +125,7 @@ package snjdck.g2d.render
 		
 		public function copyProjectData(output:Vector.<Number>):void
 		{
-			projectionStack.projection.upload(output);
+			projection.upload(output);
 		}
 	}
 }
