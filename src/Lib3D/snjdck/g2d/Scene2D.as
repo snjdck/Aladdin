@@ -1,7 +1,5 @@
 package snjdck.g2d
 {
-	import flash.events.MouseEvent;
-	
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.impl.DisplayObjectContainer2D;
 	import snjdck.g2d.impl.OpaqueAreaCollector;
@@ -18,6 +16,7 @@ package snjdck.g2d
 	final public class Scene2D implements IScene, IViewPort
 	{
 		public const root:DisplayObjectContainer2D = new DisplayObjectContainer2D();
+		private const mouseEventDispatcher:MouseEventDispatcher = new MouseEventDispatcher(root);
 		private const viewPort:IViewPort = new ViewPort2D(root);
 		
 		private const collector:OpaqueAreaCollector = new OpaqueAreaCollector();
@@ -41,7 +40,7 @@ package snjdck.g2d
 			root.onUpdate(timeElapsed);
 			collector.clear();
 			root.collectOpaqueArea(collector);
-			onMouseMove();
+			mouseEventDispatcher.update();
 		}
 		
 		public function needDraw():Boolean
@@ -71,38 +70,11 @@ package snjdck.g2d
 			render2d.popScreen();
 		}
 		
-		private var prevMouseTarget:DisplayObject2D;
-		
-		private function onMouseMove():void
-		{
-			var mouseTarget:DisplayObject2D = root.findTargetUnderMouse() || root;
-			
-			if(mouseTarget == prevMouseTarget){
-				return;
-			}
-			
-			var shareParent:DisplayObject2D = findShareParent(mouseTarget, prevMouseTarget);
-			
-			notifyEventImpl(prevMouseTarget, MouseEvent.MOUSE_OUT, shareParent);
-			notifyEventImpl(mouseTarget, MouseEvent.MOUSE_OVER, shareParent);
-			
-			prevMouseTarget = mouseTarget;
-		}
-		
 		public function notifyEvent(evtType:String):Boolean
 		{
-			notifyEventImpl(prevMouseTarget, evtType);
-			return prevMouseTarget != root;
-		}
-		
-		private function notifyEventImpl(target:DisplayObject2D, evtType:String, finalNode:DisplayObject2D=null):void
-		{
-			while(target != finalNode){
-				if(target.mouseEnabled){
-					target.notify(evtType, target);
-				}
-				target = target.parent;
-			}
+			var mouseTarget:DisplayObject2D = mouseEventDispatcher.getMouseTarget();
+			mouseEventDispatcher.notifyEvent(mouseTarget, evtType);
+			return mouseTarget != root;
 		}
 		
 		public function get mouseX():Number
@@ -113,21 +85,6 @@ package snjdck.g2d
 		public function get mouseY():Number
 		{
 			return _mouseY;
-		}
-		
-		private function findShareParent(a:DisplayObject2D, b:DisplayObject2D):DisplayObject2D
-		{
-			while(a != null){
-				var tb:DisplayObject2D = b;
-				while(tb != null){
-					if(a == tb){
-						return a;
-					}
-					tb = tb.parent;
-				}
-				a = a.parent;
-			}
-			return null;
 		}
 		
 		public function createLayer(name:String, parentName:String=null):void
