@@ -11,7 +11,6 @@ package snjdck.g2d
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.support.QuadRender;
 	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g2d;
@@ -19,6 +18,7 @@ package snjdck.g2d
 	final public class Scene2D implements IScene, IViewPort
 	{
 		public const root:DisplayObjectContainer2D = new DisplayObjectContainer2D();
+		private const viewPort:IViewPort = new ViewPort2D(root);
 		
 		private const collector:OpaqueAreaCollector = new OpaqueAreaCollector();
 		private const render2d:Render2D = new Render2D();
@@ -130,22 +130,14 @@ package snjdck.g2d
 			return null;
 		}
 		
-		private const layerDict:Object = {};
-		
 		public function createLayer(name:String, parentName:String=null):void
 		{
-			var parent:DisplayObjectContainer2D = parentName ? layerDict[parentName] : root;
-			
-			var layer:DisplayObjectContainer2D = new DisplayObjectContainer2D();
-			layer.mouseEnabled = false;
-			parent.addChild(layer);
-			
-			layerDict[name] = layer;
+			viewPort.createLayer(name, parentName);
 		}
 		
 		public function getLayer(name:String):IViewPortLayer
 		{
-			return layerDict[name];
+			return viewPort.getLayer(name);
 		}
 		
 		public function resize(width:int, height:int):void
