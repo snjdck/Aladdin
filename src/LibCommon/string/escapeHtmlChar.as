@@ -1,17 +1,19 @@
 package string
 {
-	public function escapeHtmlChar(str:String):String
+	public function escapeHtmlChar(input:String):String
 	{
-		return str.replace(/[<>&]/g, _replace);
+		return input.replace(regExp, _replace);
 	}
 }
 
-function _replace():String{
-	return dict[arguments[0]];
-}
+var regExp:RegExp = /[<>&]/g;
 
-const dict:Object = {
-	"<":"&lt;",
-	">":"&gt;",
-	"&":"&amp;"
+function _replace(input:String, index:int, _:String):String
+{
+	switch(input){
+		case "<": return "&lt;";
+		case ">": return "&gt;";
+		case "&": return "&amp;";
+	}
+	return null;
 }
