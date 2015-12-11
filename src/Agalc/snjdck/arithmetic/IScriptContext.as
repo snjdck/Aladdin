@@ -11,6 +11,5 @@ package snjdck.arithmetic
 		function setValue(key:String, value:Object):void;
 		
 		function createChildContext():IScriptContext;
-		function get parent():IScriptContext;
 	}
 }

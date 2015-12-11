@@ -5,16 +5,11 @@ package snjdck.arithmetic.impl
 	final public class ScriptContext implements IScriptContext
 	{
 		private const dataDict:Object = {};
-		private var _parent:IScriptContext;
+		private var parent:IScriptContext;
 		
 		public function ScriptContext(parent:IScriptContext=null)
 		{
-			_parent = parent;
-		}
-		
-		public function get parent():IScriptContext
-		{
-			return _parent;
+			this.parent = parent;
 		}
 		
 		public function getValue(key:String):*
