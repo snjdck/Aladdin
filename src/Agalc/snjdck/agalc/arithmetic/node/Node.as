@@ -1,13 +1,11 @@
 package snjdck.agalc.arithmetic.node
 {
 	import snjdck.agalc.arithmetic.TempRegFactory;
-	import snjdck.arithmetic.IExecutable;
-	import snjdck.arithmetic.IScriptContext;
 	
 	import string.repeat;
 	import string.replace;
 
-	public class Node implements IExecutable
+	public class Node
 	{
 		private var _type:NodeType;
 		private var _value:String;
@@ -117,11 +115,6 @@ package snjdck.agalc.arithmetic.node
 					children.join(",\n")
 				]
 			);
-		}
-		
-		public function calculate(context:IScriptContext):*
-		{
-			throw new Error("unsupport nodeType:" + type.toString());
 		}
 	}
 }
