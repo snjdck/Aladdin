@@ -10,7 +10,7 @@ package snjdck.agalc.arithmetic.node
 		private var _type:NodeType;
 		private var _value:String;
 		
-		protected var realValue:*;
+		public var realValue:*;
 		
 		public var firstChild:Node;
 		public var nextSibling:Node;
