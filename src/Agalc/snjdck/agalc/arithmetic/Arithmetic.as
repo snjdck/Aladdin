@@ -48,7 +48,7 @@ package snjdck.agalc.arithmetic
 			return a;
 		}
 		
-		final protected function calcute(a:Node, op:Node, b:Node=null):Node
+		final protected function calcute(a:Node, op:Node, b:Node):Node
 		{
 			op.firstChild = a;
 			if(b){

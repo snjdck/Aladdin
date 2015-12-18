@@ -46,7 +46,7 @@ package snjdck.agalc.arithmetic.rule
 			ruleList.addRule(/\bif\b/, NodeType.KEYWORD_IF);
 			ruleList.addRule(/\bwhile\b/, NodeType.KEYWORD_WHILE);
 			ruleList.addRule(/\bvar\b/, NodeType.KEYWORD_VAR);
-			ruleList.addRule(/\bfunc\b/, NodeType.KEYWORD_FUNC);
+			ruleList.addRule(/\bfunction\b/, NodeType.KEYWORD_FUNC);
 			ruleList.addRule(/\breturn\b/, NodeType.KEYWORD_RETURN);
 			
 			ruleList.addRule(/[$_a-zA-Z][$_a-zA-Z0-9]*/, NodeType.VAR_ID);
