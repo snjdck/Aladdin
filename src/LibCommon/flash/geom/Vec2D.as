@@ -1,5 +1,7 @@
 package flash.geom
 {
+	import flash.display.Graphics;
+	
 	import math.nearEquals;
 
 	final public class Vec2D
@@ -45,6 +47,12 @@ package flash.geom
 			this.y = y;
 		}
 		
+		public function setTo(vx:Number, vy:Number):void
+		{
+			x = vx;
+			y = vy;
+		}
+		
 		public function get lengthSQ():Number
 		{
 			return (x * x) + (y * y);
@@ -57,17 +65,19 @@ package flash.geom
 		
 		public function set length(val:Number):void
 		{
-			var a:Number = getAngle();
-			x = val * Math.cos(a);
-			y = val * Math.sin(a);
+			if(isZero()){
+				x = val;
+				return;
+			}
+			multiplyLocal(val / length);
 		}
 		
-		public function getAngle():Number
+		public function get angle():Number
 		{
 			return Math.atan2(y, x);
 		}
 		
-		public function setAngle(val:Number):void
+		public function set angle(val:Number):void
 		{
 			var d:Number = length;
 			x = d * Math.cos(val);
@@ -76,7 +86,9 @@ package flash.geom
 		
 		public function truncate(max:Number):void
 		{
-			length = Math.min(length, max);
+			if(length > max){
+				length = max;
+			}
 		}
 		
 		public function negate():Vec2D
@@ -86,13 +98,18 @@ package flash.geom
 		
 		public function reverse():void
 		{
-			x *= -1;
-			y *= -1;
+			x = -x;
+			y = -y;
 		}
 		
 		public function dotProd(v:Vec2D):Number
 		{
 			return (x * v.x) + (y * v.y);
+		}
+		
+		public function sign(v:Vec2D):int
+		{
+			return crossProd(v) < 0 ? -1 : 1;
 		}
 		
 		/**
@@ -110,12 +127,14 @@ package flash.geom
 		
 		public function distanceSQ(v:Vec2D):Number
 		{
-			return subtract(v).lengthSQ;
+			var dx:Number = x - v.x;
+			var dy:Number = y - v.y;
+			return dx * dx + dy * dy;
 		}
 		
 		public function distance(v:Vec2D):Number
 		{
-			return subtract(v).length;
+			return Math.sqrt(distanceSQ(v));
 		}
 		
 		public function add(v:Vec2D)			:Vec2D { return new Vec2D(x + v.x, y + v.y); }
@@ -187,9 +206,13 @@ package flash.geom
 			return nearEquals(x, v.x) && nearEquals(y, v.y);
 		}
 		
-		public function normalize():Vec2D
+		public function normalize():void
 		{
-			return isZero() ? clone() : divide(length);
+			if(isZero()){
+				x = 1;
+				return;
+			}
+			multiplyLocal(1 / length);
 		}
 		
 		public function isZero():Boolean
@@ -200,6 +223,13 @@ package flash.geom
 		public function setZero():void
 		{
 			x = y = 0;
+		}
+		
+		public function draw(g:Graphics, color:uint=0):void
+		{
+			g.lineStyle(0, color);
+			g.moveTo(0, 0);
+			g.lineTo(x, y);
 		}
 		
 		public function toString():String
