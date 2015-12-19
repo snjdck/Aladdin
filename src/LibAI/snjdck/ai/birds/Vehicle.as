@@ -21,9 +21,6 @@ package snjdck.ai.birds
 			draw();
 		}
 		
-		/**
-		 * Default graphics for vehicle. Can be overridden in subclasses.
-		 */
 		protected function draw():void
 		{
 			graphics.clear();
@@ -34,34 +31,19 @@ package snjdck.ai.birds
 			graphics.lineTo(10, 0);
 		}
 		
-		/**
-		 * Handles all basic motion. Should be called on each frame / timer interval.
-		 */
 		public function update():void
 		{
-			// make sure velocity stays within max speed.
 			velocity.truncate(maxSpeed);
-			
-			// add velocity to position
 			_position.addLocal(velocity);
 			
-			// handle any edge behavior
-			if(edgeBehavior == WRAP){
-				wrap();
-			}else if(edgeBehavior == BOUNCE){
-				bounce();
-			}
+			if(edgeBehavior == WRAP)		wrap();
+			else if(edgeBehavior == BOUNCE)	bounce();
 			
-			// update position of sprite
-			x = position.x;
-			y = position.y;
-			
+			super.x = position.x;
+			super.y = position.y;
 			rotation = velocity.angle * Unit.DEGREE;
 		}
 		
-		/**
-		 * Causes character to bounce off edge if edge is hit.
-		 */
 		private function bounce():void
 		{
 			if(stage == null){
@@ -83,9 +65,6 @@ package snjdck.ai.birds
 			}
 		}
 		
-		/**
-		 * Causes character to wrap around to opposite edge if edge is hit.
-		 */
 		private function wrap():void
 		{
 			if(stage == null){
@@ -97,38 +76,28 @@ package snjdck.ai.birds
 			if(position.y < 0) position.y = stage.stageHeight;
 		}
 		
-		
-		/**
-		 * Sets / gets position of character as a Vector2D.
-		 */
 		public function set position(value:Vec2D):void
 		{
 			_position.setTo(value.x, value.y);
 			super.x = _position.x;
 			super.y = _position.y;
 		}
+		
 		public function get position():Vec2D
 		{
 			return _position;
 		}
 		
-		/**
-		 * Sets x position of character. Overrides Sprite.x to set internal Vector2D position as well.
-		 */
 		override public function set x(value:Number):void
 		{
 			super.x = value;
 			position.x = value;
 		}
 		
-		/**
-		 * Sets y position of character. Overrides Sprite.y to set internal Vector2D position as well.
-		 */
 		override public function set y(value:Number):void
 		{
 			super.y = value;
 			position.y = value;
 		}
-		
 	}
 }

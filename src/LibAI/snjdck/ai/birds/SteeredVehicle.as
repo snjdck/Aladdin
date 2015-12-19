@@ -30,22 +30,23 @@ package snjdck.ai.birds
 			super.update();
 		}
 		
-		public function seek(target:Vec2D):void
+		private function getSeekSteerForce(target:Vec2D):Vec2D
 		{
 			var desiredVelocity:Vec2D = target.subtract(position);
 			desiredVelocity.normalize();
-			desiredVelocity = desiredVelocity.multiply(maxSpeed);
-			var force:Vec2D = desiredVelocity.subtract(velocity);
-			_steeringForce.addLocal(force);
+			desiredVelocity.multiplyLocal(maxSpeed);
+			desiredVelocity.subtractLocal(velocity);
+			return desiredVelocity;
+		}
+		
+		public function seek(target:Vec2D):void
+		{
+			_steeringForce.addLocal(getSeekSteerForce(target));
 		}
 		
 		public function flee(target:Vec2D):void
 		{
-			var desiredVelocity:Vec2D = target.subtract(position);
-			desiredVelocity.normalize();
-			desiredVelocity = desiredVelocity.multiply(maxSpeed);
-			var force:Vec2D = desiredVelocity.subtract(velocity);
-			_steeringForce.subtractLocal(force);
+			_steeringForce.subtractLocal(getSeekSteerForce(target));
 		}
 		
 		public function arrive(target:Vec2D):void
@@ -67,18 +68,20 @@ package snjdck.ai.birds
 			_steeringForce.addLocal(force);
 		}
 		
-		public function pursue(target:Vehicle):void
+		private function getLookAheadOffset(target:Vehicle):Vec2D
 		{
 			var lookAheadTime:Number = position.distance(target.position) / maxSpeed;
-			var predictedTarget:Vec2D = target.position.add(target.velocity.multiply(lookAheadTime));
-			seek(predictedTarget);
+			return target.velocity.multiply(lookAheadTime);
+		}
+		
+		public function pursue(target:Vehicle):void
+		{
+			seek(target.position.add(getLookAheadOffset(target)));
 		}
 		
 		public function evade(target:Vehicle):void
 		{
-			var lookAheadTime:Number = position.distance(target.position) / maxSpeed;
-			var predictedTarget:Vec2D = target.position.subtract(target.velocity.multiply(lookAheadTime));
-			flee(predictedTarget);
+			flee(target.position.subtract(getLookAheadOffset(target)));
 		}
 		
 		public function wander():void
@@ -89,7 +92,7 @@ package snjdck.ai.birds
 			var offset:Vec2D = new Vec2D();
 			offset.length = wanderRadius;
 			offset.angle = _wanderAngle;
-			_wanderAngle += Math.random() * wanderRange - wanderRange * .5;
+			_wanderAngle += wanderRange * (Math.random() - 0.5);
 			var force:Vec2D = center.add(offset);
 			_steeringForce.addLocal(force);
 		}
