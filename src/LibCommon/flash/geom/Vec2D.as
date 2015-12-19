@@ -125,6 +125,21 @@ package flash.geom
 			return new Vec2D(-y, x);
 		}
 		
+		public function distanceInside(other:Vec2D, distace:Number):Boolean
+		{
+			return distanceSQ(other) < distace * distace;
+		}
+		
+		public function distanceOutside(other:Vec2D, distace:Number):Boolean
+		{
+			return distanceSQ(other) > distace * distace;
+		}
+		
+		public function distanceEqual(other:Vec2D, distace:Number):Boolean
+		{
+			return distanceSQ(other) == distace * distace;
+		}
+		
 		public function distanceSQ(v:Vec2D):Number
 		{
 			var dx:Number = x - v.x;

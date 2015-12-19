@@ -35,10 +35,17 @@ package
 		
 		private function onEnterFrame(event:Event):void
 		{
-			for(var i:int = 0; i < _numVehicles; i++)
+			var vehicle:SteeredVehicle;
+			var i:int;
+			for(i = 0; i < _numVehicles; i++)
 			{
-				_vehicles[i].flock(_vehicles);
-				_vehicles[i].update();
+				vehicle = _vehicles[i];
+				vehicle.flock(_vehicles);
+			}
+			for(i = 0; i < _numVehicles; i++)
+			{
+				vehicle = _vehicles[i];
+				vehicle.update();
 			}
 		}
 	}

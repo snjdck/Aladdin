@@ -16,17 +16,17 @@ package snjdck.ai.birds
 		public var inSightDist:Number = 200;
 		public var tooCloseDist:Number = 60;
 		
-		private const _steeringForce:Vec2D = new Vec2D();
-		private var _wanderAngle:Number = 0;
+		private const steeringForce:Vec2D = new Vec2D();
+		private var wanderAngle:Number = 0;
 		
 		public function SteeredVehicle(){}
 		
 		override public function update():void
 		{
-			_steeringForce.truncate(maxForce);
-			_steeringForce.multiplyLocal(1 / mass);
-			velocity.addLocal(_steeringForce);
-			_steeringForce.setZero();
+			steeringForce.truncate(maxForce);
+			steeringForce.multiplyLocal(1 / mass);
+			velocity.addLocal(steeringForce);
+			steeringForce.setZero();
 			super.update();
 		}
 		
@@ -41,12 +41,12 @@ package snjdck.ai.birds
 		
 		public function seek(target:Vec2D):void
 		{
-			_steeringForce.addLocal(getSeekSteerForce(target));
+			steeringForce.addLocal(getSeekSteerForce(target));
 		}
 		
 		public function flee(target:Vec2D):void
 		{
-			_steeringForce.subtractLocal(getSeekSteerForce(target));
+			steeringForce.subtractLocal(getSeekSteerForce(target));
 		}
 		
 		public function arrive(target:Vec2D):void
@@ -55,17 +55,13 @@ package snjdck.ai.birds
 			desiredVelocity.normalize();
 			
 			var dist:Number = position.distance(target);
-			if(dist > arrivalThreshold)
-			{
-				desiredVelocity = desiredVelocity.multiply(maxSpeed);
+			if(dist > arrivalThreshold){
+				desiredVelocity.multiplyLocal(maxSpeed);
+			}else{
+				desiredVelocity.multiplyLocal(maxSpeed * dist / arrivalThreshold);
 			}
-			else
-			{
-				desiredVelocity = desiredVelocity.multiply(maxSpeed * dist / arrivalThreshold);
-			}
-			
-			var force:Vec2D = desiredVelocity.subtract(velocity);
-			_steeringForce.addLocal(force);
+			desiredVelocity.subtractLocal(velocity);
+			steeringForce.addLocal(desiredVelocity);
 		}
 		
 		private function getLookAheadOffset(target:Vehicle):Vec2D
@@ -91,10 +87,10 @@ package snjdck.ai.birds
 			center.multiplyLocal(wanderDistance);
 			var offset:Vec2D = new Vec2D();
 			offset.length = wanderRadius;
-			offset.angle = _wanderAngle;
-			_wanderAngle += wanderRange * (Math.random() - 0.5);
+			offset.angle = wanderAngle;
+			wanderAngle += wanderRange * (Math.random() - 0.5);
 			var force:Vec2D = center.add(offset);
-			_steeringForce.addLocal(force);
+			steeringForce.addLocal(force);
 		}
 		
 		public function avoid(circles:Array):void
@@ -135,7 +131,7 @@ package snjdck.ai.birds
 		                                             feeler.length);
 		                
 		                // add to steering force
-						_steeringForce.addLocal(force);
+						steeringForce.addLocal(force);
 		                
 		                // braking force
 		                velocity.multiplyLocal(projection.length / feeler.length);
@@ -148,58 +144,47 @@ package snjdck.ai.birds
 		{
 			var wayPoint:Vec2D = path[pathIndex];
 			if(wayPoint == null) return;
-			if(position.distance(wayPoint) < pathThreshold)
-			{
-				if(pathIndex >= path.length - 1)
-				{
-					if(loop)
-					{
+			if(position.distanceInside(wayPoint, pathThreshold)){
+				if(pathIndex >= path.length - 1){
+					if(loop){
 						pathIndex = 0;
 					}
-				}
-				else
-				{
+				}else{
 					pathIndex++;
 				}
 			}
-			if(pathIndex >= path.length - 1 && !loop)
-			{
+			if(loop || pathIndex < path.length - 1){
+				seek(wayPoint);
+			}else{
 				arrive(wayPoint);
 			}
-			else
-			{
-				seek(wayPoint);
-			}
 		}
+		
+		static private const averagePosition:Vec2D = new Vec2D();
 		
 		public function flock(vehicles:Array):void
 		{
-			var averageVelocity:Vec2D = velocity.clone();
-			var averagePosition:Vec2D = new Vec2D();
+			averagePosition.setZero();
 			var inSightCount:int = 0;
-			for(var i:int = 0; i < vehicles.length; i++)
-			{
-				var vehicle:Vehicle = vehicles[i] as Vehicle;
-				if(vehicle != this && inSight(vehicle))
-				{
-					averageVelocity = averageVelocity.add(vehicle.velocity);
-					averagePosition = averagePosition.add(vehicle.position);
-					if(tooClose(vehicle)) flee(vehicle.position);
-					inSightCount++;
+			for(var i:int=vehicles.length-1; i >= 0; --i){
+				var vehicle:Vehicle = vehicles[i];
+				if(vehicle != this && inSight(vehicle)){
+					averagePosition.addLocal(vehicle.position);
+					++inSightCount;
+					if(tooClose(vehicle))
+						flee(vehicle.position);
 				}
 			}
-			if(inSightCount > 0)
-			{
-				averageVelocity = averageVelocity.divide(inSightCount);
-				averagePosition = averagePosition.divide(inSightCount);
+			if(inSightCount > 0){
+				averagePosition.multiplyLocal(1 / inSightCount);
 				seek(averagePosition);
-				_steeringForce.add(averageVelocity.subtract(velocity));
 			}
 		}
 		
-		public function inSight(vehicle:Vehicle):Boolean		
+		public function inSight(vehicle:Vehicle):Boolean
 		{
-			if(position.distance(vehicle.position) > inSightDist) return false;
+			if(position.distanceOutside(vehicle.position, inSightDist))
+				return false;
 			var heading:Vec2D = velocity.clone();
 			heading.normalize();
 			var difference:Vec2D = vehicle.position.subtract(position);
@@ -208,7 +193,7 @@ package snjdck.ai.birds
 		
 		public function tooClose(vehicle:Vehicle):Boolean
 		{
-			return position.distance(vehicle.position) < tooCloseDist;
+			return position.distanceInside(vehicle.position, tooCloseDist);
 		}
 	}
 }
