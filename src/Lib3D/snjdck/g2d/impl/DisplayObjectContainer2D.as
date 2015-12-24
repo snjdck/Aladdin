@@ -1,6 +1,5 @@
 package snjdck.g2d.impl
 {
-	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	import array.delAt;
@@ -156,7 +155,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override public function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
+		override ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
 		{
 			super.updateMouseXY(parentMouseX, parentMouseY);
 			for each(var child:DisplayObject2D in _childList){
@@ -164,14 +163,12 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override public function onUpdate(timeElapsed:int):void
+		override ns_g2d function updateMatrix(timeElapsed:int, isParentDirty:Boolean):void
 		{
-			if(!hasVisibleArea()){
-				return;
-			}
-			super.onUpdate(timeElapsed);
+			var dirtyFlag:Boolean = isSelfDirty(isParentDirty);
+			super.updateMatrix(timeElapsed, isParentDirty);
 			for each(var child:DisplayObject2D in _childList){
-				child.onUpdate(timeElapsed);
+				child.updateMatrix(timeElapsed, dirtyFlag);
 			}
 		}
 		
@@ -221,8 +218,6 @@ package snjdck.g2d.impl
 			}
 			result.setTo(minX, minY, maxX-minX, maxY-minY);
 		}
-		
-		private const tempPt:Point = new Point();
 		
 		public function get bottomChild():DisplayObject2D
 		{

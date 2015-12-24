@@ -37,7 +37,7 @@ package snjdck.g2d
 		public function update(timeElapsed:int):void
 		{
 			root.updateMouseXY(_mouseX, _mouseY);
-			root.onUpdate(timeElapsed);
+			root.updateMatrix(timeElapsed, false);
 			collector.clear();
 			root.collectOpaqueArea(collector);
 			mouseEventDispatcher.update();

@@ -38,6 +38,7 @@ package snjdck.g2d.impl
 		ns_g2d var _scene:IScene;
 		ns_g2d var _root:DisplayObjectContainer2D;
 		
+		private var isWorldMatrixDirty:Boolean;
 		private var isLocalMatrixDirty:Boolean;
 		private const _localMatrix:Matrix = new Matrix();
 		
@@ -81,31 +82,36 @@ package snjdck.g2d.impl
 			return _localMatrix;
 		}
 		
-		public function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
+		public function isSelfDirty(isParentDirty:Boolean):Boolean
+		{
+			return isWorldMatrixDirty || isParentDirty;
+		}
+		
+		ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
 		{
 			transformCoordsInv(transform, parentMouseX, parentMouseY, tempPt);
 			mouseX = tempPt.x;
 			mouseY = tempPt.y;
 		}
 		
-		public function onUpdate(timeElapsed:int):void
+		ns_g2d function updateMatrix(timeElapsed:int, isParentDirty:Boolean):void
 		{
-			if(!hasVisibleArea()){
-				return;
-			}
 			if(isDraging){
 				x = parent.mouseX - dragOffsetX;
 				y = parent.mouseY - dragOffsetY;
 			}
-			prevWorldMatrix.copyFrom(transform);
-			if(parent != null){
-				prevWorldMatrix.concat(parent.prevWorldMatrix);
+			if(isSelfDirty(isParentDirty)){
+				prevWorldMatrix.copyFrom(transform);
+				if(parent != null)
+					prevWorldMatrix.concat(parent.prevWorldMatrix);
+				isWorldMatrixDirty = false;
 			}
 			notify(Event.ENTER_FRAME, this);
 		}
 		
 		ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void{}
-		ns_g2d function draw(render2d:Render2D, context3d:GpuContext):void
+		
+		final ns_g2d function draw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(clipContent){
 				_clipRect.drawBegin(render2d, context3d);
@@ -198,6 +204,7 @@ package snjdck.g2d.impl
 		{
 			_pivotX = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 
 		public function get pivotY():Number
@@ -209,6 +216,7 @@ package snjdck.g2d.impl
 		{
 			_pivotY = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 
 		public function get x():Number
@@ -221,6 +229,7 @@ package snjdck.g2d.impl
 			mouseX += _x - value;
 			_x = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 
 		public function get y():Number
@@ -233,6 +242,7 @@ package snjdck.g2d.impl
 			mouseY += _y - value;
 			_y = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 
 		public function get scaleX():Number
@@ -244,6 +254,7 @@ package snjdck.g2d.impl
 		{
 			_scaleX = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 
 		public function get scaleY():Number
@@ -255,12 +266,14 @@ package snjdck.g2d.impl
 		{
 			_scaleY = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 		
 		public function set scale(value:Number):void
 		{
 			_scaleX = _scaleY = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 
 		public function get rotation():Number
@@ -272,6 +285,7 @@ package snjdck.g2d.impl
 		{
 			_rotation = value;
 			isLocalMatrixDirty = true;
+			isWorldMatrixDirty = true;
 		}
 		
 		public function get width():Number
