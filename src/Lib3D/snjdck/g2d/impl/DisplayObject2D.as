@@ -226,7 +226,6 @@ package snjdck.g2d.impl
 
 		public function set x(value:Number):void
 		{
-			mouseX += _x - value;
 			_x = value;
 			isLocalMatrixDirty = true;
 			isWorldMatrixDirty = true;
@@ -239,7 +238,6 @@ package snjdck.g2d.impl
 
 		public function set y(value:Number):void
 		{
-			mouseY += _y - value;
 			_y = value;
 			isLocalMatrixDirty = true;
 			isWorldMatrixDirty = true;
@@ -463,9 +461,9 @@ package snjdck.g2d.impl
 		
 		public function startDrag():void
 		{
-			dragOffsetX = mouseX;
-			dragOffsetY = mouseY;
 			isDraging = true;
+			dragOffsetX = parent.mouseX - x;
+			dragOffsetY = parent.mouseY - y;
 		}
 		
 		public function stopDrag():void
