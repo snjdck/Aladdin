@@ -99,6 +99,10 @@ package snjdck.g2d.impl
 		
 		ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
 		{
+			if(isDraging){
+				x = parentMouseX - dragOffsetX;
+				y = parentMouseY - dragOffsetY;
+			}
 			transformCoordsInv(transform, parentMouseX, parentMouseY, tempPt);
 			mouseX = tempPt.x;
 			mouseY = tempPt.y;
@@ -106,10 +110,6 @@ package snjdck.g2d.impl
 		
 		ns_g2d function onUpdate(timeElapsed:int):void
 		{
-			if(isDraging){
-				x = parent.mouseX - dragOffsetX;
-				y = parent.mouseY - dragOffsetY;
-			}
 			notify(Event.ENTER_FRAME, this);
 		}
 		
@@ -230,6 +230,8 @@ package snjdck.g2d.impl
 
 		public function set x(value:Number):void
 		{
+			if(_x == value)
+				return;
 			_x = value;
 			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
@@ -242,6 +244,8 @@ package snjdck.g2d.impl
 
 		public function set y(value:Number):void
 		{
+			if(_y == value)
+				return;
 			_y = value;
 			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
@@ -254,6 +258,8 @@ package snjdck.g2d.impl
 
 		public function set scaleX(value:Number):void
 		{
+			if(_scaleX == value)
+				return;
 			_scaleX = value;
 			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
@@ -266,6 +272,8 @@ package snjdck.g2d.impl
 
 		public function set scaleY(value:Number):void
 		{
+			if(_scaleY == value)
+				return;
 			_scaleY = value;
 			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
@@ -273,6 +281,8 @@ package snjdck.g2d.impl
 		
 		public function set scale(value:Number):void
 		{
+			if(_scaleX == value && _scaleY == value)
+				return;
 			_scaleX = _scaleY = value;
 			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
@@ -285,6 +295,8 @@ package snjdck.g2d.impl
 
 		public function set rotation(value:Number):void
 		{
+			if(_rotation == value)
+				return;
 			_rotation = value;
 			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
