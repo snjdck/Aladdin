@@ -163,12 +163,12 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override ns_g2d function updateMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		override ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
 		{
 			var dirtyFlag:Boolean = isSelfDirty(isParentDirty);
-			super.updateMatrix(timeElapsed, isParentDirty);
+			super.updateWorldMatrix(timeElapsed, isParentDirty);
 			for each(var child:DisplayObject2D in _childList){
-				child.updateMatrix(timeElapsed, dirtyFlag);
+				child.updateWorldMatrix(timeElapsed, dirtyFlag);
 			}
 		}
 		

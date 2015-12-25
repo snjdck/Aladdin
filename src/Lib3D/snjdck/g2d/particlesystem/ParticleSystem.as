@@ -112,9 +112,9 @@ package snjdck.g2d.particlesystem
 			context3d.restore();
 		}
 		
-		override ns_g2d function updateMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		override ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
 		{
-			super.updateMatrix(timeElapsed, isParentDirty);
+			super.updateWorldMatrix(timeElapsed, isParentDirty);
 			const passedTime:Number = timeElapsed * 0.001;
 			
 			var particleIndex:int = 0;

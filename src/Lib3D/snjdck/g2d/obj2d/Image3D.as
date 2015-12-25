@@ -29,9 +29,9 @@ package snjdck.g2d.obj2d
 			scene3d.root.addChild(child);
 		}
 		
-		override ns_g2d function updateMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		override ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
 		{
-			super.updateMatrix(timeElapsed, isParentDirty);
+			super.updateWorldMatrix(timeElapsed, isParentDirty);
 			transformCoordsDelta(transform, width, height, tempPt);
 			scene3d.root.syncMatrix2D(prevWorldMatrix);
 			scene3d.root.x += 0.5 * (tempPt.x - scene.stageWidth);

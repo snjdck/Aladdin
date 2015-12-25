@@ -94,7 +94,7 @@ package snjdck.g2d.impl
 			mouseY = tempPt.y;
 		}
 		
-		ns_g2d function updateMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
 		{
 			if(isDraging){
 				x = parent.mouseX - dragOffsetX;
