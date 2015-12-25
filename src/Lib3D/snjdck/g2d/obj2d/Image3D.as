@@ -29,11 +29,11 @@ package snjdck.g2d.obj2d
 			scene3d.root.addChild(child);
 		}
 		
-		override ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		override ns_g2d function onUpdate(timeElapsed:int):void
 		{
-			super.updateWorldMatrix(timeElapsed, isParentDirty);
+			super.onUpdate(timeElapsed);
 			transformCoordsDelta(transform, width, height, tempPt);
-			scene3d.root.syncMatrix2D(prevWorldMatrix);
+			scene3d.root.syncMatrix2D(worldTransform);
 			scene3d.root.x += 0.5 * (tempPt.x - scene.stageWidth);
 			scene3d.root.y = 0.5 * (scene.stageHeight - tempPt.y) - scene3d.root.y;
 			scene3d.root.rotationZ *= -1;

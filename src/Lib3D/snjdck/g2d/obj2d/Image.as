@@ -55,7 +55,7 @@ package snjdck.g2d.obj2d
 			}
 			if(texture.scale9 != null){
 				var v:Vector.<Number> = texture.scale9;
-				collector.add(prevWorldMatrix,
+				collector.add(worldTransform,
 					v[0],v[1],
 					width - (v[0] + v[2]),
 					height - (v[1] + v[3])

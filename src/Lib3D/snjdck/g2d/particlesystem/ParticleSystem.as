@@ -106,15 +106,15 @@ package snjdck.g2d.particlesystem
 			context3d.blendMode = blendMode;
 			context3d.texture = mTexture;
 			particleInstanceData.numParticles = mNumParticles;
-			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
+			InstanceRender.Instance.setVc(render2d, worldTransform);
 			InstanceRender.Instance.draw(context3d, particleInstanceData);
 			
 			context3d.restore();
 		}
 		
-		override ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		override ns_g2d function onUpdate(timeElapsed:int):void
 		{
-			super.updateWorldMatrix(timeElapsed, isParentDirty);
+			super.onUpdate(timeElapsed);
 			const passedTime:Number = timeElapsed * 0.001;
 			
 			var particleIndex:int = 0;

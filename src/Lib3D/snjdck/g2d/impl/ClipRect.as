@@ -3,7 +3,6 @@ package snjdck.g2d.impl
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DStencilAction;
 	import flash.display3D.Context3DTriangleFace;
-	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
 	import snjdck.g2d.render.Render2D;
@@ -14,11 +13,11 @@ package snjdck.g2d.impl
 		static private const MAX_RECURSIVE_COUNT:int = 8;
 		static private var stencilIndex:int = 0;
 		
-		private var worldMatrix:Matrix;
+		private var target:DisplayObject2D;
 		
-		public function ClipRect(worldMatrix:Matrix)
+		public function ClipRect(target:DisplayObject2D)
 		{
-			this.worldMatrix = worldMatrix;
+			this.target = target;
 		}
 		
 		public function drawBegin(render2d:Render2D, context3d:GpuContext):void
@@ -51,7 +50,7 @@ package snjdck.g2d.impl
 				Context3DStencilAction.KEEP,
 				Context3DStencilAction.SET
 			);
-			render2d.drawLocalRect(context3d, worldMatrix, x, y, width, height);
+			render2d.drawLocalRect(context3d, target.worldTransform, x, y, width, height);
 			
 			context3d.setStencilActions(
 				Context3DTriangleFace.FRONT_AND_BACK,

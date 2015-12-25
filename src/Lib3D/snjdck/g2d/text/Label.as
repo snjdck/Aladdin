@@ -109,7 +109,7 @@ package snjdck.g2d.text
 			textInstanceData.textureSize = textFactory.textureSize;
 			textFactory.setTexture(context3d);
 			
-			InstanceRender.Instance.setVc(render2d, prevWorldMatrix);
+			InstanceRender.Instance.setVc(render2d, worldTransform);
 			InstanceRender.Instance.draw(context3d, textInstanceData);
 			
 			context3d.restore();

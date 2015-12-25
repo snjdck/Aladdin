@@ -1,18 +1,19 @@
 package snjdck.g2d.text.ime
 {
-	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.text.ime.CompositionAttributeRange;
 	import flash.text.ime.IIMEClient;
 	
+	import snjdck.g2d.impl.DisplayObject2D;
+	
 	public class IMEClient implements IIMEClient
 	{
-		private var worldMatrix:Matrix;
+		private var target:DisplayObject2D;
 		private var textBounds:Rectangle;
 		
-		public function IMEClient(worldMatrix:Matrix)
+		public function IMEClient(target:DisplayObject2D)
 		{
-			this.worldMatrix = worldMatrix;
+			this.target = target;
 			textBounds = new Rectangle(0, 0, 12, 12);
 		}
 		
@@ -32,8 +33,8 @@ package snjdck.g2d.text.ime
 		
 		public function getTextBounds(startIndex:int, endIndex:int):Rectangle
 		{
-			textBounds.x = worldMatrix.tx;
-			textBounds.y = worldMatrix.ty;
+			textBounds.x = target.worldTransform.tx;
+			textBounds.y = target.worldTransform.ty;
 			return textBounds;
 		}
 		

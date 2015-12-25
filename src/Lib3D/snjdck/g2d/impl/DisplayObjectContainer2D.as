@@ -46,13 +46,25 @@ package snjdck.g2d.impl
 			if(isLocked || index < 0 || numChildren < index){
 				return;
 			}
-			
-			child.removeFromParent();
+			var needMarkWorldMatrixDirty:Boolean = true;
+			if(child.parent != null){
+				if(child.parent == this){
+					if(getChildIndex(child) != index){
+						setChildIndex(child, index);
+					}
+					return;
+				}
+				child.removeFromParent();
+				needMarkWorldMatrixDirty = false;
+			}
 			
 			isLocked = true;
 			
 			array.insert(_childList, index, child);
 			child.parent = this;
+			if(needMarkWorldMatrixDirty){
+				child.markWorldMatrixDirty();
+			}
 			
 			isLocked = false;
 		}
@@ -72,6 +84,7 @@ package snjdck.g2d.impl
 			
 			var child:DisplayObject2D = array.delAt(_childList, index);
 			child.parent = null;
+			child.markWorldMatrixDirty();
 			
 			isLocked = false;
 			
@@ -129,6 +142,14 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
+		override internal function markWorldMatrixDirty():void
+		{
+			super.markWorldMatrixDirty();
+			for each(var child:DisplayObject2D in _childList){
+				child.markWorldMatrixDirty();
+			}
+		}
+		
 		override ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void
 		{
 			if(clipContent){
@@ -163,12 +184,11 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		override ns_g2d function onUpdate(timeElapsed:int):void
 		{
-			var dirtyFlag:Boolean = isSelfDirty(isParentDirty);
-			super.updateWorldMatrix(timeElapsed, isParentDirty);
+			super.onUpdate(timeElapsed);
 			for each(var child:DisplayObject2D in _childList){
-				child.updateWorldMatrix(timeElapsed, dirtyFlag);
+				child.onUpdate(timeElapsed);
 			}
 		}
 		

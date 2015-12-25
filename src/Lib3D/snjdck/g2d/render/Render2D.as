@@ -72,7 +72,7 @@ package snjdck.g2d.render
 		public function drawImage(context3d:GpuContext, target:DisplayObject2D, texture:ITexture2D, colorTransform:ColorTransform=null):void
 		{
 			copyProjectData(rawData);
-			matrix33.toBuffer(target.prevWorldMatrix, rawData, 4);
+			matrix33.toBuffer(target.worldTransform, rawData, 4);
 			
 			constData.copyMatrix(texture.frameMatrix, 12);
 			constData.copyMatrix(texture.uvMatrix, 14);

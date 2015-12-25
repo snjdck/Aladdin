@@ -27,7 +27,7 @@ package snjdck.g2d.text
 		
 		public function TextInput()
 		{
-			imeClient = new IMEClient(prevWorldMatrix);
+			imeClient = new IMEClient(this);
 			addListener(MouseEvent.MOUSE_DOWN, __onMouseDown);
 		}
 		
@@ -60,8 +60,8 @@ package snjdck.g2d.text
 				charList.calcPosition(text, caretIndex, width, tempPt);
 				caret.x = tempPt.x;
 				caret.y = tempPt.y;
-				caret.prevWorldMatrix.copyFrom(caret.transform);
-				caret.prevWorldMatrix.concat(prevWorldMatrix);
+				caret.worldTransform.copyFrom(caret.transform);
+				caret.worldTransform.concat(worldTransform);
 				caret.draw(render2d, context3d);
 			}
 		}

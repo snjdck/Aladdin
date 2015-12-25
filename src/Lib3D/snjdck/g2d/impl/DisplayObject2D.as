@@ -40,9 +40,8 @@ package snjdck.g2d.impl
 		
 		private var isWorldMatrixDirty:Boolean;
 		private var isLocalMatrixDirty:Boolean;
+		private const _worldMatrix:Matrix = new Matrix();
 		private const _localMatrix:Matrix = new Matrix();
-		
-		ns_g2d const prevWorldMatrix:Matrix = new Matrix();
 		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
@@ -52,7 +51,7 @@ package snjdck.g2d.impl
 		
 		public function DisplayObject2D()
 		{
-			_clipRect = new ClipRect(prevWorldMatrix);
+			_clipRect = new ClipRect(this);
 			
 			_pivotX = _pivotY = 0;
 			_x = _y = 0;
@@ -82,9 +81,20 @@ package snjdck.g2d.impl
 			return _localMatrix;
 		}
 		
-		public function isSelfDirty(isParentDirty:Boolean):Boolean
+		public function get worldTransform():Matrix
 		{
-			return isWorldMatrixDirty || isParentDirty;
+			if(isWorldMatrixDirty){
+				_worldMatrix.copyFrom(transform);
+				if(parent != null)
+					_worldMatrix.concat(parent.worldTransform);
+				isWorldMatrixDirty = false;
+			}
+			return _worldMatrix;
+		}
+		
+		internal function markWorldMatrixDirty():void
+		{
+			isWorldMatrixDirty = true;
 		}
 		
 		ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
@@ -94,17 +104,11 @@ package snjdck.g2d.impl
 			mouseY = tempPt.y;
 		}
 		
-		ns_g2d function updateWorldMatrix(timeElapsed:int, isParentDirty:Boolean):void
+		ns_g2d function onUpdate(timeElapsed:int):void
 		{
 			if(isDraging){
 				x = parent.mouseX - dragOffsetX;
 				y = parent.mouseY - dragOffsetY;
-			}
-			if(isSelfDirty(isParentDirty)){
-				prevWorldMatrix.copyFrom(transform);
-				if(parent != null)
-					prevWorldMatrix.concat(parent.prevWorldMatrix);
-				isWorldMatrixDirty = false;
 			}
 			notify(Event.ENTER_FRAME, this);
 		}
@@ -151,7 +155,7 @@ package snjdck.g2d.impl
 		
 		public function globalToLocal(globalX:Number, globalY:Number, output:Point):void
 		{
-			transformCoordsInv(prevWorldMatrix, globalX, globalY, output);
+			transformCoordsInv(worldTransform, globalX, globalY, output);
 		}
 		
 		public function globalToLocal2(globalPt:Point, output:Point):void
@@ -161,7 +165,7 @@ package snjdck.g2d.impl
 		
 		public function localToGlobal(localX:Number, localY:Number, output:Point):void
 		{
-			transformCoords(prevWorldMatrix, localX, localY, output);
+			transformCoords(worldTransform, localX, localY, output);
 		}
 		
 		public function localToGlobal2(localPt:Point, output:Point):void
@@ -204,7 +208,7 @@ package snjdck.g2d.impl
 		{
 			_pivotX = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 
 		public function get pivotY():Number
@@ -216,7 +220,7 @@ package snjdck.g2d.impl
 		{
 			_pivotY = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 
 		public function get x():Number
@@ -228,7 +232,7 @@ package snjdck.g2d.impl
 		{
 			_x = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 
 		public function get y():Number
@@ -240,7 +244,7 @@ package snjdck.g2d.impl
 		{
 			_y = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 
 		public function get scaleX():Number
@@ -252,7 +256,7 @@ package snjdck.g2d.impl
 		{
 			_scaleX = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 
 		public function get scaleY():Number
@@ -264,14 +268,14 @@ package snjdck.g2d.impl
 		{
 			_scaleY = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function set scale(value:Number):void
 		{
 			_scaleX = _scaleY = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 
 		public function get rotation():Number
@@ -283,7 +287,7 @@ package snjdck.g2d.impl
 		{
 			_rotation = value;
 			isLocalMatrixDirty = true;
-			isWorldMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get width():Number
