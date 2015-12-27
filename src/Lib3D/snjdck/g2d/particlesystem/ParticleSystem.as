@@ -112,7 +112,7 @@ package snjdck.g2d.particlesystem
 			context3d.restore();
 		}
 		
-		override ns_g2d function onUpdate(timeElapsed:int):void
+		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
 			const passedTime:Number = timeElapsed * 0.001;

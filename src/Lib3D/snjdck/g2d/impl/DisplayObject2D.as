@@ -108,7 +108,7 @@ package snjdck.g2d.impl
 			mouseY = tempPt.y;
 		}
 		
-		ns_g2d function onUpdate(timeElapsed:int):void
+		public function onUpdate(timeElapsed:int):void
 		{
 			notify(Event.ENTER_FRAME, this);
 		}

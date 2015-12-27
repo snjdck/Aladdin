@@ -184,7 +184,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override ns_g2d function onUpdate(timeElapsed:int):void
+		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
 			for each(var child:DisplayObject2D in _childList){

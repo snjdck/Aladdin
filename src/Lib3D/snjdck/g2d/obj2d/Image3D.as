@@ -29,7 +29,7 @@ package snjdck.g2d.obj2d
 			scene3d.root.addChild(child);
 		}
 		
-		override ns_g2d function onUpdate(timeElapsed:int):void
+		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
 			transformCoordsDelta(transform, width, height, tempPt);
