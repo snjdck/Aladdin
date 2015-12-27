@@ -33,7 +33,7 @@ package snjdck.g3d.core
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
 			for each(var child:Object3D in _childList){
-				if(child.hasVisibleArea()){
+				if(child.isVisible()){
 					child.collectDrawUnit(collector, camera3d);
 				}
 			}
@@ -52,7 +52,7 @@ package snjdck.g3d.core
 				return;
 			}
 			for each(var child:Object3D in _childList){
-				if(child.hasVisibleArea()){
+				if(child.isVisible()){
 					child.hitTest(tempRay, result);
 				}
 			}
