@@ -47,6 +47,7 @@ package snjdck.g2d.impl
 			_matrix.translate(_x, _y);
 		}
 		
+		internal function markWorldMatrixDirty():void{}
 		
 		public function get pivotX():Number
 		{
@@ -55,8 +56,11 @@ package snjdck.g2d.impl
 		
 		public function set pivotX(value:Number):void
 		{
+			if(_pivotX == value)
+				return;
 			_pivotX = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get pivotY():Number
@@ -66,8 +70,11 @@ package snjdck.g2d.impl
 		
 		public function set pivotY(value:Number):void
 		{
+			if(_pivotY == value)
+				return;
 			_pivotY = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get x():Number
@@ -77,8 +84,11 @@ package snjdck.g2d.impl
 		
 		public function set x(value:Number):void
 		{
+			if(_x == value)
+				return;
 			_x = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get y():Number
@@ -88,8 +98,11 @@ package snjdck.g2d.impl
 		
 		public function set y(value:Number):void
 		{
+			if(_y == value)
+				return;
 			_y = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get scaleX():Number
@@ -99,8 +112,11 @@ package snjdck.g2d.impl
 		
 		public function set scaleX(value:Number):void
 		{
+			if(_scaleX == value)
+				return;
 			_scaleX = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get scaleY():Number
@@ -110,14 +126,20 @@ package snjdck.g2d.impl
 		
 		public function set scaleY(value:Number):void
 		{
+			if(_scaleY == value)
+				return;
 			_scaleY = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function set scale(value:Number):void
 		{
+			if(_scaleX == value && _scaleY == value)
+				return;
 			_scaleX = _scaleY = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get rotation():Number
@@ -127,8 +149,11 @@ package snjdck.g2d.impl
 		
 		public function set rotation(value:Number):void
 		{
+			if(_rotation == value)
+				return;
 			_rotation = value;
 			isDirty = true;
+			markWorldMatrixDirty();
 		}
 	}
 }

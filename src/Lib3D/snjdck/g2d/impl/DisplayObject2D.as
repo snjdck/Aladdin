@@ -61,7 +61,7 @@ package snjdck.g2d.impl
 			return _worldMatrix;
 		}
 		
-		internal function markWorldMatrixDirty():void
+		override internal function markWorldMatrixDirty():void
 		{
 			isWorldMatrixDirty = true;
 		}
@@ -166,66 +166,6 @@ package snjdck.g2d.impl
 			}
 			
 			isLocked = false;
-		}
-
-		override public function set pivotX(value:Number):void
-		{
-			super.pivotX = value;
-			markWorldMatrixDirty();
-		}
-
-		override public function set pivotY(value:Number):void
-		{
-			super.pivotY = value;
-			markWorldMatrixDirty();
-		}
-
-		override public function set x(value:Number):void
-		{
-			if(x == value)
-				return;
-			super.x = value;
-			markWorldMatrixDirty();
-		}
-
-		override public function set y(value:Number):void
-		{
-			if(y == value)
-				return;
-			super.y = value;
-			markWorldMatrixDirty();
-		}
-
-		override public function set scaleX(value:Number):void
-		{
-			if(scaleX == value)
-				return;
-			super.scaleX = value;
-			markWorldMatrixDirty();
-		}
-
-		override public function set scaleY(value:Number):void
-		{
-			if(scaleY == value)
-				return;
-			super.scaleY = value;
-			markWorldMatrixDirty();
-		}
-		
-		override public function set scale(value:Number):void
-		{
-			if(scaleX == value && scaleY == value)
-				return;
-			super.scale = value;
-			markWorldMatrixDirty();
-		}
-
-		override public function set rotation(value:Number):void
-		{
-			if(rotation == value)
-				return;
-			super.rotation = value;
-			markWorldMatrixDirty();
 		}
 		
 		public function get width():Number
