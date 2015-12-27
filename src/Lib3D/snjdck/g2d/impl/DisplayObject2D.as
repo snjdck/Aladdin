@@ -4,6 +4,7 @@ package snjdck.g2d.impl
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.signals.ISignalGroup;
 	import flash.signals.SignalGroup;
 	
 	import matrix33.transformCoords;
@@ -15,18 +16,14 @@ package snjdck.g2d.impl
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	
-	import stdlib.constant.Unit;
-	
 	use namespace ns_g2d;
 
-	public class DisplayObject2D extends SignalGroup
+	public class DisplayObject2D extends Transform2D implements ISignalGroup
 	{
 		public var name:String;
 		
-		private var _x:Number, _scaleX:Number, _pivotX:Number;
-		private var _y:Number, _scaleY:Number, _pivotY:Number;
-		private var _rotation:Number;
 		protected var _width:Number, _height:Number;
+		private const signalGroup:SignalGroup = new SignalGroup();
 		
 		public var mouseEnabled:Boolean = true;
 		public var mouseX:Number, mouseY:Number;
@@ -39,9 +36,7 @@ package snjdck.g2d.impl
 		ns_g2d var _root:DisplayObjectContainer2D;
 		
 		private var isWorldMatrixDirty:Boolean;
-		private var isLocalMatrixDirty:Boolean;
 		private const _worldMatrix:Matrix = new Matrix();
-		private const _localMatrix:Matrix = new Matrix();
 		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
@@ -52,33 +47,7 @@ package snjdck.g2d.impl
 		public function DisplayObject2D()
 		{
 			_clipRect = new ClipRect(this);
-			
-			_pivotX = _pivotY = 0;
-			_x = _y = 0;
-			_scaleX = _scaleY = 1;
-			_rotation = 0;
 			_width = _height = 0;
-		}
-		
-		/** 1.缩放, 2.旋转, 3.位移 */
-		private function calcTransform():void
-		{
-			_localMatrix.identity();
-			if(_pivotX != 0 || _pivotY != 0){
-				_localMatrix.translate(_pivotX, _pivotY);
-			}
-			_localMatrix.scale(_scaleX, _scaleY);
-			_localMatrix.rotate(_rotation * Unit.RADIAN);
-			_localMatrix.translate(_x, _y);
-		}
-		
-		public function get transform():Matrix
-		{
-			if(isLocalMatrixDirty){
-				calcTransform();
-				isLocalMatrixDirty = false;
-			}
-			return _localMatrix;
 		}
 		
 		public function get worldTransform():Matrix
@@ -198,107 +167,64 @@ package snjdck.g2d.impl
 			
 			isLocked = false;
 		}
-		
-		public function get pivotX():Number
-		{
-			return _pivotX;
-		}
 
-		public function set pivotX(value:Number):void
+		override public function set pivotX(value:Number):void
 		{
-			_pivotX = value;
-			isLocalMatrixDirty = true;
+			super.pivotX = value;
 			markWorldMatrixDirty();
 		}
 
-		public function get pivotY():Number
+		override public function set pivotY(value:Number):void
 		{
-			return _pivotY;
-		}
-
-		public function set pivotY(value:Number):void
-		{
-			_pivotY = value;
-			isLocalMatrixDirty = true;
+			super.pivotY = value;
 			markWorldMatrixDirty();
 		}
 
-		public function get x():Number
+		override public function set x(value:Number):void
 		{
-			return _x;
-		}
-
-		public function set x(value:Number):void
-		{
-			if(_x == value)
+			if(x == value)
 				return;
-			_x = value;
-			isLocalMatrixDirty = true;
+			super.x = value;
 			markWorldMatrixDirty();
 		}
 
-		public function get y():Number
+		override public function set y(value:Number):void
 		{
-			return _y;
-		}
-
-		public function set y(value:Number):void
-		{
-			if(_y == value)
+			if(y == value)
 				return;
-			_y = value;
-			isLocalMatrixDirty = true;
+			super.y = value;
 			markWorldMatrixDirty();
 		}
 
-		public function get scaleX():Number
+		override public function set scaleX(value:Number):void
 		{
-			return _scaleX;
-		}
-
-		public function set scaleX(value:Number):void
-		{
-			if(_scaleX == value)
+			if(scaleX == value)
 				return;
-			_scaleX = value;
-			isLocalMatrixDirty = true;
+			super.scaleX = value;
 			markWorldMatrixDirty();
 		}
 
-		public function get scaleY():Number
+		override public function set scaleY(value:Number):void
 		{
-			return _scaleY;
-		}
-
-		public function set scaleY(value:Number):void
-		{
-			if(_scaleY == value)
+			if(scaleY == value)
 				return;
-			_scaleY = value;
-			isLocalMatrixDirty = true;
+			super.scaleY = value;
 			markWorldMatrixDirty();
 		}
 		
-		public function set scale(value:Number):void
+		override public function set scale(value:Number):void
 		{
-			if(_scaleX == value && _scaleY == value)
+			if(scaleX == value && scaleY == value)
 				return;
-			_scaleX = _scaleY = value;
-			isLocalMatrixDirty = true;
+			super.scale = value;
 			markWorldMatrixDirty();
 		}
 
-		public function get rotation():Number
+		override public function set rotation(value:Number):void
 		{
-			return _rotation;
-		}
-
-		public function set rotation(value:Number):void
-		{
-			if(_rotation == value)
+			if(rotation == value)
 				return;
-			_rotation = value;
-			isLocalMatrixDirty = true;
+			super.rotation = value;
 			markWorldMatrixDirty();
 		}
 		
@@ -324,12 +250,12 @@ package snjdck.g2d.impl
 		
 		public function get scaleWidth():Number
 		{
-			return _scaleX * _width;
+			return scaleX * _width;
 		}
 		
 		public function get scaleHeight():Number
 		{
-			return _scaleY * _height;
+			return scaleY * _height;
 		}
 		
 		public function get clipRect():Rectangle
@@ -485,6 +411,26 @@ package snjdck.g2d.impl
 		public function stopDrag():void
 		{
 			isDraging = false;
+		}
+		
+		public function addListener(evtName:String, handler:Function, once:Boolean=false):void
+		{
+			signalGroup.addListener(evtName, handler, once);
+		}
+		
+		public function hasListener(evtName:String, handler:Function):Boolean
+		{
+			return signalGroup.hasListener(evtName, handler);
+		}
+		
+		public function notify(evtName:String, arg:Object):void
+		{
+			signalGroup.notify(evtName, arg);
+		}
+		
+		public function removeListener(evtName:String, handler:Function):void
+		{
+			signalGroup.removeListener(evtName, handler);
 		}
 	}
 }

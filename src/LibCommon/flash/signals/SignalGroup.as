@@ -2,7 +2,7 @@ package flash.signals
 {
 	import dict.hasKey;
 
-	public class SignalGroup
+	public class SignalGroup implements ISignalGroup
 	{
 		private const signalDict:Object = {};
 		
@@ -28,7 +28,7 @@ package flash.signals
 			return false;
 		}
 		
-		public function getSignal(evtName:String):Signal
+		private function getSignal(evtName:String):Signal
 		{
 			if(!dict.hasKey(signalDict, evtName)){
 				signalDict[evtName] = new Signal(Object);
