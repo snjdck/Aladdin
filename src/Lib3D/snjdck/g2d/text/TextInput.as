@@ -37,7 +37,7 @@ package snjdck.g2d.text
 			ImeMgr.Instance.activeIME(this);
 		}
 		
-		override public function hasVisibleArea():Boolean
+		override public function isVisible():Boolean
 		{
 			return visible;
 		}

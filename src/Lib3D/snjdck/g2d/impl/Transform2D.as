@@ -10,8 +10,10 @@ package snjdck.g2d.impl
 		private var _y:Number, _scaleY:Number, _pivotY:Number;
 		private var _rotation:Number;
 		
-		private const _matrix:Matrix = new Matrix();
-		private var isDirty:Boolean;
+		private var isWorldMatrixDirty:Boolean;
+		private var isLocalMatrixDirty:Boolean;
+		private const worldMatrix:Matrix = new Matrix();
+		private const localMatrix:Matrix = new Matrix();
 		
 		public function Transform2D()
 		{
@@ -26,28 +28,48 @@ package snjdck.g2d.impl
 			return (_scaleX != 0) && (_scaleY != 0);
 		}
 		
+		public function get worldTransform():Matrix
+		{
+			if(isWorldMatrixDirty){
+				var parentWorldMatrix:Matrix = parentWorldTransform;
+				worldMatrix.copyFrom(transform);
+				if(parentWorldMatrix != null)
+					worldMatrix.concat(parentWorldMatrix);
+				isWorldMatrixDirty = false;
+			}
+			return worldMatrix;
+		}
+		
+		protected function get parentWorldTransform():Matrix
+		{
+			return null;
+		}
+		
 		public function get transform():Matrix
 		{
-			if(isDirty){
+			if(isLocalMatrixDirty){
 				calcTransform();
-				isDirty = false;
+				isLocalMatrixDirty = false;
 			}
-			return _matrix;
+			return localMatrix;
 		}
 		
 		/** 1.缩放, 2.旋转, 3.位移 */
 		private function calcTransform():void
 		{
-			_matrix.identity();
+			localMatrix.identity();
 			if(_pivotX != 0 || _pivotY != 0){
-				_matrix.translate(_pivotX, _pivotY);
+				localMatrix.translate(_pivotX, _pivotY);
 			}
-			_matrix.scale(_scaleX, _scaleY);
-			_matrix.rotate(_rotation * Unit.RADIAN);
-			_matrix.translate(_x, _y);
+			localMatrix.scale(_scaleX, _scaleY);
+			localMatrix.rotate(_rotation * Unit.RADIAN);
+			localMatrix.translate(_x, _y);
 		}
 		
-		internal function markWorldMatrixDirty():void{}
+		internal function markWorldMatrixDirty():void
+		{
+			isWorldMatrixDirty = true;
+		}
 		
 		public function get pivotX():Number
 		{
@@ -59,7 +81,7 @@ package snjdck.g2d.impl
 			if(_pivotX == value)
 				return;
 			_pivotX = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 		
@@ -73,7 +95,7 @@ package snjdck.g2d.impl
 			if(_pivotY == value)
 				return;
 			_pivotY = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 		
@@ -87,7 +109,7 @@ package snjdck.g2d.impl
 			if(_x == value)
 				return;
 			_x = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 		
@@ -101,7 +123,7 @@ package snjdck.g2d.impl
 			if(_y == value)
 				return;
 			_y = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 		
@@ -115,7 +137,7 @@ package snjdck.g2d.impl
 			if(_scaleX == value)
 				return;
 			_scaleX = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 		
@@ -129,7 +151,7 @@ package snjdck.g2d.impl
 			if(_scaleY == value)
 				return;
 			_scaleY = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 		
@@ -138,7 +160,7 @@ package snjdck.g2d.impl
 			if(_scaleX == value && _scaleY == value)
 				return;
 			_scaleX = _scaleY = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 		
@@ -152,7 +174,7 @@ package snjdck.g2d.impl
 			if(_rotation == value)
 				return;
 			_rotation = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
 			markWorldMatrixDirty();
 		}
 	}

@@ -35,9 +35,6 @@ package snjdck.g2d.impl
 		ns_g2d var _scene:IScene;
 		ns_g2d var _root:DisplayObjectContainer2D;
 		
-		private var isWorldMatrixDirty:Boolean;
-		private const _worldMatrix:Matrix = new Matrix();
-		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
 		
@@ -50,20 +47,11 @@ package snjdck.g2d.impl
 			_width = _height = 0;
 		}
 		
-		public function get worldTransform():Matrix
+		override protected function get parentWorldTransform():Matrix
 		{
-			if(isWorldMatrixDirty){
-				_worldMatrix.copyFrom(transform);
-				if(parent != null)
-					_worldMatrix.concat(parent.worldTransform);
-				isWorldMatrixDirty = false;
-			}
-			return _worldMatrix;
-		}
-		
-		override internal function markWorldMatrixDirty():void
-		{
-			isWorldMatrixDirty = true;
+			if(parent == null)
+				return null;
+			return parent.worldTransform;
 		}
 		
 		ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
@@ -203,9 +191,9 @@ package snjdck.g2d.impl
 			return _clipRect;
 		}
 		
-		public function hasVisibleArea():Boolean
+		override public function isVisible():Boolean
 		{
-			return visible && (scaleX != 0) && (scaleY != 0);
+			return visible && super.isVisible();
 		}
 		
 		public function getBounds(targetSpace:DisplayObject2D, result:Rectangle):void

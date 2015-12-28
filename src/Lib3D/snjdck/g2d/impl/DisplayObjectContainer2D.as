@@ -156,7 +156,7 @@ package snjdck.g2d.impl
 				return;
 			}
 			for each(var child:DisplayObject2D in _childList){
-				if(child.hasVisibleArea()){
+				if(child.isVisible()){
 					child.collectOpaqueArea(collector);
 				}
 			}
@@ -165,7 +165,7 @@ package snjdck.g2d.impl
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			for each(var child:DisplayObject2D in _childList){
-				if(!child.hasVisibleArea()){
+				if(!child.isVisible()){
 					continue;
 				}
 				if(child.filter != null){
@@ -281,7 +281,7 @@ package snjdck.g2d.impl
 			var hasChildUnderMouse:Boolean;
 			for(var i:int=_childList.length-1; i>=0; --i){
 				var child:DisplayObject2D = _childList[i];
-				if(!child.hasVisibleArea()){
+				if(!child.isVisible()){
 					continue;
 				}
 				var target:DisplayObject2D = child.findTargetUnderMouse();

@@ -43,9 +43,9 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		override public function hasVisibleArea():Boolean
+		override public function isVisible():Boolean
 		{
-			return super.hasVisibleArea() && (texture != null);
+			return super.isVisible() && (texture != null);
 		}
 		
 		override ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void

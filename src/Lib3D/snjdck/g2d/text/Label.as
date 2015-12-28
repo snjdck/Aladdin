@@ -91,9 +91,9 @@ package snjdck.g2d.text
 			textInstanceData.fontSize = value;
 		}
 
-		override public function hasVisibleArea():Boolean
+		override public function isVisible():Boolean
 		{
-			return super.hasVisibleArea() && Boolean(text) && !isBlankStr(text);
+			return super.isVisible() && Boolean(text) && !isBlankStr(text);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
