@@ -34,6 +34,14 @@ package snjdck.g3d.core
 			mouseEnabled = true;
 		}
 		
+		override protected function get parentWorldTransform():Matrix3D
+		{
+			if(parent == null){
+				return null;
+			}
+			return parent.worldTransform;
+		}
+		
 		public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
 		{
 			matrixStack.pushMatrix(transform);

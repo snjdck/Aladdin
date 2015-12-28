@@ -12,8 +12,11 @@ package snjdck.g3d.core
 		private const _rotation:Vector3D = new Vector3D();
 		private const _scale:Vector3D = new Vector3D(1, 1, 1);
 		private const _components:Vector.<Vector3D> = new <Vector3D>[_position,_rotation,_scale];
-		private const _matrix:Matrix3D = new Matrix3D();
-		private var isDirty:Boolean;
+		
+		private var isWorldMatrixDirty:Boolean;
+		private var isLocalMatrixDirty:Boolean;
+		private const worldMatrix:Matrix3D = new Matrix3D();
+		private const localMatrix:Matrix3D = new Matrix3D();
 		
 		public function Transform3D(){}
 		
@@ -22,13 +25,35 @@ package snjdck.g3d.core
 			return (_scale.x != 0) && (_scale.y != 0) && (_scale.z != 0);
 		}
 		
+		public function get worldTransform():Matrix3D
+		{
+			if(isWorldMatrixDirty){
+				var parentWorldMatrix:Matrix3D = parentWorldTransform;
+				worldMatrix.copyFrom(transform);
+				if(parentWorldMatrix != null)
+					worldMatrix.append(parentWorldMatrix);
+				isWorldMatrixDirty = false;
+			}
+			return worldMatrix;
+		}
+		
+		virtual protected function get parentWorldTransform():Matrix3D
+		{
+			return null;
+		}
+		
 		public function get transform():Matrix3D
 		{
-			if(isDirty){
-				_matrix.recompose(_components);
-				isDirty = false;
+			if(isLocalMatrixDirty){
+				localMatrix.recompose(_components);
+				isLocalMatrixDirty = false;
 			}
-			return _matrix;
+			return localMatrix;
+		}
+		
+		virtual internal function markWorldMatrixDirty():void
+		{
+			isWorldMatrixDirty = true;
 		}
 		
 		public function get x():Number
@@ -38,8 +63,11 @@ package snjdck.g3d.core
 		
 		public function set x(value:Number):void
 		{
+			if(x == value)
+				return;
 			_position.x = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get y():Number
@@ -49,8 +77,11 @@ package snjdck.g3d.core
 		
 		public function set y(value:Number):void
 		{
+			if(y == value)
+				return;
 			_position.y = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get z():Number
@@ -60,14 +91,20 @@ package snjdck.g3d.core
 		
 		public function set z(value:Number):void
 		{
+			if(z == value)
+				return;
 			_position.z = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function set scale(val:Number):void
 		{
+			if(scaleX == val && scaleY == val && scaleZ == val)
+				return;
 			_scale.x = _scale.y = _scale.z = val;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get scaleX():Number
@@ -77,8 +114,11 @@ package snjdck.g3d.core
 		
 		public function set scaleX(value:Number):void
 		{
+			if(scaleX == value)
+				return;
 			_scale.x = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get scaleY():Number
@@ -88,8 +128,11 @@ package snjdck.g3d.core
 		
 		public function set scaleY(value:Number):void
 		{
+			if(scaleY == value)
+				return;
 			_scale.y = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get scaleZ():Number
@@ -99,8 +142,11 @@ package snjdck.g3d.core
 		
 		public function set scaleZ(value:Number):void
 		{
+			if(scaleZ == value)
+				return;
 			_scale.z = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get rotationX():Number
@@ -110,8 +156,11 @@ package snjdck.g3d.core
 		
 		public function set rotationX(value:Number):void
 		{
+			if(rotationX == value)
+				return;
 			_rotation.x = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get rotationY():Number
@@ -121,8 +170,11 @@ package snjdck.g3d.core
 		
 		public function set rotationY(value:Number):void
 		{
+			if(rotationY == value)
+				return;
 			_rotation.y = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		public function get rotationZ():Number
@@ -132,8 +184,11 @@ package snjdck.g3d.core
 		
 		public function set rotationZ(value:Number):void
 		{
+			if(rotationZ == value)
+				return;
 			_rotation.z = value;
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 		
 		static private const tempPoint:Vector3D = new Vector3D();
@@ -142,8 +197,8 @@ package snjdck.g3d.core
 		{
 			var size:Number = distance / axis.length;
 			
-			_matrix.prependTranslation(axis.x * size, axis.y * size, axis.z * size);
-			_matrix.copyColumnTo(3, tempPoint);
+			localMatrix.prependTranslation(axis.x * size, axis.y * size, axis.z * size);
+			localMatrix.copyColumnTo(3, tempPoint);
 			_position.x = tempPoint.x;
 			_position.y = tempPoint.y;
 			_position.z = tempPoint.z;
@@ -152,7 +207,8 @@ package snjdck.g3d.core
 		public function syncMatrix2D(matrix2d:Matrix):void
 		{
 			matrix33.decompose(matrix2d, _position, _scale, _rotation);
-			isDirty = true;
+			isLocalMatrixDirty = true;
+			markWorldMatrixDirty();
 		}
 	}
 }

@@ -20,6 +20,14 @@ package snjdck.g3d.core
 			mouseChildren = true;
 		}
 		
+		override internal function markWorldMatrixDirty():void
+		{
+			super.markWorldMatrixDirty();
+			for each(var child:Object3D in _childList){
+				child.markWorldMatrixDirty();
+			}
+		}
+		
 		override public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
 		{
 			matrixStack.pushMatrix(transform);
@@ -64,12 +72,17 @@ package snjdck.g3d.core
 				return;
 			}
 			
-			if(child.parent){
+			var needMarkWorldMatrixDirty:Boolean = true;
+			if(child.parent != null){
 				child.parent.removeChild(child);
+				needMarkWorldMatrixDirty = false;
 			}
 			
-			child._parent = this;
 			_childList.push(child);
+			child._parent = this;
+			if(needMarkWorldMatrixDirty){
+				child.markWorldMatrixDirty();
+			}
 		}
 		
 		public function removeChild(child:Object3D):void
@@ -78,8 +91,9 @@ package snjdck.g3d.core
 				return;
 			}
 			
-			child._parent = null;
 			array.del(_childList, child);
+			child._parent = null;
+			child.markWorldMatrixDirty();
 		}
 		
 		public function getChild(childName:String):Object3D
@@ -115,6 +129,7 @@ package snjdck.g3d.core
 		{
 			for each(var child:Object3D in _childList){
 				child._parent = null;
+				child.markWorldMatrixDirty();
 			}
 			_childList.length = 0;
 		}
