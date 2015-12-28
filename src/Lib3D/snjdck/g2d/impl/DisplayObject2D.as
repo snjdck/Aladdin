@@ -25,10 +25,10 @@ package snjdck.g2d.impl
 		protected var _width:Number, _height:Number;
 		private const signalGroup:SignalGroup = new SignalGroup();
 		
-		public var mouseEnabled:Boolean = true;
+		public var mouseEnabled:Boolean;
 		public var mouseX:Number, mouseY:Number;
 		
-		public var visible:Boolean = true;
+		public var visible:Boolean;
 		public var filter:IFilter2D;
 		
 		private var _parent:DisplayObjectContainer2D;
@@ -45,6 +45,8 @@ package snjdck.g2d.impl
 		{
 			_clipRect = new ClipRect(this);
 			_width = _height = 0;
+			mouseEnabled = true;
+			visible = true;
 		}
 		
 		override protected function get parentWorldTransform():Matrix

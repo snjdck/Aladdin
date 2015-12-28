@@ -40,7 +40,7 @@ package snjdck.g2d.impl
 			return worldMatrix;
 		}
 		
-		protected function get parentWorldTransform():Matrix
+		virtual protected function get parentWorldTransform():Matrix
 		{
 			return null;
 		}
@@ -66,7 +66,7 @@ package snjdck.g2d.impl
 			localMatrix.translate(_x, _y);
 		}
 		
-		internal function markWorldMatrixDirty():void
+		virtual internal function markWorldMatrixDirty():void
 		{
 			isWorldMatrixDirty = true;
 		}
