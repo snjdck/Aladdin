@@ -5,7 +5,6 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
-	import snjdck.g3d.render.MatrixStack3D;
 	
 	use namespace ns_g3d;
 
@@ -28,14 +27,11 @@ package snjdck.g3d.core
 			}
 		}
 		
-		override public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
+		override public function onUpdate(timeElapsed:int):void
 		{
-			matrixStack.pushMatrix(transform);
-			prevWorldMatrix.copyFrom(matrixStack.worldMatrix);
 			for each(var child:Object3D in _childList){
-				child.onUpdate(matrixStack, timeElapsed);
+				child.onUpdate(timeElapsed);
 			}
-			matrixStack.popMatrix();
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void

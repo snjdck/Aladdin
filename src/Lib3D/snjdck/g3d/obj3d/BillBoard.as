@@ -63,7 +63,7 @@ package snjdck.g3d.obj3d
 			var count:int = 256;
 			var tex:IGpuTexture = AssetMgr.Instance.getTexture("terrain");
 			context3d.texture = tex;
-			context3d.setVcM(5, prevWorldMatrix);
+			context3d.setVcM(5, worldTransform);
 			context3d.setVc(8, new <Number>[
 				count * tex.width, count * tex.height, -0.5, 0,
 				count,count,1,1

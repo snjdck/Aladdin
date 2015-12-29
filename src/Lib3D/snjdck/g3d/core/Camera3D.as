@@ -53,7 +53,7 @@ package snjdck.g3d.core
 			isWorldMatrixDirty = false;
 			_worldMatrix.copyFrom(localMatrix);
 			if(bindTarget != null){
-				_worldMatrix.append(bindTarget.prevWorldMatrix);
+				_worldMatrix.append(bindTarget.worldTransform);
 			}
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();

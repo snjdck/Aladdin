@@ -60,7 +60,7 @@ package snjdck.g3d.obj3d
 		
 		public function draw(context3d:GpuContext, camera3d:Camera3D):void
 		{
-			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, prevWorldMatrix);
+			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldTransform);
 			camera3d.getCameraZ(zAxis);
 			Vector3DUtil.CopyTo(zAxis, buffer);
 			buffer[3] = lineWidth * 0.5;

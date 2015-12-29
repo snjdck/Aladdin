@@ -1,11 +1,14 @@
 package snjdck.g3d.obj3d
 {
+	import flash.geom.Matrix3D;
+	
 	import array.del;
 	import array.pushIfNotHas;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Camera3D;
+	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
@@ -13,9 +16,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
-	import snjdck.g3d.render.MatrixStack3D;
 	import snjdck.g3d.skeleton.Bone;
-	import snjdck.g3d.skeleton.BoneAttachmentGroup;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
 	import snjdck.gpu.BlendMode;
@@ -24,14 +25,14 @@ package snjdck.g3d.obj3d
 	
 	use namespace ns_g3d;
 
-	public class Entity extends Object3D implements IDrawUnit3D
+	public class Entity extends DisplayObjectContainer3D implements IDrawUnit3D
 	{
 		private const subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
 		
 		private var boneStateGroup:BoneStateGroup = new BoneStateGroup();
-		private const boneAttachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup();
+		private const boneDict:Object = {};
 		
 		public function Entity(mesh:Mesh)
 		{
@@ -59,7 +60,7 @@ package snjdck.g3d.obj3d
 				if(!camera3d.enableViewFrusum){
 					return true;
 				}
-				subEntity.updateWorldBound(prevWorldMatrix);
+				subEntity.updateWorldBound(worldTransform);
 				if(camera3d.isInSight(subEntity.worldBound)){
 					return true;
 				}
@@ -69,7 +70,7 @@ package snjdck.g3d.obj3d
 					if(!camera3d.enableViewFrusum){
 						return true;
 					}
-					subMesh.calcWorldBound(prevWorldMatrix, tempBound);
+					subMesh.calcWorldBound(worldTransform, tempBound);
 					if(camera3d.isInSight(tempBound)){
 						return true;
 					}
@@ -80,7 +81,7 @@ package snjdck.g3d.obj3d
 		
 		public function draw(context3d:GpuContext, camera3d:Camera3D):void
 		{
-			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, prevWorldMatrix);
+			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldTransform);
 			for each(var subEntity:SubEntity in subEntityList){
 				if(subEntity.visible){
 					subEntity.draw(context3d, boneStateGroup);
@@ -100,9 +101,7 @@ package snjdck.g3d.obj3d
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
-			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
-				boneAttachmentGroup.collectDrawUnits(collector, camera3d);
-			}
+			super.collectDrawUnit(collector, camera3d);
 			if(isInSight(camera3d)){
 				collector.addDrawUnit(this);
 			}
@@ -118,33 +117,34 @@ package snjdck.g3d.obj3d
 			return false;
 		}
 		
-		private function checkBoneName(boneName:String):Bone
+		private function getBoneObject(boneName:String):DisplayObjectContainer3D
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);
 			if(null == bone){
 				throw new Error("boneName '" + boneName + "' not exist!");
 			}
-			return bone;
+			var boneObject:DisplayObjectContainer3D = boneDict[boneName];
+			if(boneObject == null){
+				boneObject = new DisplayObjectContainer3D();
+				boneObject.id = bone.id;
+				boneDict[boneName] = boneObject;
+			}
+			return boneObject;
 		}
 		
 		public function bindEntityToBone(boneName:String, entity:Object3D):void
 		{
-			var boneId:int = checkBoneName(boneName).id;
-			boneAttachmentGroup.addAttachment(boneId, entity);
+			getBoneObject(boneName).addChild(entity);
 		}
 		
 		public function unbindEntityFromBone(boneName:String, entity:Entity):void
 		{
-			checkBoneName(boneName);
-			var boneId:int = checkBoneName(boneName).id;
-			boneAttachmentGroup.removeAttachment(boneId, entity);
+			getBoneObject(boneName).removeChild(entity);
 		}
 		
 		public function unbindAllEntitiesFromBone(boneName:String):void
 		{
-			checkBoneName(boneName);
-			var boneId:int = checkBoneName(boneName).id;
-			boneAttachmentGroup.removeAttachmentsOnBone(boneId);
+			getBoneObject(boneName).removeAllChildren();
 		}
 		
 		public function shareSkeletonInstanceWith(entity:Entity):void
@@ -153,15 +153,18 @@ package snjdck.g3d.obj3d
 			boneStateGroup = entity.boneStateGroup;
 		}
 		
-		override public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
+		override public function onUpdate(timeElapsed:int):void
 		{
 			updateBoneState(timeElapsed);
-			matrixStack.pushMatrix(transform);
-			prevWorldMatrix.copyFrom(matrixStack.worldMatrix);
-			if(hasSkeleton && boneAttachmentGroup.hasAttachments()){
-				boneAttachmentGroup.onUpdate(matrixStack, boneStateGroup, timeElapsed);
+			if(!hasSkeleton)
+				return;
+			for each(var boneObject:DisplayObjectContainer3D in boneDict){
+				if(boneObject.numChildren <= 0)
+					continue;
+				var matrix:Matrix3D = boneObject.worldTransform;
+				boneStateGroup.getBoneStateLocal(boneObject.id).toMatrix(matrix);
+				boneObject.worldTransform = matrix;
 			}
-			matrixStack.popMatrix();
 		}
 		
 		public function set aniName(value:String):void
@@ -178,9 +181,8 @@ package snjdck.g3d.obj3d
 		
 		public function calculateBound():void
 		{
-			prevWorldMatrix.copyFrom(transform);
 			for each(var subEntity:SubEntity in subEntityList){
-				subEntity.updateWorldBound(prevWorldMatrix);
+				subEntity.updateWorldBound(worldTransform);
 			}
 		}
 		
@@ -199,12 +201,12 @@ package snjdck.g3d.obj3d
 		
 		private const _meshList:Vector.<Mesh> = new Vector.<Mesh>();
 		
-		public function addChild(child:Mesh):void
+		public function addMesh(child:Mesh):void
 		{
 			pushIfNotHas(_meshList, child);
 		}
 		
-		public function removeChild(child:Mesh):void
+		public function removeMesh(child:Mesh):void
 		{
 			array.del(_meshList, child);
 		}

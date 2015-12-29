@@ -7,7 +7,6 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
-	import snjdck.g3d.render.MatrixStack3D;
 	import snjdck.gpu.BlendMode;
 	
 	use namespace ns_g3d;
@@ -16,10 +15,9 @@ package snjdck.g3d.core
 	{
 		ns_g3d var _parent:DisplayObjectContainer3D;
 		
-		ns_g3d const prevWorldMatrix:Matrix3D = new Matrix3D();
-		
-		public var visible:Boolean;
+		public var id:int;
 		public var name:String;
+		public var visible:Boolean;
 		
 		public var mouseEnabled:Boolean;
 		
@@ -42,13 +40,7 @@ package snjdck.g3d.core
 			return parent.worldTransform;
 		}
 		
-		public function onUpdate(matrixStack:MatrixStack3D, timeElapsed:int):void
-		{
-			matrixStack.pushMatrix(transform);
-			prevWorldMatrix.copyFrom(matrixStack.worldMatrix);
-			matrixStack.popMatrix();
-		}
-		
+		public function onUpdate(timeElapsed:int):void{}
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void{}
 		
 		public function hitTest(ray:Ray, result:Vector.<Object3D>):void

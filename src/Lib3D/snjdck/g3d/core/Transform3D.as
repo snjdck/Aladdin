@@ -37,6 +37,14 @@ package snjdck.g3d.core
 			return worldMatrix;
 		}
 		
+		public function set worldTransform(value:Matrix3D):void
+		{
+			markWorldMatrixDirty();
+			if(worldMatrix != value)
+				worldMatrix.copyFrom(value);
+			isWorldMatrixDirty = false;
+		}
+		
 		virtual protected function get parentWorldTransform():Matrix3D
 		{
 			return null;
