@@ -126,6 +126,7 @@ package snjdck.g3d.obj3d
 			var boneObject:DisplayObjectContainer3D = boneDict[boneName];
 			if(boneObject == null){
 				boneObject = new DisplayObjectContainer3D();
+				addChild(boneObject);
 				boneObject.id = bone.id;
 				boneDict[boneName] = boneObject;
 			}
