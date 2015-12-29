@@ -162,9 +162,9 @@ package snjdck.g3d.obj3d
 			for each(var boneObject:DisplayObjectContainer3D in boneDict){
 				if(boneObject.numChildren <= 0)
 					continue;
-				var matrix:Matrix3D = boneObject.worldTransform;
+				var matrix:Matrix3D = boneObject.transform;
 				boneStateGroup.getBoneStateLocal(boneObject.id).toMatrix(matrix);
-				boneObject.worldTransform = matrix;
+				boneObject.transform = matrix;
 			}
 		}
 		

@@ -59,6 +59,14 @@ package snjdck.g3d.core
 			return localMatrix;
 		}
 		
+		public function set transform(value:Matrix3D):void
+		{
+			markWorldMatrixDirty();
+			if(localMatrix != value)
+				localMatrix.copyFrom(value);
+			isLocalMatrixDirty = false;
+		}
+		
 		virtual internal function markWorldMatrixDirty():void
 		{
 			isWorldMatrixDirty = true;
