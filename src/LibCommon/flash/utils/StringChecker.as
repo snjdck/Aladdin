@@ -14,5 +14,10 @@ package flash.utils
 		{
 			return intPattern.test(str);
 		}
+		
+		static public function IsBoolean(str:String):Boolean
+		{
+			return str == "true" || str == "false";
+		}
 	}
 }
