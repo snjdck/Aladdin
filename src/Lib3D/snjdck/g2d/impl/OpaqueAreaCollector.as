@@ -42,7 +42,7 @@ package snjdck.g2d.impl
 		public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
 		{
 			InstanceRender.Instance.setVc(render2d, null);
-			InstanceRender.Instance.draw(context3d, this);
+			InstanceRender.Instance.drawQuad(context3d, this);
 		}
 		
 		public function get numRegisterPerInstance():int

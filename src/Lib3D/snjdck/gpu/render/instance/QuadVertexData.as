@@ -2,7 +2,7 @@ package snjdck.gpu.render.instance
 {
 	import snjdck.gpu.asset.GpuVertexBuffer;
 
-	internal class VertexData
+	internal class QuadVertexData
 	{
 		static private const data32perVertex:int = 3;
 		static private const data32perQuad:int = data32perVertex << 2;
@@ -11,7 +11,7 @@ package snjdck.gpu.render.instance
 		private var vertexBuffer:GpuVertexBuffer;
 		private var maxQuadCount:int;
 		
-		public function VertexData(){}
+		public function QuadVertexData(){}
 		
 		public function getGpuData(quadCount:int):GpuVertexBuffer
 		{

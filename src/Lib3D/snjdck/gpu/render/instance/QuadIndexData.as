@@ -2,13 +2,13 @@ package snjdck.gpu.render.instance
 {
 	import snjdck.gpu.asset.GpuIndexBuffer;
 
-	internal class IndexData
+	internal class QuadIndexData
 	{
 		private const indexData:Vector.<uint> = new Vector.<uint>();
 		private var indexBuffer:GpuIndexBuffer;
 		private var maxQuadCount:int;
 		
-		public function IndexData(){}
+		public function QuadIndexData(){}
 		
 		public function getGpuData(quadCount:int):GpuIndexBuffer
 		{

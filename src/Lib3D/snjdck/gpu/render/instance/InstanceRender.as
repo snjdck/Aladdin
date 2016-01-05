@@ -1,14 +1,11 @@
 package snjdck.gpu.render.instance
 {
-	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix;
 	
 	import matrix33.toBuffer;
 	
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuIndexBuffer;
-	import snjdck.gpu.asset.GpuVertexBuffer;
 	
 	final public class InstanceRender
 	{
@@ -16,10 +13,11 @@ package snjdck.gpu.render.instance
 		static public var MAX_VC_COUNT:int = 128;
 		static private const RESERVE_VC_COUNT:int = 4;
 		
-		private const vertexData:VertexData = new VertexData();
-		private const indexData:IndexData = new IndexData();
+		private const quadGpuData:QuadGpuData = new QuadGpuData();
+		private const trigGpuData:TrigGpuData = new TrigGpuData();
 		
 		private const constData:Vector.<Number> = new Vector.<Number>(1000, true);
+		private var gpuData:IInstanceGpuData;
 		
 		public function InstanceRender(){}
 		
@@ -30,23 +28,33 @@ package snjdck.gpu.render.instance
 				matrix33.toBuffer(worldMatrix, constData, 4);
 		}
 		
-		public function draw(context3d:GpuContext, instanceData:IInstanceData):void
+		public function drawQuad(context3d:GpuContext, instanceData:IInstanceData):void
+		{
+			gpuData = quadGpuData;
+			drawImpl(context3d, instanceData);
+		}
+		
+		public function drawTrig(context3d:GpuContext, instanceData:IInstanceData):void
+		{
+			gpuData = trigGpuData;
+			drawImpl(context3d, instanceData);
+		}
+		
+		private function drawImpl(context3d:GpuContext, instanceData:IInstanceData):void
 		{
 			var numRegisterPerInstance:int = instanceData.numRegisterPerInstance;
 			var instanceCountPerBatch:int = (MAX_VC_COUNT - RESERVE_VC_COUNT) / numRegisterPerInstance;
 			var totalInstanceCount:int = instanceData.numInstances;
 			var batchCount:int = Math.ceil(totalInstanceCount / instanceCountPerBatch);
-			var maxQuadCount:int = Math.min(totalInstanceCount, instanceCountPerBatch);
-			var vertexBuffer:GpuVertexBuffer = vertexData.getGpuData(maxQuadCount);
-			var indexBuffer:GpuIndexBuffer = indexData.getGpuData(maxQuadCount);
-			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
+			var maxInstanceCount:int = Math.min(totalInstanceCount, instanceCountPerBatch);
+			gpuData.initGpuData(context3d, maxInstanceCount);
 			instanceData.initConstData(constData);
 			for(var i:int=0; i<batchCount; ++i){
 				var fromIndex:int = i * instanceCountPerBatch;
 				var count:int = Math.min(instanceCountPerBatch, totalInstanceCount - fromIndex);
 				instanceData.updateConstData(constData, fromIndex, count);
 				context3d.setVc(0, constData, RESERVE_VC_COUNT + numRegisterPerInstance * count);
-				context3d.drawTriangles(indexBuffer, 0, count << 1);
+				gpuData.drawTriangles(context3d, count);
 			}
 		}
 	}
