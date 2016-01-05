@@ -1,36 +1,20 @@
 package snjdck.gpu.render.instance
 {
-	import snjdck.gpu.asset.GpuVertexBuffer;
-
-	internal class QuadVertexData
+	internal class QuadVertexData extends BaseVertexData
 	{
-		static private const data32perVertex:int = 3;
-		static private const data32perQuad:int = data32perVertex << 2;
+		private var data32perQuad:int;
 		
-		private const vertexData:Vector.<Number> = new Vector.<Number>();
-		private var vertexBuffer:GpuVertexBuffer;
-		private var maxQuadCount:int;
-		
-		public function QuadVertexData(){}
-		
-		public function getGpuData(quadCount:int):GpuVertexBuffer
+		public function QuadVertexData()
 		{
-			if(maxQuadCount < quadCount){
-				adjustData(quadCount);
-				maxQuadCount = quadCount;
-				if(vertexBuffer != null)
-					vertexBuffer.dispose();
-				vertexBuffer = new GpuVertexBuffer(quadCount << 2, data32perVertex);
-				vertexBuffer.upload(vertexData);
-			}
-			return vertexBuffer;
+			super(3, 4);
+			data32perQuad = 12;
 		}
 		
-		private function adjustData(quadCount:int):void
+		override protected function adjustData(instanceCount:int):void
 		{
-			vertexData.length = quadCount * data32perQuad;
-			var offset:int = maxQuadCount * data32perQuad;
-			for(var i:int=maxQuadCount; i<quadCount; ++i){
+			vertexData.length = instanceCount * data32perQuad;
+			var offset:int = maxInstanceCount * data32perQuad;
+			for(var i:int=maxInstanceCount; i<instanceCount; ++i){
 				vertexData[offset+2] = i;
 				offset += data32perVertex;
 				vertexData[offset] = 1;
