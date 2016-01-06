@@ -44,6 +44,9 @@ package snjdck.gpu.asset
 		[Embed(source="/snjdck/shader/text2d.agal", mimeType="application/octet-stream")]
 		static private const CLS_SHADER_DATA_TEXT_2D:Class;
 		
+		[Embed(source="/snjdck/shader/polygon2d.agal", mimeType="application/octet-stream")]
+		static private const CLS_SHADER_DATA_POLYGON_2D:Class;
+		
 		static public const Instance:AssetMgr = new AssetMgr();
 		
 		private var searchPathList:Array;
@@ -127,6 +130,7 @@ package snjdck.gpu.asset
 				initShaderData(new CLS_SHADER_DATA_PARTICLE().toString());
 				initShaderData(new CLS_SHADER_DATA_TERRAIN().toString());
 				initShaderData(new CLS_SHADER_DATA_TEXT_2D().toString());
+				initShaderData(new CLS_SHADER_DATA_POLYGON_2D().toString());
 			}
 			return programDict[name];
 		}

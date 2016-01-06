@@ -3,14 +3,25 @@ package snjdck.g2d.geom
 	import flash.display.Graphics;
 	import flash.geom.Point;
 	import flash.geom.d2.JudgePtToTriangle;
+	
+	import snjdck.g2d.impl.DisplayObject2D;
+	import snjdck.g2d.render.Render2D;
+	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.instance.InstanceRender;
 
-	public class Polygon
+	public class Polygon extends DisplayObject2D
 	{
-		private var vertexList:Vector.<Number>;
+		internal var vertexList:Vector.<Number>;
+		public var lineWidth:Number = 2;
+		
+		private var fillDrawer:FillDrawer;
+		private var lineDrawer:LineDrawer;
 		
 		public function Polygon()
 		{
 			vertexList = new Vector.<Number>();
+			fillDrawer = new FillDrawer(this);
+			lineDrawer = new LineDrawer(this);
 		}
 		
 		public function get vertexCount():int
@@ -162,6 +173,20 @@ package snjdck.g2d.geom
 		):Boolean
 		{
 			return (bx - ax) * (cy - by) - (by - ay) * (cx - bx) >= 0;
+		}
+		
+		private const fillColor:Vector.<Number> = new <Number>[0xFF, 0, 0, 1];
+		private const lineColor:Vector.<Number> = new <Number>[0, 0xFF, 0, 1];
+		
+		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
+		{
+			InstanceRender.Instance.setVc(render2d, worldTransform);
+			context3d.save();
+			context3d.setFc(0, fillColor, 1);
+			fillDrawer.draw(context3d);
+			context3d.setFc(0, lineColor, 1);
+			lineDrawer.draw(context3d);
+			context3d.restore();
 		}
 	}
 }

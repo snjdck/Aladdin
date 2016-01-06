@@ -1,0 +1,28 @@
+@g2d_polygon_fill
+
+vt0.xy = vc[va0.x+4]
+vt0.zw = va0
+${mvp2d.vs}
+oc = fc0
+
+
+
+@g2d_polygon_line
+
+vt0 = vc[va0.z+4]
+
+vt1.xy  = vt0.zw  - vt0.xy		#width
+vt2.xyz = vt0.yzz - vt0.wxz		#-dy, dx, 0
+vt2.xyz = nrm: vt2.xyz
+vt1.zw  = vc3.x * vt2.xxxy		#halfHeight
+
+vt0.xy -= vt1.zw				#topLeft
+
+vt1.zw = vt1 + vt1				#height
+vt1 *= va0.xxyy
+
+vt0.xy = vt0 + vt1.xy			#add width
+vt0.xy = vt0 + vt1.zw			#add height
+vt0.zw = vc3					#set zw to 01
+${mvp2d.vs}
+oc = fc0

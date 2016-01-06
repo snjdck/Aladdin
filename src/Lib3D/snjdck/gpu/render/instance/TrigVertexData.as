@@ -12,13 +12,10 @@ package snjdck.gpu.render.instance
 		
 		override protected function adjustData(instanceCount:int):void
 		{
+			var offset:int = vertexData.length;
 			vertexData.length = instanceCount * data32perTrig;
-			var offset:int = maxInstanceCount * data32perTrig;
-			for(var i:int=maxInstanceCount; i<instanceCount; ++i){
-				vertexData[offset  ] = i;
-				vertexData[offset+1] = i;
-				vertexData[offset+2] = i;
-				offset += data32perTrig;
+			for(var i:int=vertexData.length-1; i>=offset; --i){
+				vertexData[i] = i;
 			}
 		}
 	}
