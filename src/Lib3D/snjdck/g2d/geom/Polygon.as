@@ -12,6 +12,9 @@ package snjdck.g2d.geom
 	public class Polygon extends DisplayObject2D
 	{
 		internal var vertexList:Vector.<Number>;
+		private var isIndicesDirty:Boolean;
+		private var indices:Vector.<uint>;
+		
 		public var lineWidth:Number = 2;
 		
 		private var fillDrawer:FillDrawer;
@@ -32,6 +35,7 @@ package snjdck.g2d.geom
 		public function addVertex(px:Number, py:Number):void
 		{
 			vertexList.push(px, py);
+			isIndicesDirty = true;
 		}
 		
 		public function setVertex(index:int, px:Number, py:Number):void
@@ -39,6 +43,7 @@ package snjdck.g2d.geom
 			var offset:int = index << 1;
 			vertexList[offset  ] = px;
 			vertexList[offset+1] = py;
+			isIndicesDirty = true;
 		}
 		
 		public function getVertex(index:int, result:Point):void
@@ -82,6 +87,15 @@ package snjdck.g2d.geom
 		}
 		
 		public function triangulate():Vector.<uint>
+		{
+			if(isIndicesDirty){
+				indices = triangulateImpl();
+				isIndicesDirty = false;
+			}
+			return indices;
+		}
+		
+		private function triangulateImpl():Vector.<uint>
 		{
 			var count:int = vertexList.length >> 1;
 			
