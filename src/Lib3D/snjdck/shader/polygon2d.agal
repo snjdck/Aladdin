@@ -27,21 +27,38 @@ vt1 *= va0.xxyy
 
 vt0.xy += vt1.xy				#add width
 vt0.xy += vt1.zw				#add height
-vt0.zw = vc3					#set zw to 01
+vt0.zw = vc3					#set z,w to 0,1
 ${mvp2d.vs}
 oc = fc0
 
 
 @g3d_polygon_line
 
-vt0.w = va0.z + va0.z
-vt0.xyz = vc[vt0.w+8]
-vt1 = vc[vt0.w+9]
-vt2 = vt1 - vt0
+vt1.x = va0.z + va0.z
+vt0 = vc[vt1.x+8]				#from pt
+vt1 = vc[vt1.x+9] - vt0			#width
+vt0.w = vc1						#set w to 1
 
-vt1.xyz = crs: vc1, vc8
-vt1.xyz *= vc8.w
-vt0.xyz = va0 + vt1.xyz
-vt0.w = va0
-${objectImp.vs}
+vt0.xyz = m34: vt0, vc5	#本地 -> 世界
+vt0.xyz = m34: vt0, vc2	#世界 -> 相机
+
+vt1.xyz = m33: vt1, vc5	#本地 -> 世界
+vt1.xyz = m33: vt1, vc2	#世界 -> 相机
+
+vt2.xyz = crs: vt1, vc1.zzw		#vc1.zzw = (0,0,1)
+vt2.xyz = nrm: vt2.xyz
+vt2.xyz *= vc1.x				#halfHeight
+
+vt0.xyz -= vt2.xyz				#topLeft
+vt2.xyz += vt2.xyz				#height
+
+vt1.xyz *= va0.x
+vt2.xyz *= va0.y
+
+vt0.xyz += vt1.xyz				#add width
+vt0.xyz += vt2.xyz				#add height
+
+vt0.z += vc0.w
+vt0.xyz *= vc0
+op = vt0
 oc = fc0

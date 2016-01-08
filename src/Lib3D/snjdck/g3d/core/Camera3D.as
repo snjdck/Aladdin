@@ -69,6 +69,12 @@ package snjdck.g3d.core
 			context3d.setVcM(2, _worldMatrixInvert);
 		}
 		
+		public function copyMVP(output:Vector.<Number>):void
+		{
+			projection.copyTo(output);
+			_worldMatrixInvert.copyRawDataTo(output, 8, true);
+		}
+		
 		public function isInSight(bound:AABB):Boolean
 		{
 			return enableViewFrusum ? viewFrusum.containsAABB(bound) : true;

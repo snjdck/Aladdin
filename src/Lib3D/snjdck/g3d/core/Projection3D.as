@@ -28,5 +28,11 @@ package snjdck.g3d.core
 		{
 			context3d.setVc(0, transform, 1);
 		}
+		
+		public function copyTo(output:Vector.<Number>):void
+		{
+			for(var i:int=0; i<4; ++i)
+				output[i] = transform[i];
+		}
 	}
 }

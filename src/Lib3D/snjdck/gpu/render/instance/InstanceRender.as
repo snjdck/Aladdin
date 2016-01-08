@@ -15,7 +15,7 @@ package snjdck.gpu.render.instance
 		private const quadGpuData:QuadGpuData = new QuadGpuData();
 		private const trigGpuData:TrigGpuData = new TrigGpuData();
 		
-		private const constData:Vector.<Number> = new Vector.<Number>(1000, true);
+		public const constData:Vector.<Number> = new Vector.<Number>(1000, true);
 		private var gpuData:IInstanceGpuData;
 		
 		public function InstanceRender(){}
