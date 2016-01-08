@@ -42,7 +42,7 @@ package snjdck.g2d.impl
 		public function preDrawDepth(render2d:Render2D, context3d:GpuContext):void
 		{
 			InstanceRender.Instance.setVc(render2d, null);
-			InstanceRender.Instance.drawQuad(context3d, this);
+			InstanceRender.Instance.drawQuad(context3d, this, areaList.length);
 		}
 		
 		public function get numRegisterPerInstance():int
@@ -50,9 +50,9 @@ package snjdck.g2d.impl
 			return 1;
 		}
 		
-		public function get numInstances():int
+		public function get numRegisterReserved():int
 		{
-			return areaList.length;
+			return 4;
 		}
 		
 		public function initConstData(constData:Vector.<Number>):void

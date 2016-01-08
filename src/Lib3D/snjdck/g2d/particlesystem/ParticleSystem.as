@@ -105,9 +105,8 @@ package snjdck.g2d.particlesystem
 			context3d.program = AssetMgr.Instance.getProgram(ShaderName.PARTICLE_2D);
 			context3d.blendMode = blendMode;
 			context3d.texture = mTexture;
-			particleInstanceData.numParticles = mNumParticles;
 			InstanceRender.Instance.setVc(render2d, worldTransform);
-			InstanceRender.Instance.drawQuad(context3d, particleInstanceData);
+			InstanceRender.Instance.drawQuad(context3d, particleInstanceData, mNumParticles);
 			
 			context3d.restore();
 		}

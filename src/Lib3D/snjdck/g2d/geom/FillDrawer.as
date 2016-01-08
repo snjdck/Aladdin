@@ -17,7 +17,8 @@ package snjdck.g2d.geom
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram("g2d_polygon_fill");
-			InstanceRender.Instance.drawTrig(context3d, this);
+			var indices:Vector.<uint> = polygon.triangulate();
+			InstanceRender.Instance.drawTrig(context3d, this, indices.length / 3);
 		}
 		
 		public function get numRegisterPerInstance():int
@@ -25,10 +26,9 @@ package snjdck.g2d.geom
 			return 2;
 		}
 		
-		public function get numInstances():int
+		public function get numRegisterReserved():int
 		{
-			var indices:Vector.<uint> = polygon.triangulate();
-			return indices.length / 3;
+			return 4;
 		}
 		
 		public function initConstData(constData:Vector.<Number>):void

@@ -17,7 +17,7 @@ package snjdck.g2d.geom
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram("g2d_polygon_line");
-			InstanceRender.Instance.drawQuad(context3d, this);
+			InstanceRender.Instance.drawQuad(context3d, this, polygon.vertexCount);
 		}
 		
 		public function get numRegisterPerInstance():int
@@ -25,9 +25,9 @@ package snjdck.g2d.geom
 			return 1;
 		}
 		
-		public function get numInstances():int
+		public function get numRegisterReserved():int
 		{
-			return polygon.vertexCount;
+			return 4;
 		}
 		
 		public function initConstData(constData:Vector.<Number>):void

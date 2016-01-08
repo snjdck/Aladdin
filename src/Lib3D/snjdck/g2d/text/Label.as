@@ -110,7 +110,7 @@ package snjdck.g2d.text
 			textFactory.setTexture(context3d);
 			
 			InstanceRender.Instance.setVc(render2d, worldTransform);
-			InstanceRender.Instance.drawQuad(context3d, textInstanceData);
+			InstanceRender.Instance.drawQuad(context3d, textInstanceData, charList.charCount);
 			
 			context3d.restore();
 		}

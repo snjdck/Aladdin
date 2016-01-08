@@ -7,7 +7,6 @@ package snjdck.g2d.particlesystem
 	{
 		private var particleList:Vector.<Particle>;
 		private var texture:IGpuTexture;
-		public var numParticles:int;
 		
 		public function ParticleInstanceData(particleList:Vector.<Particle>, texture:IGpuTexture)
 		{
@@ -20,9 +19,9 @@ package snjdck.g2d.particlesystem
 			return 2;
 		}
 		
-		public function get numInstances():int
+		public function get numRegisterReserved():int
 		{
-			return numParticles;
+			return 4;
 		}
 		
 		public function initConstData(constData:Vector.<Number>):void

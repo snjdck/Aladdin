@@ -19,9 +19,9 @@ package snjdck.g2d.text
 			return 1;
 		}
 		
-		public function get numInstances():int
+		public function get numRegisterReserved():int
 		{
-			return charList.charCount;
+			return 4;
 		}
 		
 		public function initConstData(constData:Vector.<Number>):void
