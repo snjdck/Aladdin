@@ -15,18 +15,15 @@ package snjdck.gpu.render.instance
 			vertexData.length = instanceCount * data32perQuad;
 			var offset:int = maxInstanceCount * data32perQuad;
 			for(var i:int=maxInstanceCount; i<instanceCount; ++i){
-				vertexData[offset+2] = i;
-				offset += data32perVertex;
-				vertexData[offset] = 1;
-				vertexData[offset+2] = i;
-				offset += data32perVertex;
-				vertexData[offset+1] = 1;
-				vertexData[offset+2] = i;
-				offset += data32perVertex;
-				vertexData[offset] = 1;
-				vertexData[offset+1] = 1;
-				vertexData[offset+2] = i;
-				offset += data32perVertex;
+				vertexData[offset+3 ] =
+				vertexData[offset+7 ] =
+				vertexData[offset+9 ] =
+				vertexData[offset+10] = 1;
+				vertexData[offset+2 ] =
+				vertexData[offset+5 ] =
+				vertexData[offset+8 ] =
+				vertexData[offset+11] = i;
+				offset += data32perQuad;
 			}
 		}
 	}

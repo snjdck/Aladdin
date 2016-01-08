@@ -22,7 +22,7 @@ package snjdck.g2d.geom
 		
 		public function get numRegisterPerInstance():int
 		{
-			return 3;
+			return 2;
 		}
 		
 		public function get numInstances():int
@@ -33,6 +33,8 @@ package snjdck.g2d.geom
 		
 		public function initConstData(constData:Vector.<Number>):void
 		{
+			constData[14] = 0;
+			constData[15] = 1;
 		}
 		
 		public function updateConstData(constData:Vector.<Number>, instanceOffset:int, instanceCount:int):void
@@ -47,8 +49,9 @@ package snjdck.g2d.geom
 					constData[offset  ] = vertexList[vertexOffset];
 					constData[offset+1] = vertexList[vertexOffset+1];
 					++indiceOffset;
-					offset += 4;
+					offset += 2;
 				}
+				offset += 2;
 			}
 		}
 	}

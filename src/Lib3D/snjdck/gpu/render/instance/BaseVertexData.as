@@ -4,7 +4,7 @@ package snjdck.gpu.render.instance
 
 	internal class BaseVertexData
 	{
-		protected var data32perVertex:int;
+		private var data32perVertex:int;
 		private var vertexPerInstance:int;
 		protected const vertexData:Vector.<Number> = new Vector.<Number>();
 		protected var maxInstanceCount:int;

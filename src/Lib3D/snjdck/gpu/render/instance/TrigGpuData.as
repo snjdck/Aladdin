@@ -16,7 +16,7 @@ package snjdck.gpu.render.instance
 		public function initGpuData(context3d:GpuContext, maxInstanceCount:int):void
 		{
 			var vertexBuffer:GpuVertexBuffer = vertexData.getGpuData(maxInstanceCount);
-			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_1);
+			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_4);
 		}
 		
 		public function drawTriangles(context3d:GpuContext, instanceCount:int):void

@@ -8,10 +8,8 @@ package snjdck.gpu.render.instance
 		{
 			var offset:int = indexData.length;
 			indexData.length = instanceCount * 3;
-			for(var i:int=maxInstanceCount; i<instanceCount; ++i){
-				indexData[offset] = offset; ++offset;
-				indexData[offset] = offset; ++offset;
-				indexData[offset] = offset; ++offset;
+			for(var i:int=indexData.length-1; i>=offset; --i){
+				indexData[i] = i;
 			}
 		}
 	}
