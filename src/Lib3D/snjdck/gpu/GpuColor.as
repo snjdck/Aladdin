@@ -53,5 +53,13 @@ package snjdck.gpu
 			list[offset+2] = blue;
 			list[offset+3] = alpha;
 		}
+		
+		public function toVector():Vector.<Number>
+		{
+			copyTo(colorData);
+			return colorData;
+		}
+		
+		static private const colorData:Vector.<Number> = new Vector.<Number>(4, true);
 	}
 }

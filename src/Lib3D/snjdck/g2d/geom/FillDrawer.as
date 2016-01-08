@@ -1,5 +1,6 @@
 package snjdck.g2d.geom
 {
+	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.instance.IInstanceData;
@@ -7,18 +8,22 @@ package snjdck.g2d.geom
 
 	internal class FillDrawer implements IInstanceData
 	{
-		private var polygon:Polygon;
+		public const color:GpuColor = new GpuColor(0xFFFF0000);
 		
-		public function FillDrawer(polygon:Polygon)
+		private var vertexList:Vector.<Number>;
+		private var indexList:Vector.<uint>;
+		
+		public function FillDrawer(vertexList:Vector.<Number>)
 		{
-			this.polygon = polygon;
+			this.vertexList = vertexList;
 		}
 		
-		public function draw(context3d:GpuContext):void
+		public function draw(context3d:GpuContext, indexList:Vector.<uint>):void
 		{
+			this.indexList = indexList;
 			context3d.program = AssetMgr.Instance.getProgram("g2d_polygon_fill");
-			var indices:Vector.<uint> = polygon.triangulate();
-			InstanceRender.Instance.drawTrig(context3d, this, indices.length / 3);
+			context3d.setFc(0, color.toVector(), 1);
+			InstanceRender.Instance.drawTrig(context3d, this, indexList.length / 3);
 		}
 		
 		public function get numRegisterPerInstance():int
@@ -39,13 +44,11 @@ package snjdck.g2d.geom
 		
 		public function updateConstData(constData:Vector.<Number>, instanceOffset:int, instanceCount:int):void
 		{
-			var indices:Vector.<uint> = polygon.triangulate();
-			var vertexList:Vector.<Number> = polygon.vertexList;
 			var indiceOffset:int = instanceOffset * 3;
 			var offset:int = 16;
 			for(var i:int=0; i<instanceCount; ++i){
 				for(var j:int=0; j<3; ++j){
-					var vertexOffset:int = indices[indiceOffset] << 1;
+					var vertexOffset:int = indexList[indiceOffset] << 1;
 					constData[offset  ] = vertexList[vertexOffset];
 					constData[offset+1] = vertexList[vertexOffset+1];
 					++indiceOffset;

@@ -1,5 +1,6 @@
 package snjdck.g2d.geom
 {
+	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.instance.IInstanceData;
@@ -7,17 +8,22 @@ package snjdck.g2d.geom
 
 	internal class LineDrawer implements IInstanceData
 	{
-		private var polygon:Polygon;
+		public const color:GpuColor = new GpuColor(0xFF00FF00);
 		
-		public function LineDrawer(polygon:Polygon)
+		private var vertexList:Vector.<Number>;
+		public var lineWidth:Number;
+		
+		public function LineDrawer(vertexList:Vector.<Number>)
 		{
-			this.polygon = polygon;
+			this.vertexList = vertexList;
+			this.lineWidth = 1;
 		}
 		
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.program = AssetMgr.Instance.getProgram("g2d_polygon_line");
-			InstanceRender.Instance.drawQuad(context3d, this, polygon.vertexCount);
+			context3d.setFc(0, color.toVector(), 1);
+			InstanceRender.Instance.drawQuad(context3d, this, vertexList.length >> 1);
 		}
 		
 		public function get numRegisterPerInstance():int
@@ -32,14 +38,13 @@ package snjdck.g2d.geom
 		
 		public function initConstData(constData:Vector.<Number>):void
 		{
-			constData[12] = 0.5 * polygon.lineWidth;
+			constData[12] = 0.5 * lineWidth;
 			constData[14] = 0;
 			constData[15] = 1;
 		}
 		
 		public function updateConstData(constData:Vector.<Number>, instanceOffset:int, instanceCount:int):void
 		{
-			var vertexList:Vector.<Number> = polygon.vertexList;
 			var vertexListLength:int = vertexList.length;
 			var vertexOffset:int = instanceOffset << 1;
 			var offset:int = 16;

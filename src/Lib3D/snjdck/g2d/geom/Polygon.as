@@ -15,21 +15,24 @@ package snjdck.g2d.geom
 		private var isIndicesDirty:Boolean;
 		private var indices:Vector.<uint>;
 		
-		public var lineWidth:Number = 2;
-		
 		private var fillDrawer:FillDrawer;
 		private var lineDrawer:LineDrawer;
 		
 		public function Polygon()
 		{
 			vertexList = new Vector.<Number>();
-			fillDrawer = new FillDrawer(this);
-			lineDrawer = new LineDrawer(this);
+			fillDrawer = new FillDrawer(vertexList);
+			lineDrawer = new LineDrawer(vertexList);
 		}
 		
 		public function get vertexCount():int
 		{
 			return vertexList.length >> 1;
+		}
+		
+		public function set lineWidth(value:Number):void
+		{
+			lineDrawer.lineWidth = value;
 		}
 		
 		public function addVertex(px:Number, py:Number):void
@@ -189,16 +192,11 @@ package snjdck.g2d.geom
 			return (bx - ax) * (cy - by) - (by - ay) * (cx - bx) >= 0;
 		}
 		
-		private const fillColor:Vector.<Number> = new <Number>[0xFF, 0, 0, 1];
-		private const lineColor:Vector.<Number> = new <Number>[0, 0xFF, 0, 1];
-		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			InstanceRender.Instance.setVc(render2d, worldTransform);
 			context3d.save();
-			context3d.setFc(0, fillColor, 1);
-			fillDrawer.draw(context3d);
-			context3d.setFc(0, lineColor, 1);
+			fillDrawer.draw(context3d, triangulate());
 			lineDrawer.draw(context3d);
 			context3d.restore();
 		}
