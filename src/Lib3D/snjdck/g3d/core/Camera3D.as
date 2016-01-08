@@ -3,8 +3,6 @@ package snjdck.g3d.core
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import matrix44.transformVector;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
@@ -40,6 +38,7 @@ package snjdck.g3d.core
 				localMatrix.appendRotation(120, Vector3D.X_AXIS);
 				localMatrix.appendRotation(-45, Vector3D.Z_AXIS);
 			}
+			isWorldMatrixDirty = true;
 		}
 		
 		public function update():void
@@ -89,7 +88,7 @@ package snjdck.g3d.core
 			ray.dir.setTo(0, 0, 1);
 			ray.transform(_worldMatrix, ray);
 		}
-		
+		/*
 		public function world2camera(input:Vector3D, output:Vector3D):void
 		{
 			matrix44.transformVector(_worldMatrixInvert, input, output);
@@ -104,5 +103,6 @@ package snjdck.g3d.core
 		{
 			_worldMatrix.copyColumnTo(2, result);
 		}
+		*/
 	}
 }
