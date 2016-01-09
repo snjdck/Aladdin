@@ -53,12 +53,26 @@ vt0.w = va0
 
 #===============================================================
 
-@objectImp.vs
-vt0.xyz = m34: vt0, vc5	#本地 -> 世界
-vt0.xyz = m34: vt0, vc2	#世界 -> 相机
+@camera3d.vs
+#世界 -> 相机
+vt0.xyz += vc3
+vt0.xyz /= vc2.z
+vt7.xyz = vt0 * vc2.yyz		#bx, by, cz
+vt0.x -= vt7.y				#x - by
+vt7.x += vt0.y				#y + bx
+vt7.xz = vt7.xxzz * vc2.x
+vt7.yw = vt7.xxzz * vc2.w
+vt0.y = vt7.x - vt7.w
+vt0.z = vt7.y + vt7.z
+#投影
 vt0.z += vc0.w
 vt0.xyz *= vc0
 op = vt0
+
+@objectImp.vs
+#本地 -> 世界
+vt0.xyz = m34: vt0, vc5
+${camera3d.vs}
 
 @objectImp.agal
 ${objectImp.vs}
@@ -68,10 +82,6 @@ ft1.x = ft0.w - fc27.x
 kil:ft1.x
 oc = ft0
 #===============================================================
-@g3d_preDrawDepth
-vt0 = va0
-${objectImp.vs}
-oc = fc0
 
 @bone_ani<rgba>
 ${bone_ani_pos.vs}

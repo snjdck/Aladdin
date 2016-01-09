@@ -40,12 +40,9 @@ vt1 = vc[vt1.x+9] - vt0			#width
 vt0.w = vc1						#set w to 1
 
 vt0.xyz = m34: vt0, vc5	#本地 -> 世界
-vt0.xyz = m34: vt0, vc2	#世界 -> 相机
-
 vt1.xyz = m33: vt1, vc5	#本地 -> 世界
-vt1.xyz = m33: vt1, vc2	#世界 -> 相机
 
-vt2.xyz = crs: vt1, vc1.zzw		#vc1.zzw = (0,0,1)
+vt2.xyz = crs: vt1, vc2.wwz		#vc1.zzw = (0,0,1)
 vt2.xyz = nrm: vt2.xyz
 vt2.xyz *= vc1.x				#halfHeight
 
@@ -58,7 +55,5 @@ vt2.xyz *= va0.y
 vt0.xyz += vt1.xyz				#add width
 vt0.xyz += vt2.xyz				#add height
 
-vt0.z += vc0.w
-vt0.xyz *= vc0
-op = vt0
+${camera3d.vs}
 oc = fc0

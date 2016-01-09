@@ -3,13 +3,24 @@ package snjdck.g3d.core
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
+	import array.copy;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
+	
+	/**
+	 *   x - b * y
+	 * ((y + b * x) - d * c * z) * a
+	 * ((y + b * x) * d + c * z) * a
 
+	 *  x - y
+	 * ((x + y) - sqrt3 * sqrt2 * z) * -0.5
+	 * ((x + y) * sqrt3 + sqrt2 * z) * -0.5
+	 */
 	final public class Camera3D
 	{
 		private const projection:Projection3D = new Projection3D();
@@ -22,6 +33,8 @@ package snjdck.g3d.core
 		
 		private const localMatrix:Matrix3D = new Matrix3D();
 		public var bindTarget:Object3D;
+		
+		private const cameraData:Vector.<Number> = new Vector.<Number>(8, true);
 		
 		public function Camera3D(){}
 		
@@ -37,6 +50,13 @@ package snjdck.g3d.core
 			if(value){
 				localMatrix.appendRotation(120, Vector3D.X_AXIS);
 				localMatrix.appendRotation(-45, Vector3D.Z_AXIS);
+				cameraData[0] = -0.5;
+				cameraData[1] = 1;
+				cameraData[2] = Math.SQRT2;
+				cameraData[3] = Math.sqrt(3);
+			}else{
+				cameraData[0] = cameraData[2] = 1;
+				cameraData[1] = cameraData[3] = 0;
 			}
 			isWorldMatrixDirty = true;
 		}
@@ -72,6 +92,7 @@ package snjdck.g3d.core
 		{
 			projection.copyTo(output);
 			_worldMatrixInvert.copyRawDataTo(output, 8, true);
+			copy(cameraData, output, 8, 0, 8);
 		}
 		
 		public function isInSight(bound:AABB):Boolean
