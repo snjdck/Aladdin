@@ -13,11 +13,11 @@ package snjdck.g3d.core
 	use namespace ns_g3d;
 	
 	/**
-	 *   x - b * y
-	 * ((y + b * x) - d * c * z) * a
-	 * ((y + b * x) * d + c * z) * a
+	 *   a * x - b * y
+	 * ((a * y + b * x) - d * c * z) * e
+	 * ((a * y + b * x) * d + c * z) * e
 
-	 *  x - y
+	 *   x - y
 	 * ((x + y) - sqrt3 * sqrt2 * z) * -0.5
 	 * ((x + y) * sqrt3 + sqrt2 * z) * -0.5
 	 */
@@ -50,13 +50,15 @@ package snjdck.g3d.core
 			if(value){
 				localMatrix.appendRotation(120, Vector3D.X_AXIS);
 				localMatrix.appendRotation(-45, Vector3D.Z_AXIS);
-				cameraData[0] = -0.5;
+				cameraData[0] = 1;
 				cameraData[1] = 1;
 				cameraData[2] = Math.SQRT2;
 				cameraData[3] = Math.sqrt(3);
+				cameraData[7] = -0.5;
 			}else{
-				cameraData[0] = cameraData[2] = 1;
+				cameraData[0] = cameraData[2] = -1;
 				cameraData[1] = cameraData[3] = 0;
+				cameraData[7] = 1;
 			}
 			isWorldMatrixDirty = true;
 		}
