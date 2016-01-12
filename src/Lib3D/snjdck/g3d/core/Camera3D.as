@@ -12,15 +12,6 @@ package snjdck.g3d.core
 	
 	use namespace ns_g3d;
 	
-	/**
-	 *   a * x - b * y
-	 * ((a * y + b * x) - d * c * z) * e
-	 * ((a * y + b * x) * d + c * z) * e
-
-	 *   x - y
-	 * ((x + y) - sqrt3 * sqrt2 * z) * -0.5
-	 * ((x + y) * sqrt3 + sqrt2 * z) * -0.5
-	 */
 	final public class Camera3D
 	{
 		private const projection:Projection3D = new Projection3D();
@@ -30,11 +21,11 @@ package snjdck.g3d.core
 		private var isWorldMatrixDirty:Boolean = true;
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
+		private const _localMatrix:Matrix3D = new Matrix3D();
 		
-		private const localMatrix:Matrix3D = new Matrix3D();
 		public var bindTarget:Object3D;
 		
-		private const cameraData:Vector.<Number> = new Vector.<Number>(8, true);
+		private const constData:Vector.<Number> = new Vector.<Number>(24, true);
 		
 		public function Camera3D(){}
 		
@@ -46,19 +37,10 @@ package snjdck.g3d.core
 		
 		public function set ortho(value:Boolean):void
 		{
-			localMatrix.identity();
+			_localMatrix.identity();
 			if(value){
-				localMatrix.appendRotation(120, Vector3D.X_AXIS);
-				localMatrix.appendRotation(-45, Vector3D.Z_AXIS);
-				cameraData[0] = 1;
-				cameraData[1] = 1;
-				cameraData[2] = Math.SQRT2;
-				cameraData[3] = Math.sqrt(3);
-				cameraData[7] = -0.5;
-			}else{
-				cameraData[0] = cameraData[2] = -1;
-				cameraData[1] = cameraData[3] = 0;
-				cameraData[7] = 1;
+				_localMatrix.appendRotation(120, Vector3D.X_AXIS);
+				_localMatrix.appendRotation(-45, Vector3D.Z_AXIS);
 			}
 			isWorldMatrixDirty = true;
 		}
@@ -72,12 +54,13 @@ package snjdck.g3d.core
 				return;
 			}
 			isWorldMatrixDirty = false;
-			_worldMatrix.copyFrom(localMatrix);
+			_worldMatrix.copyFrom(_localMatrix);
 			if(bindTarget != null){
-				_worldMatrix.append(bindTarget.worldTransform);
+				_worldMatrix.prependTranslation(bindTarget.x, bindTarget.y, bindTarget.z);
 			}
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
+			_worldMatrixInvert.copyRawDataTo(constData, 8, true);
 			if(enableViewFrusum){
 				viewFrusum.updateAABB(_worldMatrix);
 			}
@@ -86,15 +69,13 @@ package snjdck.g3d.core
 		public function uploadMVP(context3d:GpuContext):void
 		{
 			projection.resize(context3d.bufferWidth, context3d.bufferHeight);
-			projection.upload(context3d);
-			context3d.setVcM(2, _worldMatrixInvert);
+			projection.upload(constData);
+			context3d.setVc(0, constData, 5);
 		}
 		
 		public function copyMVP(output:Vector.<Number>):void
 		{
-			projection.copyTo(output);
-			_worldMatrixInvert.copyRawDataTo(output, 8, true);
-			copy(cameraData, output, 8, 0, 8);
+			copy(constData, output, 20);
 		}
 		
 		public function isInSight(bound:AABB):Boolean

@@ -55,16 +55,7 @@ vt0.w = va0
 
 @camera3d.vs
 #世界 -> 相机
-vt0.xyz += vc3
-vt0.xyz /= vc2.z
-vt7 = vt0.xxyy * vc2.xyxy	#ax,bx,ay,by
-vt0.x = vt7.x - vt7.w		#ax-by
-vt7.w = vt7.y + vt7.z		#bx+ay
-vt7.z = vt0 * vc2			#cz
-vt7.zw = vc3.w * vt7
-vt7.xy = vc2.w * vt7.zw		#cdz,d(bx+ay),cz,(bx+ay)
-vt0.y = vt7.w - vt7.x
-vt0.z = vt7.y + vt7.z
+vt0.xyz = m34: vt0, vc2
 #投影
 vt0.z += vc0.w
 vt0.xyz *= vc0

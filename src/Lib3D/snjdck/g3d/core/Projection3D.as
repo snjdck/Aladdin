@@ -1,7 +1,5 @@
 package snjdck.g3d.core
 {
-	import snjdck.gpu.asset.GpuContext;
-	
 	/**
 	 * 平行投影,left hand
 	 */
@@ -24,12 +22,7 @@ package snjdck.g3d.core
 			transform[1] = 2 / height;
 		}
 		
-		public function upload(context3d:GpuContext):void
-		{
-			context3d.setVc(0, transform, 1);
-		}
-		
-		public function copyTo(output:Vector.<Number>):void
+		public function upload(output:Vector.<Number>):void
 		{
 			for(var i:int=0; i<4; ++i)
 				output[i] = transform[i];

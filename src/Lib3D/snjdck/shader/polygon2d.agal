@@ -42,7 +42,7 @@ vt0.w = vc1						#set w to 1
 vt0.xyz = m34: vt0, vc5	#本地 -> 世界
 vt1.xyz = m33: vt1, vc5	#本地 -> 世界
 
-vt2.xyz = crs: vt1, vc2.wwz		#vc1.zzw = (0,0,1)
+vt2.xyz = crs: vt1, vc4
 vt2.xyz = nrm: vt2.xyz
 vt2.xyz *= vc1.x				#halfHeight
 
