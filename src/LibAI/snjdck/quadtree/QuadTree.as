@@ -85,6 +85,29 @@
 			targetTree.objectList.push(node);
 		}
 		
+		public function getObjectsByFrustum(center:Vector3D, halfWidth:Number, result:Array):void
+		{
+			var stack:Array = [this];
+			var halfSize:Number = halfWidth * Math.SQRT2;
+			while(stack.length > 0){
+				var currentNode:QuadTree = stack.pop();
+				var offset:Vector3D = center.subtract(currentNode.center);
+				var distance:Number = Math.abs(offset.x - offset.y) - halfSize;
+				var nodeHalfSize:Number = currentNode.halfWidth + currentNode.halfHeight;
+				if( distance >= nodeHalfSize){
+					continue;
+				}
+				if(-distance >= nodeHalfSize){
+					currentNode.collectObjsRecursively(result);
+					continue;
+				}
+				result.push.apply(null, currentNode.objectList);
+				if(currentNode.nodeList != null){
+					stack.push.apply(null, currentNode.nodeList);
+				}
+			}
+		}
+		
 		public function getObjectsInArea(rect:Rect45, result:Array):void
 		{
 			var stack:Array = [this];

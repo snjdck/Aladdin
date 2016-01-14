@@ -27,8 +27,8 @@ package snjdck.g3d.core
 		public function updateAABB(cameraWorldMatrix:Matrix3D):void
 		{
 			matrix44.extractPosition(cameraWorldMatrix, center);
-			center.z =  center.y - center.x;
-			center.w = -center.y - center.x;
+//			center.z =  center.y - center.x;
+//			center.w = -center.y - center.x;
 		}
 		/*
 		public function containsAABB(bound:AABB):Boolean
