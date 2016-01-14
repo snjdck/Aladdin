@@ -8,7 +8,7 @@ package snjdck.g3d.bound
 	
 	use namespace ns_g3d;
 
-	final public class AABB extends Sphere
+	public class AABB extends Sphere
 	{
 		public const halfSize:Vector3D = new Vector3D();
 		

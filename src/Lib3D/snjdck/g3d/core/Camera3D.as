@@ -32,7 +32,7 @@ package snjdck.g3d.core
 		public function setScreenSize(width:int, height:int):void
 		{
 			projection.resize(width, height);
-			viewFrusum.resize(0.5 * width, height);
+			viewFrusum.resize(width, height);
 		}
 		
 		public function set ortho(value:Boolean):void
