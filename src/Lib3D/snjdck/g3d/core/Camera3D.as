@@ -21,9 +21,9 @@ package snjdck.g3d.core
 		private var isWorldMatrixDirty:Boolean = true;
 		private const _worldMatrix:Matrix3D = new Matrix3D();
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
-		private const _localMatrix:Matrix3D = new Matrix3D();
 		
 		public var bindTarget:Object3D;
+		private const position:Vector3D = new Vector3D();
 		
 		private const constData:Vector.<Number> = new Vector.<Number>(24, true);
 		
@@ -37,10 +37,10 @@ package snjdck.g3d.core
 		
 		public function set ortho(value:Boolean):void
 		{
-			_localMatrix.identity();
+			_worldMatrix.identity();
 			if(value){
-				_localMatrix.appendRotation(120, Vector3D.X_AXIS);
-				_localMatrix.appendRotation(-45, Vector3D.Z_AXIS);
+				_worldMatrix.appendRotation(120, Vector3D.X_AXIS);
+				_worldMatrix.appendRotation(-45, Vector3D.Z_AXIS);
 			}
 			isWorldMatrixDirty = true;
 		}
@@ -54,9 +54,9 @@ package snjdck.g3d.core
 				return;
 			}
 			isWorldMatrixDirty = false;
-			_worldMatrix.copyFrom(_localMatrix);
 			if(bindTarget != null){
-				_worldMatrix.prependTranslation(bindTarget.x, bindTarget.y, bindTarget.z);
+				bindTarget.worldTransform.copyColumnTo(3, position);
+				_worldMatrix.copyColumnFrom(3, position);
 			}
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
@@ -80,7 +80,10 @@ package snjdck.g3d.core
 		
 		public function isInSight(bound:AABB):Boolean
 		{
-			return enableViewFrusum ? viewFrusum.containsAABB(bound) : true;
+			if(enableViewFrusum){
+				return viewFrusum.classify(bound) != ViewFrustum.AWAY;
+			}
+			return true;
 		}
 		/**
 		 * @param screenX [-w/2, w/2]
@@ -97,12 +100,12 @@ package snjdck.g3d.core
 		{
 			matrix44.transformVector(_worldMatrixInvert, input, output);
 		}
-		
+		//*/
 		public function getViewFrustum():ViewFrustum
 		{
 			return viewFrusum;
 		}
-		
+		/*
 		public function getCameraZ(result:Vector3D):void
 		{
 			_worldMatrix.copyColumnTo(2, result);

@@ -216,5 +216,14 @@ package snjdck.g3d.bound
 			
 			setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
 		}
+		
+		public function mergeZ(other:AABB):void
+		{
+			var minZ:Number = this.minZ < other.minZ ? this.minZ : other.minZ;
+			var maxZ:Number = this.maxZ > other.maxZ ? this.maxZ : other.maxZ;
+			center.z = 0.5 * (minZ + maxZ);
+			halfSize.z = 0.5 * (maxZ - minZ);
+			radius = halfSize.length;
+		}
 	}
 }
