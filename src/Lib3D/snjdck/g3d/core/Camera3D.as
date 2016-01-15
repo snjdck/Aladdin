@@ -62,7 +62,7 @@ package snjdck.g3d.core
 			_worldMatrixInvert.invert();
 			_worldMatrixInvert.copyRawDataTo(constData, 8, true);
 			if(enableViewFrusum){
-				viewFrusum.updateAABB(_worldMatrix);
+				_worldMatrix.copyColumnTo(3, viewFrusum.center);
 			}
 		}
 		

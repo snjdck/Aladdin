@@ -3,20 +3,19 @@ package snjdck.g3d.core
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import matrix44.extractPosition;
-	
 	import snjdck.g3d.bound.AABB;
 	
 	import vec3.subtract;
 
 	public class ViewFrustum extends AABB
 	{
-		static public const CONTAINS:int = 1;
-		static public const AWAY:int = 2;
-		static public const INTERECT:int = 3;
+		static public const AWAY:int = 1;
+		static public const INTERECT:int = 0;
+		static public const CONTAINS:int = -1;
 		
-		static private const SQRT8:Number = Math.SQRT2 * 2;
-		static private const SQRT6:Number = Math.sqrt(6);
+		static private const SQRT3_2:Number = Math.sqrt(1.5);
+		static private const SQRT8:Number = 2 * Math.SQRT2;
+		static private const SQRT6:Number = 2 * SQRT3_2;
 		
 		private const offset:Vector3D = new Vector3D();
 		
@@ -28,33 +27,21 @@ package snjdck.g3d.core
 			halfSize.y = 0.5 * height;
 		}
 		
-		public function updateAABB(cameraWorldMatrix:Matrix3D):void
-		{
-			matrix44.extractPosition(cameraWorldMatrix, center);
-//			center.z =  center.y - center.x;
-//			center.w = -center.y - center.x;
-		}
-		/*
-		public function containsAABB(bound:AABB):Boolean
-		{
-			return hitTestRect(bound.center, bound.halfSize);
-		}
-		*/
 		public function classify(aabb:AABB):int
 		{
 			vec3.subtract(center, aabb.center, offset);
 			var t0:Number = aabb.halfSize.x + aabb.halfSize.y;
-			var t1:Number = Math.SQRT2 * halfSize.x;
+			var t1:Number = halfSize.x * Math.SQRT2;
 			var dx:Number = Math.abs(offset.x - offset.y) - t1;
-			if( dx >= t0) return AWAY;
-			var t2:Number = SQRT6 * aabb.halfSize.z + SQRT8 * halfSize.y;
-			var t3:Number = SQRT6 * offset.z;
-			var t4:Number = t0 + SQRT6 * aabb.halfSize.z;
-			var dy:Number = Math.abs(offset.x + offset.y - t3) - SQRT8 * halfSize.y;
+			if(dx >= t0) return AWAY;
+			var t2:Number = aabb.halfSize.z * SQRT6;
+			var t3:Number = halfSize.y * SQRT8;
+			var dy:Number = Math.abs(offset.x + offset.y - SQRT6 * offset.z) - t3;
+			var t4:Number = t0 + t2;
 			if(dy >= t4) return AWAY;
 			if(-dx >= t0 && -dy >= t4) return CONTAINS;
-			t0 = 0.5 * t3;
-			t1 = 0.5 * (t1 + t2);
+			t0 = SQRT3_2 * offset.z;
+			t1 = 0.5 * (t1 + t2 + t3);
 			if(Math.abs(offset.y - t0) >= aabb.halfSize.y + t1) return AWAY;
 			if(Math.abs(offset.x - t0) >= aabb.halfSize.x + t1) return AWAY;
 			return INTERECT;
