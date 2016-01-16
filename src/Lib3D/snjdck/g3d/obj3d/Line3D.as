@@ -38,12 +38,11 @@ package snjdck.g3d.obj3d
 			canRender = true;
 		}
 		
-		public function draw(context3d:GpuContext, camera3d:Camera3D):void
+		public function draw(context3d:GpuContext):void
 		{
 			color.copyTo(buffer);
 			context3d.setFc(0, buffer);
 			var constData:Vector.<Number> = InstanceRender.Instance.constData;
-			camera3d.copyMVP(constData);
 			worldTransform.copyRawDataTo(constData, Geometry.WORLD_MATRIX_OFFSET*4, true);
 			InstanceRender.Instance.drawQuad(context3d, this, vertexList.length / 3);
 		}

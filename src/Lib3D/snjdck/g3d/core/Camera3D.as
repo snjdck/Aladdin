@@ -8,7 +8,6 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
 	
@@ -31,8 +30,9 @@ package snjdck.g3d.core
 		
 		public function setScreenSize(width:int, height:int):void
 		{
-			projection.resize(width, height);
 			viewFrusum.resize(width, height);
+			projection.resize(width, height);
+			projection.upload(constData);
 		}
 		
 		public function set ortho(value:Boolean):void
@@ -66,14 +66,7 @@ package snjdck.g3d.core
 			}
 		}
 		
-		public function uploadMVP(context3d:GpuContext):void
-		{
-			projection.resize(context3d.bufferWidth, context3d.bufferHeight);
-			projection.upload(constData);
-			context3d.setVc(0, constData, 5);
-		}
-		
-		public function copyMVP(output:Vector.<Number>):void
+		public function upload(output:Vector.<Number>):void
 		{
 			copy(constData, output, 20);
 		}

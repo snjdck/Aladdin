@@ -1,6 +1,5 @@
 package snjdck.g3d.core
 {
-	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.bound.AABB;

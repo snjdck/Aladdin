@@ -79,7 +79,7 @@ package snjdck.g3d.obj3d
 			return false;
 		}
 		
-		public function draw(context3d:GpuContext, camera3d:Camera3D):void
+		public function draw(context3d:GpuContext):void
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldTransform);
 			for each(var subEntity:SubEntity in subEntityList){

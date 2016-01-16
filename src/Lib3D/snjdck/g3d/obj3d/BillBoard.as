@@ -52,7 +52,7 @@ package snjdck.g3d.obj3d
 		}
 		*/
 		
-		public function draw(context3d:GpuContext, camera3d:Camera3D):void
+		public function draw(context3d:GpuContext):void
 		{
 			/*
 			var t1:Vector.<Vector3D> = cameraWorldMatrix.decompose();

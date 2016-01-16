@@ -10,6 +10,7 @@ package snjdck.g3d
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.render.instance.InstanceRender;
 	
 	use namespace ns_g3d;
 
@@ -48,9 +49,11 @@ package snjdck.g3d
 		
 		public function draw(context3d:GpuContext):void
 		{
+			var constData:Vector.<Number> = InstanceRender.Instance.constData;
+			camera.upload(InstanceRender.Instance.constData);
+			context3d.setVc(0, constData, 5);
 //			var t1:int = getTimer();
-			camera.uploadMVP(context3d);
-			collector.render(context3d, camera);
+			collector.render(context3d);
 //			var t2:int = getTimer();
 //			trace("render:",t2-t1);
 		}
