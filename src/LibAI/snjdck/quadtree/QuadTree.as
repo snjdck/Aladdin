@@ -1,14 +1,10 @@
 ﻿package snjdck.quadtree
 {
-	import flash.debugger.enterDebugger;
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.bound.AABB;
-	import snjdck.g3d.bound.Rect45;
 	import snjdck.g3d.core.ViewFrustum;
 	import snjdck.gpu.geom.AABB2;
-	
-	import vec3.subtract;
 
 	/**
 	 * 00 01
@@ -107,9 +103,8 @@
 		public function getObjectsInFrustum(viewFrustum:ViewFrustum, result:Array):void
 		{
 			var halfSize:Number = viewFrustum.halfSize.x * Math.SQRT2;
-			var stack:Array = [this];
-			do{
-				var currentNode:QuadTree = stack.pop();
+			var currentNode:QuadTree = this;
+			for(;;){
 				switch(viewFrustum.classify(currentNode.bound)){
 					case ViewFrustum.INTERECT:
 						for each(var item:IQuadTreeNode in currentNode.objectList){
@@ -118,45 +113,33 @@
 							}
 						}
 						if(currentNode.nodeList != null){
-							stack.push.apply(null, currentNode.nodeList);
+							nodeList1.push.apply(null, currentNode.nodeList);
 						}
 						break;
 					case ViewFrustum.CONTAINS:
 						currentNode.collectObjsRecursively(result);
 						break;
 				}
-			}while(stack.length > 0);
-		}
-		
-		public function getObjectsInArea(rect:Rect45, result:Array):void
-		{
-			var stack:Array = [this];
-			while(stack.length > 0){
-				var currentNode:QuadTree = stack.pop();
-				switch(rect.classify(currentNode.center, currentNode.halfWidth, currentNode.halfHeight)){
-				case Rect45.INTERECT:
-					result.push.apply(null, currentNode.objectList);
-					if(currentNode.nodeList != null){
-						stack.push.apply(null, currentNode.nodeList);
-					}
+				if(nodeList1.length <= 0)
 					break;
-				case Rect45.CONTAINS:
-					currentNode.collectObjsRecursively(result);
-					break;
-				}
+				currentNode = nodeList1.pop();
 			}
 		}
 		
 		private function collectObjsRecursively(result:Array):void
 		{
-			var stack:Array = [this];
-			while(stack.length > 0){
-				var currentNode:QuadTree = stack.pop();
+			var currentNode:QuadTree = this;
+			for(;;){
 				result.push.apply(null, currentNode.objectList);
-				if(currentNode.nodeList != null){
-					stack.push.apply(null, currentNode.nodeList);
-				}
+				if(currentNode.nodeList != null)
+					nodeList2.push.apply(null, currentNode.nodeList);
+				if(nodeList2.length <= 0)
+					break;
+				currentNode = nodeList2.pop();
 			}
 		}
+		
+		static private const nodeList1:Array = [];
+		static private const nodeList2:Array = [];
 	}
 }

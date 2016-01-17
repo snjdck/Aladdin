@@ -1,9 +1,10 @@
 package snjdck.g3d.terrain
 {
-	import flash.display3D.Context3DVertexBufferFormat;
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
+	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.core.ViewFrustum;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.AssetMgr;
@@ -25,12 +26,14 @@ package snjdck.g3d.terrain
 		public var light:GpuColor = new GpuColor();
 		
 //		public var vertexBuffer:GpuVertexBuffer;
+		private const aabb:AABB = new AABB();
 		
 		public function TerrainQuad()
 		{
 //			vertexData = new Vector.<Number>(4 * COUNT_PER_VERTEX);
 //			vertexBuffer = new GpuVertexBuffer(4, COUNT_PER_VERTEX);
 			worldMatrix.appendScale(128, 128, 1);
+			aabb.halfSize.setTo(64, 64, 0);
 		}
 		
 		public function setLight(value:uint):void
@@ -92,12 +95,19 @@ package snjdck.g3d.terrain
 		{
 			position.x = value;
 			worldMatrix.position = position;
+			aabb.center.setTo(x + 64, y + 64, 0);
 		}
 		
 		public function set y(value:Number):void
 		{
 			position.y = value;
 			worldMatrix.position = position;
+			aabb.center.setTo(x + 64, y + 64, 0);
+		}
+		
+		public function getBound():AABB
+		{
+			return aabb;
 		}
 	}
 }

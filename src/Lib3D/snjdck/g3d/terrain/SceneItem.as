@@ -34,5 +34,10 @@ package snjdck.g3d.terrain
 		{
 			return bound.halfSize.y * 2;
 		}
+		
+		public function getBound():AABB
+		{
+			return bound;
+		}
 	}
 }
