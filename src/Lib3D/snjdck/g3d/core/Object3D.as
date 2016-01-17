@@ -11,25 +11,33 @@ package snjdck.g3d.core
 	
 	use namespace ns_g3d;
 	
-	public class Object3D extends Transform3D
+	public class Object3D extends BoundTransform3D
 	{
 		ns_g3d var _parent:DisplayObjectContainer3D;
 		
 		public var id:int;
 		public var name:String;
-		public var visible:Boolean;
 		
 		public var mouseEnabled:Boolean;
 		
 		private var _blendMode:BlendMode;
+		private var _visible:Boolean;
 		
 		public const mouseDownSignal:Signal = new Signal();
 		public const mouseLocation:Vector3D = new Vector3D();
 		
 		public function Object3D()
 		{
-			visible = true;
+			_visible = true;
 			mouseEnabled = true;
+		}
+		
+		override protected function markOriginalBoundDirty():void
+		{
+			super.markOriginalBoundDirty();
+			if(parent != null){
+				parent.markOriginalBoundDirty();
+			}
 		}
 		
 		override protected function get parentWorldTransform():Matrix3D
@@ -147,6 +155,16 @@ package snjdck.g3d.core
 		public function moveRight(distance:Number):void
 		{
 			translateLocal(Vector3D.X_AXIS, distance);
+		}
+
+		public function get visible():Boolean
+		{
+			return _visible;
+		}
+
+		public function set visible(value:Boolean):void
+		{
+			_visible = value;
 		}
 		
 		protected const tempRay:Ray = new Ray();
