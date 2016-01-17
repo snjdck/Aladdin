@@ -67,6 +67,11 @@ package snjdck.g3d.core
 			isLocalMatrixDirty = false;
 		}
 		
+		virtual protected function markLocalMatrixDirty():void
+		{
+			isLocalMatrixDirty = true;
+		}
+		
 		virtual internal function markWorldMatrixDirty():void
 		{
 			isWorldMatrixDirty = true;
@@ -82,7 +87,7 @@ package snjdck.g3d.core
 			if(x == value)
 				return;
 			_position.x = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -96,7 +101,7 @@ package snjdck.g3d.core
 			if(y == value)
 				return;
 			_position.y = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -110,7 +115,7 @@ package snjdck.g3d.core
 			if(z == value)
 				return;
 			_position.z = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -119,7 +124,7 @@ package snjdck.g3d.core
 			if(scaleX == val && scaleY == val && scaleZ == val)
 				return;
 			_scale.x = _scale.y = _scale.z = val;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -133,7 +138,7 @@ package snjdck.g3d.core
 			if(scaleX == value)
 				return;
 			_scale.x = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -147,7 +152,7 @@ package snjdck.g3d.core
 			if(scaleY == value)
 				return;
 			_scale.y = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -161,7 +166,7 @@ package snjdck.g3d.core
 			if(scaleZ == value)
 				return;
 			_scale.z = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -175,7 +180,7 @@ package snjdck.g3d.core
 			if(rotationX == value)
 				return;
 			_rotation.x = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -189,7 +194,7 @@ package snjdck.g3d.core
 			if(rotationY == value)
 				return;
 			_rotation.y = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -203,7 +208,7 @@ package snjdck.g3d.core
 			if(rotationZ == value)
 				return;
 			_rotation.z = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -223,7 +228,7 @@ package snjdck.g3d.core
 		public function syncMatrix2D(matrix2d:Matrix):void
 		{
 			matrix33.decompose(matrix2d, _position, _scale, _rotation);
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 	}

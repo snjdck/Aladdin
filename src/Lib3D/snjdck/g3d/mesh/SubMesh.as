@@ -24,6 +24,11 @@ package snjdck.g3d.mesh
 			geometry.draw(context3d, boneStateGroup);
 		}
 		
+		public function mergeSubMeshBound(result:AABB):void
+		{
+			result.merge(geometry.bound);
+		}
+		
 		public function calcWorldBound(worldMatrix:Matrix3D, result:AABB):void
 		{
 			geometry.bound.transform(worldMatrix, result);
