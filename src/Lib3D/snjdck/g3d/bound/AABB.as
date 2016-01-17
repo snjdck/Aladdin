@@ -17,6 +17,12 @@ package snjdck.g3d.bound
 			radius = 0;
 		}
 		
+		public function clear():void
+		{
+			center.setTo(0, 0, 0);
+			halfSize.setTo(0, 0, 0);
+		}
+		
 		public function setMinMax(minX:Number, minY:Number, minZ:Number, maxX:Number, maxY:Number, maxZ:Number):void
 		{
 			center.x = 0.5 * (minX + maxX);

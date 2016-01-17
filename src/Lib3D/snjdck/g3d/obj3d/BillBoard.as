@@ -18,30 +18,24 @@ package snjdck.g3d.obj3d
 	
 	public class BillBoard extends Object3D implements IDrawUnit3D
 	{
-		private var aabb:AABB = new AABB();
-		
 		public function BillBoard()
 		{
 			blendMode = BlendMode.NORMAL;
 			
 			var s:int = 128 * 128;
-			aabb.setMinMax(-s, -s, 0, s, s, 0);
-		}
-		
-		public function get bound():AABB
-		{
-			return aabb;
+			originalBound.setMinMax(-s, -s, 0, s, s, 0);
+			markOriginalBoundDirty();
 		}
 		
 		override protected function onHitTest(localRay:Ray):Boolean
 		{
-			return aabb.hitRay(localRay, mouseLocation);
+			return originalBound.hitRay(localRay, mouseLocation);
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
 			super.collectDrawUnit(collector, camera3d);
-			if(camera3d.isInSight(aabb)){
+			if(camera3d.isInSight(worldBound)){
 				collector.addDrawUnit(this);
 			}
 		}
