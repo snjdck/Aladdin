@@ -12,7 +12,7 @@ package snjdck.g3d.terrain
 		public function SceneItem(entity:Entity)
 		{
 			this.entity = entity;
-			entity.getEntityBound(bound);
+			bound.copyFrom(entity.bound);
 		}
 		
 		public function get x():Number

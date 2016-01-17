@@ -1,38 +1,60 @@
 package snjdck.g3d.obj3d
 {
-	import flash.geom.Matrix3D;
-	import flash.geom.Vector3D;
-	
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Camera3D;
+	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.skeleton.BoneStateGroup;
+	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 
-	internal class SubEntity
+	internal class SubEntity extends Object3D implements IDrawUnit3D
 	{
 		private var subMesh:SubMesh;
-		public const worldBound:AABB = new AABB();
-		public var visible:Boolean = true;
 		
 		public function SubEntity(subMesh:SubMesh)
 		{
 			this.subMesh = subMesh;
+			originalBound = subMesh.geometry.bound;
 		}
 		
-		public function updateWorldBound(worldMatrix:Matrix3D):void
+		private function get entity():Entity
 		{
-			subMesh.calcWorldBound(worldMatrix, worldBound);
+			return parent as Entity;
 		}
 		
-		public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
+		public function draw(context3d:GpuContext):void
 		{
-			subMesh.draw(context3d, boneStateGroup);
+			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, parent.worldTransform);
+			subMesh.draw(context3d, entity.boneStateGroup);
 		}
 		
-		public function testRay(ray:Ray, mouseLocation:Vector3D):Boolean
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
-			return worldBound.hitRay(ray, mouseLocation);
+			if(camera3d.isInSight(worldBound)){
+				collector.addDrawUnit(this);
+			}
+		}
+		
+		public function get shaderName():String
+		{
+			return entity.shaderName;
+		}
+		
+		override public function get blendMode():BlendMode
+		{
+			return parent.blendMode;
+		}
+		
+		override protected function onHitTest(localRay:Ray):Boolean
+		{
+			if(bound.hitRay(localRay, mouseLocation)){
+				return true;
+			}
+			return false;
 		}
 	}
 }

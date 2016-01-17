@@ -3,6 +3,7 @@ package snjdck.g3d.core
 	import array.del;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	
@@ -12,6 +13,8 @@ package snjdck.g3d.core
 	{
 		private var _childList:Vector.<Object3D>;
 		public var mouseChildren:Boolean;
+		
+		private var isOriginalBoundDirty:Boolean;
 		
 		public function DisplayObjectContainer3D()
 		{
@@ -25,6 +28,27 @@ package snjdck.g3d.core
 			for each(var child:Object3D in _childList){
 				child.markWorldMatrixDirty();
 			}
+		}
+		
+		override protected function get originalBound():AABB
+		{
+			var result:AABB = super.originalBound;
+			if(isOriginalBoundDirty){
+				result.clear();
+				for each(var child:Object3D in _childList){
+					if(child.isVisible()){
+						result.merge(child.bound);
+					}
+				}
+				isOriginalBoundDirty = false;
+			}
+			return result;
+		}
+		
+		override protected function markOriginalBoundDirty():void
+		{
+			isOriginalBoundDirty = true;
+			super.markOriginalBoundDirty();
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
@@ -79,6 +103,7 @@ package snjdck.g3d.core
 			if(needMarkWorldMatrixDirty){
 				child.markWorldMatrixDirty();
 			}
+			markOriginalBoundDirty();
 		}
 		
 		public function removeChild(child:Object3D):void
@@ -86,10 +111,24 @@ package snjdck.g3d.core
 			if(null == child || this != child.parent){
 				return;
 			}
-			
-			array.del(_childList, child);
+			removeChildAt(_childList.indexOf(child));
+		}
+		
+		public function removeChildAt(index:int):void
+		{
+			if(index < 0 || index >= numChildren){
+				return;
+			}
+			var child:Object3D = _childList[index];
+			_childList.splice(index, 1);
 			child._parent = null;
 			child.markWorldMatrixDirty();
+			markOriginalBoundDirty();
+		}
+		
+		public function getChildAt(index:int):Object3D
+		{
+			return _childList[index];
 		}
 		
 		public function getChild(childName:String):Object3D
@@ -152,6 +191,17 @@ package snjdck.g3d.core
 		public function get numChildren():int
 		{
 			return _childList.length;
+		}
+		
+		override public function set visible(value:Boolean):void
+		{
+			if(super.visible == value){
+				return;
+			}
+			super.visible = value;
+			if(parent != null){
+				parent.markOriginalBoundDirty();
+			}
 		}
 	}
 }

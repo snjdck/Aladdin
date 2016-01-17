@@ -25,21 +25,26 @@ package snjdck.g3d.obj3d
 	
 	use namespace ns_g3d;
 
-	public class Entity extends DisplayObjectContainer3D implements IDrawUnit3D
+	public class Entity extends DisplayObjectContainer3D
 	{
-		private const subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
+//		private const subEntityList:Vector.<SubEntity> = new Vector.<SubEntity>();
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
+//		private var mesh:Mesh;
 		
-		private var boneStateGroup:BoneStateGroup = new BoneStateGroup();
+		internal var boneStateGroup:BoneStateGroup = new BoneStateGroup();
 		private const boneDict:Object = {};
 		
 		public function Entity(mesh:Mesh)
 		{
 			blendMode = BlendMode.NORMAL;
+//			this.mesh = mesh;
 			
-			for each(var subMesh:SubMesh in mesh.subMeshes){
-				subEntityList.push(new SubEntity(subMesh));
+			for(var i:int=0; i<mesh.subMeshes.length; ++i){
+				var subMesh:SubMesh = mesh.subMeshes[i];
+				var subEntity:SubEntity = new SubEntity(subMesh);
+				subEntity.id = i;
+				addChild(subEntity);
 			}
 			
 			hasSkeleton = (mesh.skeleton != null);
@@ -49,6 +54,20 @@ package snjdck.g3d.obj3d
 				aniName = skeleton.getAnimationNames()[0];
 				boneStateGroup.skeleton = skeleton;
 			}
+		}
+		/*
+		private function calcOriginalBound():void
+		{
+			originalBound.clear();
+			var subMeshList:Array = mesh.subMeshes;
+			for(var i:int=0; i<subMeshList.length; ++i){
+				var subEntity:SubEntity = subEntityList[i];
+				if(subEntity.visible){
+					var subMesh:SubMesh = subMeshList[i];
+					subMesh.mergeSubMeshBound(originalBound);
+				}
+			}
+			markOriginalBoundDirty();
 		}
 		
 		private function isInSight(camera3d:Camera3D):Boolean
@@ -82,23 +101,18 @@ package snjdck.g3d.obj3d
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldTransform);
-			for each(var subEntity:SubEntity in subEntityList){
-				if(subEntity.visible){
-					subEntity.draw(context3d, boneStateGroup);
-				}
-			}
 			for each(var mesh:Mesh in _meshList){
 				for each(var subMesh:SubMesh in mesh.subMeshes){
 					subMesh.draw(context3d, boneStateGroup);
 				}
 			}
 		}
-		
+		*/
 		public function get shaderName():String
 		{
 			return hasSkeleton ? ShaderName.DYNAMIC_OBJECT : ShaderName.STATIC_OBJECT;
 		}
-		
+		/*
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
 		{
 			super.collectDrawUnit(collector, camera3d);
@@ -116,7 +130,7 @@ package snjdck.g3d.obj3d
 			}
 			return false;
 		}
-		
+		*/
 		private function getBoneObject(boneName:String):DisplayObjectContainer3D
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);
@@ -179,7 +193,7 @@ package snjdck.g3d.obj3d
 				boneStateGroup.advanceTime(timeElapsed * 0.001);
 			}
 		}
-		
+		/*
 		public function calculateBound():void
 		{
 			for each(var subEntity:SubEntity in subEntityList){
@@ -199,20 +213,34 @@ package snjdck.g3d.obj3d
 				bound.merge(subEntity.worldBound);
 			}
 		}
-		
-		private const _meshList:Vector.<Mesh> = new Vector.<Mesh>();
+		*/
 		
 		public function addMesh(child:Mesh):void
 		{
-			pushIfNotHas(_meshList, child);
+			var i:int;
+			for(i=numChildren-1; i>=0; --i){
+				if(getChildAt(i).userData === child){
+					return;
+				}
+			}
+			for(i=0; i<child.subMeshes.length; ++i){
+				var subMesh:SubMesh = child.subMeshes[i];
+				var subEntity:SubEntity = new SubEntity(subMesh);
+				subEntity.userData = child;
+				addChild(subEntity);
+			}
 		}
 		
 		public function removeMesh(child:Mesh):void
 		{
-			array.del(_meshList, child);
+			for(var i:int=numChildren-1; i>=0; --i){
+				if(getChildAt(i).userData === child){
+					removeChildAt(i);
+				}
+			}
 		}
 		
-		static private const tempBound:AABB = new AABB();
+//		static private const tempBound:AABB = new AABB();
 		
 		public function bindBoneStateGroup(value:BoneStateGroup):void
 		{
@@ -226,20 +254,11 @@ package snjdck.g3d.obj3d
 			skeleton = null;
 		}
 		
-		public function showSubMeshAt(index:int):void
-		{
-			setSubMeshVisible(index, true);
-		}
-		
 		public function hideSubMeshAt(index:int):void
 		{
-			setSubMeshVisible(index, false);
-		}
-		
-		public function setSubMeshVisible(index:int, value:Boolean):void
-		{
-			if(0 <= index && index < subEntityList.length){
-				subEntityList[index].visible = value;
+			var subEntity:Object3D = getChildAt(index);
+			if(subEntity != null){
+				subEntity.visible = false;
 			}
 		}
 	}

@@ -6,7 +6,7 @@ package snjdck.g3d.core
 	
 	import matrix33.decompose;
 	
-	public class Transform3D
+	internal class Transform3D
 	{
 		private const _position:Vector3D = new Vector3D();
 		private const _rotation:Vector3D = new Vector3D();

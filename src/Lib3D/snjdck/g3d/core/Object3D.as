@@ -17,6 +17,7 @@ package snjdck.g3d.core
 		
 		public var id:int;
 		public var name:String;
+		public var userData:*;
 		
 		public var mouseEnabled:Boolean;
 		

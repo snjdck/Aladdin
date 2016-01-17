@@ -2,7 +2,7 @@ package snjdck.g3d.core
 {
 	import snjdck.g3d.bound.AABB;
 
-	public class BoundTransform3D extends Transform3D
+	internal class BoundTransform3D extends Transform3D
 	{
 		private var isWorldBoundDirty:Boolean;
 		private var isLocalBoundDirty:Boolean;

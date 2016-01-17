@@ -22,7 +22,6 @@ package snjdck.g3d.core
 		private const _worldMatrixInvert:Matrix3D = new Matrix3D();
 		
 		public var bindTarget:Object3D;
-		private const position:Vector3D = new Vector3D();
 		
 		private const constData:Vector.<Number> = new Vector.<Number>(24, true);
 		
@@ -55,15 +54,12 @@ package snjdck.g3d.core
 			}
 			isWorldMatrixDirty = false;
 			if(bindTarget != null){
-				bindTarget.worldTransform.copyColumnTo(3, position);
-				_worldMatrix.copyColumnFrom(3, position);
+				bindTarget.worldTransform.copyColumnTo(3, viewFrusum.center);
+				_worldMatrix.copyColumnFrom(3, viewFrusum.center);
 			}
 			_worldMatrixInvert.copyFrom(_worldMatrix);
 			_worldMatrixInvert.invert();
 			_worldMatrixInvert.copyRawDataTo(constData, 8, true);
-			if(enableViewFrusum){
-				_worldMatrix.copyColumnTo(3, viewFrusum.center);
-			}
 		}
 		
 		public function upload(output:Vector.<Number>):void
@@ -73,9 +69,8 @@ package snjdck.g3d.core
 		
 		public function isInSight(bound:AABB):Boolean
 		{
-			if(enableViewFrusum){
-				return viewFrusum.classify(bound) != ViewFrustum.AWAY;
-			}
+			if(enableViewFrusum)
+				return viewFrusum.classify(bound) <= 0;
 			return true;
 		}
 		/**

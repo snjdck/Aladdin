@@ -39,7 +39,7 @@ package mu
 			entity.rotationY = rotationY;
 			entity.rotationZ = rotationZ;
 			entity.scale = scale;
-			entity.calculateBound();
+//			entity.calculateBound();
 			callback(entity);
 		}
 	}
