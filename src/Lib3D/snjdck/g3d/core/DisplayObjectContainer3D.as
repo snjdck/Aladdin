@@ -1,7 +1,5 @@
 package snjdck.g3d.core
 {
-	import array.del;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
@@ -191,17 +189,6 @@ package snjdck.g3d.core
 		public function get numChildren():int
 		{
 			return _childList.length;
-		}
-		
-		override public function set visible(value:Boolean):void
-		{
-			if(super.visible == value){
-				return;
-			}
-			super.visible = value;
-			if(parent != null){
-				parent.markOriginalBoundDirty();
-			}
 		}
 	}
 }

@@ -165,7 +165,12 @@ package snjdck.g3d.core
 
 		public function set visible(value:Boolean):void
 		{
+			if(_visible == value)
+				return;
 			_visible = value;
+			if(parent != null){
+				parent.markOriginalBoundDirty();
+			}
 		}
 		
 		protected const tempRay:Ray = new Ray();

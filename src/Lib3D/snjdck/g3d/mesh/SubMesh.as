@@ -1,7 +1,5 @@
 package snjdck.g3d.mesh
 {
-	import flash.geom.Matrix3D;
-	
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.skeleton.BoneStateGroup;
@@ -27,11 +25,6 @@ package snjdck.g3d.mesh
 		public function mergeSubMeshBound(result:AABB):void
 		{
 			result.merge(geometry.bound);
-		}
-		
-		public function calcWorldBound(worldMatrix:Matrix3D, result:AABB):void
-		{
-			geometry.bound.transform(worldMatrix, result);
 		}
 	}
 }

@@ -51,10 +51,7 @@ package snjdck.g3d.obj3d
 		
 		override protected function onHitTest(localRay:Ray):Boolean
 		{
-			if(bound.hitRay(localRay, mouseLocation)){
-				return true;
-			}
-			return false;
+			return bound.hitRay(localRay, mouseLocation);
 		}
 	}
 }
