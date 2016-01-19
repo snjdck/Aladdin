@@ -178,22 +178,28 @@ package snjdck.g2d.impl
 		{
 			return originalBound.width;
 		}
-/*
+
 		public function set width(value:Number):void
 		{
-			_width = value;
+			if(originalBound.width == value)
+				return;
+			originalBound.width = value;
+			markOriginalBoundDirty();
 		}
-*/		
+		
 		public function get height():Number
 		{
 			return originalBound.height;
 		}
-/*
+		
 		public function set height(value:Number):void
 		{
-			_height = value;
+			if(originalBound.height == value)
+				return;
+			originalBound.height = value;
+			markOriginalBoundDirty();
 		}
-*/		
+		
 		public function get scaleWidth():Number
 		{
 			return scaleX * width;
