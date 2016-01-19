@@ -6,6 +6,10 @@ package snjdck.g3d.core
 	
 	import matrix33.decompose;
 	
+	import snjdck.g3d.ns_g3d;
+	
+	use namespace ns_g3d;
+	
 	internal class Transform3D
 	{
 		private const _position:Vector3D = new Vector3D();
@@ -72,7 +76,7 @@ package snjdck.g3d.core
 			isLocalMatrixDirty = true;
 		}
 		
-		virtual internal function markWorldMatrixDirty():void
+		virtual ns_g3d function markWorldMatrixDirty():void
 		{
 			isWorldMatrixDirty = true;
 		}

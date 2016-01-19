@@ -1,6 +1,9 @@
 package snjdck.g3d.core
 {
+	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
+	
+	use namespace ns_g3d;
 
 	internal class BoundTransform3D extends Transform3D
 	{
@@ -29,7 +32,7 @@ package snjdck.g3d.core
 			isLocalBoundDirty = true;
 		}
 		
-		override internal function markWorldMatrixDirty():void
+		override ns_g3d function markWorldMatrixDirty():void
 		{
 			super.markWorldMatrixDirty();
 			isWorldBoundDirty = true;

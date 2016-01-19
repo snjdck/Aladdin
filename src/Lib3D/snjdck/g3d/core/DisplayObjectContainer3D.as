@@ -20,7 +20,7 @@ package snjdck.g3d.core
 			mouseChildren = true;
 		}
 		
-		override internal function markWorldMatrixDirty():void
+		override ns_g3d function markWorldMatrixDirty():void
 		{
 			super.markWorldMatrixDirty();
 			for each(var child:Object3D in _childList){
