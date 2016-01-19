@@ -28,6 +28,7 @@ package snjdck.g3d.skeleton
 			boneObject.id = id;
 			boneObject.name = name;
 			boneObject.entity = entity;
+			entity.regBone(boneObject);
 			boneObject.initTransform.copyFrom(transform);
 			boneObject.transformGlobalToLocal = transformGlobalToLocal;
 			parent.addChild(boneObject);
