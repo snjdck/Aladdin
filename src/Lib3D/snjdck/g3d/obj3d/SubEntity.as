@@ -29,7 +29,7 @@ package snjdck.g3d.obj3d
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, parent.worldTransform);
-			subMesh.draw(context3d, entity.boneStateGroup);
+			subMesh.draw(context3d, entity);
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
