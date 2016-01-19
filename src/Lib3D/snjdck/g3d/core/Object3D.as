@@ -33,6 +33,14 @@ package snjdck.g3d.core
 			mouseEnabled = true;
 		}
 		
+		override protected function markLocalMatrixDirty():void
+		{
+			super.markLocalMatrixDirty();
+			if(parent != null){
+				parent.markOriginalBoundDirty();
+			}
+		}
+		
 		override protected function markOriginalBoundDirty():void
 		{
 			super.markOriginalBoundDirty();

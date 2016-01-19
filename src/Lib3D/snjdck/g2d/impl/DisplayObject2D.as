@@ -51,6 +51,14 @@ package snjdck.g2d.impl
 			_visible = true;
 		}
 		
+		override protected function markLocalMatrixDirty():void
+		{
+			super.markLocalMatrixDirty();
+			if(parent != null){
+				parent.markOriginalBoundDirty();
+			}
+		}
+		
 		override protected function markOriginalBoundDirty():void
 		{
 			super.markOriginalBoundDirty();
