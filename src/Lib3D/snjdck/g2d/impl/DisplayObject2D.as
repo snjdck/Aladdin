@@ -24,7 +24,6 @@ package snjdck.g2d.impl
 		public var name:String;
 		public var userData:*;
 		
-		protected var _width:Number, _height:Number;
 		private const signalGroup:SignalGroup = new SignalGroup();
 		
 		public var mouseEnabled:Boolean;
@@ -46,7 +45,6 @@ package snjdck.g2d.impl
 		public function DisplayObject2D()
 		{
 			_clipRect = new ClipRect(this);
-			_width = _height = 0;
 			mouseEnabled = true;
 			_visible = true;
 		}
@@ -178,32 +176,32 @@ package snjdck.g2d.impl
 		
 		public function get width():Number
 		{
-			return _width;
+			return originalBound.width;
 		}
-
+/*
 		public function set width(value:Number):void
 		{
 			_width = value;
 		}
-		
+*/		
 		public function get height():Number
 		{
-			return _height;
+			return originalBound.height;
 		}
-
+/*
 		public function set height(value:Number):void
 		{
 			_height = value;
 		}
-		
+*/		
 		public function get scaleWidth():Number
 		{
-			return scaleX * _width;
+			return scaleX * width;
 		}
 		
 		public function get scaleHeight():Number
 		{
-			return scaleY * _height;
+			return scaleY * height;
 		}
 		
 		public function get clipRect():Rectangle

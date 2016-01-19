@@ -20,8 +20,8 @@ package snjdck.g2d.obj2d
 		public function Image3D(w:int, h:int)
 		{
 			scene3d.resize(1000, 600);
-			this.width = w;
-			this.height = h;
+			originalBound.setTo(0, 0, w, h);
+			markOriginalBoundDirty();
 		}
 		
 		public function addChild(child:Object3D):void

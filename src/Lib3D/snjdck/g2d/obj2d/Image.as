@@ -36,11 +36,11 @@ package snjdck.g2d.obj2d
 			_texture = value;
 			
 			if(texture){
-				_width = texture.width;
-				_height = texture.height;
+				originalBound.setTo(0, 0, texture.width, texture.height);
 			}else{
-				_width = _height = 0;
+				originalBound.setEmpty();
 			}
+			markOriginalBoundDirty();
 		}
 		
 		override public function isVisible():Boolean
