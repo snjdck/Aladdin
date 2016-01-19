@@ -18,9 +18,11 @@ package snjdck.g2d.impl
 	
 	use namespace ns_g2d;
 
-	public class DisplayObject2D extends Transform2D implements ISignalGroup
+	public class DisplayObject2D extends BoundTransform2D implements ISignalGroup
 	{
+		public var id:int;
 		public var name:String;
+		public var userData:*;
 		
 		protected var _width:Number, _height:Number;
 		private const signalGroup:SignalGroup = new SignalGroup();
@@ -28,7 +30,7 @@ package snjdck.g2d.impl
 		public var mouseEnabled:Boolean;
 		public var mouseX:Number, mouseY:Number;
 		
-		public var visible:Boolean;
+		private var _visible:Boolean;
 		public var filter:IFilter2D;
 		
 		private var _parent:DisplayObjectContainer2D;
@@ -46,7 +48,15 @@ package snjdck.g2d.impl
 			_clipRect = new ClipRect(this);
 			_width = _height = 0;
 			mouseEnabled = true;
-			visible = true;
+			_visible = true;
+		}
+		
+		override protected function markOriginalBoundDirty():void
+		{
+			super.markOriginalBoundDirty();
+			if(parent != null){
+				parent.markOriginalBoundDirty();
+			}
 		}
 		
 		override protected function get parentWorldTransform():Matrix
@@ -361,6 +371,21 @@ package snjdck.g2d.impl
 		public function removeListener(evtName:String, handler:Function):void
 		{
 			signalGroup.removeListener(evtName, handler);
+		}
+
+		public function get visible():Boolean
+		{
+			return _visible;
+		}
+
+		public function set visible(value:Boolean):void
+		{
+			if(_visible == value)
+				return;
+			_visible = value;
+			if(parent != null){
+				parent.markOriginalBoundDirty();
+			}
 		}
 	}
 }

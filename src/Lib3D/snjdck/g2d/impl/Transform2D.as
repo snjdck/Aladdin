@@ -4,7 +4,7 @@ package snjdck.g2d.impl
 	
 	import stdlib.constant.Unit;
 
-	public class Transform2D
+	internal class Transform2D
 	{
 		private var _x:Number, _scaleX:Number, _pivotX:Number;
 		private var _y:Number, _scaleY:Number, _pivotY:Number;
@@ -66,6 +66,11 @@ package snjdck.g2d.impl
 			localMatrix.translate(_x, _y);
 		}
 		
+		virtual protected function markLocalMatrixDirty():void
+		{
+			isLocalMatrixDirty = true;
+		}
+		
 		virtual internal function markWorldMatrixDirty():void
 		{
 			isWorldMatrixDirty = true;
@@ -81,7 +86,7 @@ package snjdck.g2d.impl
 			if(_pivotX == value)
 				return;
 			_pivotX = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -95,7 +100,7 @@ package snjdck.g2d.impl
 			if(_pivotY == value)
 				return;
 			_pivotY = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -109,7 +114,7 @@ package snjdck.g2d.impl
 			if(_x == value)
 				return;
 			_x = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -123,7 +128,7 @@ package snjdck.g2d.impl
 			if(_y == value)
 				return;
 			_y = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -137,7 +142,7 @@ package snjdck.g2d.impl
 			if(_scaleX == value)
 				return;
 			_scaleX = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -151,7 +156,7 @@ package snjdck.g2d.impl
 			if(_scaleY == value)
 				return;
 			_scaleY = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -160,7 +165,7 @@ package snjdck.g2d.impl
 			if(_scaleX == value && _scaleY == value)
 				return;
 			_scaleX = _scaleY = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 		
@@ -174,7 +179,7 @@ package snjdck.g2d.impl
 			if(_rotation == value)
 				return;
 			_rotation = value;
-			isLocalMatrixDirty = true;
+			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
 	}
