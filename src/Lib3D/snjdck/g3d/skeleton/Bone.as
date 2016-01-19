@@ -1,5 +1,8 @@
 package snjdck.g3d.skeleton
 {
+	import snjdck.g3d.core.DisplayObjectContainer3D;
+	import snjdck.g3d.obj3d.Entity;
+
 	final public class Bone
 	{
 		public var name:String;
@@ -7,7 +10,6 @@ package snjdck.g3d.skeleton
 		public var parentId:int = -1;
 		
 		public const transform:Transform = new Transform();
-		private var keyFrame:Transform;
 		
 		private var nextSibling:Bone;
 		private var firstChild:Bone;
@@ -18,8 +20,23 @@ package snjdck.g3d.skeleton
 		{
 			this.name = name;
 			this.id = id;
-			
-			keyFrame = new Transform();
+		}
+		
+		internal function createObject3D(entity:Entity, parent:DisplayObjectContainer3D):void
+		{
+			var boneObject:BoneObject3D = new BoneObject3D();
+			boneObject.id = id;
+			boneObject.name = name;
+			boneObject.entity = entity;
+			boneObject.initTransform.copyFrom(transform);
+			boneObject.transformGlobalToLocal = transformGlobalToLocal;
+			parent.addChild(boneObject);
+			if(nextSibling){
+				nextSibling.createObject3D(entity, parent);
+			}
+			if(firstChild){
+				firstChild.createObject3D(entity, boneObject);
+			}
 		}
 		
 		internal function onInit(parentTransform:Transform):void
@@ -56,38 +73,6 @@ package snjdck.g3d.skeleton
 				test = test.nextSibling;
 			}
 			test.nextSibling = bone;
-		}
-		
-		internal function updateMatrix(parentTransform:Transform, boneStateGroup:BoneStateGroup):void
-		{
-			var transformLocalToGlobal:Transform = boneStateGroup.getBoneStateLocal(id);
-			if(null == parentTransform){
-				transformLocalToGlobal.copyFrom(transform);
-			}else{
-				parentTransform.prepend(transform, transformLocalToGlobal);
-			}
-			
-			transformLocalToGlobal.prepend(keyFrame, transformLocalToGlobal);
-			transformLocalToGlobal.prepend(transformGlobalToLocal, boneStateGroup.getBoneStateGlobal(id));
-			
-			if(nextSibling){
-				nextSibling.updateMatrix(parentTransform, boneStateGroup);
-			}
-			if(firstChild){
-				firstChild.updateMatrix(transformLocalToGlobal, boneStateGroup);
-			}
-		}
-		
-		internal function calculateKeyFrame(ani:Animation, time:Number):void
-		{
-			ani.getTransform(id, time, keyFrame);
-			
-			if(nextSibling){
-				nextSibling.calculateKeyFrame(ani, time);
-			}
-			if(firstChild){
-				firstChild.calculateKeyFrame(ani, time);
-			}
 		}
 	}
 }

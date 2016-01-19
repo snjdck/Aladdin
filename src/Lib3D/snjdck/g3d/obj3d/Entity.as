@@ -7,8 +7,8 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.Bone;
-	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
 	import snjdck.gpu.BlendMode;
 	import snjdck.shader.ShaderName;
@@ -20,8 +20,10 @@ package snjdck.g3d.obj3d
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
 		
-		internal var boneStateGroup:BoneStateGroup = new BoneStateGroup();
 		private const boneDict:Object = {};
+		
+		public var animation:Animation;
+		public var animationTime:Number = 0;
 		
 		public function Entity(mesh:Mesh)
 		{
@@ -37,7 +39,7 @@ package snjdck.g3d.obj3d
 			if(hasSkeleton){
 				skeleton = mesh.skeleton;
 				aniName = skeleton.getAnimationNames()[0];
-				boneStateGroup.skeleton = skeleton;
+				skeleton.createObject3D(this);
 			}
 		}
 		

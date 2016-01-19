@@ -3,6 +3,7 @@ package snjdck.g3d.skeleton
 	import dict.getNumKeys;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.obj3d.Entity;
 	
 	use namespace ns_g3d;
 
@@ -99,10 +100,9 @@ package snjdck.g3d.skeleton
 			return dict.getKeys(animationDict);
 		}
 		
-		public function onUpdate(animation:Animation, time:Number, boneStateGroup:BoneStateGroup):void
+		public function createObject3D(entity:Entity):void
 		{
-			rootBone.calculateKeyFrame(animation, time);
-			rootBone.updateMatrix(null, boneStateGroup);
+			rootBone.createObject3D(entity, entity);
 		}
 	}
 }
