@@ -66,14 +66,6 @@ package snjdck.g3d.obj3d
 				throw new Error("boneName '" + boneName + "' not exist!");
 			}
 			return boneStateGroup[bone.id];
-//			var boneObject:DisplayObjectContainer3D = boneDict[boneName];
-//			if(boneObject == null){
-//				boneObject = new DisplayObjectContainer3D();
-//				addChild(boneObject);
-//				boneObject.id = bone.id;
-//				boneDict[boneName] = boneObject;
-//			}
-//			return boneObject;
 		}
 		
 		public function bindEntityToBone(boneName:String, entity:Object3D):void
@@ -108,22 +100,13 @@ package snjdck.g3d.obj3d
 		{
 			super.onUpdate(timeElapsed);
 			updateBoneState(timeElapsed);
-			/*
-			for each(var boneObject:DisplayObjectContainer3D in boneDict){
-				if(boneObject.numChildren <= 0)
-					continue;
-				var matrix:Matrix3D = boneObject.transform;
-				boneStateGroup.getBoneStateLocal(boneObject.id).toMatrix(matrix);
-				boneObject.transform = matrix;
-			}
-			*/
 		}
 		
 		public function set aniName(value:String):void
 		{
 			animation = skeleton.getAnimationByName(value);
 		}
-		//*
+		
 		public function updateBoneState(timeElapsed:int):void
 		{
 			if(skeleton != null){
@@ -133,7 +116,7 @@ package snjdck.g3d.obj3d
 				}
 			}
 		}
-		//*/
+		
 		public function addMesh(child:Mesh):void
 		{
 			var i:int;

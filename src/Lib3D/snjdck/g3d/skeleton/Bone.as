@@ -29,7 +29,7 @@ package snjdck.g3d.skeleton
 			boneObject.name = name;
 			boneObject.entity = entity;
 			entity.regBone(boneObject);
-			boneObject.initTransform.copyFrom(transform);
+			boneObject.initTransform = transform;
 			boneObject.transformGlobalToLocal = transformGlobalToLocal;
 			parent.addChild(boneObject);
 			if(nextSibling){

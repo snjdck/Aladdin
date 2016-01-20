@@ -10,7 +10,7 @@ package snjdck.g3d.skeleton
 	
 	public class BoneObject3D extends DisplayObjectContainer3D
 	{
-		internal const initTransform:Transform = new Transform();
+		internal var initTransform:Transform;
 		internal var transformGlobalToLocal:Transform;
 		internal var entity:Entity;
 		

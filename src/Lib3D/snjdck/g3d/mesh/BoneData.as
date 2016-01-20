@@ -149,7 +149,7 @@ package snjdck.g3d.mesh
 			}
 		}
 		
-		public function transformVertex(input:Vector.<Number>, output:Vector.<Number>, boneStateGroup:Array):void
+		public function transformVertex(input:Vector.<Number>, output:Vector.<Number>, boneStateGroup:IBoneStateGroup):void
 		{
 			for(var i:int=0, n:int=input.length; i<n; i++){
 				output[i] = 0;
@@ -158,7 +158,7 @@ package snjdck.g3d.mesh
 			for(var boneId:* in vertexDict)
 			{
 				var vertexInfoList:Array = vertexDict[boneId];
-				boneStateGroup[boneId].toMatrix(boneMatrix);
+				boneStateGroup.getBoneState(boneId).toMatrix(boneMatrix);
 				
 				var globalOffset:int, localOffset:int = 0;
 				
