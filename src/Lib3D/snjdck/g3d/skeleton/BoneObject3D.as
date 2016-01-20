@@ -5,6 +5,8 @@ package snjdck.g3d.skeleton
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.obj3d.Entity;
+	import snjdck.g3d.parser.Geometry;
+	import snjdck.model3d.calcVertexBound;
 	
 	use namespace ns_g3d;
 	
@@ -82,5 +84,20 @@ package snjdck.g3d.skeleton
 			}
 			return transformGlobalToGlobal;
 		}
+		
+		public function addVertex(geometry:Geometry):void
+		{
+			var posData:Vector.<Number> = geometry.getPosData();
+			var vertexList:Array = geometry.boneData.getVertexListByBoneId(id);
+			for(var i:int=0, n:int=vertexList.length; i<n; i+=2){
+				var vertexIndex:int = vertexList[i];
+				posData.push(posData[vertexIndex], posData[vertexIndex+1], posData[vertexIndex+2]);
+			}
+			transformGlobalToLocal.transformVectors(posData, posData);
+			calcVertexBound(posData, originalBound);
+			markOriginalBoundDirty();
+		}
+		
+		private const posData:Vector.<Number> = new Vector.<Number>();
 	}
 }

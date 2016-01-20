@@ -12,6 +12,7 @@ package snjdck.g3d.parser
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.model3d.calcVertexBound;
 	
 	use namespace ns_g3d;
 	
@@ -86,24 +87,7 @@ package snjdck.g3d.parser
 		
 		public function calculateBound():void
 		{
-			var minX:Number=Number.MAX_VALUE, maxX:Number=Number.MIN_VALUE;
-			var minY:Number=Number.MAX_VALUE, maxY:Number=Number.MIN_VALUE;
-			var minZ:Number=Number.MAX_VALUE, maxZ:Number=Number.MIN_VALUE;
-			
-			for(var i:int=0, n:int=posData.length; i<n; i+=3){
-				var vx:Number = posData[i];
-				var vy:Number = posData[i+1];
-				var vz:Number = posData[i+2];
-				
-				if(vx < minX)	minX = vx;
-				if(vx > maxX)	maxX = vx;
-				if(vy < minY)	minY = vy;
-				if(vy > maxY)	maxY = vy;
-				if(vz < minZ)	minZ = vz;
-				if(vz > maxZ) 	maxZ = vz;
-			}
-			
-			_bound.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
+			calcVertexBound(posData, _bound);
 		}
 		
 		public function get bound():AABB

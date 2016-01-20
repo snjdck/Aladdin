@@ -3,6 +3,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.skeleton.Animation;
@@ -169,6 +170,21 @@ package snjdck.g3d.obj3d
 			var subEntity:Object3D = getChildAt(index);
 			if(subEntity != null){
 				subEntity.visible = false;
+			}
+		}
+		
+		override public function addChild(child:Object3D):void
+		{
+			super.addChild(child);
+			if(!(child is SubEntity)){
+				return;
+			}
+			var subMesh:SubMesh = (child as SubEntity).subMesh;
+			for each(var boneObject:BoneObject3D in boneStateGroup){
+				if(null == boneObject){
+					continue;
+				}
+				boneObject.addVertex(subMesh.geometry);
 			}
 		}
 	}

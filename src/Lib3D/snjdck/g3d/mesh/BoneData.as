@@ -190,5 +190,10 @@ package snjdck.g3d.mesh
 		
 		static private const tempFloatBuffer:Vector.<Number> = new Vector.<Number>();
 		static private const boneMatrix:Matrix3D = new Matrix3D();
+		
+		public function getVertexListByBoneId(boneId:int):Array
+		{
+			return vertexDict[boneId];
+		}
 	}
 }

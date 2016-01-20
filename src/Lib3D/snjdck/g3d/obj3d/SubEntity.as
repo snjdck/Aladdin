@@ -13,7 +13,7 @@ package snjdck.g3d.obj3d
 
 	internal class SubEntity extends Object3D implements IDrawUnit3D
 	{
-		private var subMesh:SubMesh;
+		internal var subMesh:SubMesh;
 		
 		public function SubEntity(subMesh:SubMesh)
 		{
