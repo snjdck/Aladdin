@@ -31,6 +31,9 @@ package snjdck.g2d.impl
 		override protected function get originalBound():Rectangle
 		{
 			var result:Rectangle = super.originalBound;
+			if(useExplicitWidth && useExplicitHeight){
+				return result;
+			}
 			if(isOriginalBoundDirty){
 				result.setEmpty();
 				for each(var child:DisplayObject2D in _childList){
@@ -39,6 +42,11 @@ package snjdck.g2d.impl
 					}
 				}
 				isOriginalBoundDirty = false;
+			}
+			if(useExplicitWidth){
+				result.width = explicitWidth;
+			}else if(useExplicitHeight){
+				result.height = explicitHeight;
 			}
 			return result;
 		}

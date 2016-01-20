@@ -42,6 +42,11 @@ package snjdck.g2d.impl
 		private var _clipRect:ClipRect;
 		public var clipContent:Boolean;
 		
+		protected var useExplicitWidth:Boolean;
+		protected var explicitWidth:Number;
+		protected var useExplicitHeight:Boolean;
+		protected var explicitHeight:Number;
+		
 		public function DisplayObject2D()
 		{
 			_clipRect = new ClipRect(this);
@@ -181,6 +186,8 @@ package snjdck.g2d.impl
 
 		public function set width(value:Number):void
 		{
+			useExplicitWidth = true;
+			explicitWidth = value;
 			if(originalBound.width == value)
 				return;
 			originalBound.width = value;
@@ -194,6 +201,8 @@ package snjdck.g2d.impl
 		
 		public function set height(value:Number):void
 		{
+			useExplicitHeight = true;
+			explicitHeight = value;
 			if(originalBound.height == value)
 				return;
 			originalBound.height = value;
