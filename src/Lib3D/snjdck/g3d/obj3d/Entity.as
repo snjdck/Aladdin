@@ -100,6 +100,16 @@ package snjdck.g3d.obj3d
 		{
 			super.onUpdate(timeElapsed);
 			updateBoneState(timeElapsed);
+			if(!hasSkeleton){
+				return;
+			}
+			markOriginalBoundDirty();
+			for(var i:int=numChildren-1; i>=0; --i){
+				var boneObject:BoneObject3D = getChildAt(i) as BoneObject3D;
+				if(boneObject != null){
+					boneObject.markWorldMatrixDirty();
+				}
+			}
 		}
 		
 		public function set aniName(value:String):void

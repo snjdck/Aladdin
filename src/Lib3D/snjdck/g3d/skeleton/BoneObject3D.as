@@ -15,77 +15,59 @@ package snjdck.g3d.skeleton
 		internal var entity:Entity;
 		
 		private var isKeyFrameDirty:Boolean;
-		private const keyFrame:Transform = new Transform();
+		private const _keyFrame:Transform = new Transform();
+		
+		private var isTransformDirty:Boolean;
 		
 		private var isGlobalToGlobalDirty:Boolean;
+		private var isGlobalToLocalDirty:Boolean;
 		private const transformGlobalToGlobal:Transform = new Transform();
 		private const transformLocalToGlobal:Transform = new Transform();
 		
-		private var flag:Boolean;
-		
 		public function BoneObject3D(){}
 		
-		private function get parentTransform():Transform
+		private function get keyFrame():Transform
 		{
-			var parentBoneObject:BoneObject3D = parent as BoneObject3D;
-			if(parentBoneObject != null){
-				return parentBoneObject.getBoneStateLocal();
+			if(isKeyFrameDirty){
+				entity.animation.getTransform(id, entity.animationTime, _keyFrame);
+				isKeyFrameDirty = false;
 			}
-			return null;
+			return _keyFrame;
 		}
-		//*
+		
 		override public function get transform():Matrix3D
 		{
 			var result:Matrix3D = super.transform;
-			if(flag){
-				entity.animation.getTransform(id, entity.animationTime, keyFrame);
+			if(isTransformDirty){
 				initTransform.prepend(keyFrame, transformLocalToGlobal);
 				transformLocalToGlobal.toMatrix(result);
-				markOriginalBoundDirty();
-				flag = false;
+				isTransformDirty = false;
 			}
 			return result;
 		}
-		/*
-		override public function get worldTransform():Matrix3D
-		{
-			var result:Matrix3D = super.worldTransform;
-			result.copyFrom(transform);
-			result.append(parent.worldTransform);
-			return result;
-		}
-		//*/
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
 			isKeyFrameDirty = true;
 			isGlobalToGlobalDirty = true;
-			flag = true;
-			markWorldMatrixDirty();
+			isGlobalToLocalDirty = true;
+			isTransformDirty = true;
 			super.onUpdate(timeElapsed);
 		}
 		
 		private function getBoneStateLocal():Transform
 		{
-//			transform = transform;
-//			if(parentTransform != null){
-//				parentTransform.prepend(transformLocalToGlobal, transformLocalToGlobal);
-//			}
-//			/*
-			if(isKeyFrameDirty){
-				entity.animation.getTransform(id, entity.animationTime, keyFrame);
-				
-				if(null == parentTransform){
+			if(isGlobalToLocalDirty){
+				var parentBoneObject:BoneObject3D = parent as BoneObject3D;
+				if(parentBoneObject == null){
 					transformLocalToGlobal.copyFrom(initTransform);
 				}else{
+					var parentTransform:Transform = parentBoneObject.getBoneStateLocal();
 					parentTransform.prepend(initTransform, transformLocalToGlobal);
 				}
-				
 				transformLocalToGlobal.prepend(keyFrame, transformLocalToGlobal);
-				markOriginalBoundDirty();
-				isKeyFrameDirty = false;
+				isGlobalToLocalDirty = false;
 			}
-//			*/
 			return transformLocalToGlobal;
 		}
 		
