@@ -175,7 +175,7 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		override internal function markWorldMatrixDirty():void
+		override ns_g2d function markWorldMatrixDirty():void
 		{
 			super.markWorldMatrixDirty();
 			for each(var child:DisplayObject2D in _childList){

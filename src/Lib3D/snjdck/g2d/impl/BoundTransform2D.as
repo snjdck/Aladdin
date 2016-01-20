@@ -3,6 +3,10 @@ package snjdck.g2d.impl
 	import flash.geom.Rectangle;
 	
 	import matrix33.transformBound;
+	
+	import snjdck.g2d.ns_g2d;
+	
+	use namespace ns_g2d;
 
 	internal class BoundTransform2D extends Transform2D
 	{
@@ -31,7 +35,7 @@ package snjdck.g2d.impl
 			isLocalBoundDirty = true;
 		}
 		
-		override internal function markWorldMatrixDirty():void
+		override ns_g2d function markWorldMatrixDirty():void
 		{
 			super.markWorldMatrixDirty();
 			isWorldBoundDirty = true;

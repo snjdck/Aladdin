@@ -4,6 +4,7 @@ package snjdck.g3d.skeleton
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.Geometry;
@@ -51,11 +52,13 @@ package snjdck.g3d.skeleton
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
-			isKeyFrameDirty = true;
-			isGlobalToGlobalDirty = true;
-			isGlobalToLocalDirty = true;
-			isTransformDirty = true;
 			super.onUpdate(timeElapsed);
+			if(entity.isBoneDirty){
+				isKeyFrameDirty = true;
+				isGlobalToGlobalDirty = true;
+				isGlobalToLocalDirty = true;
+				isTransformDirty = true;
+			}
 		}
 		
 		private function getBoneStateLocal():Transform
@@ -88,25 +91,20 @@ package snjdck.g3d.skeleton
 		
 		public function addVertex(geometry:Geometry):void
 		{
-			var posData:Vector.<Number> = geometry.getPosData();
 			var vertexList:Array = geometry.boneData.getVertexListByBoneId(id);
+			if(vertexList == null || vertexList.length <= 0){
+				return;
+			}
+			var vertexPosData:Vector.<Number> = geometry.getPosData();
 			for(var i:int=0, n:int=vertexList.length; i<n; i+=2){
 				var vertexIndex:int = vertexList[i];
-				posData.push(posData[vertexIndex], posData[vertexIndex+1], posData[vertexIndex+2]);
+				posData.push(vertexPosData[vertexIndex], vertexPosData[vertexIndex+1], vertexPosData[vertexIndex+2]);
 			}
 			transformGlobalToLocal.transformVectors(posData, posData);
-			calcVertexBound(posData, boneBound);
+			calcVertexBound(posData, defaultBound);
 			markOriginalBoundDirty();
 		}
 		
-		override protected function get originalBound():AABB
-		{
-			var result:AABB = super.originalBound;
-			result.merge(boneBound);
-			return result;
-		}
-		
-		private const boneBound:AABB = new AABB();
 		private const posData:Vector.<Number> = new Vector.<Number>();
 	}
 }

@@ -1,5 +1,7 @@
 package snjdck.g2d.obj2d
 {
+	import flash.utils.getTimer;
+	
 	import matrix33.transformCoordsDelta;
 	
 	import snjdck.g2d.ns_g2d;
@@ -16,6 +18,7 @@ package snjdck.g2d.obj2d
 	public class Image3D extends DisplayObject2D
 	{
 		public const scene3d:Scene3D = new Scene3D();
+		private var isMatrixDirty:Boolean = true;
 		
 		public function Image3D(w:int, h:int)
 		{
@@ -31,13 +34,19 @@ package snjdck.g2d.obj2d
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
+			var t1:int = getTimer();
 			super.onUpdate(timeElapsed);
-			transformCoordsDelta(transform, width, height, tempPt);
-			scene3d.root.syncMatrix2D(worldTransform);
-			scene3d.root.x += 0.5 * (tempPt.x - scene.stageWidth);
-			scene3d.root.y = 0.5 * (scene.stageHeight - tempPt.y) - scene3d.root.y;
-			scene3d.root.rotationZ *= -1;
+			if(isMatrixDirty){
+				transformCoordsDelta(transform, width, height, tempPt);
+				scene3d.root.syncMatrix2D(worldTransform);
+				scene3d.root.x += 0.5 * (tempPt.x - scene.stageWidth);
+				scene3d.root.y = 0.5 * (scene.stageHeight - tempPt.y) - scene3d.root.y;
+				scene3d.root.rotationZ *= -1;
+				isMatrixDirty = false;
+			}
 			scene3d.update(timeElapsed);
+			var t2:int = getTimer();
+			trace("image3d update======================", t2 - t1);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
@@ -48,6 +57,18 @@ package snjdck.g2d.obj2d
 				scene3d.draw(context3d);
 				context3d.restore();
 			}
+		}
+		
+		override protected function markLocalMatrixDirty():void
+		{
+			super.markLocalMatrixDirty();
+			isMatrixDirty = true;
+		}
+		
+		override ns_g2d function markWorldMatrixDirty():void
+		{
+			super.markWorldMatrixDirty();
+			isMatrixDirty = true;
 		}
 	}
 }

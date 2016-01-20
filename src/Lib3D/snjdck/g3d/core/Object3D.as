@@ -4,6 +4,7 @@ package snjdck.g3d.core
 	import flash.geom.Vector3D;
 	import flash.signals.Signal;
 	
+	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
@@ -14,6 +15,8 @@ package snjdck.g3d.core
 	public class Object3D extends BoundTransform3D
 	{
 		ns_g3d var _parent:DisplayObjectContainer3D;
+		ns_g3d var _scene:Scene3D;
+		ns_g3d var _root:DisplayObjectContainer3D;
 		
 		public var id:int;
 		public var name:String;
@@ -58,7 +61,7 @@ package snjdck.g3d.core
 		}
 		
 		public function onUpdate(timeElapsed:int):void{}
-		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void{}
+		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void{}
 		
 		public function hitTest(ray:Ray, result:Vector.<Object3D>):void
 		{
@@ -164,6 +167,36 @@ package snjdck.g3d.core
 		public function moveRight(distance:Number):void
 		{
 			translateLocal(Vector3D.X_AXIS, distance);
+		}
+		
+		final public function get scene():Scene3D
+		{
+			var target:Object3D = this;
+			for(;;){
+				if(target._scene != null){
+					return target._scene;
+				}
+				if(null == target._parent){
+					return null;
+				}
+				target = target._parent;
+			}
+			return null;
+		}
+		
+		final public function get root():DisplayObjectContainer3D
+		{
+			var target:Object3D = this;
+			for(;;){
+				if(target._root != null){
+					return target._root;
+				}
+				if(null == target._parent){
+					return null;
+				}
+				target = target._parent;
+			}
+			return null;
 		}
 
 		public function get visible():Boolean

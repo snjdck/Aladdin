@@ -3,7 +3,6 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.skeleton.Animation;
@@ -25,6 +24,7 @@ package snjdck.g3d.obj3d
 		public var animation:Animation;
 		public var animationTime:Number = 0;
 		private const boneStateGroup:Array = [];
+		public var isBoneDirty:Boolean = true;
 		
 		public function Entity(mesh:Mesh)
 		{
@@ -41,6 +41,9 @@ package snjdck.g3d.obj3d
 				skeleton = mesh.skeleton;
 				aniName = skeleton.getAnimationNames()[0];
 				skeleton.createObject3D(this);
+				for(var i:int=0; i<mesh.subMeshes.length; ++i){
+					handleSubEntity(getChildAt(i) as SubEntity);
+				}
 			}
 		}
 		
@@ -99,18 +102,21 @@ package snjdck.g3d.obj3d
 		*/
 		override public function onUpdate(timeElapsed:int):void
 		{
-			super.onUpdate(timeElapsed);
-			updateBoneState(timeElapsed);
-			if(!hasSkeleton){
+			if(!scene.camera.isInSight(worldBound)){
 				return;
 			}
-			markOriginalBoundDirty();
-			for(var i:int=numChildren-1; i>=0; --i){
-				var boneObject:BoneObject3D = getChildAt(i) as BoneObject3D;
-				if(boneObject != null){
-					boneObject.markWorldMatrixDirty();
+			updateBoneState(timeElapsed);
+			super.onUpdate(timeElapsed);
+			if(hasSkeleton && isBoneDirty){
+				markOriginalBoundDirty();
+				for(var i:int=numChildren-1; i>=0; --i){
+					var boneObject:BoneObject3D = getChildAt(i) as BoneObject3D;
+					if(boneObject != null){
+						boneObject.markWorldMatrixDirty();
+					}
 				}
 			}
+			isBoneDirty = false;
 		}
 		
 		public function set aniName(value:String):void
@@ -120,11 +126,12 @@ package snjdck.g3d.obj3d
 		
 		public function updateBoneState(timeElapsed:int):void
 		{
-			if(skeleton != null){
+			if(skeleton != null && animation.length > 0){
 				animationTime += timeElapsed * 0.001;
 				if(animationTime > animation.length){
 					animationTime -= animation.length;
 				}
+				isBoneDirty = true;
 			}
 		}
 		
@@ -179,7 +186,12 @@ package snjdck.g3d.obj3d
 			if(!(child is SubEntity)){
 				return;
 			}
-			var subMesh:SubMesh = (child as SubEntity).subMesh;
+			handleSubEntity(child as SubEntity);
+		}
+		
+		private function handleSubEntity(subEntity:SubEntity):void
+		{
+			var subMesh:SubMesh = subEntity.subMesh;
 			for each(var boneObject:BoneObject3D in boneStateGroup){
 				if(null == boneObject){
 					continue;

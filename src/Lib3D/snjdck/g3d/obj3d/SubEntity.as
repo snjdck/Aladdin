@@ -1,7 +1,6 @@
 package snjdck.g3d.obj3d
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.Geometry;
@@ -18,7 +17,7 @@ package snjdck.g3d.obj3d
 		public function SubEntity(subMesh:SubMesh)
 		{
 			this.subMesh = subMesh;
-//			originalBound = subMesh.geometry.bound;
+			originalBound = subMesh.geometry.bound;
 		}
 		
 		private function get entity():Entity
@@ -32,9 +31,9 @@ package snjdck.g3d.obj3d
 			subMesh.draw(context3d, entity);
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-			if(camera3d.isInSight(worldBound)){
+			if(scene.camera.isInSight(parent.worldBound)){
 				collector.addDrawUnit(this);
 			}
 		}

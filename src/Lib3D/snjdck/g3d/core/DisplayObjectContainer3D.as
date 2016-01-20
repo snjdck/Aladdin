@@ -13,6 +13,7 @@ package snjdck.g3d.core
 		public var mouseChildren:Boolean;
 		
 		private var isOriginalBoundDirty:Boolean;
+		public const defaultBound:AABB = new AABB();
 		
 		public function DisplayObjectContainer3D()
 		{
@@ -32,7 +33,7 @@ package snjdck.g3d.core
 		{
 			var result:AABB = super.originalBound;
 			if(isOriginalBoundDirty){
-				result.clear();
+				result.copyFrom(defaultBound);
 				for each(var child:Object3D in _childList){
 					if(child.isVisible()){
 						result.merge(child.bound);
@@ -56,11 +57,11 @@ package snjdck.g3d.core
 			}
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			for each(var child:Object3D in _childList){
 				if(child.isVisible()){
-					child.collectDrawUnit(collector, camera3d);
+					child.collectDrawUnit(collector);
 				}
 			}
 		}

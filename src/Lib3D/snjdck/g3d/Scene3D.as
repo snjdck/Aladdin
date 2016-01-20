@@ -29,17 +29,21 @@ package snjdck.g3d
 		private var _width:int;
 		private var _height:int;
 		
-		public function Scene3D(){}
+		public function Scene3D()
+		{
+			root._scene = this;
+			root._root = root;
+		}
 		
 		public function update(timeElapsed:int):void
 		{
-//			var t1:int = getTimer();
+			var t1:int = getTimer();
 			root.onUpdate(timeElapsed);
 			camera.update();
 			collector.clear();
-			root.collectDrawUnit(collector, camera);
-//			var t2:int = getTimer();
-//			trace("update:",t2-t1);
+			root.collectDrawUnit(collector);
+			var t2:int = getTimer();
+			trace("scene3d update:",t2-t1);
 		}
 		
 		public function needDraw():Boolean
@@ -52,10 +56,10 @@ package snjdck.g3d
 			var constData:Vector.<Number> = InstanceRender.Instance.constData;
 			camera.upload(InstanceRender.Instance.constData);
 			context3d.setVc(0, constData, 5);
-//			var t1:int = getTimer();
+			var t1:int = getTimer();
 			collector.render(context3d);
-//			var t2:int = getTimer();
-//			trace("render:",t2-t1);
+			var t2:int = getTimer();
+			trace("scene3d render:",t2-t1);
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void

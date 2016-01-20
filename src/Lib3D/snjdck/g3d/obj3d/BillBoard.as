@@ -32,10 +32,10 @@ package snjdck.g3d.obj3d
 			return originalBound.hitRay(localRay, mouseLocation);
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-			super.collectDrawUnit(collector, camera3d);
-			if(camera3d.isInSight(worldBound)){
+			super.collectDrawUnit(collector);
+			if(scene.camera.isInSight(worldBound)){
 				collector.addDrawUnit(this);
 			}
 		}

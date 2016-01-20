@@ -55,7 +55,7 @@ package snjdck.g3d.obj3d
 			return "g3d_polygon_line";
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D, camera3d:Camera3D):void
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			if(canRender){
 				collector.addDrawUnit(this);

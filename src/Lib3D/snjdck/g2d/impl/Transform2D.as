@@ -2,7 +2,11 @@ package snjdck.g2d.impl
 {
 	import flash.geom.Matrix;
 	
+	import snjdck.g2d.ns_g2d;
+	
 	import stdlib.constant.Unit;
+	
+	use namespace ns_g2d;
 
 	internal class Transform2D
 	{
@@ -71,7 +75,7 @@ package snjdck.g2d.impl
 			isLocalMatrixDirty = true;
 		}
 		
-		virtual internal function markWorldMatrixDirty():void
+		virtual ns_g2d function markWorldMatrixDirty():void
 		{
 			isWorldMatrixDirty = true;
 		}

@@ -244,5 +244,16 @@ package snjdck.g3d.bound
 		{
 			return halfSize.x <= 0 || halfSize.y <= 0 || halfSize.z <= 0;
 		}
+		
+		public function contains(other:AABB):Boolean
+		{
+			if(this.minX > other.minX) return false;
+			if(this.maxX < other.maxX) return false;
+			if(this.minY > other.minY) return false;
+			if(this.maxY < other.maxY) return false;
+			if(this.minZ > other.minZ) return false;
+			if(this.maxZ < other.maxZ) return false;
+			return true;
+		}
 	}
 }
