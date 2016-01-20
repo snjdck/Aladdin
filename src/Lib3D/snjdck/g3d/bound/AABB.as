@@ -212,6 +212,14 @@ package snjdck.g3d.bound
 		
 		public function merge(other:AABB):void
 		{
+			if(other.isEmpty()){
+				return;
+			}
+			if(isEmpty()){
+				copyFrom(other);
+				return;
+			}
+			
 			var minX:Number = this.minX < other.minX ? this.minX : other.minX;
 			var minY:Number = this.minY < other.minY ? this.minY : other.minY;
 			var minZ:Number = this.minZ < other.minZ ? this.minZ : other.minZ;
@@ -230,6 +238,11 @@ package snjdck.g3d.bound
 			center.z = 0.5 * (minZ + maxZ);
 			halfSize.z = 0.5 * (maxZ - minZ);
 			radius = halfSize.length;
+		}
+		
+		public function isEmpty():Boolean
+		{
+			return halfSize.x <= 0 || halfSize.y <= 0 || halfSize.z <= 0;
 		}
 	}
 }

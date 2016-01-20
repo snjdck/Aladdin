@@ -18,7 +18,7 @@ package snjdck.g3d.obj3d
 		public function SubEntity(subMesh:SubMesh)
 		{
 			this.subMesh = subMesh;
-			originalBound = subMesh.geometry.bound;
+//			originalBound = subMesh.geometry.bound;
 		}
 		
 		private function get entity():Entity
