@@ -3,6 +3,7 @@ package snjdck.g3d.skeleton
 	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.Geometry;
@@ -94,10 +95,18 @@ package snjdck.g3d.skeleton
 				posData.push(posData[vertexIndex], posData[vertexIndex+1], posData[vertexIndex+2]);
 			}
 			transformGlobalToLocal.transformVectors(posData, posData);
-			calcVertexBound(posData, originalBound);
+			calcVertexBound(posData, boneBound);
 			markOriginalBoundDirty();
 		}
 		
+		override protected function get originalBound():AABB
+		{
+			var result:AABB = super.originalBound;
+			result.merge(boneBound);
+			return result;
+		}
+		
+		private const boneBound:AABB = new AABB();
 		private const posData:Vector.<Number> = new Vector.<Number>();
 	}
 }
