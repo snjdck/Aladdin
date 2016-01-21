@@ -62,23 +62,31 @@ package snjdck.g2d.impl
 		private function calcTransform():void
 		{
 			localMatrix.identity();
-			if(_pivotX != 0 || _pivotY != 0){
+			if(_pivotX != 0 || _pivotY != 0)
 				localMatrix.translate(_pivotX, _pivotY);
-			}
 			localMatrix.scale(_scaleX, _scaleY);
 			localMatrix.rotate(_rotation * Unit.RADIAN);
 			localMatrix.translate(_x, _y);
 		}
 		
-		virtual protected function markLocalMatrixDirty():void
+		private function markLocalMatrixDirty():void
 		{
+			if(isLocalMatrixDirty)
+				return;
 			isLocalMatrixDirty = true;
+			onLocalMatrixDirty();
 		}
 		
-		virtual ns_g2d function markWorldMatrixDirty():void
+		final ns_g2d function markWorldMatrixDirty():void
 		{
+			if(isWorldMatrixDirty)
+				return;
 			isWorldMatrixDirty = true;
+			onWorldMatrixDirty();
 		}
+		
+		virtual protected function onLocalMatrixDirty():void{}
+		virtual protected function onWorldMatrixDirty():void{}
 		
 		public function get pivotX():Number
 		{
@@ -90,8 +98,7 @@ package snjdck.g2d.impl
 			if(_pivotX == value)
 				return;
 			_pivotX = value;
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			onTransformChanged();
 		}
 		
 		public function get pivotY():Number
@@ -104,8 +111,7 @@ package snjdck.g2d.impl
 			if(_pivotY == value)
 				return;
 			_pivotY = value;
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			onTransformChanged();
 		}
 		
 		public function get x():Number
@@ -118,8 +124,7 @@ package snjdck.g2d.impl
 			if(_x == value)
 				return;
 			_x = value;
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			onTransformChanged();
 		}
 		
 		public function get y():Number
@@ -132,8 +137,7 @@ package snjdck.g2d.impl
 			if(_y == value)
 				return;
 			_y = value;
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			onTransformChanged();
 		}
 		
 		public function get scaleX():Number
@@ -146,8 +150,7 @@ package snjdck.g2d.impl
 			if(_scaleX == value)
 				return;
 			_scaleX = value;
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			onTransformChanged();
 		}
 		
 		public function get scaleY():Number
@@ -160,8 +163,7 @@ package snjdck.g2d.impl
 			if(_scaleY == value)
 				return;
 			_scaleY = value;
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			onTransformChanged();
 		}
 		
 		public function set scale(value:Number):void
@@ -169,8 +171,7 @@ package snjdck.g2d.impl
 			if(_scaleX == value && _scaleY == value)
 				return;
 			_scaleX = _scaleY = value;
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			onTransformChanged();
 		}
 		
 		public function get rotation():Number
@@ -183,6 +184,11 @@ package snjdck.g2d.impl
 			if(_rotation == value)
 				return;
 			_rotation = value;
+			onTransformChanged();
+		}
+		
+		private function onTransformChanged():void
+		{
 			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}

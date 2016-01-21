@@ -59,15 +59,15 @@ package snjdck.g2d.obj2d
 			}
 		}
 		
-		override protected function markLocalMatrixDirty():void
+		override protected function onLocalMatrixDirty():void
 		{
-			super.markLocalMatrixDirty();
+			super.onLocalMatrixDirty();
 			isMatrixDirty = true;
 		}
 		
-		override ns_g2d function markWorldMatrixDirty():void
+		override protected function onWorldMatrixDirty():void
 		{
-			super.markWorldMatrixDirty();
+			super.onWorldMatrixDirty();
 			isMatrixDirty = true;
 		}
 	}

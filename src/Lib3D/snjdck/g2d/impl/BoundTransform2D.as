@@ -10,59 +10,48 @@ package snjdck.g2d.impl
 
 	internal class BoundTransform2D extends Transform2D
 	{
-		private var isWorldBoundDirty:Boolean;
-		private var isLocalBoundDirty:Boolean;
+		private var _isOriginalBoundDirty:Boolean;
+		private var _isDeformedBoundDirty:Boolean;
 		private const _originalBound:Rectangle = new Rectangle();
-		private const _worldBound:Rectangle = new Rectangle();
-		private const _localBound:Rectangle = new Rectangle();
+		private const _deformedBound:Rectangle = new Rectangle();
 		
 		public function BoundTransform2D(){}
 		
+		override protected function onLocalMatrixDirty():void
+		{
+			_isDeformedBoundDirty = true;
+			markParentBoundDirty();
+		}
+		
+		protected function get isOriginalBoundDirty():Boolean
+		{
+			return _isOriginalBoundDirty;
+		}
+		
+		final ns_g2d function markOriginalBoundDirty():void
+		{
+			if(_isOriginalBoundDirty)
+				return;
+			_isOriginalBoundDirty = true;
+			_isDeformedBoundDirty = true;
+			markParentBoundDirty();
+		}
+		
+		virtual protected function markParentBoundDirty():void{}
+		
 		protected function get originalBound():Rectangle
 		{
+			_isOriginalBoundDirty = false;
 			return _originalBound;
 		}
 		
-		protected function set originalBound(value:Rectangle):void
+		public function get deformedBound():Rectangle
 		{
-			_originalBound.copyFrom(value);
-			markOriginalBoundDirty();
-		}
-		
-		protected function markOriginalBoundDirty():void
-		{
-			isWorldBoundDirty = true;
-			isLocalBoundDirty = true;
-		}
-		
-		override ns_g2d function markWorldMatrixDirty():void
-		{
-			super.markWorldMatrixDirty();
-			isWorldBoundDirty = true;
-		}
-		
-		override protected function markLocalMatrixDirty():void
-		{
-			super.markLocalMatrixDirty();
-			isLocalBoundDirty = true;
-		}
-		
-		public function get bound():Rectangle
-		{
-			if(isLocalBoundDirty){
-				transformBound(transform, originalBound, _localBound);
-				isLocalBoundDirty = false;
+			if(_isDeformedBoundDirty){
+				transformBound(transform, originalBound, _deformedBound);
+				_isDeformedBoundDirty = false;
 			}
-			return _localBound;
-		}
-		
-		public function get worldBound():Rectangle
-		{
-			if(isWorldBoundDirty){
-				transformBound(worldTransform, originalBound, _worldBound);
-				isWorldBoundDirty = false;
-			}
-			return _worldBound;
+			return _deformedBound;
 		}
 	}
 }

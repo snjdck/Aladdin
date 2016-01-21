@@ -17,8 +17,6 @@ package snjdck.g2d.impl
 		private var _childList:Vector.<DisplayObject2D>;
 		public var mouseChildren:Boolean;
 		
-		private var isOriginalBoundDirty:Boolean;
-		
 		/** 防止递归操作 */
 		private var isLocked:Boolean;
 		
@@ -30,18 +28,18 @@ package snjdck.g2d.impl
 		
 		override protected function get originalBound():Rectangle
 		{
+			var isBoundDirty:Boolean = isOriginalBoundDirty;
 			var result:Rectangle = super.originalBound;
 			if(useExplicitWidth && useExplicitHeight){
 				return result;
 			}
-			if(isOriginalBoundDirty){
+			if(isBoundDirty){
 				result.setEmpty();
 				for each(var child:DisplayObject2D in _childList){
 					if(child.isVisible()){
-						result.union(child.bound);
+						result.union(child.deformedBound);
 					}
 				}
-				isOriginalBoundDirty = false;
 			}
 			if(useExplicitWidth){
 				result.width = explicitWidth;
@@ -49,12 +47,6 @@ package snjdck.g2d.impl
 				result.height = explicitHeight;
 			}
 			return result;
-		}
-		
-		override protected function markOriginalBoundDirty():void
-		{
-			isOriginalBoundDirty = true;
-			super.markOriginalBoundDirty();
 		}
 		
 		public function get numChildren():int
@@ -175,9 +167,8 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		override ns_g2d function markWorldMatrixDirty():void
+		override protected function onWorldMatrixDirty():void
 		{
-			super.markWorldMatrixDirty();
 			for each(var child:DisplayObject2D in _childList){
 				child.markWorldMatrixDirty();
 			}

@@ -54,18 +54,9 @@ package snjdck.g2d.impl
 			_visible = true;
 		}
 		
-		override protected function markLocalMatrixDirty():void
+		override protected function markParentBoundDirty():void
 		{
-			super.markLocalMatrixDirty();
-			if(parent != null){
-				parent.markOriginalBoundDirty();
-			}
-		}
-		
-		override protected function markOriginalBoundDirty():void
-		{
-			super.markOriginalBoundDirty();
-			if(parent != null){
+			if(parent != null && !(parent.useExplicitWidth && parent.useExplicitHeight)){
 				parent.markOriginalBoundDirty();
 			}
 		}
@@ -404,9 +395,7 @@ package snjdck.g2d.impl
 			if(_visible == value)
 				return;
 			_visible = value;
-			if(parent != null){
-				parent.markOriginalBoundDirty();
-			}
+			markParentBoundDirty();
 		}
 	}
 }
