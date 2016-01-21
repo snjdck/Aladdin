@@ -12,7 +12,7 @@ package snjdck.g3d.core
 	
 	use namespace ns_g3d;
 	
-	public class Object3D extends BoundTransform3D
+	public class Object3D extends Transform3D
 	{
 		ns_g3d var _parent:DisplayObjectContainer3D;
 		ns_g3d var _scene:Scene3D;
@@ -25,31 +25,15 @@ package snjdck.g3d.core
 		public var mouseEnabled:Boolean;
 		
 		private var _blendMode:BlendMode;
-		private var _visible:Boolean;
+		public var visible:Boolean;
 		
 		public const mouseDownSignal:Signal = new Signal();
 		public const mouseLocation:Vector3D = new Vector3D();
 		
 		public function Object3D()
 		{
-			_visible = true;
+			visible = true;
 			mouseEnabled = true;
-		}
-		
-		override protected function markLocalMatrixDirty():void
-		{
-			super.markLocalMatrixDirty();
-			if(parent != null){
-				parent.markOriginalBoundDirty();
-			}
-		}
-		
-		override protected function markOriginalBoundDirty():void
-		{
-			super.markOriginalBoundDirty();
-			if(parent != null){
-				parent.markOriginalBoundDirty();
-			}
 		}
 		
 		override protected function get parentWorldTransform():Matrix3D
@@ -83,13 +67,6 @@ package snjdck.g3d.core
 			return visible && super.isVisible();
 		}
 		
-		
-		/*
-		public function get scene():Scene3D
-		{
-			return parent ? parent.scene : null;
-		}
-		*/
 		public function get parent():DisplayObjectContainer3D
 		{
 			return _parent;
@@ -197,21 +174,6 @@ package snjdck.g3d.core
 				target = target._parent;
 			}
 			return null;
-		}
-
-		public function get visible():Boolean
-		{
-			return _visible;
-		}
-
-		public function set visible(value:Boolean):void
-		{
-			if(_visible == value)
-				return;
-			_visible = value;
-			if(parent != null){
-				parent.markOriginalBoundDirty();
-			}
 		}
 		
 		protected const tempRay:Ray = new Ray();

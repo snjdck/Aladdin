@@ -71,15 +71,24 @@ package snjdck.g3d.core
 			isLocalMatrixDirty = false;
 		}
 		
-		virtual protected function markLocalMatrixDirty():void
+		private function markLocalMatrixDirty():void
 		{
+			if(isLocalMatrixDirty)
+				return;
 			isLocalMatrixDirty = true;
+			onLocalMatrixDirty();
 		}
 		
-		virtual ns_g3d function markWorldMatrixDirty():void
+		final ns_g3d function markWorldMatrixDirty():void
 		{
+			if(isWorldMatrixDirty)
+				return;
 			isWorldMatrixDirty = true;
+			onWorldMatrixDirty();
 		}
+		
+		virtual protected function onLocalMatrixDirty():void{}
+		virtual protected function onWorldMatrixDirty():void{}
 		
 		public function get x():Number
 		{
@@ -208,12 +217,8 @@ package snjdck.g3d.core
 		
 		private function onTransformChanged():void
 		{
-			if(!isLocalMatrixDirty){
-				markLocalMatrixDirty();
-			}
-			if(!isWorldMatrixDirty){
-				markWorldMatrixDirty();
-			}
+			markLocalMatrixDirty();
+			markWorldMatrixDirty();
 		}
 		
 		static private const tempPoint:Vector3D = new Vector3D();

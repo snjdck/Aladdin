@@ -1,7 +1,6 @@
 package snjdck.g3d.core
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	
@@ -12,42 +11,18 @@ package snjdck.g3d.core
 		private var _childList:Vector.<Object3D>;
 		public var mouseChildren:Boolean;
 		
-		private var isOriginalBoundDirty:Boolean;
-		public const defaultBound:AABB = new AABB();
-		
 		public function DisplayObjectContainer3D()
 		{
 			_childList = new <Object3D>[];
 			mouseChildren = true;
 		}
 		
-		override ns_g3d function markWorldMatrixDirty():void
+		override protected function onWorldMatrixDirty():void
 		{
-			super.markWorldMatrixDirty();
+			super.onWorldMatrixDirty();
 			for each(var child:Object3D in _childList){
 				child.markWorldMatrixDirty();
 			}
-		}
-		
-		override protected function get originalBound():AABB
-		{
-			var result:AABB = super.originalBound;
-			if(isOriginalBoundDirty){
-				result.copyFrom(defaultBound);
-				for each(var child:Object3D in _childList){
-					if(child.isVisible()){
-						result.merge(child.bound);
-					}
-				}
-				isOriginalBoundDirty = false;
-			}
-			return result;
-		}
-		
-		override protected function markOriginalBoundDirty():void
-		{
-			isOriginalBoundDirty = true;
-			super.markOriginalBoundDirty();
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
@@ -102,7 +77,7 @@ package snjdck.g3d.core
 			if(needMarkWorldMatrixDirty){
 				child.markWorldMatrixDirty();
 			}
-			markOriginalBoundDirty();
+//			markOriginalBoundDirty();
 		}
 		
 		public function removeChild(child:Object3D):void
@@ -122,7 +97,7 @@ package snjdck.g3d.core
 			_childList.splice(index, 1);
 			child._parent = null;
 			child.markWorldMatrixDirty();
-			markOriginalBoundDirty();
+//			markOriginalBoundDirty();
 		}
 		
 		public function getChildAt(index:int):Object3D

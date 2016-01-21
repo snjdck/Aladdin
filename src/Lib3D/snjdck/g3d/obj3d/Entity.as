@@ -1,6 +1,7 @@
 package snjdck.g3d.obj3d
 {
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
@@ -26,14 +27,19 @@ package snjdck.g3d.obj3d
 		private const boneStateGroup:Array = [];
 		public var isBoneDirty:Boolean = true;
 		
+		public const worldBound:AABB = new AABB();
+		public const bound:AABB = new AABB();
+		
 		public function Entity(mesh:Mesh)
 		{
 			blendMode = BlendMode.NORMAL;
 			
 			for(var i:int=0; i<mesh.subMeshes.length; ++i){
 				var subMesh:SubMesh = mesh.subMeshes[i];
+				bound.merge(subMesh.geometry.bound);
 				addChild(new SubEntity(subMesh));
 			}
+			bound.transform(worldTransform, worldBound);
 			
 			hasSkeleton = (mesh.skeleton != null);
 			
@@ -46,6 +52,13 @@ package snjdck.g3d.obj3d
 				}
 			}
 		}
+		
+		override protected function onWorldMatrixDirty():void
+		{
+			super.onWorldMatrixDirty();
+			bound.transform(worldTransform, worldBound);
+		}
+		
 		
 		public function getBoneState(boneId:int):Transform
 		{
@@ -102,13 +115,13 @@ package snjdck.g3d.obj3d
 		*/
 		override public function onUpdate(timeElapsed:int):void
 		{
-			if(!scene.camera.isInSight(worldBound)){
-				return;
-			}
+//			if(!scene.camera.isInSight(worldBound)){
+//				return;
+//			}
 			updateBoneState(timeElapsed);
 			super.onUpdate(timeElapsed);
 			if(hasSkeleton && isBoneDirty){
-				markOriginalBoundDirty();
+//				markOriginalBoundDirty();
 				for(var i:int=numChildren-1; i>=0; --i){
 					var boneObject:BoneObject3D = getChildAt(i) as BoneObject3D;
 					if(boneObject != null){

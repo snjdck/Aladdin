@@ -17,7 +17,7 @@ package snjdck.g3d.obj3d
 		public function SubEntity(subMesh:SubMesh)
 		{
 			this.subMesh = subMesh;
-			originalBound = subMesh.geometry.bound;
+//			originalBound = subMesh.geometry.bound;
 		}
 		
 		private function get entity():Entity
@@ -33,7 +33,7 @@ package snjdck.g3d.obj3d
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-			if(scene.camera.isInSight(parent.worldBound)){
+			if(scene.camera.isInSight(entity.worldBound)){
 				collector.addDrawUnit(this);
 			}
 		}
@@ -50,7 +50,7 @@ package snjdck.g3d.obj3d
 		
 		override protected function onHitTest(localRay:Ray):Boolean
 		{
-			return bound.hitRay(localRay, mouseLocation);
+			return entity.worldBound.hitRay(localRay, mouseLocation);
 		}
 	}
 }

@@ -4,7 +4,6 @@ package snjdck.g3d.skeleton
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
-	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.Geometry;
@@ -102,9 +101,10 @@ package snjdck.g3d.skeleton
 			}
 			transformGlobalToLocal.transformVectors(posData, posData);
 			calcVertexBound(posData, defaultBound);
-			markOriginalBoundDirty();
+//			markOriginalBoundDirty();
 		}
 		
+		private const defaultBound:AABB = new AABB();
 		private const posData:Vector.<Number> = new Vector.<Number>();
 	}
 }
