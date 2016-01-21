@@ -61,11 +61,9 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override protected function get parentWorldTransform():Matrix
+		override protected function get getParent():Transform2D
 		{
-			if(parent == null)
-				return null;
-			return parent.worldTransform;
+			return parent;
 		}
 		
 		ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
@@ -230,7 +228,7 @@ package snjdck.g2d.impl
 		
 		public function getRect(targetSpace:DisplayObject2D, result:Rectangle):void
 		{
-			calcSpaceTransform(targetSpace, tempMatrix1);
+			calculateRelativeTransform(targetSpace, tempMatrix1);
 			
 			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;
 			var minY:Number = Number.MAX_VALUE, maxY:Number = Number.MIN_VALUE;
@@ -259,31 +257,7 @@ package snjdck.g2d.impl
 			result.setTo(minX, minY, maxX-minX, maxY-minY);
 		}
 		
-		public function calcSpaceTransform(targetSpace:DisplayObject2D, result:Matrix):void
-		{
-			if(parent == targetSpace){
-				result.copyFrom(transform);
-				return;
-			}
-			result.identity();
-			var target:DisplayObject2D = this;
-			while(target != null){
-				if(target == targetSpace){
-					return;
-				}
-				result.concat(target.transform);
-				target = target.parent;
-			}
-			if(null == targetSpace){
-				return;
-			}
-			tempMatrix2.copyFrom(targetSpace.worldTransform);
-			tempMatrix2.invert();
-			result.concat(tempMatrix2);
-		}
-		
 		static private const tempMatrix1:Matrix = new Matrix();
-		static private const tempMatrix2:Matrix = new Matrix();
 		static protected const tempPt:Point = new Point();
 		static private const tempRect:Rectangle = new Rectangle();
 		

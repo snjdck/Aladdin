@@ -157,14 +157,7 @@ package snjdck.g2d.impl
 		
 		public function contains(child:DisplayObject2D):Boolean
 		{
-			while(child){
-				if(child == this){
-					return true;
-				}else{
-					child = child.parent;
-				}
-			}
-			return false;
+			return isDescendant(child);
 		}
 		
 		override protected function onWorldMatrixDirty():void

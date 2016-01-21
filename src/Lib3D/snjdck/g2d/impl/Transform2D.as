@@ -19,6 +19,11 @@ package snjdck.g2d.impl
 		private const worldMatrix:Matrix = new Matrix();
 		private const localMatrix:Matrix = new Matrix();
 		
+		private var isWorldMatrixInvertDirty:Boolean;
+		private var isLocalMatrixInvertDirty:Boolean;
+		private const worldMatrixInvert:Matrix = new Matrix();
+		private const localMatrixInvert:Matrix = new Matrix();
+		
 		public function Transform2D()
 		{
 			_pivotX = _pivotY = 0;
@@ -26,6 +31,10 @@ package snjdck.g2d.impl
 			_scaleX = _scaleY = 1;
 			_rotation = 0;
 		}
+		
+		virtual protected function onLocalMatrixDirty():void{}
+		virtual protected function onWorldMatrixDirty():void{}
+		virtual protected function getParent():Transform2D{return null;}
 		
 		public function isVisible():Boolean
 		{
@@ -35,38 +44,47 @@ package snjdck.g2d.impl
 		public function get worldTransform():Matrix
 		{
 			if(isWorldMatrixDirty){
-				var parentWorldMatrix:Matrix = parentWorldTransform;
+				var parent:Transform2D = getParent();
 				worldMatrix.copyFrom(transform);
-				if(parentWorldMatrix != null)
-					worldMatrix.concat(parentWorldMatrix);
+				if(parent != null)
+					worldMatrix.concat(parent.worldTransform);
 				isWorldMatrixDirty = false;
 			}
 			return worldMatrix;
 		}
 		
-		virtual protected function get parentWorldTransform():Matrix
-		{
-			return null;
-		}
-		
+		/** 1.缩放, 2.旋转, 3.位移 */
 		public function get transform():Matrix
 		{
 			if(isLocalMatrixDirty){
-				calcTransform();
+				localMatrix.identity();
+				localMatrix.translate(_pivotX, _pivotY);
+				localMatrix.scale(_scaleX, _scaleY);
+				localMatrix.rotate(_rotation * Unit.RADIAN);
+				localMatrix.translate(_x, _y);
 				isLocalMatrixDirty = false;
 			}
 			return localMatrix;
 		}
 		
-		/** 1.缩放, 2.旋转, 3.位移 */
-		private function calcTransform():void
+		public function get worldTransformInvert():Matrix
 		{
-			localMatrix.identity();
-			if(_pivotX != 0 || _pivotY != 0)
-				localMatrix.translate(_pivotX, _pivotY);
-			localMatrix.scale(_scaleX, _scaleY);
-			localMatrix.rotate(_rotation * Unit.RADIAN);
-			localMatrix.translate(_x, _y);
+			if(isWorldMatrixInvertDirty){
+				worldMatrixInvert.copyFrom(worldTransform);
+				worldMatrixInvert.invert();
+				isWorldMatrixInvertDirty = false;
+			}
+			return worldMatrixInvert;
+		}
+		
+		public function get transformInvert():Matrix
+		{
+			if(isLocalMatrixInvertDirty){
+				localMatrixInvert.copyFrom(transform);
+				localMatrixInvert.invert();
+				isLocalMatrixInvertDirty = false;
+			}
+			return localMatrixInvert;
 		}
 		
 		private function markLocalMatrixDirty():void
@@ -74,6 +92,7 @@ package snjdck.g2d.impl
 			if(isLocalMatrixDirty)
 				return;
 			isLocalMatrixDirty = true;
+			isLocalMatrixInvertDirty = true;
 			onLocalMatrixDirty();
 		}
 		
@@ -82,11 +101,15 @@ package snjdck.g2d.impl
 			if(isWorldMatrixDirty)
 				return;
 			isWorldMatrixDirty = true;
+			isWorldMatrixInvertDirty = true;
 			onWorldMatrixDirty();
 		}
 		
-		virtual protected function onLocalMatrixDirty():void{}
-		virtual protected function onWorldMatrixDirty():void{}
+		private function onTransformChanged():void
+		{
+			markLocalMatrixDirty();
+			markWorldMatrixDirty();
+		}
 		
 		public function get pivotX():Number
 		{
@@ -187,10 +210,63 @@ package snjdck.g2d.impl
 			onTransformChanged();
 		}
 		
-		private function onTransformChanged():void
+		protected function isDescendant(target:Transform2D):Boolean
 		{
-			markLocalMatrixDirty();
-			markWorldMatrixDirty();
+			while(target != null){
+				if(target == this)
+					return true;
+				target = target.getParent();
+			}
+			return false;
+		}
+		
+		protected function isAncestor(target:Transform2D):Boolean
+		{
+			if(target == null)
+				return false;
+			var node:Transform2D = this;
+			do{
+				if(node == target)
+					return true;
+				node = node.getParent();
+			}while(node != null);
+			return false;
+		}
+		
+		public function calculateRelativeTransform(target:Transform2D, result:Matrix):void
+		{
+			if(target == null){
+				result.copyFrom(worldTransform);
+				return;
+			}
+			if(target == this){
+				result.identity();
+				return;
+			}
+			if(target == getParent()){
+				result.copyFrom(transform);
+				return;
+			}
+			if(target.getParent() == this){
+				result.copyFrom(target.transformInvert);
+				return;
+			}
+			if(isDescendant(target)){
+				target.calculateRelativeTransform(this, result);
+				result.invert();
+				return;
+			}
+			if(isAncestor(target)){
+				result.identity();
+				var node:Transform2D = this;
+				while(node != target){
+					result.concat(node.transform);
+					node = node.getParent();
+				}
+				return;
+			}
+			result.copyFrom(worldTransform);
+			result.concat(target.worldTransformInvert);
 		}
 	}
 }
