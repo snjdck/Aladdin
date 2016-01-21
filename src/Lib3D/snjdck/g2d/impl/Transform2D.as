@@ -35,6 +35,7 @@ package snjdck.g2d.impl
 		virtual protected function onLocalMatrixDirty():void{}
 		virtual protected function onWorldMatrixDirty():void{}
 		virtual protected function getParent():Transform2D{return null;}
+		virtual protected function getChildren():Array{return null;}
 		
 		public function isVisible():Boolean
 		{
@@ -96,13 +97,17 @@ package snjdck.g2d.impl
 			onLocalMatrixDirty();
 		}
 		
-		final ns_g2d function markWorldMatrixDirty():void
+		final internal function markWorldMatrixDirty():void
 		{
 			if(isWorldMatrixDirty)
 				return;
 			isWorldMatrixDirty = true;
 			isWorldMatrixInvertDirty = true;
 			onWorldMatrixDirty();
+			var childList:Array = getChildren();
+			for each(var child:Transform2D in childList){
+				child.markWorldMatrixDirty();
+			}
 		}
 		
 		private function onTransformChanged():void

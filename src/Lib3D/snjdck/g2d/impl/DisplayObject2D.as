@@ -42,23 +42,11 @@ package snjdck.g2d.impl
 		private var _clipRect:ClipRect;
 		public var clipContent:Boolean;
 		
-		protected var useExplicitWidth:Boolean;
-		protected var explicitWidth:Number;
-		protected var useExplicitHeight:Boolean;
-		protected var explicitHeight:Number;
-		
 		public function DisplayObject2D()
 		{
 			_clipRect = new ClipRect(this);
 			mouseEnabled = true;
 			_visible = true;
-		}
-		
-		override protected function markParentBoundDirty():void
-		{
-			if(parent != null && !(parent.useExplicitWidth && parent.useExplicitHeight)){
-				parent.markOriginalBoundDirty();
-			}
 		}
 		
 		override protected function getParent():Transform2D
@@ -180,7 +168,7 @@ package snjdck.g2d.impl
 			if(originalBound.width == value)
 				return;
 			originalBound.width = value;
-			markOriginalBoundDirty();
+			markBoundDirty();
 		}
 		
 		public function get height():Number
@@ -195,7 +183,7 @@ package snjdck.g2d.impl
 			if(originalBound.height == value)
 				return;
 			originalBound.height = value;
-			markOriginalBoundDirty();
+			markBoundDirty();
 		}
 		
 		public function get scaleWidth():Number

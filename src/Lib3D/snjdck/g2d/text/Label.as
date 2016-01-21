@@ -36,7 +36,7 @@ package snjdck.g2d.text
 			_fontSize = 12;
 			charList = new CharInfoList(this);
 			originalBound.setTo(0, 0, 100, 100);
-			markOriginalBoundDirty();
+			markBoundDirty();
 			textColor[0] = 1;
 			textColor[1] = 1;
 			textColor[2] = 1;

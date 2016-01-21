@@ -24,7 +24,7 @@ package snjdck.g2d.obj2d
 		{
 			scene3d.resize(1000, 600);
 			originalBound.setTo(0, 0, w, h);
-			markOriginalBoundDirty();
+			markBoundDirty();
 		}
 		
 		public function addChild(child:Object3D):void

@@ -14,7 +14,7 @@ package snjdck.g2d.impl
 	
 	public class DisplayObjectContainer2D extends DisplayObject2D implements IViewPortLayer
 	{
-		private var _childList:Vector.<DisplayObject2D>;
+		private var _childList:Array;
 		public var mouseChildren:Boolean;
 		
 		/** 防止递归操作 */
@@ -22,31 +22,13 @@ package snjdck.g2d.impl
 		
 		public function DisplayObjectContainer2D()
 		{
-			_childList = new <DisplayObject2D>[];
+			_childList = [];
 			mouseChildren = true;
 		}
 		
-		override protected function get originalBound():Rectangle
+		override protected function getChildren():Array
 		{
-			var isBoundDirty:Boolean = isOriginalBoundDirty;
-			var result:Rectangle = super.originalBound;
-			if(useExplicitWidth && useExplicitHeight){
-				return result;
-			}
-			if(isBoundDirty){
-				result.setEmpty();
-				for each(var child:DisplayObject2D in _childList){
-					if(child.isVisible()){
-						result.union(child.deformedBound);
-					}
-				}
-			}
-			if(useExplicitWidth){
-				result.width = explicitWidth;
-			}else if(useExplicitHeight){
-				result.height = explicitHeight;
-			}
-			return result;
+			return _childList;
 		}
 		
 		public function get numChildren():int
@@ -88,7 +70,7 @@ package snjdck.g2d.impl
 			if(needMarkWorldMatrixDirty){
 				child.markWorldMatrixDirty();
 			}
-			markOriginalBoundDirty();
+			markBoundDirty();
 			
 			isLocked = false;
 		}
@@ -109,7 +91,7 @@ package snjdck.g2d.impl
 			var child:DisplayObject2D = array.delAt(_childList, index);
 			child.parent = null;
 			child.markWorldMatrixDirty();
-			markOriginalBoundDirty();
+			markBoundDirty();
 			
 			isLocked = false;
 			
@@ -158,13 +140,6 @@ package snjdck.g2d.impl
 		public function contains(child:DisplayObject2D):Boolean
 		{
 			return isDescendant(child);
-		}
-		
-		override protected function onWorldMatrixDirty():void
-		{
-			for each(var child:DisplayObject2D in _childList){
-				child.markWorldMatrixDirty();
-			}
 		}
 		
 		override ns_g2d function collectOpaqueArea(collector:OpaqueAreaCollector):void

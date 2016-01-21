@@ -15,6 +15,11 @@ package snjdck.g2d.impl
 		private const _originalBound:Rectangle = new Rectangle();
 		private const _deformedBound:Rectangle = new Rectangle();
 		
+		protected var useExplicitWidth:Boolean;
+		protected var explicitWidth:Number;
+		protected var useExplicitHeight:Boolean;
+		protected var explicitHeight:Number;
+		
 		public function BoundTransform2D(){}
 		
 		override protected function onLocalMatrixDirty():void
@@ -23,12 +28,7 @@ package snjdck.g2d.impl
 			markParentBoundDirty();
 		}
 		
-		protected function get isOriginalBoundDirty():Boolean
-		{
-			return _isOriginalBoundDirty;
-		}
-		
-		final ns_g2d function markOriginalBoundDirty():void
+		final ns_g2d function markBoundDirty():void
 		{
 			if(_isOriginalBoundDirty)
 				return;
@@ -37,11 +37,38 @@ package snjdck.g2d.impl
 			markParentBoundDirty();
 		}
 		
-		virtual protected function markParentBoundDirty():void{}
-		
-		protected function get originalBound():Rectangle
+		final ns_g2d function markParentBoundDirty():void
 		{
-			_isOriginalBoundDirty = false;
+			var parent:BoundTransform2D = getParent() as BoundTransform2D;
+			if(parent != null && !(parent.useExplicitWidth && parent.useExplicitHeight)){
+				parent.markBoundDirty();
+			}
+		}
+		
+		public function get originalBound():Rectangle
+		{
+			var childList:Array = getChildren();
+			if(childList == null){
+				_isOriginalBoundDirty = false;
+				return _originalBound;
+			}
+			if(useExplicitWidth && useExplicitHeight){
+				return _originalBound;
+			}
+			if(_isOriginalBoundDirty){
+				_originalBound.setEmpty();
+				for each(var child:BoundTransform2D in childList){
+					if(child.isVisible()){
+						_originalBound.union(child.deformedBound);
+					}
+				}
+				_isOriginalBoundDirty = false;
+			}
+			if(useExplicitWidth){
+				_originalBound.width = explicitWidth;
+			}else if(useExplicitHeight){
+				_originalBound.height = explicitHeight;
+			}
 			return _originalBound;
 		}
 		

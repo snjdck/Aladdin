@@ -40,7 +40,7 @@ package snjdck.g2d.obj2d
 			}else{
 				originalBound.setEmpty();
 			}
-			markOriginalBoundDirty();
+			markBoundDirty();
 		}
 		
 		override public function isVisible():Boolean
