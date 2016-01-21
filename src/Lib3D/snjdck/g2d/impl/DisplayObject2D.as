@@ -277,19 +277,9 @@ package snjdck.g2d.impl
 			if(null == targetSpace){
 				return;
 			}
-			targetSpace.calcWorldMatrix(tempMatrix2);
+			tempMatrix2.copyFrom(targetSpace.worldTransform);
 			tempMatrix2.invert();
 			result.concat(tempMatrix2);
-		}
-		
-		public function calcWorldMatrix(result:Matrix):void
-		{
-			result.identity();
-			var target:DisplayObject2D = this;
-			while(target != null){
-				result.concat(target.transform);
-				target = target.parent;
-			}
 		}
 		
 		static private const tempMatrix1:Matrix = new Matrix();
