@@ -61,7 +61,7 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override protected function get getParent():Transform2D
+		override protected function getParent():Transform2D
 		{
 			return parent;
 		}
