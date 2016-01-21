@@ -20,6 +20,8 @@ package snjdck.g2d.impl
 		protected var useExplicitHeight:Boolean;
 		protected var explicitHeight:Number;
 		
+		private var _visible:Boolean = true;
+		
 		public function BoundTransform2D(){}
 		
 		override protected function onLocalMatrixDirty():void
@@ -28,7 +30,7 @@ package snjdck.g2d.impl
 			markParentBoundDirty();
 		}
 		
-		final ns_g2d function markBoundDirty():void
+		final protected function markBoundDirty():void
 		{
 			if(_isOriginalBoundDirty)
 				return;
@@ -37,7 +39,7 @@ package snjdck.g2d.impl
 			markParentBoundDirty();
 		}
 		
-		final ns_g2d function markParentBoundDirty():void
+		private function markParentBoundDirty():void
 		{
 			var parent:BoundTransform2D = getParent() as BoundTransform2D;
 			if(parent != null && !(parent.useExplicitWidth && parent.useExplicitHeight)){
@@ -79,6 +81,19 @@ package snjdck.g2d.impl
 				_isDeformedBoundDirty = false;
 			}
 			return _deformedBound;
+		}
+		
+		public function get visible():Boolean
+		{
+			return _visible;
+		}
+		
+		public function set visible(value:Boolean):void
+		{
+			if(_visible == value)
+				return;
+			_visible = value;
+			markParentBoundDirty();
 		}
 	}
 }

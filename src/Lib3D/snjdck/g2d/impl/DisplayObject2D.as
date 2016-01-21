@@ -29,7 +29,6 @@ package snjdck.g2d.impl
 		public var mouseEnabled:Boolean;
 		public var mouseX:Number, mouseY:Number;
 		
-		private var _visible:Boolean;
 		public var filter:IFilter2D;
 		
 		private var _parent:DisplayObjectContainer2D;
@@ -46,7 +45,6 @@ package snjdck.g2d.impl
 		{
 			_clipRect = new ClipRect(this);
 			mouseEnabled = true;
-			_visible = true;
 		}
 		
 		override protected function getParent():Transform2D
@@ -335,19 +333,6 @@ package snjdck.g2d.impl
 		public function removeListener(evtName:String, handler:Function):void
 		{
 			signalGroup.removeListener(evtName, handler);
-		}
-
-		public function get visible():Boolean
-		{
-			return _visible;
-		}
-
-		public function set visible(value:Boolean):void
-		{
-			if(_visible == value)
-				return;
-			_visible = value;
-			markParentBoundDirty();
 		}
 	}
 }
