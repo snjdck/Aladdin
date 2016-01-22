@@ -105,7 +105,7 @@ package snjdck.gpu
 		{
 			scene2d._mouseX = px;
 			scene2d._mouseY = py;
-			scene2d.root.updateMouseXY(px, py);
+			scene2d.root.updateMouseXY();
 		}
 		
 		protected function updateScene(timeElapsed:int):void

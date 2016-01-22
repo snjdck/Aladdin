@@ -60,10 +60,11 @@ package snjdck.g2d.impl
 			isMouseMoved = true;
 		}
 		
-		ns_g2d function updateMouseXY(stageMouseX:Number, stageMouseY:Number):void
+		ns_g2d function updateMouseXY():void
 		{
 			if(isDraging){
-				parent.globalToLocal(stageMouseX - dragOffsetX, stageMouseY - dragOffsetY, tempPt);
+				var theScene:Scene2D = scene;
+				parent.globalToLocal(theScene._mouseX - dragOffsetX, theScene._mouseY - dragOffsetY, tempPt);
 				x = tempPt.x;
 				y = tempPt.y;
 			}else{
