@@ -175,6 +175,8 @@ package snjdck.g2d.impl
 		override ns_g2d function updateMouseXY(stageMouseX:Number, stageMouseY:Number):void
 		{
 			super.updateMouseXY(stageMouseX, stageMouseY);
+			if(isDraging)
+				return;
 			for each(var child:DisplayObject2D in _childList){
 				child.updateMouseXY(stageMouseX, stageMouseY);
 			}

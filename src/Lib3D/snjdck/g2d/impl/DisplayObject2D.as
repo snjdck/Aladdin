@@ -25,7 +25,10 @@ package snjdck.g2d.impl
 		private const signalGroup:SignalGroup = new SignalGroup();
 		
 		public var mouseEnabled:Boolean;
-		public var mouseX:Number, mouseY:Number;
+		
+		private var isMouseMoved:Boolean;
+		private var _mouseX:Number;
+		private var _mouseY:Number;
 		
 		public var filter:IFilter2D;
 		private var _visible:Boolean;
@@ -52,15 +55,19 @@ package snjdck.g2d.impl
 			return parent;
 		}
 		
+		override protected function onWorldMatrixDirty():void
+		{
+			isMouseMoved = true;
+		}
+		
 		ns_g2d function updateMouseXY(stageMouseX:Number, stageMouseY:Number):void
 		{
 			if(isDraging){
-				x = parent.mouseX - dragOffsetX;
-				y = parent.mouseY - dragOffsetY;
+				parent.globalToLocal(stageMouseX - dragOffsetX, stageMouseY - dragOffsetY, tempPt);
+				x = tempPt.x;
+				y = tempPt.y;
 			}else{
-				transformCoords(worldTransformInvert, stageMouseX, stageMouseY, tempPt);
-				mouseX = tempPt.x;
-				mouseY = tempPt.y;
+				isMouseMoved = true;
 			}
 		}
 		
@@ -95,11 +102,6 @@ package snjdck.g2d.impl
 				return false;
 			}
 			return (0 <= localX) && (localX < width) && (0 <= localY) && (localY < height);
-		}
-		
-		public function isMouseOver():Boolean
-		{
-			return containsPt(mouseX, mouseY);
 		}
 		
 		final public function removeFromParent():void
@@ -259,15 +261,17 @@ package snjdck.g2d.impl
 			markParentBoundDirty();
 		}
 		
-		private var isDraging:Boolean;
+		protected var isDraging:Boolean;
 		private var dragOffsetX:Number;
 		private var dragOffsetY:Number;
 		
 		public function startDrag():void
 		{
+			var theScene:Scene2D = scene;
+			parent.localToGlobal(x, y, tempPt);
+			dragOffsetX = theScene._mouseX - tempPt.x;
+			dragOffsetY = theScene._mouseY - tempPt.y;
 			isDraging = true;
-			dragOffsetX = parent.mouseX - x;
-			dragOffsetY = parent.mouseY - y;
 		}
 		
 		public function stopDrag():void
@@ -293,6 +297,29 @@ package snjdck.g2d.impl
 		public function removeListener(evtName:String, handler:Function):void
 		{
 			signalGroup.removeListener(evtName, handler);
+		}
+		
+		private function calcuateMouseXY():void
+		{
+			if(isMouseMoved){
+				var theScene:Scene2D = scene;
+				globalToLocal(theScene._mouseX, theScene._mouseY, tempPt);
+				_mouseX = tempPt.x;
+				_mouseY = tempPt.y;
+				isMouseMoved = false;
+			}
+		}
+
+		public function get mouseX():Number
+		{
+			calcuateMouseXY();
+			return _mouseX;
+		}
+
+		public function get mouseY():Number
+		{
+			calcuateMouseXY();
+			return _mouseY;
 		}
 	}
 }
