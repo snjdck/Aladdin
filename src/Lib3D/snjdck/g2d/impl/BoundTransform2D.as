@@ -3,6 +3,8 @@ package snjdck.g2d.impl
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
+	import bound2d.union;
+	
 	import matrix33.transformBound;
 
 	internal class BoundTransform2D extends Transform2D
@@ -79,12 +81,12 @@ package snjdck.g2d.impl
 		public function get bound():Rectangle
 		{
 			if(_isBoundDirty && getChildren() && !useExplicitSize)
-				calculateBound(this, _bound);
+				calculateRelativeBound(this, _bound);
 			_isBoundDirty = false;
 			return _bound;
 		}
 		
-		private function calculateBound(target:Transform2D, result:Rectangle):void
+		private function calculateRelativeBound(target:Transform2D, result:Rectangle):void
 		{
 			var childList:Array = getChildren();
 			if(childList == null || useExplicitSize){
@@ -95,8 +97,8 @@ package snjdck.g2d.impl
 			result.setEmpty();
 			for each(var child:BoundTransform2D in childList){
 				if(child.isVisible()){
-					child.calculateBound(target, tempBound);
-					result.union(tempBound);
+					child.calculateRelativeBound(target, tempBound);
+					union(result, tempBound, result);
 				}
 			}
 			if(useExplicitWidth){

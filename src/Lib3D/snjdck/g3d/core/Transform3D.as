@@ -220,7 +220,7 @@ package snjdck.g3d.core
 			markLocalMatrixDirty();
 			markWorldMatrixDirty();
 		}
-		
+		/*
 		static private const tempPoint:Vector3D = new Vector3D();
 		
 		public function translateLocal(axis:Vector3D, distance:Number):void
@@ -233,7 +233,7 @@ package snjdck.g3d.core
 			_position.y = tempPoint.y;
 			_position.z = tempPoint.z;
 		}
-		
+		*/
 		public function syncMatrix2D(matrix2d:Matrix):void
 		{
 			matrix33.decompose(matrix2d, _position, _scale, _rotation);

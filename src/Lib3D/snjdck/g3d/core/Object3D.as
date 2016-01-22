@@ -115,7 +115,7 @@ package snjdck.g3d.core
 		{
 			moveTo(value.x, value.y, value.z);
 		}
-		
+		/*
 		public function moveForward(distance:Number):void
 		{
 			translateLocal(Vector3D.Z_AXIS, distance);
@@ -145,7 +145,7 @@ package snjdck.g3d.core
 		{
 			translateLocal(Vector3D.X_AXIS, distance);
 		}
-		
+		//*/
 		final public function get scene():Scene3D
 		{
 			var target:Object3D = this;

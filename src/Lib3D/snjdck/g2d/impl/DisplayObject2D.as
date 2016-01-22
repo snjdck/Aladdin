@@ -7,8 +7,8 @@ package snjdck.g2d.impl
 	import flash.signals.ISignalGroup;
 	import flash.signals.SignalGroup;
 	
+	import matrix33.transformBound;
 	import matrix33.transformCoords;
-	import matrix33.transformCoordsInv;
 	
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.IFilter2D;
@@ -60,7 +60,7 @@ package snjdck.g2d.impl
 				x = parentMouseX - dragOffsetX;
 				y = parentMouseY - dragOffsetY;
 			}
-			transformCoordsInv(transform, parentMouseX, parentMouseY, tempPt);
+			transformCoords(transformInvert, parentMouseX, parentMouseY, tempPt);
 			mouseX = tempPt.x;
 			mouseY = tempPt.y;
 		}
@@ -112,7 +112,7 @@ package snjdck.g2d.impl
 		
 		public function globalToLocal(globalX:Number, globalY:Number, output:Point):void
 		{
-			transformCoordsInv(worldTransform, globalX, globalY, output);
+			transformCoords(worldTransformInvert, globalX, globalY, output);
 		}
 		
 		public function globalToLocal2(globalPt:Point, output:Point):void
@@ -186,38 +186,16 @@ package snjdck.g2d.impl
 		
 		public function getRect(targetSpace:DisplayObject2D, result:Rectangle):void
 		{
-			calculateRelativeTransform(targetSpace, tempMatrix1);
-			
-			var minX:Number = Number.MAX_VALUE, maxX:Number = Number.MIN_VALUE;
-			var minY:Number = Number.MAX_VALUE, maxY:Number = Number.MIN_VALUE;
-			
-			transformCoords(tempMatrix1, 0, 0, tempPt);
-			if(tempPt.x < minX){ minX = tempPt.x; }
-			if(tempPt.y < minY){ minY = tempPt.y; }
-			if(tempPt.x > maxX){ maxX = tempPt.x; }
-			if(tempPt.y > maxY){ maxY = tempPt.y; }
-			transformCoords(tempMatrix1, width, 0, tempPt);
-			if(tempPt.x < minX){ minX = tempPt.x; }
-			if(tempPt.y < minY){ minY = tempPt.y; }
-			if(tempPt.x > maxX){ maxX = tempPt.x; }
-			if(tempPt.y > maxY){ maxY = tempPt.y; }
-			transformCoords(tempMatrix1, width, height, tempPt);
-			if(tempPt.x < minX){ minX = tempPt.x; }
-			if(tempPt.y < minY){ minY = tempPt.y; }
-			if(tempPt.x > maxX){ maxX = tempPt.x; }
-			if(tempPt.y > maxY){ maxY = tempPt.y; }
-			transformCoords(tempMatrix1, 0, height, tempPt);
-			if(tempPt.x < minX){ minX = tempPt.x; }
-			if(tempPt.y < minY){ minY = tempPt.y; }
-			if(tempPt.x > maxX){ maxX = tempPt.x; }
-			if(tempPt.y > maxY){ maxY = tempPt.y; }
-			
-			result.setTo(minX, minY, maxX-minX, maxY-minY);
+			if(targetSpace == this){
+				result.copyFrom(bound);
+			}else{
+				calculateRelativeTransform(targetSpace, tempMatrix);
+				transformBound(tempMatrix, bound, result);
+			}
 		}
 		
-		static private const tempMatrix1:Matrix = new Matrix();
+		static private const tempMatrix:Matrix = new Matrix();
 		static protected const tempPt:Point = new Point();
-		static private const tempRect:Rectangle = new Rectangle();
 		
 		public function swapToTop():void
 		{
