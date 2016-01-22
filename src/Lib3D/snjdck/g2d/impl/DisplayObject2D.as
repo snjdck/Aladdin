@@ -1,19 +1,17 @@
 package snjdck.g2d.impl
 {
 	import flash.events.Event;
-	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.signals.ISignalGroup;
 	import flash.signals.SignalGroup;
 	
-	import matrix33.transformBound;
 	import matrix33.transformCoords;
 	
+	import snjdck.g2d.Scene2D;
 	import snjdck.g2d.ns_g2d;
 	import snjdck.g2d.core.IFilter2D;
 	import snjdck.g2d.render.Render2D;
-	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g2d;
@@ -33,7 +31,7 @@ package snjdck.g2d.impl
 		private var _visible:Boolean;
 		
 		private var _parent:DisplayObjectContainer2D;
-		ns_g2d var _scene:IScene;
+		ns_g2d var _scene:Scene2D;
 		ns_g2d var _root:DisplayObjectContainer2D;
 		
 		/** 防止递归操作 */
@@ -54,15 +52,16 @@ package snjdck.g2d.impl
 			return parent;
 		}
 		
-		ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
+		ns_g2d function updateMouseXY(stageMouseX:Number, stageMouseY:Number):void
 		{
 			if(isDraging){
-				x = parentMouseX - dragOffsetX;
-				y = parentMouseY - dragOffsetY;
+				x = parent.mouseX - dragOffsetX;
+				y = parent.mouseY - dragOffsetY;
+			}else{
+				transformCoords(worldTransformInvert, stageMouseX, stageMouseY, tempPt);
+				mouseX = tempPt.x;
+				mouseY = tempPt.y;
 			}
-			transformCoords(transformInvert, parentMouseX, parentMouseY, tempPt);
-			mouseX = tempPt.x;
-			mouseY = tempPt.y;
 		}
 		
 		public function onUpdate(timeElapsed:int):void
@@ -189,12 +188,10 @@ package snjdck.g2d.impl
 			if(targetSpace == this){
 				result.copyFrom(bound);
 			}else{
-				calculateRelativeTransform(targetSpace, tempMatrix);
-				transformBound(tempMatrix, bound, result);
+				calculateRelativeBound(targetSpace, result);
 			}
 		}
 		
-		static private const tempMatrix:Matrix = new Matrix();
 		static protected const tempPt:Point = new Point();
 		
 		public function swapToTop():void
@@ -207,7 +204,7 @@ package snjdck.g2d.impl
 			parent.swapChildToBottom(this);
 		}
 		
-		final public function get scene():IScene
+		final public function get scene():Scene2D
 		{
 			var target:DisplayObject2D = this;
 			for(;;){

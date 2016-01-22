@@ -172,11 +172,11 @@ package snjdck.g2d.impl
 			}
 		}
 		
-		override ns_g2d function updateMouseXY(parentMouseX:Number, parentMouseY:Number):void
+		override ns_g2d function updateMouseXY(stageMouseX:Number, stageMouseY:Number):void
 		{
-			super.updateMouseXY(parentMouseX, parentMouseY);
+			super.updateMouseXY(stageMouseX, stageMouseY);
 			for each(var child:DisplayObject2D in _childList){
-				child.updateMouseXY(mouseX, mouseY);
+				child.updateMouseXY(stageMouseX, stageMouseY);
 			}
 		}
 		

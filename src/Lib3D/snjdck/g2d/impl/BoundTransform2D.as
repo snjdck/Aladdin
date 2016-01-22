@@ -86,7 +86,7 @@ package snjdck.g2d.impl
 			return _bound;
 		}
 		
-		private function calculateRelativeBound(target:Transform2D, result:Rectangle):void
+		protected function calculateRelativeBound(target:Transform2D, result:Rectangle):void
 		{
 			var childList:Array = getChildren();
 			if(childList == null || useExplicitSize){
