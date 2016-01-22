@@ -20,7 +20,7 @@ package snjdck.g2d.impl
 		
 		public function BoundTransform2D(){}
 		
-		private function get useExplicitSize():Boolean
+		protected function get useExplicitSize():Boolean
 		{
 			return useExplicitWidth && useExplicitHeight;
 		}
