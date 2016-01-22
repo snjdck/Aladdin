@@ -12,8 +12,8 @@ package snjdck.g2d.text.ime
 		public function Caret()
 		{
 			super(new Texture2D(GpuAssetFactory.DefaultGpuTexture));
-			originalBound.setTo(0, 0, 2, 12);
-			markBoundDirty();
+			width = 2;
+			height = 12;
 		}
 	}
 }

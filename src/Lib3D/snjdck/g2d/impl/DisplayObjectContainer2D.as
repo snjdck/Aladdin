@@ -70,7 +70,9 @@ package snjdck.g2d.impl
 			if(needMarkWorldMatrixDirty){
 				child.markWorldMatrixDirty();
 			}
-			markBoundDirty();
+			if(child.isVisible()){
+				markBoundDirty();
+			}
 			
 			isLocked = false;
 		}
@@ -91,7 +93,9 @@ package snjdck.g2d.impl
 			var child:DisplayObject2D = array.delAt(_childList, index);
 			child.parent = null;
 			child.markWorldMatrixDirty();
-			markBoundDirty();
+			if(child.isVisible()){
+				markBoundDirty();
+			}
 			
 			isLocked = false;
 			

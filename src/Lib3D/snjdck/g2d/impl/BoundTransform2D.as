@@ -1,99 +1,109 @@
 package snjdck.g2d.impl
 {
+	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
 	import matrix33.transformBound;
-	
-	import snjdck.g2d.ns_g2d;
-	
-	use namespace ns_g2d;
 
 	internal class BoundTransform2D extends Transform2D
 	{
-		private var _isOriginalBoundDirty:Boolean;
-		private var _isDeformedBoundDirty:Boolean;
-		private const _originalBound:Rectangle = new Rectangle();
-		private const _deformedBound:Rectangle = new Rectangle();
+		static private const tempMatrix:Matrix = new Matrix();
+		private const tempBound:Rectangle = new Rectangle();
 		
-		protected var useExplicitWidth:Boolean;
-		protected var explicitWidth:Number;
-		protected var useExplicitHeight:Boolean;
-		protected var explicitHeight:Number;
+		private var _isBoundDirty:Boolean;
+		private const _bound:Rectangle = new Rectangle();
 		
-		private var _visible:Boolean = true;
+		private var useExplicitWidth:Boolean;
+		private var explicitWidth:Number;
+		private var useExplicitHeight:Boolean;
+		private var explicitHeight:Number;
 		
 		public function BoundTransform2D(){}
 		
-		override protected function onLocalMatrixDirty():void
+		private function get useExplicitSize():Boolean
 		{
-			_isDeformedBoundDirty = true;
-			markParentBoundDirty();
+			return useExplicitWidth && useExplicitHeight;
 		}
 		
-		final protected function markBoundDirty():void
+		protected function markBoundDirty():void
 		{
-			if(_isOriginalBoundDirty)
+			if(_isBoundDirty)
 				return;
-			_isOriginalBoundDirty = true;
-			_isDeformedBoundDirty = true;
+			_isBoundDirty = true;
 			markParentBoundDirty();
 		}
 		
-		private function markParentBoundDirty():void
+		protected function markParentBoundDirty():void
 		{
 			var parent:BoundTransform2D = getParent() as BoundTransform2D;
-			if(parent != null && !(parent.useExplicitWidth && parent.useExplicitHeight)){
+			if(parent != null && !parent.useExplicitSize){
 				parent.markBoundDirty();
 			}
 		}
 		
-		public function get originalBound():Rectangle
+		public function get width():Number
+		{
+			return bound.width;
+		}
+		
+		public function set width(value:Number):void
+		{
+			useExplicitWidth = true;
+			explicitWidth = value;
+			if(_bound.width == value)
+				return;
+			_bound.width = value;
+			markBoundDirty();
+		}
+		
+		public function get height():Number
+		{
+			return bound.height;
+		}
+		
+		public function set height(value:Number):void
+		{
+			useExplicitHeight = true;
+			explicitHeight = value;
+			if(_bound.height == value)
+				return;
+			_bound.height = value;
+			markBoundDirty();
+		}
+		
+		override protected function onLocalMatrixDirty():void
+		{
+			markParentBoundDirty();
+		}
+		
+		public function get bound():Rectangle
+		{
+			if(_isBoundDirty && getChildren() && !useExplicitSize)
+				calculateBound(this, _bound);
+			_isBoundDirty = false;
+			return _bound;
+		}
+		
+		private function calculateBound(target:Transform2D, result:Rectangle):void
 		{
 			var childList:Array = getChildren();
-			if(childList == null){
-				_isOriginalBoundDirty = false;
-				return _originalBound;
+			if(childList == null || useExplicitSize){
+				calculateRelativeTransform(target, tempMatrix);
+				transformBound(tempMatrix, _bound, result);
+				return;
 			}
-			if(useExplicitWidth && useExplicitHeight){
-				return _originalBound;
-			}
-			if(_isOriginalBoundDirty){
-				_originalBound.setEmpty();
-				for each(var child:BoundTransform2D in childList){
-					if(child.isVisible()){
-						_originalBound.union(child.deformedBound);
-					}
+			result.setEmpty();
+			for each(var child:BoundTransform2D in childList){
+				if(child.isVisible()){
+					child.calculateBound(target, tempBound);
+					result.union(tempBound);
 				}
-				_isOriginalBoundDirty = false;
 			}
 			if(useExplicitWidth){
-				_originalBound.width = explicitWidth;
+				result.width = explicitWidth;
 			}else if(useExplicitHeight){
-				_originalBound.height = explicitHeight;
+				result.height = explicitHeight;
 			}
-			return _originalBound;
-		}
-		
-		public function get deformedBound():Rectangle
-		{
-			if(_isDeformedBoundDirty){
-				transformBound(transform, originalBound, _deformedBound);
-				_isDeformedBoundDirty = false;
-			}
-			return _deformedBound;
-		}
-		
-		public function get visible():Boolean
-		{
-			return _visible;
-		}
-		
-		public function set visible(value:Boolean):void
-		{
-			if(_visible == value)
-				return;
-			_visible = value;
-			markParentBoundDirty();
 		}
 	}
 }

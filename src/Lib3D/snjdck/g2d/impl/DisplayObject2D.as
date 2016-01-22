@@ -30,6 +30,7 @@ package snjdck.g2d.impl
 		public var mouseX:Number, mouseY:Number;
 		
 		public var filter:IFilter2D;
+		private var _visible:Boolean;
 		
 		private var _parent:DisplayObjectContainer2D;
 		ns_g2d var _scene:IScene;
@@ -45,6 +46,7 @@ package snjdck.g2d.impl
 		{
 			_clipRect = new ClipRect(this);
 			mouseEnabled = true;
+			_visible = true;
 		}
 		
 		override protected function getParent():Transform2D
@@ -152,36 +154,6 @@ package snjdck.g2d.impl
 			}
 			
 			isLocked = false;
-		}
-		
-		public function get width():Number
-		{
-			return originalBound.width;
-		}
-
-		public function set width(value:Number):void
-		{
-			useExplicitWidth = true;
-			explicitWidth = value;
-			if(originalBound.width == value)
-				return;
-			originalBound.width = value;
-			markBoundDirty();
-		}
-		
-		public function get height():Number
-		{
-			return originalBound.height;
-		}
-		
-		public function set height(value:Number):void
-		{
-			useExplicitHeight = true;
-			explicitHeight = value;
-			if(originalBound.height == value)
-				return;
-			originalBound.height = value;
-			markBoundDirty();
 		}
 		
 		public function get scaleWidth():Number
@@ -297,6 +269,19 @@ package snjdck.g2d.impl
 				target = target.parent;
 			}
 			return null;
+		}
+		
+		public function get visible():Boolean
+		{
+			return _visible;
+		}
+		
+		public function set visible(value:Boolean):void
+		{
+			if(_visible == value)
+				return;
+			_visible = value;
+			markParentBoundDirty();
 		}
 		
 		private var isDraging:Boolean;

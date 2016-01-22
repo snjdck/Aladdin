@@ -2,11 +2,7 @@ package snjdck.g2d.impl
 {
 	import flash.geom.Matrix;
 	
-	import snjdck.g2d.ns_g2d;
-	
 	import stdlib.constant.Unit;
-	
-	use namespace ns_g2d;
 
 	internal class Transform2D
 	{
@@ -54,7 +50,6 @@ package snjdck.g2d.impl
 			return worldMatrix;
 		}
 		
-		/** 1.缩放, 2.旋转, 3.位移 */
 		public function get transform():Matrix
 		{
 			if(isLocalMatrixDirty){
@@ -97,15 +92,14 @@ package snjdck.g2d.impl
 			onLocalMatrixDirty();
 		}
 		
-		final internal function markWorldMatrixDirty():void
+		internal function markWorldMatrixDirty():void
 		{
 			if(isWorldMatrixDirty)
 				return;
 			isWorldMatrixDirty = true;
 			isWorldMatrixInvertDirty = true;
 			onWorldMatrixDirty();
-			var childList:Array = getChildren();
-			for each(var child:Transform2D in childList){
+			for each(var child:Transform2D in getChildren()){
 				child.markWorldMatrixDirty();
 			}
 		}
@@ -215,7 +209,7 @@ package snjdck.g2d.impl
 			onTransformChanged();
 		}
 		
-		protected function isDescendant(target:Transform2D):Boolean
+		public function isDescendant(target:Transform2D):Boolean
 		{
 			while(target != null){
 				if(target == this)
@@ -225,7 +219,7 @@ package snjdck.g2d.impl
 			return false;
 		}
 		
-		protected function isAncestor(target:Transform2D):Boolean
+		public function isAncestor(target:Transform2D):Boolean
 		{
 			if(target == null)
 				return false;
