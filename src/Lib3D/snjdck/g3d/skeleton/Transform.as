@@ -6,16 +6,9 @@ package snjdck.g3d.skeleton
 	import snjdck.g3d.geom.Quaternion;
 	
 	import vec3.add;
-	import vec3.interpolate;
 
 	final public class Transform
 	{
-		static public function Interpolate(from:Transform, to:Transform, f:Number, result:Transform):void
-		{
-			vec3.interpolate(from.translation, to.translation, f, result.translation);
-			Quaternion.Slerp(from.rotation, to.rotation, f, result.rotation);
-		}
-		
 		public const translation:Vector3D = new Vector3D();
 		public const rotation:Quaternion = new Quaternion();
 		

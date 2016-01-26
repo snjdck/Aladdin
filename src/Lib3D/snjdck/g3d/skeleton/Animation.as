@@ -53,7 +53,7 @@ package snjdck.g3d.skeleton
 			}else if(nearEquals(time, to.time)){
 				result.copyFrom(to.transform);
 			}else{
-				Transform.Interpolate(from.transform, to.transform, (time-from.time) / (to.time-from.time), result);
+				from.interpolate(to, time, result);
 			}
 		}
 		
