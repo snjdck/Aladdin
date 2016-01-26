@@ -1,32 +1,33 @@
-package snjdck.g3d.skeleton
+package snjdck.g3d.geom
 {
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
-	import snjdck.g3d.geom.Quaternion;
-	
 	import vec3.add;
 
-	final public class Transform
+	public class Matrix4x4
 	{
 		public const translation:Vector3D = new Vector3D();
 		public const rotation:Quaternion = new Quaternion();
+		public const scale:Vector3D = new Vector3D(1, 1, 1);
 		
-		public function Transform(){}
+		public function Matrix4x4(){}
 		
-		public function copyFrom(from:Transform):void
-		{
-			translation.copyFrom(from.translation);
-			rotation.copyFrom(from.rotation);
-		}
-		
-		public function reset():void
+		public function identity():void
 		{
 			translation.setTo(0, 0, 0);
 			rotation.setTo(0, 0, 0, 1);
+			scale.setTo(1, 1, 1);
 		}
 		
-		public function prepend(other:Transform, result:Transform):void
+		public function copyFrom(from:Matrix4x4):void
+		{
+			translation.copyFrom(from.translation);
+			rotation.copyFrom(from.rotation);
+			scale.copyFrom(from.scale);
+		}
+		
+		public function prepend(other:Matrix4x4, result:Matrix4x4):void
 		{
 			rotation.rotateVector(other.translation, tempVector);
 			vec3.add(translation, tempVector, result.translation);
@@ -42,25 +43,13 @@ package snjdck.g3d.skeleton
 		
 		public function toMatrix(result:Matrix3D):void
 		{
-			rotation.toMatrix(result, translation);
+			rotation.toMatrix(result, translation, scale);
 		}
 		
 		public function transformVectors(vIn:Vector.<Number>, vOut:Vector.<Number>):void
 		{
 			toMatrix(tempMatrix);
 			tempMatrix.transformVectors(vIn, vOut);
-		}
-		
-		public function copyRawDataTo(output:Vector.<Number>, offset:int):void
-		{
-			output[offset  ] = rotation.x;
-			output[offset+1] = rotation.y;
-			output[offset+2] = rotation.z;
-			output[offset+3] = rotation.w;
-			output[offset+4] = translation.x;
-			output[offset+5] = translation.y;
-			output[offset+6] = translation.z;
-			output[offset+7] = 1;				//scale
 		}
 		
 		static private const tempVector:Vector3D = new Vector3D();

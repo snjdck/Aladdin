@@ -7,6 +7,7 @@ package snjdck.fileformat.bmd
 	import array.setValue;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
@@ -15,7 +16,6 @@ package snjdck.fileformat.bmd
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.KeyFrame;
 	import snjdck.g3d.skeleton.Skeleton;
-	import snjdck.g3d.skeleton.Transform;
 	
 	import stream.readFixedString;
 	
@@ -38,7 +38,7 @@ package snjdck.fileformat.bmd
 		private var skeleton:Skeleton;
 		
 		private var isStaticMesh:Boolean;
-		private var lastKeyFrameTransform:Transform;
+		private var lastKeyFrameTransform:Matrix4x4;
 		
 		
 		public function BmdParser(ba:ByteArray)

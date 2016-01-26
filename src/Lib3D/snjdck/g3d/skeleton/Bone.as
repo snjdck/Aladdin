@@ -1,6 +1,7 @@
 package snjdck.g3d.skeleton
 {
 	import snjdck.g3d.core.DisplayObjectContainer3D;
+	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.obj3d.Entity;
 
 	final public class Bone
@@ -9,12 +10,12 @@ package snjdck.g3d.skeleton
 		public var id:int;
 		public var parentId:int = -1;
 		
-		public const transform:Transform = new Transform();
+		public const transform:Matrix4x4 = new Matrix4x4();
 		
 		private var nextSibling:Bone;
 		private var firstChild:Bone;
 		
-		private const transformGlobalToLocal:Transform = new Transform();
+		private const transformGlobalToLocal:Matrix4x4 = new Matrix4x4();
 		
 		public function Bone(name:String, id:int)
 		{
@@ -40,7 +41,7 @@ package snjdck.g3d.skeleton
 			}
 		}
 		
-		internal function onInit(parentTransform:Transform):void
+		internal function onInit(parentTransform:Matrix4x4):void
 		{
 			if(null == parentTransform){
 				transformGlobalToLocal.copyFrom(transform);

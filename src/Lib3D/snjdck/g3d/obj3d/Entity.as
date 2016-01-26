@@ -4,6 +4,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.skeleton.Animation;
@@ -11,7 +12,6 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.skeleton.BoneObject3D;
 	import snjdck.g3d.skeleton.IBoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
-	import snjdck.g3d.skeleton.Transform;
 	import snjdck.gpu.BlendMode;
 	import snjdck.shader.ShaderName;
 	
@@ -60,7 +60,7 @@ package snjdck.g3d.obj3d
 		}
 		
 		
-		public function getBoneState(boneId:int):Transform
+		public function getBoneState(boneId:int):Matrix4x4
 		{
 			var boneObject:BoneObject3D = boneStateGroup[boneId];
 			return boneObject.getBoneStateGlobal();

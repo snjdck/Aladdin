@@ -5,9 +5,9 @@ package snjdck.g3d.mesh
 	import flash.utils.Dictionary;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.skeleton.IBoneStateGroup;
-	import snjdck.g3d.skeleton.Transform;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
@@ -116,13 +116,23 @@ package snjdck.g3d.mesh
 			}
 			var offset:int = 0;
 			for(var i:int=0; i<boneCount; ++i){
-				var bone:Transform = boneStateGroup.getBoneState(boneIds[i]);
-				bone.copyRawDataTo(tempFloatBuffer, offset);
+				uploadBoneMatrix(boneStateGroup.getBoneState(boneIds[i]), offset);
 				offset += 8;
 			}
 			context3d.setVc(Geometry.BONE_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
 			
 			context3d.markRecoverableGpuAsset(gpuBoneBuffer);
+		}
+		
+		private function uploadBoneMatrix(bone:Matrix4x4, offset:int):void
+		{
+			tempFloatBuffer[offset  ] = bone.rotation.x;
+			tempFloatBuffer[offset+1] = bone.rotation.y;
+			tempFloatBuffer[offset+2] = bone.rotation.z;
+			tempFloatBuffer[offset+3] = bone.rotation.w;
+			tempFloatBuffer[offset+4] = bone.translation.x;
+			tempFloatBuffer[offset+5] = bone.translation.y;
+			tempFloatBuffer[offset+6] = bone.translation.z;
 		}
 		
 		ns_g3d function adjustBoneWeight():void

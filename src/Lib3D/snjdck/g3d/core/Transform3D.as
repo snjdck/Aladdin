@@ -7,15 +7,14 @@ package snjdck.g3d.core
 	import matrix33.decompose;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.geom.Matrix4x4;
 	
 	use namespace ns_g3d;
 	
 	internal class Transform3D
 	{
-		private const _position:Vector3D = new Vector3D();
-		private const _rotation:Vector3D = new Vector3D();
-		private const _scale:Vector3D = new Vector3D(1, 1, 1);
-		private const _components:Vector.<Vector3D> = new <Vector3D>[_position,_rotation,_scale];
+		private const _transform:Matrix4x4 = new Matrix4x4();
+		private const eulerAngles:Vector3D = new Vector3D();
 		
 		private var isWorldMatrixDirty:Boolean;
 		private var isLocalMatrixDirty:Boolean;
@@ -26,6 +25,7 @@ package snjdck.g3d.core
 		
 		public function isVisible():Boolean
 		{
+			var _scale:Vector3D = _transform.scale;
 			return (_scale.x != 0) && (_scale.y != 0) && (_scale.z != 0);
 		}
 		
@@ -57,7 +57,7 @@ package snjdck.g3d.core
 		public function get transform():Matrix3D
 		{
 			if(isLocalMatrixDirty){
-				localMatrix.recompose(_components);
+				_transform.toMatrix(localMatrix);
 				isLocalMatrixDirty = false;
 			}
 			return localMatrix;
@@ -92,45 +92,46 @@ package snjdck.g3d.core
 		
 		public function get x():Number
 		{
-			return _position.x;
+			return _transform.translation.x;
 		}
 		
 		public function set x(value:Number):void
 		{
 			if(x == value)
 				return;
-			_position.x = value;
+			_transform.translation.x = value;
 			onTransformChanged();
 		}
 		
 		public function get y():Number
 		{
-			return _position.y;
+			return _transform.translation.y;
 		}
 		
 		public function set y(value:Number):void
 		{
 			if(y == value)
 				return;
-			_position.y = value;
+			_transform.translation.y = value;
 			onTransformChanged();
 		}
 		
 		public function get z():Number
 		{
-			return _position.z;
+			return _transform.translation.z;
 		}
 		
 		public function set z(value:Number):void
 		{
 			if(z == value)
 				return;
-			_position.z = value;
+			_transform.translation.z = value;
 			onTransformChanged();
 		}
 		
 		public function set scale(val:Number):void
 		{
+			var _scale:Vector3D = _transform.scale;
 			if(scaleX == val && scaleY == val && scaleZ == val)
 				return;
 			_scale.x = _scale.y = _scale.z = val;
@@ -139,79 +140,79 @@ package snjdck.g3d.core
 		
 		public function get scaleX():Number
 		{
-			return _scale.x;
+			return _transform.scale.x;
 		}
 		
 		public function set scaleX(value:Number):void
 		{
 			if(scaleX == value)
 				return;
-			_scale.x = value;
+			_transform.scale.x = value;
 			onTransformChanged();
 		}
 		
 		public function get scaleY():Number
 		{
-			return _scale.y;
+			return _transform.scale.y;
 		}
 		
 		public function set scaleY(value:Number):void
 		{
 			if(scaleY == value)
 				return;
-			_scale.y = value;
+			_transform.scale.y = value;
 			onTransformChanged();
 		}
 		
 		public function get scaleZ():Number
 		{
-			return _scale.z;
+			return _transform.scale.z;
 		}
 		
 		public function set scaleZ(value:Number):void
 		{
 			if(scaleZ == value)
 				return;
-			_scale.z = value;
+			_transform.scale.z = value;
 			onTransformChanged();
 		}
 		
 		public function get rotationX():Number
 		{
-			return _rotation.x;
+			return eulerAngles.x;
 		}
 		
 		public function set rotationX(value:Number):void
 		{
 			if(rotationX == value)
 				return;
-			_rotation.x = value;
+			eulerAngles.x = value;
 			onTransformChanged();
 		}
 		
 		public function get rotationY():Number
 		{
-			return _rotation.y;
+			return eulerAngles.y;
 		}
 		
 		public function set rotationY(value:Number):void
 		{
 			if(rotationY == value)
 				return;
-			_rotation.y = value;
+			eulerAngles.y = value;
 			onTransformChanged();
 		}
 		
 		public function get rotationZ():Number
 		{
-			return _rotation.z;
+			return eulerAngles.z;
 		}
 		
 		public function set rotationZ(value:Number):void
 		{
 			if(rotationZ == value)
 				return;
-			_rotation.z = value;
+			eulerAngles.z = value;
 			onTransformChanged();
 		}
 		
@@ -236,8 +237,8 @@ package snjdck.g3d.core
 		*/
 		public function syncMatrix2D(matrix2d:Matrix):void
 		{
-			matrix33.decompose(matrix2d, _position, _scale, _rotation);
-			onTransformChanged();
+//			matrix33.decompose(matrix2d, _position, _scale, _rotation);
+//			onTransformChanged();
 		}
 	}
 }

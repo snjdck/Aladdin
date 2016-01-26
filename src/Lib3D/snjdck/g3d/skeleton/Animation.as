@@ -3,6 +3,7 @@ package snjdck.g3d.skeleton
 	import math.nearEquals;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.geom.Matrix4x4;
 	
 	use namespace ns_g3d;
 
@@ -26,12 +27,12 @@ package snjdck.g3d.skeleton
 			trackList[boneId] = keyFrames;
 		}
 		
-		internal function getTransform(boneId:int, time:Number, result:Transform):void
+		internal function getTransform(boneId:int, time:Number, result:Matrix4x4):void
 		{
 			var keyFrames:Vector.<KeyFrame> = trackList[boneId];
 			
 			if(null == keyFrames){
-				result.reset();
+				result.identity();
 				return;
 			}
 			
@@ -43,7 +44,7 @@ package snjdck.g3d.skeleton
 			}
 		}
 		
-		static private function interpolate(keyFrames:Vector.<KeyFrame>, index:int, time:Number, result:Transform):void
+		static private function interpolate(keyFrames:Vector.<KeyFrame>, index:int, time:Number, result:Matrix4x4):void
 		{
 			var from:KeyFrame = keyFrames[index];
 			var to:KeyFrame = (index+1 < keyFrames.length) ? keyFrames[index+1] : null;

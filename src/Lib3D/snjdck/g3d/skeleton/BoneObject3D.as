@@ -5,6 +5,7 @@ package snjdck.g3d.skeleton
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
+	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.model3d.calcVertexBound;
@@ -13,23 +14,23 @@ package snjdck.g3d.skeleton
 	
 	public class BoneObject3D extends DisplayObjectContainer3D
 	{
-		internal var initTransform:Transform;
-		internal var transformGlobalToLocal:Transform;
+		internal var initTransform:Matrix4x4;
+		internal var transformGlobalToLocal:Matrix4x4;
 		internal var entity:Entity;
 		
 		private var isKeyFrameDirty:Boolean;
-		private const _keyFrame:Transform = new Transform();
+		private const _keyFrame:Matrix4x4 = new Matrix4x4();
 		
 		private var isTransformDirty:Boolean;
 		
 		private var isGlobalToGlobalDirty:Boolean;
 		private var isGlobalToLocalDirty:Boolean;
-		private const transformGlobalToGlobal:Transform = new Transform();
-		private const transformLocalToGlobal:Transform = new Transform();
+		private const transformGlobalToGlobal:Matrix4x4 = new Matrix4x4();
+		private const transformLocalToGlobal:Matrix4x4 = new Matrix4x4();
 		
 		public function BoneObject3D(){}
 		
-		private function get keyFrame():Transform
+		private function get keyFrame():Matrix4x4
 		{
 			if(isKeyFrameDirty){
 				entity.animation.getTransform(id, entity.animationTime, _keyFrame);
@@ -60,14 +61,14 @@ package snjdck.g3d.skeleton
 			}
 		}
 		
-		private function getBoneStateLocal():Transform
+		private function getBoneStateLocal():Matrix4x4
 		{
 			if(isGlobalToLocalDirty){
 				var parentBoneObject:BoneObject3D = parent as BoneObject3D;
 				if(parentBoneObject == null){
 					transformLocalToGlobal.copyFrom(initTransform);
 				}else{
-					var parentTransform:Transform = parentBoneObject.getBoneStateLocal();
+					var parentTransform:Matrix4x4 = parentBoneObject.getBoneStateLocal();
 					parentTransform.prepend(initTransform, transformLocalToGlobal);
 				}
 				transformLocalToGlobal.prepend(keyFrame, transformLocalToGlobal);
@@ -79,7 +80,7 @@ package snjdck.g3d.skeleton
 		/**
 		 * 返回顶点的变换(全局到局部,再局部到全局)
 		 */
-		public function getBoneStateGlobal():Transform
+		public function getBoneStateGlobal():Matrix4x4
 		{
 			if(isGlobalToGlobalDirty){
 				getBoneStateLocal().prepend(transformGlobalToLocal, transformGlobalToGlobal);
