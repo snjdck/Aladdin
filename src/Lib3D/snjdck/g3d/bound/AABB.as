@@ -3,6 +3,8 @@ package snjdck.g3d.bound
 	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
+	import bound3d.union;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	
@@ -212,23 +214,7 @@ package snjdck.g3d.bound
 		
 		public function merge(other:AABB):void
 		{
-			if(other.isEmpty()){
-				return;
-			}
-			if(isEmpty()){
-				copyFrom(other);
-				return;
-			}
-			
-			var minX:Number = this.minX < other.minX ? this.minX : other.minX;
-			var minY:Number = this.minY < other.minY ? this.minY : other.minY;
-			var minZ:Number = this.minZ < other.minZ ? this.minZ : other.minZ;
-			
-			var maxX:Number = this.maxX > other.maxX ? this.maxX : other.maxX;
-			var maxY:Number = this.maxY > other.maxY ? this.maxY : other.maxY;
-			var maxZ:Number = this.maxZ > other.maxZ ? this.maxZ : other.maxZ;
-			
-			setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
+			union(this, other, this);
 		}
 		
 		public function mergeZ(other:AABB):void
