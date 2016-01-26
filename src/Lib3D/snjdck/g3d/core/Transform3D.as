@@ -57,6 +57,7 @@ package snjdck.g3d.core
 		public function get transform():Matrix3D
 		{
 			if(isLocalMatrixDirty){
+				_transform.rotation.fromEulerAngles(eulerAngles.x, eulerAngles.y, eulerAngles.z);
 				_transform.toMatrix(localMatrix);
 				isLocalMatrixDirty = false;
 			}
@@ -237,8 +238,8 @@ package snjdck.g3d.core
 		*/
 		public function syncMatrix2D(matrix2d:Matrix):void
 		{
-//			matrix33.decompose(matrix2d, _position, _scale, _rotation);
-//			onTransformChanged();
+			matrix33.decompose(matrix2d, _transform.translation, _transform.scale, eulerAngles);
+			onTransformChanged();
 		}
 	}
 }
