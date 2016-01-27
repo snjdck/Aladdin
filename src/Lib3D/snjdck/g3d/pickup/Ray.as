@@ -28,16 +28,6 @@ package snjdck.g3d.pickup
 			transformVectorDelta(matrix, dir, output.dir);
 		}
 		
-		[Inline]
-		public function transformInv(matrix:Matrix3D, output:Ray):void
-		{
-			tempMatrix.copyFrom(matrix);
-			tempMatrix.invert();
-			transform(tempMatrix, output);
-		}
-		
-		static private const tempMatrix:Matrix3D = new Matrix3D();
-		
 		public function getPt(t:Number, result:Vector3D=null):Vector3D
 		{
 			if(null == result){

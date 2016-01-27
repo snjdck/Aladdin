@@ -46,7 +46,7 @@ package snjdck.g3d.core
 			if(!(mouseEnabled || mouseChildren)){
 				return;
 			}
-			ray.transformInv(transform, tempRay);
+			ray.transform(transformInvert, tempRay);
 			if(mouseEnabled && onHitTest(tempRay)){
 				result.push(this);
 			}

@@ -50,7 +50,7 @@ package snjdck.g3d.core
 		public function hitTest(ray:Ray, result:Vector.<Object3D>):void
 		{
 			if(mouseEnabled){
-				ray.transformInv(transform, tempRay);
+				ray.transform(transformInvert, tempRay);
 				if(onHitTest(tempRay)){
 					result.push(this);
 				}

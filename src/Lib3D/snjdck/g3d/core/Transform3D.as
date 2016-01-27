@@ -22,6 +22,11 @@ package snjdck.g3d.core
 		private const worldMatrix:Matrix3D = new Matrix3D();
 		private const localMatrix:Matrix3D = new Matrix3D();
 		
+		private var isWorldMatrixInvertDirty:Boolean;
+		private var isLocalMatrixInvertDirty:Boolean;
+		private const worldMatrixInvert:Matrix3D = new Matrix3D();
+		private const localMatrixInvert:Matrix3D = new Matrix3D();
+		
 		public function Transform3D(){}
 		
 		public function isVisible():Boolean
@@ -73,11 +78,32 @@ package snjdck.g3d.core
 			isLocalMatrixDirty = false;
 		}
 		
+		public function get worldTransformInvert():Matrix3D
+		{
+			if(isWorldMatrixInvertDirty){
+				worldMatrixInvert.copyFrom(worldTransform);
+				worldMatrixInvert.invert();
+				isWorldMatrixInvertDirty = false;
+			}
+			return worldMatrixInvert;
+		}
+		
+		public function get transformInvert():Matrix3D
+		{
+			if(isLocalMatrixInvertDirty){
+				localMatrixInvert.copyFrom(transform);
+				localMatrixInvert.invert();
+				isLocalMatrixInvertDirty = false;
+			}
+			return localMatrixInvert;
+		}
+		
 		private function markLocalMatrixDirty():void
 		{
 			if(isLocalMatrixDirty)
 				return;
 			isLocalMatrixDirty = true;
+			isLocalMatrixInvertDirty = true;
 			onLocalMatrixDirty();
 		}
 		
@@ -86,6 +112,7 @@ package snjdck.g3d.core
 			if(isWorldMatrixDirty)
 				return;
 			isWorldMatrixDirty = true;
+			isWorldMatrixInvertDirty = true;
 			onWorldMatrixDirty();
 		}
 		
