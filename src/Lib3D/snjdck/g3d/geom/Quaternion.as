@@ -226,7 +226,7 @@ package snjdck.g3d.geom
 			result.z = tz;
 		}
 		
-		public function toMatrix(result:Matrix3D, translation:Vector3D=null, scale:Vector3D=null):void
+		public function toMatrix(result:Matrix3D, translation:Vector3D):void
 		{
 			//复制区域--begin
 			var xx:Number = x*x;
@@ -242,16 +242,16 @@ package snjdck.g3d.geom
 			var zw2:Number = 2*z*w;
 			//复制区域--end
 			
-			rawData[0] = xx + ww - yy - zz;
-			rawData[4] = xy2 - zw2;
-			rawData[8] = xz2 + yw2;
+			rawData[0]  = xx + ww - yy - zz;
+			rawData[4]  = xy2 - zw2;
+			rawData[8]  = xz2 + yw2;
 			
-			rawData[1] = xy2 + zw2;
-			rawData[5] = yy + ww - zz - xx;
-			rawData[9] = yz2 - xw2;
+			rawData[1]  = xy2 + zw2;
+			rawData[5]  = yy + ww - zz - xx;
+			rawData[9]  = yz2 - xw2;
 			
-			rawData[2] = xz2 - yw2;
-			rawData[6] = yz2 + xw2;
+			rawData[2]  = xz2 - yw2;
+			rawData[6]  = yz2 + xw2;
 			rawData[10] = zz + ww - xx - yy;
 			
 			if(translation != null){
@@ -260,12 +260,6 @@ package snjdck.g3d.geom
 				rawData[14] = translation.z;
 			}else{
 				rawData[12] = rawData[13] = rawData[14] = 0;
-			}
-			
-			if(scale != null){
-				rawData[0] *= scale.x;
-				rawData[5] *= scale.y;
-				rawData[10] *= scale.z;
 			}
 			
 			result.copyRawDataFrom(rawData);
