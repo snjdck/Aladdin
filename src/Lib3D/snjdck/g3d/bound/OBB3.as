@@ -108,9 +108,9 @@ package snjdck.g3d.bound
 		
 		public function hitTestAABB(other:AABB):Boolean
 		{
-			return hitTestSphere(other);
-			/*
+//			return hitTestSphere(other);
 				return false;
+			/*
 			}
 			return true;
 			other.updateSize();

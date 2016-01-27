@@ -10,13 +10,13 @@ package snjdck.g3d.bound
 	
 	use namespace ns_g3d;
 
-	public class AABB extends Sphere
+	public class AABB
 	{
+		public const center:Vector3D = new Vector3D();
 		public const halfSize:Vector3D = new Vector3D();
 		
 		public function AABB()
 		{
-			radius = 0;
 		}
 		
 		public function clear():void
@@ -34,8 +34,6 @@ package snjdck.g3d.bound
 			halfSize.x = 0.5 * (maxX - minX);
 			halfSize.y = 0.5 * (maxY - minY);
 			halfSize.z = 0.5 * (maxZ - minZ);
-			
-			radius = halfSize.length;
 		}
 		
 		public function setCenterAndSize($center:Vector3D, size:Vector3D):void
@@ -43,7 +41,6 @@ package snjdck.g3d.bound
 			center.copyFrom($center);
 			halfSize.copyFrom(size);
 			halfSize.scaleBy(0.5);
-			radius = halfSize.length;
 		}
 		
 		public function hitRay(ray:Ray, hit:Vector3D):Boolean
@@ -209,7 +206,6 @@ package snjdck.g3d.bound
 		{
 			center.copyFrom(other.center);
 			halfSize.copyFrom(other.halfSize);
-			radius = other.radius;
 		}
 		
 		public function merge(other:AABB):void
@@ -223,7 +219,6 @@ package snjdck.g3d.bound
 			var maxZ:Number = this.maxZ > other.maxZ ? this.maxZ : other.maxZ;
 			center.z = 0.5 * (minZ + maxZ);
 			halfSize.z = 0.5 * (maxZ - minZ);
-			radius = halfSize.length;
 		}
 		
 		public function isEmpty():Boolean
