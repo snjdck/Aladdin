@@ -15,6 +15,7 @@ package snjdck.fileformat.mdx
 	import snjdck.g3d.skeleton.Skeleton;
 	import snjdck.model3d.mergeVertexUV;
 	import snjdck.model3d.importer.readIndices;
+	import snjdck.model3d.importer.readQuaternion;
 	import snjdck.model3d.importer.readUVs;
 	import snjdck.model3d.importer.readVertices;
 	import snjdck.model3d.importer.readuBytes;
@@ -405,10 +406,10 @@ package snjdck.fileformat.mdx
 			var globalSequenceId:uint = ba.readUnsignedInt();
 			for(var i:int=0; i<trackCount; ++i){
 				var time:uint = ba.readUnsignedInt();
-				new Quaternion().readFrom(ba);
+				readQuaternion(ba, new Quaternion());
 				if(interpolationType > 1){
-					new Quaternion().readFrom(ba);
-					new Quaternion().readFrom(ba);
+					readQuaternion(ba, new Quaternion());
+					readQuaternion(ba, new Quaternion());
 				}
 			}
 		}

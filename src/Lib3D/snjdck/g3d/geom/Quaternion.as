@@ -3,9 +3,6 @@ package snjdck.g3d.geom
 	import flash.geom.Matrix3D;
 	import flash.geom.Orientation3D;
 	import flash.geom.Vector3D;
-	import flash.lang.ISerializable;
-	import flash.utils.IDataInput;
-	import flash.utils.IDataOutput;
 
 	/**
 	 * 四元数
@@ -15,7 +12,7 @@ package snjdck.g3d.geom
 	 * ki=j=-ik
 	 * 不满足乘法交换率
 	 */
-	final public class Quaternion implements ISerializable
+	final public class Quaternion
 	{
 		static public const Null:Quaternion = new Quaternion();
 		
@@ -263,19 +260,6 @@ package snjdck.g3d.geom
 			}
 			
 			result.copyRawDataFrom(rawData);
-		}
-		
-		public function readFrom(buffer:IDataInput):void
-		{
-			setTo(buffer.readFloat(), buffer.readFloat(), buffer.readFloat(), buffer.readFloat());
-		}
-		
-		public function writeTo(buffer:IDataOutput):void
-		{
-			buffer.writeFloat(x);
-			buffer.writeFloat(y);
-			buffer.writeFloat(z);
-			buffer.writeFloat(w);
 		}
 		
 		static private const rawData:Vector.<Number> = new <Number>[

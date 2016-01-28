@@ -3,12 +3,14 @@ package snjdck.fileformat.ogre
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
-	import snjdck.g3d.ns_g3d;
 	import snjdck.fileformat.ogre.support.SkeletonChunkID;
+	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.geom.Quaternion;
 	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.KeyFrame;
 	import snjdck.g3d.skeleton.Skeleton;
+	import snjdck.model3d.importer.readQuaternion;
 	
 	import stream.readCString;
 	import stream.readVector3;
@@ -57,7 +59,7 @@ package snjdck.fileformat.ogre
 				var bone:Bone = new Bone(readCString(buffer), buffer.readUnsignedShort());
 				
 				readVector3(buffer, bone.transform.translation);
-				bone.transform.rotation.readFrom(buffer);
+				readQuaternion(buffer, bone.transform.rotation);
 				
 				if(length > 30){
 //					readVector3(buffer, bone.transform.scale);
@@ -111,7 +113,7 @@ package snjdck.fileformat.ogre
 			var keyFrame:KeyFrame = new KeyFrame(buffer.readFloat());
 			output.push(keyFrame);
 			
-			keyFrame.transform.rotation.readFrom(buffer);
+			readQuaternion(buffer, keyFrame.transform.rotation);
 			readVector3(buffer, keyFrame.transform.translation);
 			if(length > 32){
 				buffer.position += 12;
@@ -138,7 +140,7 @@ package snjdck.fileformat.ogre
 				var keyFrame:KeyFrame = new KeyFrame(buffer.readFloat());
 				
 				if(hasRotation){
-					keyFrame.transform.rotation.readFrom(buffer);
+					readQuaternion(buffer, keyFrame.transform.rotation);
 				}
 				
 				if(hasTranslation){
