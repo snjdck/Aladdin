@@ -1,6 +1,7 @@
 package snjdck.g3d.render
 {
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 
@@ -11,6 +12,6 @@ package snjdck.g3d.render
 		
 		function get shaderName():String;
 		function get blendMode():BlendMode;
-		function get bindTarget():Object3D;
+		function hitTest(worldRay:Ray, result:Vector.<Object3D>):void;
 	}
 }

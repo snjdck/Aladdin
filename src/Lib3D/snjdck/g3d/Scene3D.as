@@ -62,15 +62,12 @@ package snjdck.g3d
 			trace("scene3d render:",t2-t1);
 		}
 		
-		public function preDrawDepth(context3d:GpuContext):void
-		{
-			//collector.preDrawDepth(context3d, camera);
-		}
+		public function preDrawDepth(context3d:GpuContext):void{}
 		
 		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void
 		{
 			camera.getSceneRay(stageX, stageY, ray);
-			root.hitTest(ray, result);
+			collector.hitTest(ray, result);
 		}
 		
 		public function notifyEvent(evtType:String):Boolean

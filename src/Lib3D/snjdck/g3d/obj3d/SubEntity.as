@@ -43,11 +43,6 @@ package snjdck.g3d.obj3d
 			return entity.shaderName;
 		}
 		
-		public function get bindTarget():Object3D
-		{
-			return this;
-		}
-		
 		override public function get blendMode():BlendMode
 		{
 			return parent.blendMode;

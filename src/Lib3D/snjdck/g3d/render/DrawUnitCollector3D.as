@@ -3,6 +3,8 @@ package snjdck.g3d.render
 	import flash.display3D.Context3DCompareMode;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -46,6 +48,12 @@ package snjdck.g3d.render
 				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
 				blendDrawUnits.draw(context3d, true);
 			}
+		}
+		
+		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
+		{
+			opaqueDrawUnits.hitTest(worldRay, result);
+			blendDrawUnits.hitTest(worldRay, result);
 		}
 	}
 }

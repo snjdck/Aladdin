@@ -47,10 +47,10 @@ package snjdck.g3d.core
 		public function onUpdate(timeElapsed:int):void{}
 		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void{}
 		
-		public function hitTest(ray:Ray, result:Vector.<Object3D>):void
+		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
 		{
 			if(mouseEnabled){
-				ray.transform(transformInvert, tempRay);
+				worldRay.transform(worldTransformInvert, tempRay);
 				if(onHitTest(tempRay)){
 					result.push(this);
 				}

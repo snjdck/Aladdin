@@ -3,7 +3,6 @@ package snjdck.g3d.obj3d
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.render.DrawUnitCollector3D;
@@ -53,11 +52,6 @@ package snjdck.g3d.obj3d
 		public function get shaderName():String
 		{
 			return "g3d_polygon_line";
-		}
-		
-		public function get bindTarget():Object3D
-		{
-			return this;
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void

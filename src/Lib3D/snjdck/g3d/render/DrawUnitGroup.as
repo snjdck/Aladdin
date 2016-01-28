@@ -4,8 +4,11 @@ package snjdck.g3d.render
 	
 	import dict.hasKey;
 	
+	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
+
 //	import snjdck.shader.ShaderName;
 
 	internal class DrawUnitGroup
@@ -18,14 +21,13 @@ package snjdck.g3d.render
 		
 		public function draw(context3d:GpuContext, updateBlendMode:Boolean):void
 		{
-			var drawUnit:IDrawUnit3D;
 			for(var shaderName:String in drawUnitDict){
 				var drawUnitList:Vector.<IDrawUnit3D> = drawUnitDict[shaderName];
 				if(drawUnitList.length <= 0){
 					continue;
 				}
 				context3d.program = AssetMgr.Instance.getProgram(shaderName);
-				for each(drawUnit in drawUnitList){
+				for each(var drawUnit:IDrawUnit3D in drawUnitList){
 					if(updateBlendMode){
 						context3d.blendMode = drawUnit.blendMode;
 					}
@@ -92,6 +94,15 @@ package snjdck.g3d.render
 				drawUnitDict[shaderName] = new Vector.<IDrawUnit3D>();
 			}
 			return drawUnitDict[shaderName];
+		}
+		
+		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
+		{
+			for each(var drawUnitList:Vector.<IDrawUnit3D> in drawUnitDict){
+				for each(var drawUnit:IDrawUnit3D in drawUnitList){
+					drawUnit.hitTest(worldRay, result);
+				}
+			}
 		}
 	}
 }
