@@ -1,7 +1,6 @@
 package snjdck.g3d.core
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	
 	use namespace ns_g3d;
@@ -37,25 +36,6 @@ package snjdck.g3d.core
 			for each(var child:Object3D in _childList){
 				if(child.isVisible()){
 					child.collectDrawUnit(collector);
-				}
-			}
-		}
-		
-		override public function hitTest(ray:Ray, result:Vector.<Object3D>):void
-		{
-			if(!(mouseEnabled || mouseChildren)){
-				return;
-			}
-			ray.transform(transformInvert, tempRay);
-			if(mouseEnabled && onHitTest(tempRay)){
-				result.push(this);
-			}
-			if(false == mouseChildren){
-				return;
-			}
-			for each(var child:Object3D in _childList){
-				if(child.isVisible()){
-					child.hitTest(tempRay, result);
 				}
 			}
 		}
