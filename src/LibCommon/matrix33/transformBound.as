@@ -5,50 +5,47 @@ package matrix33
 
 	public function transformBound(matrix:Matrix, source:Rectangle, result:Rectangle):void
 	{
-		var left:Number = source.x;
-		var right:Number = source.x + source.width;
-		var top:Number = source.y;
-		var bottom:Number = source.y + source.height;
+		var sourceMinX:Number = source.x;
+		var sourceMaxX:Number = source.x + source.width;
+		var sourceMinY:Number = source.y;
+		var sourceMaxY:Number = source.y + source.height;
 		
 		var minX:Number = matrix.tx, maxX:Number = minX;
 		var minY:Number = matrix.ty, maxY:Number = minY;
 		var factor:Number;
 		
-		factor = matrix.a;
-		if(factor > 0){
-			minX += factor * left;
-			maxX += factor * right;
+		if((factor = matrix.a) > 0){
+			minX += factor * sourceMinX;
+			maxX += factor * sourceMaxX;
 		}else{
-			minX += factor * right;
-			maxX += factor * left;
+			minX += factor * sourceMaxX;
+			maxX += factor * sourceMinX;
 		}
-		factor = matrix.c;
-		if(factor > 0){
-			minX += factor * top;
-			maxX += factor * bottom;
+		if((factor = matrix.c) > 0){
+			minX += factor * sourceMinY;
+			maxX += factor * sourceMaxY;
 		}else{
-			minX += factor * bottom;
-			maxX += factor * top;
+			minX += factor * sourceMaxY;
+			maxX += factor * sourceMinY;
 		}
-		factor = matrix.b;
-		if(factor > 0){
-			minY += factor * left;
-			maxY += factor * right;
+		if((factor = matrix.b) > 0){
+			minY += factor * sourceMinX;
+			maxY += factor * sourceMaxX;
 		}else{
-			minY += factor * right;
-			maxY += factor * left;
+			minY += factor * sourceMaxX;
+			maxY += factor * sourceMinX;
 		}
-		factor = matrix.d;
-		if(factor > 0){
-			minY += factor * top;
-			maxY += factor * bottom;
+		if((factor = matrix.d) > 0){
+			minY += factor * sourceMinY;
+			maxY += factor * sourceMaxY;
 		}else{
-			minY += factor * bottom;
-			maxY += factor * top;
+			minY += factor * sourceMaxY;
+			maxY += factor * sourceMinY;
 		}
+		
 		result.x = minX;
 		result.y = minY;
-		result.width = maxX - minX;
+		result.width  = maxX - minX;
 		result.height = maxY - minY;
 	}
 }

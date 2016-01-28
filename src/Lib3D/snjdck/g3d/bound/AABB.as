@@ -5,6 +5,8 @@ package snjdck.g3d.bound
 	
 	import bound3d.union;
 	
+	import matrix44.transformBound;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	
@@ -15,9 +17,7 @@ package snjdck.g3d.bound
 		public const center:Vector3D = new Vector3D();
 		public const halfSize:Vector3D = new Vector3D();
 		
-		public function AABB()
-		{
-		}
+		public function AABB(){}
 		
 		public function clear():void
 		{
@@ -35,14 +35,14 @@ package snjdck.g3d.bound
 			halfSize.y = 0.5 * (maxY - minY);
 			halfSize.z = 0.5 * (maxZ - minZ);
 		}
-		
+		/*
 		public function setCenterAndSize($center:Vector3D, size:Vector3D):void
 		{
 			center.copyFrom($center);
 			halfSize.copyFrom(size);
 			halfSize.scaleBy(0.5);
 		}
-		
+		*/
 		public function hitRay(ray:Ray, hit:Vector3D):Boolean
 		{
 			return containsPt(ray.getPt((minX - ray.pos.x) / ray.dir.x, hit))
@@ -118,88 +118,7 @@ package snjdck.g3d.bound
 		//*
 		public function transform(matrix:Matrix3D, result:AABB):void
 		{
-			var rawData:Vector.<Number> = matrix.rawData;
-			var minX:Number = rawData[12], maxX:Number = minX;
-			var minY:Number = rawData[13], maxY:Number = minY;
-			var minZ:Number = rawData[14], maxZ:Number = minZ;
-			var factor:Number;
-			//=================================x
-			factor = rawData[0];
-			if(factor > 0){
-				minX += factor * this.minX;
-				maxX += factor * this.maxX;
-			}else{
-				minX += factor * this.maxX;
-				maxX += factor * this.minX;
-			}
-			factor = rawData[4];
-			if(factor > 0){
-				minX += factor * this.minY;
-				maxX += factor * this.maxY;
-			}else{
-				minX += factor * this.maxY;
-				maxX += factor * this.minY;
-			}
-			factor = rawData[8];
-			if(factor > 0){
-				minX += factor * this.minZ;
-				maxX += factor * this.maxZ;
-			}else{
-				minX += factor * this.maxZ;
-				maxX += factor * this.minZ;
-			}
-			//=================================y
-			factor = rawData[1];
-			if(factor > 0){
-				minY += factor * this.minX;
-				maxY += factor * this.maxX;
-			}else{
-				minY += factor * this.maxX;
-				maxY += factor * this.minX;
-			}
-			factor = rawData[5];
-			if(factor > 0){
-				minY += factor * this.minY;
-				maxY += factor * this.maxY;
-			}else{
-				minY += factor * this.maxY;
-				maxY += factor * this.minY;
-			}
-			factor = rawData[9];
-			if(factor > 0){
-				minY += factor * this.minZ;
-				maxY += factor * this.maxZ;
-			}else{
-				minY += factor * this.maxZ;
-				maxY += factor * this.minZ;
-			}
-			//=================================z
-			factor = rawData[2];
-			if(factor > 0){
-				minZ += factor * this.minX;
-				maxZ += factor * this.maxX;
-			}else{
-				minZ += factor * this.maxX;
-				maxZ += factor * this.minX;
-			}
-			factor = rawData[6];
-			if(factor > 0){
-				minZ += factor * this.minY;
-				maxZ += factor * this.maxY;
-			}else{
-				minZ += factor * this.maxY;
-				maxZ += factor * this.minY;
-			}
-			factor = rawData[10];
-			if(factor > 0){
-				minZ += factor * this.minZ;
-				maxZ += factor * this.maxZ;
-			}else{
-				minZ += factor * this.maxZ;
-				maxZ += factor * this.minZ;
-			}
-			
-			result.setMinMax(minX, minY, minZ, maxX, maxY, maxZ);
+			transformBound(matrix, this, result);
 		}
 		
 		public function copyFrom(other:AABB):void
