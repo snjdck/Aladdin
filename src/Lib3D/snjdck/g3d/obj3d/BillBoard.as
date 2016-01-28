@@ -71,5 +71,10 @@ package snjdck.g3d.obj3d
 		{
 			return ShaderName.BILLBOARD;
 		}
+		
+		public function get bindTarget():Object3D
+		{
+			return this;
+		}
 	}
 }

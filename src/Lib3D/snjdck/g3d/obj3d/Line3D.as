@@ -55,6 +55,11 @@ package snjdck.g3d.obj3d
 			return "g3d_polygon_line";
 		}
 		
+		public function get bindTarget():Object3D
+		{
+			return this;
+		}
+		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			if(canRender){
