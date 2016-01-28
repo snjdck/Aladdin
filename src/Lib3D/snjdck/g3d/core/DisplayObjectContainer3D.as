@@ -33,6 +33,13 @@ package snjdck.g3d.core
 			}
 		}
 		
+		override public function onUpdate(timeElapsed:int):void
+		{
+			for each(var child:Object3D in _childList){
+				child.onUpdate(timeElapsed);
+			}
+		}
+		
 		public function addChild(child:Object3D):void
 		{
 			if(null == child || this == child || this == child.parent){

@@ -133,6 +133,7 @@ package snjdck.g3d.mesh
 			tempFloatBuffer[offset+4] = bone.translation.x;
 			tempFloatBuffer[offset+5] = bone.translation.y;
 			tempFloatBuffer[offset+6] = bone.translation.z;
+			tempFloatBuffer[offset+7] = 1;
 		}
 		
 		ns_g3d function adjustBoneWeight():void

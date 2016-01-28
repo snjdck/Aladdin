@@ -105,6 +105,11 @@ package snjdck.g2d.impl
 			return (0 <= localX) && (localX < width) && (0 <= localY) && (localY < height);
 		}
 		
+		public function isMouseOver():Boolean
+		{
+			return containsPt(mouseX, mouseY);
+		}
+		
 		final public function removeFromParent():void
 		{
 			if(parent != null){

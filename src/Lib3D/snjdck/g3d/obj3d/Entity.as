@@ -29,6 +29,7 @@ package snjdck.g3d.obj3d
 		
 		public const worldBound:AABB = new AABB();
 		public const bound:AABB = new AABB();
+		internal var updateFlag:Boolean;
 		
 		public function Entity(mesh:Mesh)
 		{

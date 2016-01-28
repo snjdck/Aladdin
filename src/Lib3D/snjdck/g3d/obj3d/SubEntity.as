@@ -34,7 +34,16 @@ package snjdck.g3d.obj3d
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			if(scene.camera.isInSight(entity.worldBound)){
+				entity.updateFlag = true;
 				collector.addDrawUnit(this);
+			}
+		}
+		
+		override public function onUpdate(timeElapsed:int):void
+		{
+			if(entity.updateFlag){
+				entity.updateFlag = false;
+				entity.onUpdate(timeElapsed);
 			}
 		}
 		
