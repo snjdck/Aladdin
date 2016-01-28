@@ -4,8 +4,6 @@ package snjdck.g3d.render
 	
 	import dict.hasKey;
 	
-	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.pickup.Ray;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 
@@ -94,15 +92,6 @@ package snjdck.g3d.render
 				drawUnitDict[shaderName] = new Vector.<IDrawUnit3D>();
 			}
 			return drawUnitDict[shaderName];
-		}
-		
-		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
-		{
-			for each(var drawUnitList:Vector.<IDrawUnit3D> in drawUnitDict){
-				for each(var drawUnit:IDrawUnit3D in drawUnitList){
-					drawUnit.hitTest(worldRay, result);
-				}
-			}
 		}
 	}
 }

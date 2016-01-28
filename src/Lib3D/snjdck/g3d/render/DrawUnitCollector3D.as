@@ -12,6 +12,7 @@ package snjdck.g3d.render
 
 	final public class DrawUnitCollector3D
 	{
+		private const drawUnitList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
 		private const opaqueDrawUnits:DrawUnitGroup = new DrawUnitGroup();
 		private const blendDrawUnits:DrawUnitGroup = new DrawUnitGroup();
 		
@@ -19,11 +20,12 @@ package snjdck.g3d.render
 		
 		public function hasDrawUnits():Boolean
 		{
-			return opaqueDrawUnits.hasDrawUnits() || blendDrawUnits.hasDrawUnits();
+			return drawUnitList.length > 0;
 		}
 		
 		public function clear():void
 		{
+			drawUnitList.length = 0;
 			opaqueDrawUnits.clear();
 			blendDrawUnits.clear();
 		}
@@ -35,6 +37,7 @@ package snjdck.g3d.render
 			}else{
 				blendDrawUnits.addDrawUnit(drawUnit);
 			}
+			drawUnitList.push(drawUnit);
 		}
 		
 		public function render(context3d:GpuContext):void
@@ -50,10 +53,20 @@ package snjdck.g3d.render
 			}
 		}
 		
+		public function update(timeElapsed:int):void
+		{
+			if(drawUnitList.length <= 0)
+				return;
+			for each(var drawUnit:IDrawUnit3D in drawUnitList)
+				drawUnit.onUpdate(timeElapsed);
+		}
+		
 		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
 		{
-			opaqueDrawUnits.hitTest(worldRay, result);
-			blendDrawUnits.hitTest(worldRay, result);
+			if(drawUnitList.length <= 0)
+				return;
+			for each(var drawUnit:IDrawUnit3D in drawUnitList)
+				drawUnit.hitTest(worldRay, result);
 		}
 	}
 }

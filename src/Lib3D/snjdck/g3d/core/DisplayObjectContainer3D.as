@@ -24,13 +24,6 @@ package snjdck.g3d.core
 			}
 		}
 		
-		override public function onUpdate(timeElapsed:int):void
-		{
-			for each(var child:Object3D in _childList){
-				child.onUpdate(timeElapsed);
-			}
-		}
-		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			for each(var child:Object3D in _childList){

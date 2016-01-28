@@ -38,10 +38,10 @@ package snjdck.g3d
 		public function update(timeElapsed:int):void
 		{
 			var t1:int = getTimer();
-			root.onUpdate(timeElapsed);
 			camera.update();
 			collector.clear();
 			root.collectDrawUnit(collector);
+			collector.update(timeElapsed);
 			var t2:int = getTimer();
 			trace("scene3d update:",t2-t1);
 		}

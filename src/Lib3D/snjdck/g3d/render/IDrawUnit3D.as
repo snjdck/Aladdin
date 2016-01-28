@@ -12,6 +12,7 @@ package snjdck.g3d.render
 		
 		function get shaderName():String;
 		function get blendMode():BlendMode;
+		function onUpdate(timeElapsed:int):void;
 		function hitTest(worldRay:Ray, result:Vector.<Object3D>):void;
 	}
 }
