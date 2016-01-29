@@ -107,6 +107,7 @@ package snjdck.g3d.obj3d
 			if(scene.camera.isInSight(worldBound)){
 				collector.addUpdateable(this);
 				meshGroup.collectDrawUnit(collector);
+				super.collectDrawUnit(collector);
 			}
 		}
 		
