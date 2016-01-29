@@ -74,9 +74,8 @@ package snjdck.g3d.obj3d
 		private function getBoneAttachmentGroup(boneName:String):BoneAttachmentGroup
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);
-			if(null == bone){
+			if(null == bone)
 				throw new Error("boneName '" + boneName + "' not exist!");
-			}
 			var boneObject:BoneObject3D = boneStateGroup[bone.id];
 			return boneObject.attachmentGroup;
 		}
@@ -156,12 +155,12 @@ package snjdck.g3d.obj3d
 			skeleton = null;
 			boneStateGroup = value;
 		}
-		*/
 		public function clearSkeleton():void
 		{
 			hasSkeleton = false;
 			skeleton = null;
 		}
+		*/
 		
 		public function hideSubMeshAt(index:int):void
 		{
@@ -171,9 +170,8 @@ package snjdck.g3d.obj3d
 		internal function handleSubEntity(subMesh:SubMesh):void
 		{
 			for each(var boneObject:BoneObject3D in boneStateGroup){
-				if(null == boneObject){
+				if(null == boneObject)
 					continue;
-				}
 				boneObject.addVertex(subMesh.geometry);
 			}
 		}
