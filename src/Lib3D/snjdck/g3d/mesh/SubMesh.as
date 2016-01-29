@@ -9,8 +9,14 @@ package snjdck.g3d.mesh
 
 	public class SubMesh
 	{
+		public var mesh:Mesh;
 		public var materialName:String;
 		public var geometry:Geometry;
+		
+		public function SubMesh(mesh:Mesh)
+		{
+			this.mesh = mesh;
+		}
 		
 		public function draw(context3d:GpuContext, boneStateGroup:IBoneStateGroup):void
 		{

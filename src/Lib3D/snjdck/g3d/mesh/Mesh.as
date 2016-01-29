@@ -22,7 +22,7 @@ package snjdck.g3d.mesh
 		
 		public function createSubMesh():SubMesh
 		{
-			var subMesh:SubMesh = new SubMesh();
+			var subMesh:SubMesh = new SubMesh(this);
 			subMeshes.push(subMesh);
 			return subMesh;
 		}

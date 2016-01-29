@@ -1,11 +1,9 @@
 package snjdck.g3d.obj3d
 {
-	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
@@ -17,7 +15,6 @@ package snjdck.g3d.obj3d
 		public function SubEntity(subMesh:SubMesh)
 		{
 			this.subMesh = subMesh;
-//			originalBound = subMesh.geometry.bound;
 		}
 		
 		private function get entity():Entity
@@ -29,22 +26,6 @@ package snjdck.g3d.obj3d
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, parent.worldTransform);
 			subMesh.draw(context3d, entity);
-		}
-		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
-		{
-			if(scene.camera.isInSight(entity.worldBound)){
-				entity.updateFlag = true;
-				collector.addDrawUnit(this);
-			}
-		}
-		
-		override public function onUpdate(timeElapsed:int):void
-		{
-			if(entity.updateFlag){
-				entity.updateFlag = false;
-				entity.onUpdate(timeElapsed);
-			}
 		}
 		
 		public function get shaderName():String

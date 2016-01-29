@@ -7,8 +7,10 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
+	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.Bone;
+	import snjdck.g3d.skeleton.BoneAttachmentGroup;
 	import snjdck.g3d.skeleton.BoneObject3D;
 	import snjdck.g3d.skeleton.IBoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
@@ -29,29 +31,22 @@ package snjdck.g3d.obj3d
 		
 		public const worldBound:AABB = new AABB();
 		public const bound:AABB = new AABB();
-		internal var updateFlag:Boolean;
+		private const meshGroup:EntityMeshGroup = new EntityMeshGroup(this);
 		
 		public function Entity(mesh:Mesh)
 		{
 			blendMode = BlendMode.NORMAL;
-			
-			for(var i:int=0; i<mesh.subMeshes.length; ++i){
-				var subMesh:SubMesh = mesh.subMeshes[i];
-				bound.merge(subMesh.geometry.bound);
-				addChild(new SubEntity(subMesh));
-			}
-			bound.transform(worldTransform, worldBound);
-			
 			hasSkeleton = (mesh.skeleton != null);
 			
 			if(hasSkeleton){
 				skeleton = mesh.skeleton;
 				aniName = skeleton.getAnimationNames()[0];
 				skeleton.createObject3D(this);
-				for(var i:int=0; i<mesh.subMeshes.length; ++i){
-					handleSubEntity(getChildAt(i) as SubEntity);
-				}
 			}
+			
+			addMesh(mesh);
+			meshGroup.calculateBound(bound);
+			bound.transform(worldTransform, worldBound);
 		}
 		
 		override protected function onWorldMatrixDirty():void
@@ -59,7 +54,6 @@ package snjdck.g3d.obj3d
 			super.onWorldMatrixDirty();
 			bound.transform(worldTransform, worldBound);
 		}
-		
 		
 		public function getBoneState(boneId:int):Matrix4x4
 		{
@@ -77,35 +71,29 @@ package snjdck.g3d.obj3d
 			return hasSkeleton ? ShaderName.DYNAMIC_OBJECT : ShaderName.STATIC_OBJECT;
 		}
 		
-		private function getBoneObject(boneName:String):DisplayObjectContainer3D
+		private function getBoneAttachmentGroup(boneName:String):BoneAttachmentGroup
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);
 			if(null == bone){
 				throw new Error("boneName '" + boneName + "' not exist!");
 			}
-			return boneStateGroup[bone.id];
+			var boneObject:BoneObject3D = boneStateGroup[bone.id];
+			return boneObject.attachmentGroup;
 		}
 		
 		public function bindEntityToBone(boneName:String, entity:Object3D):void
 		{
-			getBoneObject(boneName).addChild(entity);
+			getBoneAttachmentGroup(boneName).addAttachment(entity);
 		}
 		
 		public function unbindEntityFromBone(boneName:String, entity:Entity):void
 		{
-			getBoneObject(boneName).removeChild(entity);
+			getBoneAttachmentGroup(boneName).removeAttachment(entity);
 		}
 		
 		public function unbindAllEntitiesFromBone(boneName:String):void
 		{
-			var boneObject:DisplayObjectContainer3D = getBoneObject(boneName);
-			for(var i:int=boneObject.numChildren-1; i>=0; --i){
-				if(boneObject.getChildAt(i) is Entity){
-					boneObject.removeChildAt(i);
-				}else{
-					break;
-				}
-			}
+			getBoneAttachmentGroup(boneName).removeAllAttachments();
 		}
 		/*
 		public function shareSkeletonInstanceWith(entity:Entity):void
@@ -114,20 +102,23 @@ package snjdck.g3d.obj3d
 			boneStateGroup = entity.boneStateGroup;
 		}
 		*/
+		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		{
+			if(scene.camera.isInSight(worldBound)){
+				collector.addUpdateable(this);
+				meshGroup.collectDrawUnit(collector);
+			}
+		}
+		
 		override public function onUpdate(timeElapsed:int):void
 		{
-//			if(!scene.camera.isInSight(worldBound)){
-//				return;
-//			}
 			updateBoneState(timeElapsed);
 			super.onUpdate(timeElapsed);
 			if(hasSkeleton && isBoneDirty){
 //				markOriginalBoundDirty();
 				for(var i:int=numChildren-1; i>=0; --i){
-					var boneObject:BoneObject3D = getChildAt(i) as BoneObject3D;
-					if(boneObject != null){
-						boneObject.markWorldMatrixDirty();
-					}
+					var boneObject:Object3D = getChildAt(i);
+					boneObject.markWorldMatrixDirty();
 				}
 			}
 			isBoneDirty = false;
@@ -149,29 +140,14 @@ package snjdck.g3d.obj3d
 			}
 		}
 		
-		public function addMesh(child:Mesh):void
+		public function addMesh(mesh:Mesh):void
 		{
-			var i:int;
-			for(i=numChildren-1; i>=0; --i){
-				if(getChildAt(i).userData === child){
-					return;
-				}
-			}
-			for(i=0; i<child.subMeshes.length; ++i){
-				var subMesh:SubMesh = child.subMeshes[i];
-				var subEntity:SubEntity = new SubEntity(subMesh);
-				subEntity.userData = child;
-				addChild(subEntity);
-			}
+			meshGroup.addMesh(mesh);
 		}
 		
-		public function removeMesh(child:Mesh):void
+		public function removeMesh(mesh:Mesh):void
 		{
-			for(var i:int=numChildren-1; i>=0; --i){
-				if(getChildAt(i).userData === child){
-					removeChildAt(i);
-				}
-			}
+			meshGroup.removeMesh(mesh);
 		}
 		/*
 		public function bindBoneStateGroup(value:Array):void
@@ -188,24 +164,11 @@ package snjdck.g3d.obj3d
 		
 		public function hideSubMeshAt(index:int):void
 		{
-			var subEntity:Object3D = getChildAt(index);
-			if(subEntity != null){
-				subEntity.visible = false;
-			}
+			meshGroup.hideSubMeshAt(index);
 		}
 		
-		override public function addChild(child:Object3D):void
+		internal function handleSubEntity(subMesh:SubMesh):void
 		{
-			super.addChild(child);
-			if(!(child is SubEntity)){
-				return;
-			}
-			handleSubEntity(child as SubEntity);
-		}
-		
-		private function handleSubEntity(subEntity:SubEntity):void
-		{
-			var subMesh:SubMesh = subEntity.subMesh;
 			for each(var boneObject:BoneObject3D in boneStateGroup){
 				if(null == boneObject){
 					continue;

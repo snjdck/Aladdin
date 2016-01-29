@@ -28,6 +28,8 @@ package snjdck.g3d.skeleton
 		private const transformGlobalToGlobal:Matrix4x4 = new Matrix4x4();
 		private const transformLocalToGlobal:Matrix4x4 = new Matrix4x4();
 		
+		ns_g3d const attachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup(this);
+		
 		public function BoneObject3D(){}
 		
 		private function get keyFrame():Matrix4x4
