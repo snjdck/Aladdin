@@ -12,7 +12,7 @@ package snjdck.g3d.skeleton
 	
 	use namespace ns_g3d;
 	
-	public class BoneObject3D extends DisplayObjectContainer3D
+	public class BoneInstance extends DisplayObjectContainer3D
 	{
 		internal var initTransform:Matrix4x4;
 		internal var transformGlobalToLocal:Matrix4x4;
@@ -30,12 +30,12 @@ package snjdck.g3d.skeleton
 		
 		ns_g3d const attachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup(this);
 		
-		public function BoneObject3D(){}
+		public function BoneInstance(){}
 		
 		private function get keyFrame():Matrix4x4
 		{
 			if(isKeyFrameDirty){
-				entity.animation.getTransform(id, entity.animationTime, _keyFrame);
+				entity.animationInstance.getKeyFrame(id, _keyFrame);
 				isKeyFrameDirty = false;
 			}
 			return _keyFrame;
@@ -66,7 +66,7 @@ package snjdck.g3d.skeleton
 		private function getBoneStateLocal():Matrix4x4
 		{
 			if(isGlobalToLocalDirty){
-				var parentBoneObject:BoneObject3D = parent as BoneObject3D;
+				var parentBoneObject:BoneInstance = parent as BoneInstance;
 				if(parentBoneObject == null){
 					transformLocalToGlobal.copyFrom(initTransform);
 				}else{

@@ -25,7 +25,7 @@ package snjdck.g3d.skeleton
 		
 		internal function createObject3D(entity:Entity, parent:DisplayObjectContainer3D):void
 		{
-			var boneObject:BoneObject3D = new BoneObject3D();
+			var boneObject:BoneInstance = new BoneInstance();
 			boneObject.id = id;
 			boneObject.name = name;
 			boneObject.entity = entity;
