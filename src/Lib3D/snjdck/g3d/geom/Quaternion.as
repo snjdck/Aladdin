@@ -1,7 +1,6 @@
 package snjdck.g3d.geom
 {
 	import flash.geom.Matrix3D;
-	import flash.geom.Orientation3D;
 	import flash.geom.Vector3D;
 
 	/**
@@ -14,8 +13,6 @@ package snjdck.g3d.geom
 	 */
 	final public class Quaternion
 	{
-		static public const Null:Quaternion = new Quaternion();
-		
 		static public function Slerp(a:Quaternion, b:Quaternion, percent:Number, result:Quaternion):void
 		{
 			var x1:Number = a.x, y1:Number = a.y, z1:Number = a.z, w1:Number = a.w;
@@ -49,12 +46,6 @@ package snjdck.g3d.geom
 				
 				result.normalize();
 			}
-		}
-		
-		static public function FromMatrix(matrix:Matrix3D):Quaternion
-		{
-			var v:Vector3D = matrix.decompose(Orientation3D.QUATERNION)[1];
-			return new Quaternion(v.x, v.y, v.z, v.w);
 		}
 		
 		static public function FromAxisAngle(axis:Vector3D, angle:Number):Quaternion
@@ -262,11 +253,6 @@ package snjdck.g3d.geom
 			result.copyRawDataFrom(rawData);
 		}
 		
-		static private const rawData:Vector.<Number> = new <Number>[
-			0, 0, 0, 0,
-			0, 0, 0, 0,
-			0, 0, 0, 0,
-			0, 0, 0, 1
-		];
+		static private const rawData:Vector.<Number> = new <Number>[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
 	}
 }

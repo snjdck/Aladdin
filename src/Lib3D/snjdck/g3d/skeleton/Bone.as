@@ -28,7 +28,7 @@ package snjdck.g3d.skeleton
 			var boneObject:BoneInstance = new BoneInstance();
 			boneObject.id = id;
 			boneObject.name = name;
-			boneObject.entity = entity;
+			boneObject.animationInstance = entity.animationInstance;
 			entity.regBone(boneObject);
 			boneObject.initTransform = transform;
 			boneObject.transformGlobalToLocal = transformGlobalToLocal;

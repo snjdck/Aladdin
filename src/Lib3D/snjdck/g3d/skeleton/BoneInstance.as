@@ -1,12 +1,9 @@
 package snjdck.g3d.skeleton
 {
-	import flash.geom.Matrix3D;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.geom.Matrix4x4;
-	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.model3d.calcVertexBound;
 	
@@ -16,12 +13,9 @@ package snjdck.g3d.skeleton
 	{
 		internal var initTransform:Matrix4x4;
 		internal var transformGlobalToLocal:Matrix4x4;
-		internal var entity:Entity;
+		internal var animationInstance:AnimationInstance;
 		
-		private var isKeyFrameDirty:Boolean;
-		private const _keyFrame:Matrix4x4 = new Matrix4x4();
-		
-		private var isTransformDirty:Boolean;
+		private const keyFrame:Matrix4x4 = new Matrix4x4();
 		
 		private var isGlobalToGlobalDirty:Boolean;
 		private var isGlobalToLocalDirty:Boolean;
@@ -31,11 +25,11 @@ package snjdck.g3d.skeleton
 		ns_g3d const attachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup(this);
 		
 		public function BoneInstance(){}
-		
+		/*
 		private function get keyFrame():Matrix4x4
 		{
 			if(isKeyFrameDirty){
-				entity.animationInstance.getKeyFrame(id, _keyFrame);
+				animationInstance.getKeyFrame(id, _keyFrame);
 				isKeyFrameDirty = false;
 			}
 			return _keyFrame;
@@ -51,20 +45,23 @@ package snjdck.g3d.skeleton
 			}
 			return result;
 		}
-		
+		*/
 		override public function onUpdate(timeElapsed:int):void
 		{
+			animationInstance.getKeyFrame(id, keyFrame);
+			initTransform.prepend(keyFrame, transformLocalToGlobal);
+			transformLocalToGlobal.toMatrix(transform);
+			var parentBoneObject:BoneInstance = parent as BoneInstance;
+			if(parentBoneObject != null)
+				parentBoneObject.transformLocalToGlobal.prepend(transformLocalToGlobal, transformLocalToGlobal);
+			transformLocalToGlobal.prepend(transformGlobalToLocal, transformGlobalToGlobal);
+			markWorldMatrixDirty();
 			super.onUpdate(timeElapsed);
-			if(entity.isBoneDirty){
-				isKeyFrameDirty = true;
-				isGlobalToGlobalDirty = true;
-				isGlobalToLocalDirty = true;
-				isTransformDirty = true;
-			}
 		}
 		
 		private function getBoneStateLocal():Matrix4x4
 		{
+			/*
 			if(isGlobalToLocalDirty){
 				var parentBoneObject:BoneInstance = parent as BoneInstance;
 				if(parentBoneObject == null){
@@ -76,6 +73,7 @@ package snjdck.g3d.skeleton
 				transformLocalToGlobal.prepend(keyFrame, transformLocalToGlobal);
 				isGlobalToLocalDirty = false;
 			}
+			*/
 			return transformLocalToGlobal;
 		}
 		
@@ -84,10 +82,12 @@ package snjdck.g3d.skeleton
 		 */
 		public function getBoneStateGlobal():Matrix4x4
 		{
+			/*
 			if(isGlobalToGlobalDirty){
 				getBoneStateLocal().prepend(transformGlobalToLocal, transformGlobalToGlobal);
 				isGlobalToGlobalDirty = false;
 			}
+			*/
 			return transformGlobalToGlobal;
 		}
 		

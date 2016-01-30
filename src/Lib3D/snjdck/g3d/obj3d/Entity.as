@@ -25,9 +25,8 @@ package snjdck.g3d.obj3d
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
 		
-		ns_g3d var animationInstance:AnimationInstance;
+		public var animationInstance:AnimationInstance;
 		private const boneStateGroup:Array = [];
-		public var isBoneDirty:Boolean = true;
 		
 		public const worldBound:AABB = new AABB();
 		public const bound:AABB = new AABB();
@@ -107,15 +106,9 @@ package snjdck.g3d.obj3d
 		override public function onUpdate(timeElapsed:int):void
 		{
 			updateBoneState(timeElapsed);
-			super.onUpdate(timeElapsed);
-			if(hasSkeleton && isBoneDirty){
-//				markOriginalBoundDirty();
-				for(var i:int=numChildren-1; i>=0; --i){
-					var boneObject:Object3D = getChildAt(i);
-					boneObject.markWorldMatrixDirty();
-				}
+			if(hasSkeleton && animationInstance.hasAnimation()){
+				super.onUpdate(timeElapsed);
 			}
-			isBoneDirty = false;
 		}
 		
 		public function set aniName(value:String):void
@@ -130,7 +123,6 @@ package snjdck.g3d.obj3d
 		{
 			if(skeleton != null && animationInstance.hasAnimation()){
 				animationInstance.update(timeElapsed);
-				isBoneDirty = true;
 			}
 		}
 		
