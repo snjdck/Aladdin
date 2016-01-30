@@ -46,15 +46,14 @@ package snjdck.g3d.obj3d
 			
 			addMesh(mesh);
 			meshGroup.calculateBound(bound);
-			bound.transform(worldTransform, worldBound);
 		}
-		
+		/*
 		override protected function onWorldMatrixDirty():void
 		{
 			super.onWorldMatrixDirty();
 			bound.transform(worldTransform, worldBound);
 		}
-		
+		*/
 		public function getBoneState(boneId:int):Matrix4x4
 		{
 			var boneObject:BoneInstance = boneStateGroup[boneId];
@@ -97,6 +96,7 @@ package snjdck.g3d.obj3d
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
+			bound.transform(worldTransform, worldBound);
 			if(scene.camera.isInSight(worldBound)){
 				collector.addUpdateable(this);
 				meshGroup.collectDrawUnit(collector);
