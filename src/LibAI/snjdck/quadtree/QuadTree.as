@@ -4,18 +4,15 @@
 	
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.ViewFrustum;
-	import snjdck.gpu.geom.AABB2;
 
 	/**
 	 * 00 01
 	 * 10 11
 	 */
-	final public class QuadTree extends AABB2
+	final public class QuadTree
 	{
-		static public function Create(halfSize:int, minSize:int):QuadTree
-		{
-			return new QuadTree(null, 0, 0, 0x4000, 64);
-		}
+		private var center:Vector3D;
+		private var halfSize:int;
 		
 		private var nodeList:Array;
 		private var parent:QuadTree;
@@ -26,8 +23,7 @@
 		{
 			this.parent = parent;
 			this.center = new Vector3D(centerX, centerY);
-			this.halfWidth = halfSize;
-			this.halfHeight = halfSize;
+			this.halfSize = halfSize;
 			bound.center.x = centerX;
 			bound.center.y = centerY;
 			bound.halfSize.x = halfSize;
@@ -37,10 +33,10 @@
 		
 		private function onInit(minSize:int):void
 		{
-			if(halfWidth <= minSize || halfHeight <= minSize){
+			if(halfSize <= minSize){
 				return;
 			}
-			var childHalfSize:int = halfWidth >> 1;
+			var childHalfSize:int = halfSize >> 1;
 			nodeList = new Array(4);
 			nodeList[0] = new QuadTree(this, center.x - childHalfSize, center.y - childHalfSize, childHalfSize, minSize);
 			nodeList[1] = new QuadTree(this, center.x + childHalfSize, center.y - childHalfSize, childHalfSize, minSize);
@@ -108,7 +104,7 @@
 				switch(viewFrustum.classify(currentNode.bound)){
 					case ViewFrustum.INTERECT:
 						for each(var item:IQuadTreeNode in currentNode.objectList){
-							if(viewFrustum.classify(item.getBound()) != ViewFrustum.AWAY){
+							if(viewFrustum.classify(item.getBound()) <= 0){
 								result.push(item);
 							}
 						}
