@@ -186,7 +186,9 @@ package snjdck.g2d.impl
 		{
 			super.onUpdate(timeElapsed);
 			for each(var child:DisplayObject2D in _childList){
-				child.onUpdate(timeElapsed);
+				if(child.isVisible()){
+					child.onUpdate(timeElapsed);
+				}
 			}
 		}
 		

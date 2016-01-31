@@ -31,7 +31,7 @@ package snjdck.g3d.skeleton
 			boneObject.animationInstance = entity.animationInstance;
 			entity.regBone(boneObject);
 			boneObject.initTransform = transform;
-			boneObject.transformGlobalToLocal = transformGlobalToLocal;
+			boneObject.boneWorldToLocal = transformGlobalToLocal;
 			parent.addChild(boneObject);
 			if(nextSibling){
 				nextSibling.createObject3D(entity, parent);

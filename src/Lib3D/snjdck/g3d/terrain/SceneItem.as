@@ -7,12 +7,13 @@ package snjdck.g3d.terrain
 	internal class SceneItem implements IQuadTreeNode
 	{
 		public var entity:Entity;
-		public var bound:AABB = new AABB();
+		public var bound:AABB;
 		
 		public function SceneItem(entity:Entity)
 		{
 			this.entity = entity;
-			bound.copyFrom(entity.bound);
+			bound = entity.worldBound;
+//			bound.copyFrom(entity.bound);
 		}
 		
 		public function get x():Number

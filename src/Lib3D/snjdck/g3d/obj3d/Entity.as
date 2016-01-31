@@ -8,7 +8,6 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.render.DrawUnitCollector3D;
-	import snjdck.g3d.skeleton.Animation;
 	import snjdck.g3d.skeleton.AnimationInstance;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.BoneAttachmentGroup;
@@ -25,9 +24,10 @@ package snjdck.g3d.obj3d
 		private var hasSkeleton:Boolean;
 		private var skeleton:Skeleton;
 		
-		public var animationInstance:AnimationInstance;
+		public const animationInstance:AnimationInstance = new AnimationInstance();
 		private const boneStateGroup:Array = [];
 		
+		private var isWorldBoundDirty:Boolean;
 		public const worldBound:AABB = new AABB();
 		public const bound:AABB = new AABB();
 		private const meshGroup:EntityMeshGroup = new EntityMeshGroup(this);
@@ -46,13 +46,14 @@ package snjdck.g3d.obj3d
 			addMesh(mesh);
 			meshGroup.calculateBound(bound);
 		}
-		/*
+		//*
 		override protected function onWorldMatrixDirty():void
 		{
 			super.onWorldMatrixDirty();
-			bound.transform(worldTransform, worldBound);
+			isWorldBoundDirty = true;
+			//bound.transform(worldTransform, worldBound);
 		}
-		*/
+		//*/
 		public function getBoneState(boneId:int):Matrix4x4
 		{
 			var boneObject:BoneInstance = boneStateGroup[boneId];
@@ -95,35 +96,34 @@ package snjdck.g3d.obj3d
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-			bound.transform(worldTransform, worldBound);
-			if(scene.camera.isInSight(worldBound)){
-				collector.addUpdateable(this);
-				meshGroup.collectDrawUnit(collector);
-				super.collectDrawUnit(collector);
+			if(isWorldBoundDirty){
+				bound.transform(worldTransform, worldBound);
+				isWorldBoundDirty = false;
 			}
+			if(scene.camera.isInSight(worldBound)){
+				addToDrawUnitCollector(collector);
+				super.collectDrawUnit(collector);
+				getWorldBound();
+			}
+		}
+		
+		ns_g3d function addToDrawUnitCollector(collector:DrawUnitCollector3D):void
+		{
+			meshGroup.collectDrawUnit(collector);
+			collector.addUpdateable(this);
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
-			updateBoneState(timeElapsed);
-			if(hasSkeleton && animationInstance.hasAnimation()){
+			if(skeleton != null && animationInstance.hasAnimation()){
+				animationInstance.update(timeElapsed);
 				super.onUpdate(timeElapsed);
 			}
 		}
 		
 		public function set aniName(value:String):void
 		{
-			var animation:Animation = skeleton.getAnimationByName(value);
-			if(animation != null){
-				animationInstance = new AnimationInstance(animation);
-			}
-		}
-		
-		public function updateBoneState(timeElapsed:int):void
-		{
-			if(skeleton != null && animationInstance.hasAnimation()){
-				animationInstance.update(timeElapsed);
-			}
+			animationInstance.animation = skeleton.getAnimationByName(value);
 		}
 		
 		public function addMesh(mesh:Mesh):void
@@ -148,6 +148,24 @@ package snjdck.g3d.obj3d
 					continue;
 				boneObject.addVertex(subMesh.geometry);
 			}
+		}
+		
+		public function calculateBound():void
+		{
+			// TODO Auto Generated method stub
+			bound.transform(worldTransform, worldBound);
+		}
+		
+		public function getWorldBound():AABB
+		{
+			bound.clear();
+			for each(var boneObject:BoneInstance in boneStateGroup){
+				if(null == boneObject)
+					continue;
+				boneObject.mergeBoneBound(bound);
+			}
+			bound.transform(worldTransform, worldBound);
+			return worldBound;
 		}
 	}
 }
