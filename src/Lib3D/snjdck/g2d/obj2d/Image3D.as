@@ -1,7 +1,5 @@
 package snjdck.g2d.obj2d
 {
-	import flash.utils.getTimer;
-	
 	import matrix33.transformCoordsDelta;
 	
 	import snjdck.g2d.ns_g2d;
@@ -34,7 +32,6 @@ package snjdck.g2d.obj2d
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
-			var t1:int = getTimer();
 			super.onUpdate(timeElapsed);
 			if(isMatrixDirty){
 				transformCoordsDelta(transform, width, height, tempPt);
@@ -45,8 +42,6 @@ package snjdck.g2d.obj2d
 				isMatrixDirty = false;
 			}
 			scene3d.update(timeElapsed);
-			var t2:int = getTimer();
-			trace("image3d update======================", t2 - t1);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void

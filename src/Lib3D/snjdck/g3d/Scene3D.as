@@ -1,7 +1,6 @@
 package snjdck.g3d
 {
 	import flash.events.MouseEvent;
-	import flash.utils.getTimer;
 	
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
@@ -37,13 +36,10 @@ package snjdck.g3d
 		
 		public function update(timeElapsed:int):void
 		{
-			var t1:int = getTimer();
 			camera.update();
 			collector.clear();
 			root.collectDrawUnit(collector);
 			collector.update(timeElapsed);
-			var t2:int = getTimer();
-			trace("scene3d update:",t2-t1);
 		}
 		
 		public function needDraw():Boolean
@@ -56,10 +52,7 @@ package snjdck.g3d
 			var constData:Vector.<Number> = InstanceRender.Instance.constData;
 			camera.upload(InstanceRender.Instance.constData);
 			context3d.setVc(0, constData, 5);
-			var t1:int = getTimer();
 			collector.render(context3d);
-			var t2:int = getTimer();
-			trace("scene3d render:",t2-t1);
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void{}
