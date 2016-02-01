@@ -174,15 +174,15 @@ package snjdck.g3d.geom
 		[Inline]
 		public function multiply(other:Quaternion, result:Quaternion):void
 		{
-			var tx:Number = (this.w * other.x) + (this.x * other.w) + (this.y * other.z) - (this.z * other.y);
-			var ty:Number = (this.w * other.y) - (this.x * other.z) + (this.y * other.w) + (this.z * other.x);
-			var tz:Number = (this.w * other.z) + (this.x * other.y) - (this.y * other.x) + (this.z * other.w);
-			var tw:Number = (this.w * other.w) - (this.x * other.x) - (this.y * other.y) - (this.z * other.z);
+			var tx:* = other.x;
+			var ty:* = other.y;
+			var tz:* = other.z;
+			var tw:* = other.w;
 			
-			result.x = tx;
-			result.y = ty;
-			result.z = tz;
-			result.w = tw;
+			result.x = (w * tx) + (x * tw) + (y * tz) - (z * ty);
+			result.y = (w * ty) - (x * tz) + (y * tw) + (z * tx);
+			result.z = (w * tz) + (x * ty) - (y * tx) + (z * tw);
+			result.w = (w * tw) - (x * tx) - (y * ty) - (z * tz);
 		}
 		
 		/**
@@ -192,42 +192,42 @@ package snjdck.g3d.geom
 		public function rotateVector(v:Vector3D, result:Vector3D):void
 		{
 			//复制区域--begin
-			var xx:Number = x*x;
-			var yy:Number = y*y;
-			var zz:Number = z*z;
-			var ww:Number = w*w;
+			var xx:* = x*x;
+			var yy:* = y*y;
+			var zz:* = z*z;
+			var ww:* = w*w;
 			
-			var xy2:Number = 2*x*y;
-			var xz2:Number = 2*x*z;
-			var xw2:Number = 2*x*w;
-			var yz2:Number = 2*y*z;
-			var yw2:Number = 2*y*w;
-			var zw2:Number = 2*z*w;
+			var xy2:* = 2*x*y;
+			var xz2:* = 2*x*z;
+			var xw2:* = 2*x*w;
+			var yz2:* = 2*y*z;
+			var yw2:* = 2*y*w;
+			var zw2:* = 2*z*w;
 			//复制区域--end
 			
-			var tx:Number = v.x * (xx + ww - yy - zz) + v.y * (xy2 - zw2) + v.z * (xz2 + yw2);
-			var ty:Number = v.y * (yy + ww - zz - xx) + v.z * (yz2 - xw2) + v.x * (xy2 + zw2);
-			var tz:Number = v.z * (zz + ww - xx - yy) + v.x * (xz2 - yw2) + v.y * (yz2 + xw2);
+			var vx:* = v.x;
+			var vy:* = v.y;
+			var vz:* = v.z;
 			
-			result.x = tx;
-			result.y = ty;
-			result.z = tz;
+			result.x = vx * (xx + ww - yy - zz) + vy * (xy2 - zw2) + vz * (xz2 + yw2);
+			result.y = vy * (yy + ww - zz - xx) + vz * (yz2 - xw2) + vx * (xy2 + zw2);
+			result.z = vz * (zz + ww - xx - yy) + vx * (xz2 - yw2) + vy * (yz2 + xw2);
 		}
 		
 		public function toMatrix(result:Matrix3D, translation:Vector3D):void
 		{
 			//复制区域--begin
-			var xx:Number = x*x;
-			var yy:Number = y*y;
-			var zz:Number = z*z;
-			var ww:Number = w*w;
+			var xx:* = x*x;
+			var yy:* = y*y;
+			var zz:* = z*z;
+			var ww:* = w*w;
 			
-			var xy2:Number = 2*x*y;
-			var xz2:Number = 2*x*z;
-			var xw2:Number = 2*x*w;
-			var yz2:Number = 2*y*z;
-			var yw2:Number = 2*y*w;
-			var zw2:Number = 2*z*w;
+			var xy2:* = 2*x*y;
+			var xz2:* = 2*x*z;
+			var xw2:* = 2*x*w;
+			var yz2:* = 2*y*z;
+			var yw2:* = 2*y*w;
+			var zw2:* = 2*z*w;
 			//复制区域--end
 			
 			rawData[0]  = xx + ww - yy - zz;
@@ -242,13 +242,9 @@ package snjdck.g3d.geom
 			rawData[6]  = yz2 + xw2;
 			rawData[10] = zz + ww - xx - yy;
 			
-			if(translation != null){
-				rawData[12] = translation.x;
-				rawData[13] = translation.y;
-				rawData[14] = translation.z;
-			}else{
-				rawData[12] = rawData[13] = rawData[14] = 0;
-			}
+			rawData[12] = translation.x;
+			rawData[13] = translation.y;
+			rawData[14] = translation.z;
 			
 			result.copyRawDataFrom(rawData);
 		}

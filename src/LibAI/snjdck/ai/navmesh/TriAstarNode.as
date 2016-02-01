@@ -1,7 +1,5 @@
 package snjdck.ai.navmesh
 {
-	import flash.events.OutputProgressEvent;
-	
 	import snjdck.ai.astar.IAstarNode;
 	
 	public class TriAstarNode implements IAstarNode
