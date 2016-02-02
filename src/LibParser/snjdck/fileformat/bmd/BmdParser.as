@@ -1,5 +1,6 @@
 package snjdck.fileformat.bmd
 {
+	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
@@ -130,10 +131,12 @@ package snjdck.fileformat.bmd
 				return;
 			}
 			mesh.skeleton = null;
+			var keyFrameMatrix:Matrix3D = new Matrix3D();
+			lastKeyFrameTransform.toMatrix(keyFrameMatrix);
 			for each(var subMesh:SubMesh in mesh.subMeshes){
 				subMesh.geometry.boneData = null;
 				var posData:Vector.<Number> = subMesh.geometry.getPosData();
-				lastKeyFrameTransform.transformVectors(posData, posData);
+				keyFrameMatrix.transformVectors(posData, posData);
 			}
 		}
 		

@@ -43,13 +43,6 @@ package snjdck.g3d.geom
 			rotation.toMatrix(result, translation);
 		}
 		
-		public function transformVectors(vIn:Vector.<Number>, vOut:Vector.<Number>):void
-		{
-			toMatrix(tempMatrix);
-			tempMatrix.transformVectors(vIn, vOut);
-		}
-		
 		static private const tempVector:Vector3D = new Vector3D();
-		static private const tempMatrix:Matrix3D = new Matrix3D();
 	}
 }

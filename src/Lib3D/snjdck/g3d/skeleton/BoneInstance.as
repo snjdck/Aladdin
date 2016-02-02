@@ -15,6 +15,7 @@ package snjdck.g3d.skeleton
 	{
 		internal var initTransform:Matrix4x4;
 		internal var boneWorldToLocal:Matrix4x4;
+		internal var boneWorldToLocalMatrix:Matrix3D;
 		internal var animationInstance:AnimationInstance;
 		
 		private var isBoneDirty:Boolean;
@@ -61,7 +62,7 @@ package snjdck.g3d.skeleton
 				var vertexIndex:int = vertexList[i];
 				posData.push(vertexPosData[vertexIndex], vertexPosData[vertexIndex+1], vertexPosData[vertexIndex+2]);
 			}
-			boneWorldToLocal.transformVectors(posData, posData);
+			boneWorldToLocalMatrix.transformVectors(posData, posData);
 			calcVertexBound(posData, tempBound);
 			defaultBound.merge(tempBound);
 //			markOriginalBoundDirty();
