@@ -1,7 +1,5 @@
 ﻿package snjdck.quadtree
 {
-	import flash.geom.Vector3D;
-	
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.ViewFrustum;
 
@@ -11,8 +9,8 @@
 	 */
 	final public class QuadTree
 	{
-		private var center:Vector3D;
-		private var halfSize:int;
+		private var centerX:Number;
+		private var centerY:Number;
 		
 		private var nodeList:Array;
 		private var parent:QuadTree;
@@ -22,37 +20,35 @@
 		public function QuadTree(parent:QuadTree, centerX:int, centerY:int, halfSize:int, minSize:int)
 		{
 			this.parent = parent;
-			this.center = new Vector3D(centerX, centerY);
-			this.halfSize = halfSize;
+			this.centerX = centerX;
+			this.centerY = centerY;
 			bound.center.x = centerX;
 			bound.center.y = centerY;
 			bound.halfSize.x = halfSize;
 			bound.halfSize.y = halfSize;
-			onInit(minSize);
+			if(halfSize > minSize){
+				createChildren(halfSize >> 1, minSize);
+			}
 		}
 		
-		private function onInit(minSize:int):void
+		private function createChildren(childHalfSize:int, minSize:int):void
 		{
-			if(halfSize <= minSize){
-				return;
-			}
-			var childHalfSize:int = halfSize >> 1;
 			nodeList = new Array(4);
-			nodeList[0] = new QuadTree(this, center.x - childHalfSize, center.y - childHalfSize, childHalfSize, minSize);
-			nodeList[1] = new QuadTree(this, center.x + childHalfSize, center.y - childHalfSize, childHalfSize, minSize);
-			nodeList[2] = new QuadTree(this, center.x - childHalfSize, center.y + childHalfSize, childHalfSize, minSize);
-			nodeList[3] = new QuadTree(this, center.x + childHalfSize, center.y + childHalfSize, childHalfSize, minSize);
+			nodeList[0] = new QuadTree(this, centerX - childHalfSize, centerY - childHalfSize, childHalfSize, minSize);
+			nodeList[1] = new QuadTree(this, centerX + childHalfSize, centerY - childHalfSize, childHalfSize, minSize);
+			nodeList[2] = new QuadTree(this, centerX - childHalfSize, centerY + childHalfSize, childHalfSize, minSize);
+			nodeList[3] = new QuadTree(this, centerX + childHalfSize, centerY + childHalfSize, childHalfSize, minSize);
 		}
 		
 		private function classifyNode(node:IQuadTreeNode):QuadTree
 		{
-			var isInTopQuadrant:Boolean = node.y + node.height <= center.y;
-			var isInBottomQuadrant:Boolean = node.y >= center.y;
+			var isInTopQuadrant:Boolean = node.y + node.height <= centerY;
+			var isInBottomQuadrant:Boolean = node.y >= centerY;
 			if(!(isInTopQuadrant || isInBottomQuadrant)){
 				return this;
 			}
-			var isInLeftQuadrant:Boolean = node.x + node.width <= center.x;
-			var isInRightQuadrant:Boolean = node.x >= center.x;
+			var isInLeftQuadrant:Boolean = node.x + node.width <= centerX;
+			var isInRightQuadrant:Boolean = node.x >= centerX;
 			if(!(isInLeftQuadrant || isInRightQuadrant)){
 				return this;
 			}
@@ -65,13 +61,11 @@
 			var targetTree:QuadTree = this;
 			var testTree:QuadTree = null;
 			for(;;){
-				if(null == targetTree.nodeList){
+				if(null == targetTree.nodeList)
 					break;
-				}
 				testTree = targetTree.classifyNode(node);
-				if(testTree == targetTree){
+				if(testTree == targetTree)
 					break;
-				}
 				targetTree = testTree;
 			}
 			return targetTree;
@@ -98,7 +92,6 @@
 		
 		public function getObjectsInFrustum(viewFrustum:ViewFrustum, result:Array):void
 		{
-			var halfSize:Number = viewFrustum.halfSize.x * Math.SQRT2;
 			var currentNode:QuadTree = this;
 			for(;;){
 				switch(viewFrustum.classify(currentNode.bound)){
