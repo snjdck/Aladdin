@@ -2,7 +2,7 @@ package snjdck.quadtree
 {
 	import snjdck.g3d.bound.AABB;
 
-	public interface IQuadTreeNode
+	public interface IQuadTreeItem
 	{
 		function get x():Number;
 		function get y():Number;

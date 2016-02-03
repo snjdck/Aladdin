@@ -9,13 +9,17 @@
 	 */
 	final public class QuadTree
 	{
+		private var parent:QuadTree;
 		private var centerX:Number;
 		private var centerY:Number;
 		
-		private var nodeList:Array;
-		private var parent:QuadTree;
-		private const objectList:Array = [];
 		private const bound:AABB = new AABB();
+		
+		private var hasNode:Boolean;
+		private var nodeList:Array;
+		
+		private var hasItem:Boolean;
+		private var itemList:Array;
 		
 		public function QuadTree(parent:QuadTree, centerX:int, centerY:int, halfSize:int, minSize:int)
 		{
@@ -38,17 +42,18 @@
 			nodeList[1] = new QuadTree(this, centerX + childHalfSize, centerY - childHalfSize, childHalfSize, minSize);
 			nodeList[2] = new QuadTree(this, centerX - childHalfSize, centerY + childHalfSize, childHalfSize, minSize);
 			nodeList[3] = new QuadTree(this, centerX + childHalfSize, centerY + childHalfSize, childHalfSize, minSize);
+			hasNode = true;
 		}
 		
-		private function classifyNode(node:IQuadTreeNode):QuadTree
+		private function classifyNode(item:IQuadTreeItem):QuadTree
 		{
-			var isInTopQuadrant:Boolean = node.y + node.height <= centerY;
-			var isInBottomQuadrant:Boolean = node.y >= centerY;
+			var isInTopQuadrant:Boolean = item.y + item.height <= centerY;
+			var isInBottomQuadrant:Boolean = item.y >= centerY;
 			if(!(isInTopQuadrant || isInBottomQuadrant)){
 				return this;
 			}
-			var isInLeftQuadrant:Boolean = node.x + node.width <= centerX;
-			var isInRightQuadrant:Boolean = node.x >= centerX;
+			var isInLeftQuadrant:Boolean = item.x + item.width <= centerX;
+			var isInRightQuadrant:Boolean = item.x >= centerX;
 			if(!(isInLeftQuadrant || isInRightQuadrant)){
 				return this;
 			}
@@ -56,14 +61,14 @@
 			return nodeList[index];
 		}
 		
-		private function findTargetTree(node:IQuadTreeNode):QuadTree
+		private function findTargetTree(item:IQuadTreeItem):QuadTree
 		{
 			var targetTree:QuadTree = this;
 			var testTree:QuadTree = null;
 			for(;;){
-				if(null == targetTree.nodeList)
+				if(!targetTree.hasNode)
 					break;
-				testTree = targetTree.classifyNode(node);
+				testTree = targetTree.classifyNode(item);
 				if(testTree == targetTree)
 					break;
 				targetTree = testTree;
@@ -71,16 +76,16 @@
 			return targetTree;
 		}
 			
-		public function insert(node:IQuadTreeNode):void
+		public function insert(item:IQuadTreeItem):void
 		{
-			var targetTree:QuadTree = findTargetTree(node);
-			/*
-			if(targetTree.objectList.length > 1){
-				enterDebugger();
+			var targetTree:QuadTree = findTargetTree(item);
+			if(targetTree.hasItem){
+				targetTree.itemList.push(item);
+			}else{
+				targetTree.itemList = [item];
+				targetTree.hasItem = true;
 			}
-			*/
-			targetTree.objectList.push(node);
-			var nodeBound:AABB = node.getBound();
+			var nodeBound:AABB = item.getBound();
 			if(nodeBound.halfSize.z <= 0){
 				return;
 			}
@@ -96,22 +101,24 @@
 			for(;;){
 				switch(viewFrustum.classify(currentNode.bound)){
 					case ViewFrustum.INTERECT:
-						for each(var item:IQuadTreeNode in currentNode.objectList){
-							if(viewFrustum.classify(item.getBound()) <= 0){
-								result.push(item);
+						if(currentNode.hasItem){
+							for each(var item:IQuadTreeItem in currentNode.itemList){
+								if(viewFrustum.classify(item.getBound()) <= 0){
+									result.push(item);
+								}
 							}
 						}
-						if(currentNode.nodeList != null){
-							nodeList1.push.apply(null, currentNode.nodeList);
+						if(currentNode.hasNode){
+							list_1.push.apply(null, currentNode.nodeList);
 						}
 						break;
 					case ViewFrustum.CONTAINS:
 						currentNode.collectObjsRecursively(result);
 						break;
 				}
-				if(nodeList1.length <= 0)
+				if(list_1.length <= 0)
 					break;
-				currentNode = nodeList1.pop();
+				currentNode = list_1.pop();
 			}
 		}
 		
@@ -119,16 +126,15 @@
 		{
 			var currentNode:QuadTree = this;
 			for(;;){
-				result.push.apply(null, currentNode.objectList);
-				if(currentNode.nodeList != null)
-					nodeList2.push.apply(null, currentNode.nodeList);
-				if(nodeList2.length <= 0)
+				if(currentNode.hasItem) result.push.apply(null, currentNode.itemList);
+				if(currentNode.hasNode) list_2.push.apply(null, currentNode.nodeList);
+				if(list_2.length <= 0)
 					break;
-				currentNode = nodeList2.pop();
+				currentNode = list_2.pop();
 			}
 		}
 		
-		static private const nodeList1:Array = [];
-		static private const nodeList2:Array = [];
+		static private const list_1:Array = [];
+		static private const list_2:Array = [];
 	}
 }
