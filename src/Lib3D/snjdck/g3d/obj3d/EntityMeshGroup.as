@@ -46,7 +46,6 @@ package snjdck.g3d.obj3d
 				var subEntity:SubEntity = new SubEntity(subMesh);
 				entity.addChild(subEntity);
 				subEntityList.push(subEntity);
-				entity.handleSubEntity(subMesh);
 			}
 		}
 		

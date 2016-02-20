@@ -3,11 +3,8 @@ package snjdck.g3d.skeleton
 	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.geom.Matrix4x4;
-	import snjdck.g3d.parser.Geometry;
-	import snjdck.model3d.calcVertexBound;
 	
 	use namespace ns_g3d;
 	
@@ -50,7 +47,7 @@ package snjdck.g3d.skeleton
 			}
 			return boneWorldToWorld;
 		}
-		
+		/*
 		public function addVertex(geometry:Geometry):void
 		{
 			var vertexList:Array = geometry.boneData.getVertexListByBoneId(id);
@@ -79,5 +76,6 @@ package snjdck.g3d.skeleton
 		private const defaultBound:AABB = new AABB();
 		static private const tempMatrix:Matrix3D = new Matrix3D();
 		private const posData:Vector.<Number> = new Vector.<Number>();
+		*/
 	}
 }

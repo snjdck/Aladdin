@@ -6,7 +6,6 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.Mesh;
-	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.skeleton.AnimationInstance;
 	import snjdck.g3d.skeleton.Bone;
@@ -103,7 +102,6 @@ package snjdck.g3d.obj3d
 			if(scene.camera.isInSight(worldBound)){
 				addToDrawUnitCollector(collector);
 				super.collectDrawUnit(collector);
-				getWorldBound();
 			}
 		}
 		
@@ -140,7 +138,7 @@ package snjdck.g3d.obj3d
 		{
 			meshGroup.hideSubMeshAt(index);
 		}
-		
+		/*
 		internal function handleSubEntity(subMesh:SubMesh):void
 		{
 			for each(var boneObject:BoneInstance in boneStateGroup){
@@ -150,11 +148,6 @@ package snjdck.g3d.obj3d
 			}
 		}
 		
-		public function calculateBound():void
-		{
-			// TODO Auto Generated method stub
-			bound.transform(worldTransform, worldBound);
-		}
 		
 		public function getWorldBound():AABB
 		{
@@ -166,6 +159,11 @@ package snjdck.g3d.obj3d
 			}
 			bound.transform(worldTransform, worldBound);
 			return worldBound;
+		}
+		*/
+		public function calculateBound():void
+		{
+			bound.transform(worldTransform, worldBound);
 		}
 	}
 }
