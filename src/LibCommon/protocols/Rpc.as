@@ -89,13 +89,11 @@ package protocols
 		
 		private function readObject(result:Object):*
 		{
-			while(true){
+			for(;;){
 				var key:String = buffer.readUTF();
-				if(9 == buffer[buffer.position]){
+				if(9 == buffer[buffer.position])
 					break;
-				}else{
-					result[key] = readData();
-				}
+				result[key] = readData();
 			}
 			
 			return result;
