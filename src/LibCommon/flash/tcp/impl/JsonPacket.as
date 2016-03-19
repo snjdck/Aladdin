@@ -17,7 +17,7 @@ package flash.tcp.impl
 		
 		public function readFrom(buffer:IDataInput):void
 		{
-			if(buffer.bytesAvailable > 0){
+			if(buffer!= null && buffer.bytesAvailable > 0){
 				data = TypeCast.CastBytesToJson(buffer);
 			}
 		}

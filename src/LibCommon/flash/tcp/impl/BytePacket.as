@@ -27,7 +27,7 @@ package flash.tcp.impl
 		
 		public function get headSize():uint
 		{
-			return 4;
+			return 6;
 		}
 		
 		public function get bodySize():uint
@@ -39,6 +39,7 @@ package flash.tcp.impl
 		{
 			_bodySize = buffer.readUnsignedShort() - headSize;
 			_msgId = buffer.readUnsignedShort();
+			buffer.readUnsignedShort();//reserved
 		}
 		
 		public function readBody(buffer:IDataInput):void
@@ -54,6 +55,7 @@ package flash.tcp.impl
 			if(null == _msgData || _msgData.length <= 0){
 				buffer.writeShort(headSize);
 				buffer.writeShort(msgId);
+				buffer.writeShort(0);
 				return;
 			}
 			
@@ -61,6 +63,7 @@ package flash.tcp.impl
 			
 			buffer.writeShort(headSize + _msgData.length);
 			buffer.writeShort(msgId);
+			buffer.writeShort(0);
 			buffer.writeBytes(_msgData);
 		}
 

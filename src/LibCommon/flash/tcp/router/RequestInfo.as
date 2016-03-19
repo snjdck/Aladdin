@@ -48,7 +48,9 @@ package flash.tcp.router
 			}
 			var response:ISerializable = new responseType();
 			response.readFrom(packet.msgData);
-			assert(packet.msgData.bytesAvailable == 0, "封包中有冗余数据!");
+			if(packet.msgData != null){
+				assert(packet.msgData.bytesAvailable == 0, "封包中有冗余数据!");
+			}
 			lambda.call(trait.onSuccess, response);
 		}
 		

@@ -36,13 +36,11 @@ package protocols
 		{
 			buffer.position += 4;
 			
-			while(true){
+			for(;;){
 				var type:uint = buffer.readUnsignedByte();
-				if(type != TERMINATOR){
-					output[readCString()] = readData(type);
-				}else{
+				if(type == TERMINATOR)
 					break;
-				}
+				output[readCString()] = readData(type);
 			}
 			
 			return output;
