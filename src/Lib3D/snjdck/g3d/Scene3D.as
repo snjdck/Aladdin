@@ -7,6 +7,8 @@ package snjdck.g3d
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.terrain.EmptyTerrain;
+	import snjdck.g3d.terrain.ITerrain;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.instance.InstanceRender;
@@ -17,6 +19,8 @@ package snjdck.g3d
 	{
 		public const root:DisplayObjectContainer3D = new DisplayObjectContainer3D();
 		public const camera:Camera3D = new Camera3D();
+		
+		public var terrain:ITerrain = new EmptyTerrain();
 		
 		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
 		
@@ -40,11 +44,12 @@ package snjdck.g3d
 			collector.clear();
 			root.collectDrawUnit(collector);
 			collector.update(timeElapsed);
+			terrain.update(timeElapsed);
 		}
 		
 		public function needDraw():Boolean
 		{
-			return collector.hasDrawUnits();
+			return collector.hasDrawUnits() || terrain.needDraw();
 		}
 		
 		public function draw(context3d:GpuContext):void
@@ -52,7 +57,9 @@ package snjdck.g3d
 			var constData:Vector.<Number> = InstanceRender.Instance.constData;
 			camera.upload(InstanceRender.Instance.constData);
 			context3d.setVc(0, constData, 5);
-			collector.render(context3d);
+			collector.renderOpaqueUnits(context3d);
+			terrain.draw();
+			collector.renderBlendUnits(context3d);
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void{}

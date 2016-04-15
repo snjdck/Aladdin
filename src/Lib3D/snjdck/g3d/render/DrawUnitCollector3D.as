@@ -47,13 +47,17 @@ package snjdck.g3d.render
 			drawUnitList.push(drawUnit);
 		}
 		
-		public function render(context3d:GpuContext):void
+		public function renderOpaqueUnits(context3d:GpuContext):void
 		{
 			if(opaqueDrawUnits.hasDrawUnits()){
 				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 				context3d.blendMode = BlendMode.NORMAL;
 				opaqueDrawUnits.draw(context3d, false);
 			}
+		}
+		
+		public function renderBlendUnits(context3d:GpuContext):void
+		{
 			if(blendDrawUnits.hasDrawUnits()){
 				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
 				blendDrawUnits.draw(context3d, true);
