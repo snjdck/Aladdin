@@ -32,7 +32,7 @@ package snjdck.gpu
 		protected var _width:int;
 		protected var _height:int;
 		
-		private var isMouseMoved:Boolean = true;
+		private const stageEventProxy:StageEventProxy = new StageEventProxy();
 		
 		public function View2D(stage:Stage)
 		{
@@ -43,18 +43,7 @@ package snjdck.gpu
 		
 		private function init():void
 		{
-			var eventList:Array = [
-				MouseEvent.RIGHT_CLICK,
-				MouseEvent.RIGHT_MOUSE_DOWN,
-				MouseEvent.RIGHT_MOUSE_UP,
-				MouseEvent.CLICK,
-				MouseEvent.MOUSE_DOWN,
-				MouseEvent.MOUSE_UP
-			];
-			for each(var evtName:String in eventList){
-				stage2d.addEventListener(evtName, __onStageEvent);
-			}
-			stage2d.addEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
+			stageEventProxy.listenStageEvent(stage2d, __onStageEvent);
 //			stage2d.addEventListener(Event.RESIZE, __onResize);
 			stage3d = stage2d.stage3Ds[0];
 			stage3d.addEventListener(Event.CONTEXT3D_CREATE, __onDeviceCreate);
@@ -91,9 +80,9 @@ package snjdck.gpu
 		
 		public function onTick(timeElapsed:int):void
 		{
-			if(isMouseMoved){
+			if(stageEventProxy.isMouseMoved){
 				updateMouseXY(stage2d.mouseX-stage3d.x, stage2d.mouseY-stage3d.y);
-				isMouseMoved = false;
+				stageEventProxy.isMouseMoved = false;
 			}
 			updateScene(timeElapsed);
 			context3d.clear(_backBufferColor.red, _backBufferColor.green, _backBufferColor.blue, _backBufferColor.alpha);
@@ -128,11 +117,6 @@ package snjdck.gpu
 		protected function __onStageEvent(evt:MouseEvent):void
 		{
 			scene2d.notifyEvent(evt.type);
-		}
-		
-		private function __onMouseMove(evt:Event):void
-		{
-			isMouseMoved = true;
 		}
 		
 		private function __onResize(evt:Event):void
