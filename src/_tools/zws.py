@@ -3,7 +3,8 @@ import zlib
 import struct
 import sys
 import os
-import math
+
+from swf import *
 
 def findBestZlib(rawData):
 	result = rawData
@@ -25,31 +26,20 @@ def findBestLzma(rawData):
 	print(hex(len(result)), len(result))
 	return result
 
-def removeTags(rawData):
-	nBit = rawData[0] >> 3
-	offset = math.ceil((nBit*4+5) / 8.0) + 4
-	result = rawData[:offset]
-	rawDataSize = len(rawData)
-	while offset < rawDataSize:
-		flag = struct.unpack_from("H", rawData, offset)[0]
-		tagType = flag >> 6
-		tagBodySize = flag & 0x3F
-		if 0x3F == tagBodySize:
-			tagBodySize = struct.unpack_from("I", rawData, offset+2)[0]
-			tagSize = tagBodySize + 6
-		else:
-			tagSize = tagBodySize + 2
-		#remove ProductInfo, FrameLabel, ScriptLimits, Metadata
-		if tagType not in [41, 43, 65, 77]:
-			#hasMetadata = false
-			if tagType == 69:
-				tagBody = struct.unpack_from("I", rawData, offset+2)[0]
-				tagBody &= 0xEF
-				result += rawData[offset:offset+2] + struct.pack("I", tagBody)
-			else:
-				result += rawData[offset:offset+tagSize]
-		offset += tagSize
-	return result
+tagList = []
+
+def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
+	#remove ProductInfo, FrameLabel, ScriptLimits, Metadata
+	if tagType in [41, 43, 65, 77]:
+		return
+	#hasMetadata = false
+	if tagType == 69:
+		tagBody = readUI32(rawData, offset+2)
+		tagBody &= 0xEF
+		tagList.append(rawData[offset:offset+2] + struct.pack("I", tagBody))
+	else:
+		tagSize = tagHeadSize + tagBodySize
+		tagList.append(rawData[offset:offset+tagSize])
 
 def main(filePath):
 	if not os.path.exists(filePath):
@@ -58,22 +48,21 @@ def main(filePath):
 	with open(filePath, "rb") as f:
 		fileData = f.read()
 
-	sign, version, dataSize = struct.unpack_from("3sBI", fileData)
+	sign, version, dataSize = decodeHead(fileData)
 
 	if version < 13:
 		version = 13
 
-	if sign == b"CWS":
-		rawData = zlib.decompress(fileData[8:])
-	elif sign == b"FWS":
-		rawData = fileData[8:]
-	elif sign == b"ZWS":
-		rawData = fileData[12:17] + struct.pack("2I",0xFFFFFFFF,0xFFFFFFFF) + fileData[17:]
-		rawData = lzma.decompress(rawData, lzma.FORMAT_ALONE)
-	else:
+	rawData = decodeBody(fileData)
+
+	if not rawData:
 		return "invalid swf file."
 	
-	rawData = removeTags(rawData)
+	startOffset = visitTags(rawData, removeTags)
+	rawData = rawData[:startOffset]
+	for chunk in tagList:
+		rawData += chunk
+
 	dataSize = len(rawData) + 8
 
 	lzmaData = findBestLzma(rawData)
@@ -82,9 +71,7 @@ def main(filePath):
 	outputPath = filePath[:dotIndex] + "Compressed" + filePath[dotIndex:]
 	
 	with open(outputPath, "wb") as f:
-		f.write(struct.pack("3sB2I", b"ZWS", version, dataSize, len(lzmaData)-13))
-		f.write(lzmaData[:5])
-		f.write(lzmaData[13:])
+		f.write(encodeLzmaSWF(lzmaData, dataSize, version))
 	
 	return "success."
 
