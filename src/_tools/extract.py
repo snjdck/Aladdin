@@ -20,7 +20,9 @@ def readSymbolClass(rawData, offset):
 		while rawData[end] != 0:
 			end += 1
 		symbolName = rawData[offset:end].decode()
-		symbolName = "$".join(symbolName.split("$")[:-1])
+		index = symbolName.rfind("$")
+		if index >= 0:
+			symbolName = symbolName[:index]
 		index = symbolName.rfind("_")
 		if index >= 0:
 			symbolName = symbolName[:index] + "." + symbolName[index+1:]
