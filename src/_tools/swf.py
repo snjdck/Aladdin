@@ -9,10 +9,6 @@ def readUI16(rawData, offset):
 def readUI32(rawData, offset):
 	return struct.unpack_from("I", rawData, offset)[0]
 
-def encodeLzmaSWF(lzmaData, dataSize, version):
-	head = struct.pack("3sB2I", b"ZWS", version, dataSize, len(lzmaData)-13)
-	return head + lzmaData[:5] + lzmaData[13:]
-
 def decodeHead(fileData):
 	return struct.unpack_from("3sBI", fileData)
 
@@ -43,3 +39,25 @@ def visitTags(rawData, handler):
 		handler(rawData, offset, tagType, tagHeadSize, tagBodySize)
 		offset += tagHeadSize + tagBodySize
 	return start
+
+def encodeSWF(rawData, version):
+	head = struct.pack("3sBI", b"FWS", version, len(rawData)+8)
+	return head + rawData
+
+def encodeZlibSWF(rawData, version):
+	head = struct.pack("3sBI", b"CWS", version, len(rawData)+8)
+	return head + zlib.compress(rawData, 9)
+
+def encodeLzmaSWF(rawData, version):
+	if version < 13: version = 13
+	body = findBestLzma(rawData)
+	head = struct.pack("3sB2I", b"ZWS", version, len(rawData)+8, len(body)-13)
+	return head + body[:5] + body[13:]
+
+def findBestLzma(rawData):
+	result = rawData
+	for i in range(10):
+		tempData = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, i)
+		if len(tempData) < len(result):
+			result = tempData
+	return result
