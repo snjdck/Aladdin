@@ -54,9 +54,6 @@ def readSubMesh(fileData, offset, pMesh):
 	vetrexCount, normalCount, uvCount, triangleCount, subMeshIndex = struct.unpack_from("5H", fileData, offset)
 	offset += 10
 
-	normalList = []
-	triangleList = []
-
 	pMesh.InitControlPoints(vetrexCount)
 
 	for i in range(vetrexCount):
@@ -65,7 +62,7 @@ def readSubMesh(fileData, offset, pMesh):
 		offset += 16
 
 	for i in range(normalCount):
-		normalList.append(struct.unpack_from("3f", fileData, offset+4))
+		normal = struct.unpack_from("3f", fileData, offset+4)
 		offset += 20
 
 	for i in range(uvCount):
@@ -91,19 +88,24 @@ def readSubMesh(fileData, offset, pMesh):
 
 def readAnimation(fileData, offset):
 	keyFrameCount = readUI16(fileData, offset)
-	hasOffsetData = fileData[offset+2]
-	offset += 3
-	if hasOffsetData > 0:
+	offset += 2
+	hasOffsetData = fileData[offset] > 0
+	offset += 1
+	if hasOffsetData:
 		offset += 12 * keyFrameCount
 	return keyFrameCount, offset
 
 def readBone(fileData, offset, animationList):
-	if fileData[offset] > 0:
-		return None, offset+1
+	noBoneFlag = fileData[offset] > 0
+	offset += 1
 
-	boneName = readFixStr(fileData, offset+1)
-	parentBoneId = readI16(fileData, offset+33)
-	offset += 35
+	if noBoneFlag:
+		return None, offset
+
+	boneName = readFixStr(fileData, offset)
+	offset += 32
+	parentBoneId = readI16(fileData, offset)
+	offset += 2
 	for i in range(len(animationList)):
 		for j in range(animationList[i]):
 			offset += 24
