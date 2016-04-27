@@ -1,5 +1,24 @@
 import struct
+import sys
 from fbx import *
+
+class Bound:
+	def __init__(self):
+		self.minX = sys.maxsize
+		self.minY = sys.maxsize
+		self.minZ = sys.maxsize
+		self.maxX = -sys.maxsize
+		self.maxY = -sys.maxsize
+		self.maxZ = -sys.maxsize
+
+	def addPt(self, pt):
+		if pt[0] < self.minX: self.minX = pt[0]
+		if pt[0] > self.maxX: self.maxX = pt[0]
+		if pt[1] < self.minY: self.minY = pt[1]
+		if pt[1] > self.maxY: self.maxY = pt[1]
+		if pt[2] < self.minZ: self.minZ = pt[2]
+		if pt[2] > self.maxZ: self.maxZ = pt[2]
+
 
 keyList = (0xd1, 0x73, 0x52, 0xf6, 0xd2, 0x9a, 0xcb, 0x27, 0x3e, 0xaf, 0x59, 0x31, 0x37, 0xb3, 0xe7, 0xa2)
 
@@ -27,15 +46,19 @@ def parse(fileData, fbxMgr):
 	subMeshCount, boneCount, animationCount = struct.unpack_from("3H", fileData, offset)
 	offset += 6
 	animationList = []
+	bound = Bound()
 	for i in range(subMeshCount):
 		subMesh = fbxMgr.createMesh(str(i))
-		offset = readSubMesh(fileData, offset, subMesh)
+		offset = readSubMesh(fileData, offset, subMesh, bound)
 	for _ in range(animationCount):
 		keyFrameCount, offset = readAnimation(fileData, offset)
 		animationList.append(keyFrameCount)
-	for _ in range(boneCount):
-		bone, offset = readBone(fileData, offset, animationList)
+	for i in range(boneCount):
+		bone, offset = readBone(fileData, offset, animationList, i)
 	assert offset == len(fileData)
+	print(subMeshCount, boneCount, animationCount)
+	print(animationList)
+	print(bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY, bound.maxZ)
 
 def decode(fileData):
 	if fileData[3] == 0x0A:
@@ -50,7 +73,7 @@ def decode(fileData):
 			offset    = 0xFF & (value + 0x3D)
 		return bytes(memory), 8
 
-def readSubMesh(fileData, offset, pMesh):
+def readSubMesh(fileData, offset, pMesh, bound):
 	vetrexCount, normalCount, uvCount, triangleCount, subMeshIndex = struct.unpack_from("5H", fileData, offset)
 	offset += 10
 
@@ -58,6 +81,8 @@ def readSubMesh(fileData, offset, pMesh):
 
 	for i in range(vetrexCount):
 		vertex = struct.unpack_from("2H3f", fileData, offset)
+		print(vertex)
+		bound.addPt(vertex[2:])
 		pMesh.SetControlPointAt(FbxVector4(*vertex[2:]), i)
 		offset += 16
 
@@ -95,7 +120,7 @@ def readAnimation(fileData, offset):
 		offset += 12 * keyFrameCount
 	return keyFrameCount, offset
 
-def readBone(fileData, offset, animationList):
+def readBone(fileData, offset, animationList, boneId):
 	noBoneFlag = fileData[offset] > 0
 	offset += 1
 
@@ -110,4 +135,4 @@ def readBone(fileData, offset, animationList):
 		for j in range(animationList[i]):
 			offset += 24
 
-	return (boneName, parentBoneId), offset
+	return (boneId, boneName, parentBoneId), offset
