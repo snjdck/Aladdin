@@ -10,10 +10,11 @@ package snjdck.g3d.skeleton
 	
 	public class BoneInstance extends DisplayObjectContainer3D
 	{
-		internal var initTransform:Matrix4x4;
-		internal var boneWorldToLocal:Matrix4x4;
-		internal var boneWorldToLocalMatrix:Matrix3D;
+//		internal var initTransform:Matrix4x4;
+//		internal var boneWorldToLocal:Matrix4x4;
+//		internal var boneWorldToLocalMatrix:Matrix3D;
 		internal var animationInstance:AnimationInstance;
+		private var bone:Bone;
 		
 		private var isBoneDirty:Boolean;
 		private const boneWorldToWorld:Matrix4x4 = new Matrix4x4();
@@ -21,18 +22,25 @@ package snjdck.g3d.skeleton
 		
 		ns_g3d const attachmentGroup:BoneAttachmentGroup = new BoneAttachmentGroup(this);
 		
-		public function BoneInstance(){}
+		public function BoneInstance(bone:Bone)
+		{
+			this.id = bone.id;
+			this.name = bone.name;
+			this.bone = bone;
+		}
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
-			animationInstance.getKeyFrame(id, boneLocalToWorld);
-			initTransform.prepend(boneLocalToWorld, boneLocalToWorld);
-			boneLocalToWorld.toMatrix(transform);
-			var parentBoneObject:BoneInstance = parent as BoneInstance;
-			if(parentBoneObject != null)
-				parentBoneObject.boneLocalToWorld.prepend(boneLocalToWorld, boneLocalToWorld);
-			markWorldMatrixDirty();
-			isBoneDirty = true;
+			if(animationInstance.isDirty()){
+				animationInstance.getKeyFrame(id, boneLocalToWorld);
+				bone.transform.prepend(boneLocalToWorld, boneLocalToWorld);
+				boneLocalToWorld.toMatrix(transform);
+				var parentBoneObject:BoneInstance = parent as BoneInstance;
+				if(parentBoneObject != null)
+					parentBoneObject.boneLocalToWorld.prepend(boneLocalToWorld, boneLocalToWorld);
+				markWorldMatrixDirty();
+				isBoneDirty = true;
+			}
 			super.onUpdate(timeElapsed);
 		}
 		
@@ -42,7 +50,7 @@ package snjdck.g3d.skeleton
 		public function getBoneStateGlobal():Matrix4x4
 		{
 			if(isBoneDirty){
-				boneLocalToWorld.prepend(boneWorldToLocal, boneWorldToWorld);
+				boneLocalToWorld.prepend(bone.transformGlobalToLocal, boneWorldToWorld);
 				isBoneDirty = false;
 			}
 			return boneWorldToWorld;

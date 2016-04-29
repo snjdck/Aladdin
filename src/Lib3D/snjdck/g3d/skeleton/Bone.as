@@ -17,8 +17,8 @@ package snjdck.g3d.skeleton
 		private var nextSibling:Bone;
 		private var firstChild:Bone;
 		
-		private const transformGlobalToLocal:Matrix4x4 = new Matrix4x4();
-		private const transformGlobalToLocalMatrix:Matrix3D = new Matrix3D();
+		internal const transformGlobalToLocal:Matrix4x4 = new Matrix4x4();
+//		private const transformGlobalToLocalMatrix:Matrix3D = new Matrix3D();
 		
 		public function Bone(name:String, id:int)
 		{
@@ -28,14 +28,14 @@ package snjdck.g3d.skeleton
 		
 		internal function createObject3D(entity:Entity, parent:DisplayObjectContainer3D):void
 		{
-			var boneObject:BoneInstance = new BoneInstance();
+			var boneObject:BoneInstance = new BoneInstance(this);
 			boneObject.id = id;
 			boneObject.name = name;
 			boneObject.animationInstance = entity.animationInstance;
 			entity.regBone(boneObject);
-			boneObject.initTransform = transform;
-			boneObject.boneWorldToLocal = transformGlobalToLocal;
-			boneObject.boneWorldToLocalMatrix = transformGlobalToLocalMatrix;
+//			boneObject.initTransform = transform;
+//			boneObject.boneWorldToLocal = transformGlobalToLocal;
+//			boneObject.boneWorldToLocalMatrix = transformGlobalToLocalMatrix;
 			parent.addChild(boneObject);
 			if(nextSibling){
 				nextSibling.createObject3D(entity, parent);
@@ -61,7 +61,7 @@ package snjdck.g3d.skeleton
 			}
 			
 			transformGlobalToLocal.invert();
-			transformGlobalToLocal.toMatrix(transformGlobalToLocalMatrix);
+//			transformGlobalToLocal.toMatrix(transformGlobalToLocalMatrix);
 		}
 		
 		internal function addChild(child:Bone):void

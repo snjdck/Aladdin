@@ -25,6 +25,11 @@ package snjdck.g3d.skeleton
 			}
 		}
 		
+		public function isDirty():Boolean
+		{
+			return true;
+		}
+		
 		public function getKeyFrame(boneId:int, result:Matrix4x4):void
 		{
 			_animation.getTransform(boneId, time, result);
