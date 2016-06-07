@@ -5,7 +5,8 @@ package array
 	/**  @return list */
 	public function prepend(list:Array, items:Array):Array
 	{
-		lambda.apply(list.unshift, items);
+		if(items != null && items.length > 0)
+			lambda.apply(list.unshift, items);
 		return list;
 	}
 }
