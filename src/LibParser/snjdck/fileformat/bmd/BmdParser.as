@@ -55,18 +55,16 @@ package snjdck.fileformat.bmd
 		static private const keyList:Array = [0xd1, 0x73, 0x52, 0xf6, 0xd2, 0x9a, 0xcb, 0x27, 0x3e, 0xaf, 0x59, 0x31, 0x37, 0xb3, 0xe7, 0xa2];
 		private function decodeBmd():void
 		{
-			const prevPosition:int = buffer.position;
+			var keyIndex:int = 0;
 			var offset:int = 0x5E;
 			
-			for(var i:int=prevPosition, n:int=buffer.length; i<n; i++)
+			for(var i:int=buffer.position, n:int=buffer.length; i<n; ++i)
 			{
 				var byte:uint = buffer[i];
-				var keyIndex:int = (i - prevPosition) % keyList.length;
 				buffer[i] = (byte ^ keyList[keyIndex]) - offset;
+				keyIndex = (keyIndex + 1) & 0xF;
 				offset = (byte + 0x3D) & 0xFF;
 			}
-			
-			buffer.position = prevPosition;
 		}
 		
 		public function parse():void
