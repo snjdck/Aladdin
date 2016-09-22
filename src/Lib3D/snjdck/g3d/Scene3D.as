@@ -5,10 +5,9 @@ package snjdck.g3d
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
-	import snjdck.g3d.terrain.EmptyTerrain;
-	import snjdck.g3d.terrain.ITerrain;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.instance.InstanceRender;
@@ -52,9 +51,9 @@ package snjdck.g3d
 		public function draw(context3d:GpuContext):void
 		{
 			var constData:Vector.<Number> = InstanceRender.Instance.constData;
-			camera.upload(InstanceRender.Instance.constData);
-			context3d.setVc(0, constData, 5);
-			collector.renderOpaqueUnits(context3d);
+			camera.upload(constData);
+			context3d.setVc(0, constData, Geometry.WORLD_MATRIX_OFFSET);
+			collector.renderDrawUnits(context3d);
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void{}
