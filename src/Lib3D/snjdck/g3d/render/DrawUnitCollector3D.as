@@ -5,6 +5,9 @@ package snjdck.g3d.render
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.rendersystem.RenderSystem;
+	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
+	import snjdck.g3d.rendersystem.subsystems.RenderSystemFactory;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -14,8 +17,8 @@ package snjdck.g3d.render
 	{
 		private const updateList:Vector.<Object3D> = new Vector.<Object3D>();
 		private const drawUnitList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
-		private const opaqueDrawUnits:DrawUnitGroup = new DrawUnitGroup();
-		private const blendDrawUnits:DrawUnitGroup = new DrawUnitGroup();
+		
+		private const system:RenderSystem = RenderSystemFactory.CreateRenderSystem();
 		
 		public function DrawUnitCollector3D(){}
 		
@@ -28,8 +31,6 @@ package snjdck.g3d.render
 		{
 			updateList.length = 0;
 			drawUnitList.length = 0;
-			opaqueDrawUnits.clear();
-			blendDrawUnits.clear();
 		}
 		
 		public function addUpdateable(object:Object3D):void
@@ -39,29 +40,20 @@ package snjdck.g3d.render
 		
 		public function addDrawUnit(drawUnit:IDrawUnit3D):void
 		{
-			if(drawUnit.blendMode.isOpaque()){
-				opaqueDrawUnits.addDrawUnit(drawUnit);
-			}else{
-				blendDrawUnits.addDrawUnit(drawUnit);
-			}
+			assert(drawUnit != null);
+			var priority:int = drawUnit.blendMode.isOpaque() ? RenderPriority.OPAQUE : RenderPriority.BLEND;
+			system.addItem(drawUnit, priority);
 			drawUnitList.push(drawUnit);
 		}
 		
-		public function renderOpaqueUnits(context3d:GpuContext):void
+		public function addItem(drawUnit:Object, priority:int):void
 		{
-			if(opaqueDrawUnits.hasDrawUnits()){
-				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
-				context3d.blendMode = BlendMode.NORMAL;
-				opaqueDrawUnits.draw(context3d, false);
-			}
+			system.addItem(drawUnit, priority);
 		}
 		
-		public function renderBlendUnits(context3d:GpuContext):void
+		public function renderDrawUnits(context3d:GpuContext):void
 		{
-			if(blendDrawUnits.hasDrawUnits()){
-				context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
-				blendDrawUnits.draw(context3d, true);
-			}
+			system.render(context3d);
 		}
 		
 		public function update(timeElapsed:int):void

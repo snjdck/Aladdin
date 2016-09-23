@@ -3,7 +3,7 @@ package snjdck.g3d.core
 	/**
 	 * 平行投影,left hand
 	 */
-	internal class Projection3D
+	public class Projection3D
 	{
 		static public const zNear	:Number = -10000;
 		static public const zFar	:Number =  10000;
@@ -12,14 +12,14 @@ package snjdck.g3d.core
 		
 		public function Projection3D()
 		{
-			transform[2] = 1.0 / (zFar - zNear);
-			transform[3] = -zNear;
+			transform[2] = zFar - zNear;
+			transform[3] = zNear;
 		}
 		
 		public function resize(width:int, height:int):void
 		{
-			transform[0] = 2 / width;
-			transform[1] = 2 / height;
+			transform[0] = 0.5 * width;
+			transform[1] = 0.5 * height;
 		}
 		
 		public function upload(output:Vector.<Number>):void

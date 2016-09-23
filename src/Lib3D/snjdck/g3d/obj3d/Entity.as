@@ -99,7 +99,7 @@ package snjdck.g3d.obj3d
 				bound.transform(worldTransform, worldBound);
 				isWorldBoundDirty = false;
 			}
-			if(scene.camera.isInSight(worldBound)){
+			if(scene == null || scene.camera.isInSight(worldBound)){
 				addToDrawUnitCollector(collector);
 				super.collectDrawUnit(collector);
 			}
