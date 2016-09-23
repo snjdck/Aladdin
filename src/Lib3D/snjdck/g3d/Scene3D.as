@@ -5,12 +5,10 @@ package snjdck.g3d
 	import snjdck.g3d.core.Camera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.render.instance.InstanceRender;
 	
 	use namespace ns_g3d;
 
@@ -50,9 +48,7 @@ package snjdck.g3d
 		
 		public function draw(context3d:GpuContext):void
 		{
-			var constData:Vector.<Number> = InstanceRender.Instance.constData;
-			camera.upload(constData);
-			context3d.setVc(0, constData, Geometry.WORLD_MATRIX_OFFSET);
+			camera.upload(context3d);
 			collector.renderDrawUnits(context3d);
 		}
 		

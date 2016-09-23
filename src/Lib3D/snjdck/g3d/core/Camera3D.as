@@ -1,11 +1,10 @@
 package snjdck.g3d.core
 {
-	import array.copy;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.geom.Quaternion;
 	import snjdck.g3d.pickup.Ray;
+	import snjdck.gpu.asset.GpuContext;
 	
 	import stdlib.constant.Unit;
 	
@@ -13,38 +12,34 @@ package snjdck.g3d.core
 	
 	final public class Camera3D
 	{
-		private const projection:Projection3D = new Projection3D();
+		static public var zNear	:Number = -10000;
+		static public var zFar	:Number =  10000;
+		
 		public var enableViewFrusum:Boolean;
 		private const viewFrusum:ViewFrustum = new ViewFrustum();
 		
-		private const _rotation:Quaternion = new Quaternion();
+		private const rotation:Quaternion = new Quaternion();
 		
 		public var bindTarget:Object3D;
 		
 		private const constData:Vector.<Number> = new Vector.<Number>(12, true);
 		
-		public function Camera3D(){}
+		public function Camera3D()
+		{
+			constData[2] = zFar - zNear;
+			constData[3] = zNear;
+			rotation.fromEulerAngles(120 * Unit.RADIAN, 0, -45 * Unit.RADIAN);
+			constData[4] = rotation.x;
+			constData[5] = rotation.y;
+			constData[6] = rotation.z;
+			constData[7] = -rotation.w;
+		}
 		
 		public function setScreenSize(width:int, height:int):void
 		{
 			viewFrusum.resize(width, height);
-			projection.resize(width, height);
-			projection.upload(constData);
-			constData[7] = 1;
-		}
-		
-		public function set ortho(value:Boolean):void
-		{
-			if(value){
-				_rotation.fromEulerAngles(120 * Unit.RADIAN, 0, -45 * Unit.RADIAN);
-				constData[4] = _rotation.x;
-				constData[5] = _rotation.y;
-				constData[6] = _rotation.z;
-				constData[7] = -_rotation.w;
-			}else{
-				constData[4] = constData[5] = constData[6] = 0;
-				constData[7] = 1;
-			}
+			constData[0] = 0.5 * width;
+			constData[1] = 0.5 * height;
 		}
 		
 		public function update():void
@@ -59,9 +54,9 @@ package snjdck.g3d.core
 			}
 		}
 		
-		public function upload(output:Vector.<Number>):void
+		public function upload(context3d:GpuContext):void
 		{
-			copy(constData, output, 12);
+			context3d.setVc(0, constData);
 		}
 		
 		public function isInSight(bound:AABB):Boolean
@@ -76,11 +71,11 @@ package snjdck.g3d.core
 		 */		
 		public function getSceneRay(stageX:Number, stageY:Number, ray:Ray):void
 		{
-			ray.pos.setTo(stageX, stageY, Projection3D.zNear);
+			ray.pos.setTo(stageX, stageY, zNear);
 			ray.dir.setTo(0, 0, 1);
 //			ray.transform(_worldMatrix, ray);
-			_rotation.rotateVector(ray.dir, ray.dir);
-			_rotation.rotateVector(ray.pos, ray.pos);
+			rotation.rotateVector(ray.dir, ray.dir);
+			rotation.rotateVector(ray.pos, ray.pos);
 			ray.pos.incrementBy(viewFrusum.center);
 		}
 		/*
