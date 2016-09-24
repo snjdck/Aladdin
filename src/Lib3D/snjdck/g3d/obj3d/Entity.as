@@ -108,7 +108,6 @@ package snjdck.g3d.obj3d
 		ns_g3d function addToDrawUnitCollector(collector:DrawUnitCollector3D):void
 		{
 			meshGroup.collectDrawUnit(collector);
-			collector.addUpdateable(this);
 		}
 		
 		override public function onUpdate(timeElapsed:int):void

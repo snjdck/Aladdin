@@ -4,13 +4,14 @@ package snjdck.g3d.core
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.geom.Quaternion;
 	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.asset.GpuContext;
 	
 	import stdlib.constant.Unit;
 	
 	use namespace ns_g3d;
 	
-	final public class Camera3D
+	final public class Camera3D extends DrawUnitCollector3D
 	{
 		static public var zNear	:Number = -10000;
 		static public var zFar	:Number =  10000;
@@ -41,7 +42,7 @@ package snjdck.g3d.core
 			constData[1] = 0.5 * height;
 		}
 		
-		public function update():void
+		public function update(timeElapsed:int):void
 		{
 			if(bindTarget != null){
 				bindTarget.worldTransform.copyColumnTo(3, viewFrusum.center);
@@ -53,12 +54,13 @@ package snjdck.g3d.core
 			}
 		}
 		
-		public function upload(context3d:GpuContext):void
+		override public function draw(context3d:GpuContext):void
 		{
 			context3d.setVc(0, constData);
+			super.draw(context3d);
 		}
 		
-		public function isInSight(bound:AABB):Boolean
+		override public function isInSight(bound:AABB):Boolean
 		{
 			return viewFrusum.classify(bound) <= 0;
 		}

@@ -42,11 +42,6 @@ package snjdck.g2d
 			mouseEventDispatcher.update();
 		}
 		
-		public function needDraw():Boolean
-		{
-			return true;
-		}
-		
 		public function draw(context3d:GpuContext):void
 		{
 			render2d.drawBegin(context3d);

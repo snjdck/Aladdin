@@ -3,6 +3,7 @@ package snjdck.g3d.render
 	import flash.display3D.Context3DCompareMode;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.rendersystem.RenderSystem;
@@ -13,29 +14,22 @@ package snjdck.g3d.render
 	
 	use namespace ns_g3d;
 
-	final public class DrawUnitCollector3D
+	public class DrawUnitCollector3D
 	{
-		private const updateList:Vector.<Object3D> = new Vector.<Object3D>();
 		private const drawUnitList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
 		
 		private const system:RenderSystem = RenderSystemFactory.CreateRenderSystem();
 		
 		public function DrawUnitCollector3D(){}
 		
-		public function hasDrawUnits():Boolean
-		{
-			return drawUnitList.length > 0;
-		}
-		
 		public function clear():void
 		{
-			updateList.length = 0;
 			drawUnitList.length = 0;
 		}
 		
-		public function addUpdateable(object:Object3D):void
+		public function isInSight(bound:AABB):Boolean
 		{
-			updateList.push(object);
+			return true;
 		}
 		
 		public function addDrawUnit(drawUnit:IDrawUnit3D):void
@@ -51,17 +45,9 @@ package snjdck.g3d.render
 			system.addItem(drawUnit, priority);
 		}
 		
-		public function renderDrawUnits(context3d:GpuContext):void
+		public function draw(context3d:GpuContext):void
 		{
 			system.render(context3d);
-		}
-		
-		public function update(timeElapsed:int):void
-		{
-			if(updateList.length <= 0)
-				return;
-			for each(var object:Object3D in updateList)
-				object.onUpdate(timeElapsed);
 		}
 		
 		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void

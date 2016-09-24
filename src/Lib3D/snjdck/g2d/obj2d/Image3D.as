@@ -45,20 +45,20 @@ package snjdck.g2d.obj2d
 				root3d.rotationZ *= -1;
 				isMatrixDirty = false;
 			}
+			root3d.onUpdate(timeElapsed);
 			collector.clear();
 			root3d.collectDrawUnit(collector);
-			collector.update(timeElapsed);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			if(collector.hasDrawUnits()){
+			if(root3d.numChildren > 0){
 				MVP[0] = 0.5 * context3d.bufferWidth;
 				MVP[1] = 0.5 * context3d.bufferHeight;
 				context3d.setVc(0, MVP);
 				context3d.clearDepth();
 				context3d.save();
-				collector.renderDrawUnits(context3d);
+				collector.draw(context3d);
 				context3d.restore();
 			}
 		}

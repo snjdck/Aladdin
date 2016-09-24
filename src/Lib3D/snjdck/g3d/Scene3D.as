@@ -6,7 +6,6 @@ package snjdck.g3d
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	
@@ -16,8 +15,6 @@ package snjdck.g3d
 	{
 		public const root:DisplayObjectContainer3D = new DisplayObjectContainer3D();
 		public const camera:Camera3D = new Camera3D();
-		
-		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
 		
 		private const ray:Ray = new Ray();
 		
@@ -35,21 +32,15 @@ package snjdck.g3d
 		
 		public function update(timeElapsed:int):void
 		{
-			camera.update();
-			collector.clear();
-			root.collectDrawUnit(collector);
-			collector.update(timeElapsed);
-		}
-		
-		public function needDraw():Boolean
-		{
-			return collector.hasDrawUnits();
+			root.onUpdate(timeElapsed);
+			camera.update(timeElapsed);
+			camera.clear();
+			root.collectDrawUnit(camera);
 		}
 		
 		public function draw(context3d:GpuContext):void
 		{
-			camera.upload(context3d);
-			collector.renderDrawUnits(context3d);
+			camera.draw(context3d);
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void{}
@@ -57,7 +48,7 @@ package snjdck.g3d
 		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void
 		{
 			camera.getSceneRay(stageX, stageY, ray);
-			collector.hitTest(ray, result);
+			camera.hitTest(ray, result);
 		}
 		
 		public function notifyEvent(evtType:String):Boolean

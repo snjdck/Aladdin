@@ -33,15 +33,13 @@ package snjdck.gpu
 		
 		override protected function drawScene():void
 		{
-			if(scene3d.needDraw()){
-				if(scene2d.needPreDrawDepth()){
-					context3d.setDepthTest(true, Context3DCompareMode.LESS);
-					context3d.setColorMask(false, false, false, false);
-					scene2d.preDrawDepth(context3d);
-					context3d.setColorMask(true, true, true, true);
-				}
-				scene3d.draw(context3d);
+			if(scene2d.needPreDrawDepth()){
+				context3d.setDepthTest(true, Context3DCompareMode.LESS);
+				context3d.setColorMask(false, false, false, false);
+				scene2d.preDrawDepth(context3d);
+				context3d.setColorMask(true, true, true, true);
 			}
+			scene3d.draw(context3d);
 			super.drawScene();
 			context3d.gc();
 		}
