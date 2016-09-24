@@ -15,7 +15,6 @@ package snjdck.g3d.core
 		static public var zNear	:Number = -10000;
 		static public var zFar	:Number =  10000;
 		
-		public var enableViewFrusum:Boolean;
 		private const viewFrusum:ViewFrustum = new ViewFrustum();
 		
 		private const rotation:Quaternion = new Quaternion();
@@ -61,9 +60,7 @@ package snjdck.g3d.core
 		
 		public function isInSight(bound:AABB):Boolean
 		{
-			if(enableViewFrusum)
-				return viewFrusum.classify(bound) <= 0;
-			return true;
+			return viewFrusum.classify(bound) <= 0;
 		}
 		/**
 		 * @param screenX [-w/2, w/2]

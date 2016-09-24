@@ -16,7 +16,6 @@ package snjdck.gpu
 		public function View3D(stage:Stage)
 		{
 			super(stage);
-			scene3d.camera.enableViewFrusum = true;
 		}
 		
 		override protected function updateMouseXY(px:Number, py:Number):void
