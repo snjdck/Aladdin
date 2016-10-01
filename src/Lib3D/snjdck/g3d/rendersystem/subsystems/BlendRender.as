@@ -1,6 +1,7 @@
 package snjdck.g3d.rendersystem.subsystems
 {
 	import flash.display3D.Context3DCompareMode;
+	import flash.display3D.Context3DTriangleFace;
 	
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.ISystem;
@@ -15,7 +16,8 @@ package snjdck.g3d.rendersystem.subsystems
 		
 		public function onDrawBegin(context3d:GpuContext):void
 		{
-			context3d.setDepthTest(false, Context3DCompareMode.LESS_EQUAL);
+			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
+			context3d.setCulling(Context3DTriangleFace.BACK);
 		}
 		
 		public function render(context3d:GpuContext, item:Object):void
