@@ -1,10 +1,6 @@
 package snjdck.g3d.skeleton
 {
-	import flash.geom.Matrix3D;
-	
-	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.geom.Matrix4x4;
-	import snjdck.g3d.obj3d.Entity;
 
 	final public class Bone
 	{
@@ -17,8 +13,7 @@ package snjdck.g3d.skeleton
 		private var nextSibling:Bone;
 		private var firstChild:Bone;
 		
-		internal const transformGlobalToLocal:Matrix4x4 = new Matrix4x4();
-//		private const transformGlobalToLocalMatrix:Matrix3D = new Matrix3D();
+		internal const transformWorldToLocal:Matrix4x4 = new Matrix4x4();
 		
 		public function Bone(name:String, id:int)
 		{
@@ -26,42 +21,39 @@ package snjdck.g3d.skeleton
 			this.id = id;
 		}
 		
-		internal function createObject3D(entity:Entity, parent:DisplayObjectContainer3D):void
-		{
-			var boneObject:BoneInstance = new BoneInstance(this);
-			boneObject.id = id;
-			boneObject.name = name;
-			boneObject.animationInstance = entity.animationInstance;
-			entity.regBone(boneObject);
-//			boneObject.initTransform = transform;
-//			boneObject.boneWorldToLocal = transformGlobalToLocal;
-//			boneObject.boneWorldToLocalMatrix = transformGlobalToLocalMatrix;
-			parent.addChild(boneObject);
-			if(nextSibling){
-				nextSibling.createObject3D(entity, parent);
-			}
-			if(firstChild){
-				firstChild.createObject3D(entity, boneObject);
-			}
-		}
-		
 		internal function onInit(parentTransform:Matrix4x4):void
 		{
 			if(null == parentTransform){
-				transformGlobalToLocal.copyFrom(transform);
+				transformWorldToLocal.copyFrom(transform);
 			}else{
-				parentTransform.prepend(transform, transformGlobalToLocal);
+				parentTransform.prepend(transform, transformWorldToLocal);
 			}
 			
 			if(nextSibling){
 				nextSibling.onInit(parentTransform);
 			}
 			if(firstChild){
-				firstChild.onInit(transformGlobalToLocal);
+				firstChild.onInit(transformWorldToLocal);
 			}
 			
-			transformGlobalToLocal.invert();
-//			transformGlobalToLocal.toMatrix(transformGlobalToLocalMatrix);
+			transformWorldToLocal.invert();
+		}
+		
+		internal function updateState(parentTransform:Matrix4x4, boneStateGroup:BoneStateGroup):void
+		{
+			var transformLocalToWorld:Matrix4x4 = boneStateGroup.getBoneStateLocal(id);
+			boneStateGroup.getKeyFrame(id, transformLocalToWorld);
+			transform.prepend(transformLocalToWorld, transformLocalToWorld);
+			if(parentTransform != null){
+				parentTransform.prepend(transformLocalToWorld, transformLocalToWorld);
+			}
+			
+			if(nextSibling){
+				nextSibling.updateState(parentTransform, boneStateGroup);
+			}
+			if(firstChild){
+				firstChild.updateState(transformLocalToWorld, boneStateGroup);
+			}
 		}
 		
 		internal function addChild(child:Bone):void
