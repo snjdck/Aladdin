@@ -2,7 +2,7 @@ package snjdck.g3d.mesh
 {
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.g3d.skeleton.IBoneStateGroup;
+	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
@@ -18,7 +18,7 @@ package snjdck.g3d.mesh
 			this.mesh = mesh;
 		}
 		
-		public function draw(context3d:GpuContext, boneStateGroup:IBoneStateGroup):void
+		public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(context3d.isFsSlotInUse(0)){
 				var texture:IGpuTexture = AssetMgr.Instance.getTexture(materialName);

@@ -5,21 +5,25 @@ package snjdck.g3d.skeleton
 	
 	use namespace ns_g3d;
 	
-	public class BoneStateGroup implements IBoneStateGroup
+	public class BoneStateGroup
 	{
 		public var loopMode:int;
 		
+		private var skeleton:Skeleton;
 		private var animation:Animation;
 		private var position:Number;
 		
-		public function BoneStateGroup()
+		private const boneStateDict:Array = [];
+		
+		public function BoneStateGroup(skeleton:Skeleton)
 		{
+			this.skeleton = skeleton;
 			position = 0;
 		}
 		
-		public function changeAnimation(newAnimation:Animation):void
+		public function changeAnimation(animationName:String):void
 		{
-			animation = newAnimation;
+			animation = skeleton.getAnimationByName(animationName);
 			position = 0;
 		}
 		
@@ -31,19 +35,21 @@ package snjdck.g3d.skeleton
 			}
 		}
 		
-		public function getBoneState(boneId:int):Matrix4x4
+		public function getBoneStateWorld(boneId:int, result:Matrix4x4):void
 		{
-			return getBoneStateWorld(boneId);
-		}
-		
-		public function getBoneStateWorld(boneId:int):Matrix4x4
-		{
-			return null;
+			var boneState:Matrix4x4 = getBoneStateLocal(boneId);
+			var bone:Bone = skeleton.getBoneById(boneId);
+			boneState.prepend(bone.transform, result);
 		}
 		
 		public function getBoneStateLocal(boneId:int):Matrix4x4
 		{
-			return null;
+			var boneState:Matrix4x4 = boneStateDict[boneId];
+			if(null == boneState){
+				boneState = new Matrix4x4();
+				boneStateDict[boneId] = boneState;
+			}
+			return boneState;
 		}
 		
 		public function getKeyFrame(boneId:int, result:Matrix4x4):void

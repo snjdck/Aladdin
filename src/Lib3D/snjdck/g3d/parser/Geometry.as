@@ -7,7 +7,7 @@ package snjdck.g3d.parser
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.mesh.BoneData;
-	import snjdck.g3d.skeleton.IBoneStateGroup;
+	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuIndexBuffer;
@@ -18,8 +18,6 @@ package snjdck.g3d.parser
 	
 	public class Geometry implements IGeometry
 	{
-		static public const PROJECTION_MATRIX_OFFSET:int = 0;
-		static public const CAMERA_MATRIX_OFFSET:int = 2;
 		static public const WORLD_MATRIX_OFFSET:int = 5;
 		static public const BONE_MATRIX_OFFSET:int = 8;
 		
@@ -100,7 +98,7 @@ package snjdck.g3d.parser
 			return boneData ? boneData.numBones : 0;
 		}
 		
-		final public function draw(context3d:GpuContext, boneStateGroup:IBoneStateGroup):void
+		final public function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuPosBuffer){
 				gpuPosBuffer = GpuAssetFactory.CreateGpuVertexBuffer(posData, 3);

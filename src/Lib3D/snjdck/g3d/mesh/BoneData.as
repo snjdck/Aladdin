@@ -7,7 +7,7 @@ package snjdck.g3d.mesh
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.g3d.skeleton.IBoneStateGroup;
+	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
@@ -102,7 +102,7 @@ package snjdck.g3d.mesh
 		}
 		
 		//todo rename?
-		public function uploadBoneData(context3d:GpuContext, boneStateGroup:IBoneStateGroup):void
+		public function uploadBoneData(context3d:GpuContext, boneStateGroup:BoneStateGroup):void
 		{
 			if(null == gpuBoneBuffer){
 				gpuBoneBuffer = GpuAssetFactory.CreateGpuVertexBuffer(buffer, data32PerVertex);
@@ -116,7 +116,8 @@ package snjdck.g3d.mesh
 			}
 			var offset:int = 0;
 			for(var i:int=0; i<boneCount; ++i){
-				uploadBoneMatrix(boneStateGroup.getBoneState(boneIds[i]), offset);
+				boneStateGroup.getBoneStateWorld(boneIds[i], boneState);
+				uploadBoneMatrix(boneState, offset);
 				offset += 8;
 			}
 			context3d.setVc(Geometry.BONE_MATRIX_OFFSET, tempFloatBuffer, offset >> 2);
@@ -160,7 +161,7 @@ package snjdck.g3d.mesh
 			}
 		}
 		
-		public function transformVertex(input:Vector.<Number>, output:Vector.<Number>, boneStateGroup:IBoneStateGroup):void
+		public function transformVertex(input:Vector.<Number>, output:Vector.<Number>, boneStateGroup:BoneStateGroup):void
 		{
 			for(var i:int=0, n:int=input.length; i<n; i++){
 				output[i] = 0;
@@ -169,7 +170,8 @@ package snjdck.g3d.mesh
 			for(var boneId:* in vertexDict)
 			{
 				var vertexInfoList:Array = vertexDict[boneId];
-				boneStateGroup.getBoneState(boneId).toMatrix(boneMatrix);
+				boneStateGroup.getBoneStateWorld(boneId, boneState);
+				boneState.toMatrix(boneMatrix);
 				
 				var globalOffset:int, localOffset:int = 0;
 				
@@ -201,6 +203,7 @@ package snjdck.g3d.mesh
 		
 		static private const tempFloatBuffer:Vector.<Number> = new Vector.<Number>();
 		static private const boneMatrix:Matrix3D = new Matrix3D();
+		static private const boneState:Matrix4x4 = new Matrix4x4();
 		
 		public function getVertexListByBoneId(boneId:int):Array
 		{

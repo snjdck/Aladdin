@@ -34,6 +34,7 @@ package snjdck.g3d.core
 		{
 			visible = true;
 			mouseEnabled = true;
+			_blendMode = BlendMode.NORMAL;
 		}
 		
 		override protected function get parentWorldTransform():Matrix3D

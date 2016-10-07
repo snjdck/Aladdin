@@ -85,7 +85,7 @@ package snjdck.g3d.core
 			return _childList[index];
 		}
 		
-		public function getChild(childName:String):Object3D
+		public function getChildByName(childName:String):Object3D
 		{
 			for each(var child:Object3D in _childList){
 				if(child.name == childName){
@@ -95,9 +95,24 @@ package snjdck.g3d.core
 			return null;
 		}
 		
+		public function getChildById(childId:int):Object3D
+		{
+			for each(var child:Object3D in _childList){
+				if(child.id == childId){
+					return child;
+				}
+			}
+			return null;
+		}
+		
+		public function getChild(childName:String):Object3D
+		{
+			return getChildByName(childName);
+		}
+		
 		public function findChild(childName:String):Object3D
 		{
-			var result:Object3D = getChild(childName);
+			var result:Object3D = getChildByName(childName);
 			if(result != null){
 				return result;
 			}
@@ -125,7 +140,7 @@ package snjdck.g3d.core
 		
 		public function removeChildByName(childName:String):void
 		{
-			removeChild(getChild(childName));
+			removeChild(getChildByName(childName));
 		}
 		
 		public function traverse(handler:Function, includeSelf:Boolean=true):void

@@ -1,7 +1,7 @@
 package snjdck.g3d.parser
 {
 	import snjdck.g3d.bound.AABB;
-	import snjdck.g3d.skeleton.IBoneStateGroup;
+	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuContext;
 
 	public interface IGeometry
@@ -12,6 +12,6 @@ package snjdck.g3d.parser
 		function calculateBound():void;
 		function get bound():AABB;
 		
-		function draw(context3d:GpuContext, boneStateGroup:IBoneStateGroup):void;
+		function draw(context3d:GpuContext, boneStateGroup:BoneStateGroup):void;
 	}
 }
