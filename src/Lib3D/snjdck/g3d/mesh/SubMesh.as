@@ -28,7 +28,7 @@ package snjdck.g3d.mesh
 			geometry.draw(context3d, boneStateGroup);
 		}
 		
-		public function mergeSubMeshBound(result:AABB):void
+		public function mergeBound(result:AABB):void
 		{
 			result.merge(geometry.bound);
 		}

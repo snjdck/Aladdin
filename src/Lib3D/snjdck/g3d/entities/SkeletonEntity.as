@@ -11,7 +11,6 @@ package snjdck.g3d.entities
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
-	import snjdck.g3d.obj3d.Entity;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
@@ -23,25 +22,39 @@ package snjdck.g3d.entities
 	
 	use namespace ns_g3d;
 	
-	public class SkeletonEntity extends DisplayObjectContainer3D implements IDrawUnit3D
+	public class SkeletonEntity extends DisplayObjectContainer3D implements IDrawUnit3D, IEntity
 	{
-		private var mesh:Mesh;
+		private const meshList:Array = [];
 		private var skeleton:Skeleton;
 		
 		private var boneStateGroup:BoneStateGroup;
 		private var isBoneStateDirty:Boolean;
 		
-		public const worldBound:AABB = new AABB();
-		public const bound:AABB = new AABB();
-		
-		private var meshList:Array = [];
+		private const _worldBound:AABB = new AABB();
+		private const localBound:AABB = new AABB();
+		private var isWorldBoundDirty:Boolean = true;
 		
 		public function SkeletonEntity(mesh:Mesh)
 		{
-			this.mesh = mesh;
-			this.skeleton = mesh.skeleton;
+			skeleton = mesh.skeleton;
 			boneStateGroup = new BoneStateGroup(skeleton);
 			aniName = skeleton.getAnimationNames()[0];
+			addMesh(mesh);
+		}
+		
+		public function get worldBound():AABB
+		{
+			if(isWorldBoundDirty){
+				localBound.transform(worldTransform, _worldBound);
+				isWorldBoundDirty = false;
+			}
+			return _worldBound;
+		}
+		
+		override protected function onWorldMatrixDirty():void
+		{
+			super.onWorldMatrixDirty();
+			isWorldBoundDirty = true;
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
@@ -53,7 +66,6 @@ package snjdck.g3d.entities
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
-			bound.transform(worldTransform, worldBound);
 			if(collector.isInSight(worldBound)){
 //				if(isBoneStateDirty){
 					skeleton.updateBoneState(boneStateGroup);
@@ -80,11 +92,8 @@ package snjdck.g3d.entities
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldTransform);
-			for each(var subMesh:SubMesh in mesh.subMeshes){
-				subMesh.draw(context3d, boneStateGroup);
-			}
-			for each(var otherMesh:Mesh in meshList){
-				for each(var subMesh:SubMesh in otherMesh.subMeshes){
+			for each(var mesh:Mesh in meshList){
+				for each(var subMesh:SubMesh in mesh.subMeshes){
 					subMesh.draw(context3d, boneStateGroup);
 				}
 			}
@@ -114,7 +123,7 @@ package snjdck.g3d.entities
 			getBoneAttachments(boneName).addChild(entity);
 		}
 		
-		public function unbindEntityFromBone(boneName:String, entity:Entity):void
+		public function unbindEntityFromBone(boneName:String, entity:Object3D):void
 		{
 			getBoneAttachments(boneName).removeChild(entity);
 		}
@@ -127,32 +136,27 @@ package snjdck.g3d.entities
 		public function set aniName(value:String):void
 		{
 			boneStateGroup.changeAnimation(value);
-//			animationInstance.animation = skeleton.getAnimationByName(value);
 		}
 		
 		public function addMesh(mesh:Mesh):void
 		{
-//			meshGroup.addMesh(mesh);
 			meshList.push(mesh);
-			calculateBound(bound);
+			mesh.mergeBound(localBound);
+			isWorldBoundDirty = true;
 		}
 		
 		public function removeMesh(mesh:Mesh):void
 		{
 			array.del(meshList, mesh);
-//			meshGroup.removeMesh(mesh);
+			calculateBound();
+			isWorldBoundDirty = true;
 		}
 		
-		public function calculateBound(result:AABB):void
+		private function calculateBound():void
 		{
-			result.clear();
-			for each(var subMesh:SubMesh in mesh.subMeshes){
-				subMesh.mergeSubMeshBound(result);
-			}
-			for each(var otherMesh:Mesh in meshList){
-				for each(var subMesh:SubMesh in otherMesh.subMeshes){
-					subMesh.mergeSubMeshBound(result);
-				}
+			localBound.clear();
+			for each(var mesh:Mesh in meshList){
+				mesh.mergeBound(localBound);
 			}
 		}
 		

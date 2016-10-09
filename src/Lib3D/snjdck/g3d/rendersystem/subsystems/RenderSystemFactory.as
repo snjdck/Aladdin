@@ -7,6 +7,9 @@ package snjdck.g3d.rendersystem.subsystems
 		static public function CreateRenderSystem():RenderSystem
 		{
 			var renderSystem:RenderSystem = new RenderSystem();
+			renderSystem.regSystem(new StaticObjectRender(), RenderPriority.STATIC_OBJECT);
+			renderSystem.regSystem(new SkeletonObjectRender(), RenderPriority.SKELETON_OBJECT);
+			renderSystem.regSystem(new OpaqueRender(), RenderPriority.OPAQUE);
 			renderSystem.regSystem(new OpaqueRender(), RenderPriority.OPAQUE);
 			renderSystem.regSystem(new TerrainRender(), RenderPriority.TERRAIN);
 			renderSystem.regSystem(new BlendRender(), RenderPriority.BLEND);
