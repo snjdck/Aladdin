@@ -6,6 +6,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
@@ -35,8 +36,8 @@ package snjdck.g3d.obj3d
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			super.collectDrawUnit(collector);
-			if(scene.camera.isInSight(bound)){
-				collector.addDrawUnit(this);
+			if(collector.isInSight(bound)){
+				collector.addItem(this, RenderPriority.BILLBOARD);
 			}
 		}
 		/*

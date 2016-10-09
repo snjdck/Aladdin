@@ -11,8 +11,11 @@ package snjdck.g3d.rendersystem.subsystems
 	
 	internal class OpaqueRender implements ISystem
 	{
-		public function OpaqueRender()
+		private var shaderName:String;
+		
+		public function OpaqueRender(shaderName:String)
 		{
+			this.shaderName = shaderName;
 		}
 		
 		public function onDrawBegin(context3d:GpuContext):void
@@ -20,12 +23,12 @@ package snjdck.g3d.rendersystem.subsystems
 			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 			context3d.blendMode = BlendMode.NORMAL;
 			context3d.setCulling(Context3DTriangleFace.BACK);
+			context3d.program = AssetMgr.Instance.getProgram(shaderName);
 		}
 		
 		public function render(context3d:GpuContext, item:Object):void
 		{
 			var drawUnit:IDrawUnit3D = item as IDrawUnit3D;
-			context3d.program = AssetMgr.Instance.getProgram(drawUnit.shaderName);
 			drawUnit.draw(context3d);
 		}
 	}

@@ -14,6 +14,7 @@ package snjdck.g3d.entities
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
@@ -30,12 +31,11 @@ package snjdck.g3d.entities
 		private var boneStateGroup:BoneStateGroup;
 		private var isBoneStateDirty:Boolean;
 		
-		private const _worldBound:AABB = new AABB();
-		private const localBound:AABB = new AABB();
-		private var isWorldBoundDirty:Boolean = true;
+		private var bound:EntityBound;
 		
 		public function SkeletonEntity(mesh:Mesh)
 		{
+			bound = new EntityBound(this);
 			skeleton = mesh.skeleton;
 			boneStateGroup = new BoneStateGroup(skeleton);
 			aniName = skeleton.getAnimationNames()[0];
@@ -44,17 +44,13 @@ package snjdck.g3d.entities
 		
 		public function get worldBound():AABB
 		{
-			if(isWorldBoundDirty){
-				localBound.transform(worldTransform, _worldBound);
-				isWorldBoundDirty = false;
-			}
-			return _worldBound;
+			return bound.worldBound;
 		}
 		
 		override protected function onWorldMatrixDirty():void
 		{
 			super.onWorldMatrixDirty();
-			isWorldBoundDirty = true;
+			bound.markWorldBoundDirty();
 		}
 		
 		override public function onUpdate(timeElapsed:int):void
@@ -71,7 +67,7 @@ package snjdck.g3d.entities
 					skeleton.updateBoneState(boneStateGroup);
 //					isBoneStateDirty = false;
 //				}
-				collector.addDrawUnit(this);
+				collector.addItem(this, RenderPriority.SKELETON_OBJECT);
 				onBoneStateChanged();
 				super.collectDrawUnit(collector);
 			}
@@ -141,22 +137,22 @@ package snjdck.g3d.entities
 		public function addMesh(mesh:Mesh):void
 		{
 			meshList.push(mesh);
-			mesh.mergeBound(localBound);
-			isWorldBoundDirty = true;
+			mesh.mergeBound(bound.localBound);
+			bound.markWorldBoundDirty();
 		}
 		
 		public function removeMesh(mesh:Mesh):void
 		{
 			array.del(meshList, mesh);
 			calculateBound();
-			isWorldBoundDirty = true;
+			bound.markWorldBoundDirty();
 		}
 		
 		private function calculateBound():void
 		{
-			localBound.clear();
+			bound.localBound.clear();
 			for each(var mesh:Mesh in meshList){
-				mesh.mergeBound(localBound);
+				mesh.mergeBound(bound.localBound);
 			}
 		}
 		

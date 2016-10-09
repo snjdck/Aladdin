@@ -7,6 +7,7 @@ package snjdck.g3d.obj3d
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.GpuContext;
@@ -57,7 +58,7 @@ package snjdck.g3d.obj3d
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			if(canRender){
-				collector.addDrawUnit(this);
+				collector.addItem(this, RenderPriority.LINE_3D);
 			}
 		}
 		

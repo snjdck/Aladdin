@@ -23,8 +23,11 @@ package snjdck.g3d.skeleton
 		
 		public function changeAnimation(animationName:String):void
 		{
-			animation = skeleton.getAnimationByName(animationName);
-			position = 0;
+			var newAnimation:Animation = skeleton.getAnimationByName(animationName);
+			if(animation != newAnimation){
+				animation = newAnimation;
+				position = 0;
+			}
 		}
 		
 		public function stepAnimation(seconds:Number):void

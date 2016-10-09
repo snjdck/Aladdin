@@ -18,14 +18,13 @@ package snjdck.g3d.entities
 	{
 		private var subEntities:Array = [];
 		
-		private const _worldBound:AABB = new AABB();
-		private const localBound:AABB = new AABB();
-		private var isWorldBoundDirty:Boolean = true;
+		private var bound:EntityBound;
 		
 		public function StaticEntity(mesh:Mesh)
 		{
+			bound = new EntityBound(this);
 			for each(var subMesh:SubMesh in mesh.subMeshes){
-				subMesh.mergeBound(localBound);
+				subMesh.mergeBound(bound.localBound);
 				subEntities.push(new SubEntity(subMesh));
 			}
 		}
@@ -33,7 +32,7 @@ package snjdck.g3d.entities
 		override protected function onWorldMatrixDirty():void
 		{
 			super.onWorldMatrixDirty();
-			isWorldBoundDirty = true;
+			bound.markWorldBoundDirty();
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
@@ -60,11 +59,7 @@ package snjdck.g3d.entities
 
 		public function get worldBound():AABB
 		{
-			if(isWorldBoundDirty){
-				localBound.transform(worldTransform, _worldBound);
-				isWorldBoundDirty = false;
-			}
-			return _worldBound;
+			return bound.worldBound;
 		}
 		
 		public function setSubMeshVisible(index:int, value:Boolean):void

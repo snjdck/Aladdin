@@ -32,10 +32,10 @@ package snjdck.g3d.render
 			return true;
 		}
 		
-		public function addDrawUnit(drawUnit:IDrawUnit3D):void
+		public function addDrawUnit(drawUnit:IDrawUnit3D, priority:int):void
 		{
 			assert(drawUnit != null);
-			var priority:int = drawUnit.blendMode.isOpaque() ? RenderPriority.OPAQUE : RenderPriority.BLEND;
+//			var priority:int = drawUnit.blendMode.isOpaque() ? RenderPriority.OPAQUE : RenderPriority.BLEND;
 			system.addItem(drawUnit, priority);
 			drawUnitList.push(drawUnit);
 		}
@@ -43,6 +43,9 @@ package snjdck.g3d.render
 		public function addItem(drawUnit:Object, priority:int):void
 		{
 			system.addItem(drawUnit, priority);
+			if(drawUnit is IDrawUnit3D){
+				drawUnitList.push(drawUnit);
+			}
 		}
 		
 		public function draw(context3d:GpuContext):void
