@@ -66,7 +66,7 @@ package snjdck.g3d.rendersystem.subsystems
 			context3d.setTextureAt(0, quad.tex0);
 			context3d.setTextureAt(1, quad.tex1);
 			context3d.setVc(Geometry.BONE_MATRIX_OFFSET, quad.vcConst);
-			context3d.setFc(0, quad.fcConst);
+//			context3d.setFc(0, quad.fcConst);
 			context3d.drawTriangles(indexBuffer);
 		}
 	}

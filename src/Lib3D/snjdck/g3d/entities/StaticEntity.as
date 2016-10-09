@@ -10,21 +10,19 @@ package snjdck.g3d.entities
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 
 	public class StaticEntity extends Object3D implements IDrawUnit3D, IEntity
 	{
-		private var subEntities:Array = [];
-		
+		private const subEntities:Array = [];
 		private var bound:EntityBound;
 		
 		public function StaticEntity(mesh:Mesh)
 		{
 			bound = new EntityBound(this);
+			mesh.mergeBound(bound.localBound);
 			for each(var subMesh:SubMesh in mesh.subMeshes){
-				subMesh.mergeBound(bound.localBound);
 				subEntities.push(new SubEntity(subMesh));
 			}
 		}
@@ -50,11 +48,6 @@ package snjdck.g3d.entities
 					subEntity.subMesh.draw(context3d, null);
 				}
 			}
-		}
-		
-		public function get shaderName():String
-		{
-			return ShaderName.STATIC_OBJECT;
 		}
 
 		public function get worldBound():AABB

@@ -23,5 +23,6 @@ package snjdck.shader
 //		static public const G3D_PRE_DRAW_DEPTH:String = "g3d_preDrawDepth";
 		
 		static public const TEXT_2D:String = "text2d";
+		static public const LINE_3D:String = "g3d_polygon_line";
 	}
 }

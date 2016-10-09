@@ -25,14 +25,18 @@ ft2 = ft0.w * ft1
 
 
 @terrain_quad
-vt0 = va0
+vt0 = va0 * vc8.zzww
+vt0.xy += vc8
 ${objectImp.vs}
-v0 = va0
+vt0.xy = va0 * vc9.z
+v0 = vt0 + vc9
+v1 = vc[va1.x+10]
 
 ft0 = tex: v0, fs0
 ft1 = tex: v0, fs1
 
 ft2 = ft1 - ft0
-ft2 *= fc0.x
+ft2 *= v1.w
 ft2 += ft0
-oc = ft2 * fc1
+ft2.xyz *= v1
+oc = ft2

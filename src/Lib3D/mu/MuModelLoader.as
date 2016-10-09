@@ -1,6 +1,6 @@
 package mu
 {
-	import snjdck.g3d.obj3d.Entity;
+	import snjdck.g3d.core.Object3D;
 
 	public class MuModelLoader
 	{
@@ -31,15 +31,15 @@ package mu
 			return prefix + MuMapUtil.getObjById(objId) + ".bmd";
 		}
 		
-		private function __onLoad(entity:Entity):void
+		private function __onLoad(entity:Object3D):void
 		{
 			entity.x = x;
-			entity.y = -y;
+			entity.y = y;
 			entity.rotationX = rotationX;
 			entity.rotationY = rotationY;
 			entity.rotationZ = rotationZ;
 			entity.scale = scale;
-			entity.calculateBound();
+//			entity.calculateBound();
 			callback(entity);
 		}
 	}

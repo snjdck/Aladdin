@@ -50,11 +50,6 @@ package snjdck.g3d.obj3d
 		static private const zAxis:Vector3D = new Vector3D();
 		static private const buffer:Vector.<Number> = new Vector.<Number>(4, true);
 		
-		public function get shaderName():String
-		{
-			return "g3d_polygon_line";
-		}
-		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			if(canRender){

@@ -66,10 +66,5 @@ package snjdck.g3d.obj3d
 			QuadRender.Instance.drawBegin(context3d);
 			QuadRender.Instance.drawTriangles(context3d);
 		}
-		
-		public function get shaderName():String
-		{
-			return ShaderName.BILLBOARD;
-		}
 	}
 }

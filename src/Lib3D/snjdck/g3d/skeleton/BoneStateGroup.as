@@ -13,6 +13,8 @@ package snjdck.g3d.skeleton
 		private var animation:Animation;
 		private var position:Number;
 		
+		public var isDirty:Boolean;
+		
 		private const boneStateDict:Array = [];
 		
 		public function BoneStateGroup(skeleton:Skeleton)
@@ -27,14 +29,22 @@ package snjdck.g3d.skeleton
 			if(animation != newAnimation){
 				animation = newAnimation;
 				position = 0;
+				isDirty = true;
 			}
 		}
 		
 		public function stepAnimation(seconds:Number):void
 		{
-			position += seconds;
-			if(position > animation.length){
-				position -= animation.length;
+			if(animation.length <= 0 || animation.getKeyFrameCount() <= 1){
+				return;
+			}
+			var newPosition:Number = position + seconds;
+			while(newPosition > animation.length){
+				newPosition -= animation.length;
+			}
+			if(position != newPosition){
+				position = newPosition;
+				isDirty = true;
 			}
 		}
 		

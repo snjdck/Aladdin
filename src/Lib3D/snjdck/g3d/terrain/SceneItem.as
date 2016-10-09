@@ -1,19 +1,18 @@
 package snjdck.g3d.terrain
 {
 	import snjdck.g3d.bound.AABB;
-	import snjdck.g3d.obj3d.Entity;
-	import snjdck.quadtree.IQuadTreeNode;
+	import snjdck.g3d.entities.IEntity;
+	import snjdck.quadtree.IQuadTreeItem;
 	
-	internal class SceneItem implements IQuadTreeNode
+	internal class SceneItem implements IQuadTreeItem
 	{
-		public var entity:Entity;
-		public var bound:AABB;
+		public var entity:IEntity;
+		public var bound:AABB = new AABB();;
 		
-		public function SceneItem(entity:Entity)
+		public function SceneItem(entity:IEntity)
 		{
 			this.entity = entity;
-			bound = entity.worldBound;
-//			bound.copyFrom(entity.bound);
+			bound.copyFrom(entity.worldBound);
 		}
 		
 		public function get x():Number

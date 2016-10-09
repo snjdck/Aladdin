@@ -19,7 +19,6 @@ package snjdck.g3d.entities
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 	
@@ -29,8 +28,6 @@ package snjdck.g3d.entities
 		private var skeleton:Skeleton;
 		
 		private var boneStateGroup:BoneStateGroup;
-		private var isBoneStateDirty:Boolean;
-		
 		private var bound:EntityBound;
 		
 		public function SkeletonEntity(mesh:Mesh)
@@ -56,31 +53,29 @@ package snjdck.g3d.entities
 		override public function onUpdate(timeElapsed:int):void
 		{
 			super.onUpdate(timeElapsed);
-			isBoneStateDirty = true;
 			boneStateGroup.stepAnimation(timeElapsed * 0.001);
 		}
 		
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			if(collector.isInSight(worldBound)){
-//				if(isBoneStateDirty){
+				if(boneStateGroup.isDirty){
 					skeleton.updateBoneState(boneStateGroup);
-//					isBoneStateDirty = false;
-//				}
+					boneStateGroup.isDirty = false;
+					for(var i:int=0, n:int=numChildren; i<n; ++i){
+						updateBoneAttachments(getChildAt(i));
+					}
+				}
 				collector.addItem(this, RenderPriority.SKELETON_OBJECT);
-				onBoneStateChanged();
 				super.collectDrawUnit(collector);
 			}
 		}
 		
-		private function onBoneStateChanged():void
+		private function updateBoneAttachments(attachments:Object3D):void
 		{
-			for(var i:int=0, n:int=numChildren; i<n; ++i){
-				var attachments:Object3D = getChildAt(i);
-				var boneState:Matrix4x4 = boneStateGroup.getBoneStateLocal(attachments.id);
-				boneState.toMatrix(boneMatrix);
-				attachments.transform = boneMatrix;
-			}
+			var boneState:Matrix4x4 = boneStateGroup.getBoneStateLocal(attachments.id);
+			boneState.toMatrix(boneMatrix);
+			attachments.transform = boneMatrix;
 		}
 		
 		static private const boneMatrix:Matrix3D = new Matrix3D();
@@ -95,21 +90,20 @@ package snjdck.g3d.entities
 			}
 		}
 		
-		public function get shaderName():String
-		{
-			return ShaderName.DYNAMIC_OBJECT;
-		}
-		
 		private function getBoneAttachments(boneName:String):DisplayObjectContainer3D
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);
-			if(null == bone)
+			if(null == bone){
 				throw new Error("boneName '" + boneName + "' not exist!");
+			}
 			var attachments:Object3D = getChildById(bone.id);
 			if(null == attachments){
 				attachments = new DisplayObjectContainer3D();
 				attachments.id = bone.id;
 				addChild(attachments);
+				if(!boneStateGroup.isDirty){
+					updateBoneAttachments(attachments);
+				}
 			}
 			return attachments as DisplayObjectContainer3D;
 		}
@@ -144,16 +138,11 @@ package snjdck.g3d.entities
 		public function removeMesh(mesh:Mesh):void
 		{
 			array.del(meshList, mesh);
-			calculateBound();
-			bound.markWorldBoundDirty();
-		}
-		
-		private function calculateBound():void
-		{
 			bound.localBound.clear();
-			for each(var mesh:Mesh in meshList){
-				mesh.mergeBound(bound.localBound);
+			for each(var otherMesh:Mesh in meshList){
+				otherMesh.mergeBound(bound.localBound);
 			}
+			bound.markWorldBoundDirty();
 		}
 		
 		public function hideSubMeshAt(index:int):void

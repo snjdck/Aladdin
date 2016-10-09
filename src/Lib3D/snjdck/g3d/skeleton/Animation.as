@@ -14,6 +14,7 @@ package snjdck.g3d.skeleton
 		
 		/** 每根骨骼的keyframes */
 		private var trackList:Array;
+		private var numKeyFrames:int;
 		
 		public function Animation(name:String, length:Number)
 		{
@@ -22,9 +23,15 @@ package snjdck.g3d.skeleton
 			trackList = [];
 		}
 		
+		public function getKeyFrameCount():int
+		{
+			return numKeyFrames;
+		}
+		
 		ns_g3d function addTrack(boneId:int, keyFrames:Vector.<KeyFrame>):void
 		{
 			trackList[boneId] = keyFrames;
+			numKeyFrames = Math.max(numKeyFrames, keyFrames.length);
 		}
 		
 		internal function getTransform(boneId:int, time:Number, result:Matrix4x4):void
