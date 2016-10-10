@@ -21,6 +21,7 @@ package snjdck.g3d.render
 		
 		public function clear():void
 		{
+			system.clear();
 			drawUnitList.length = 0;
 		}
 		

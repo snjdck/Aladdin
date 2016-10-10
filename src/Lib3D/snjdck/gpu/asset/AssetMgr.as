@@ -21,6 +21,7 @@ package snjdck.gpu.asset
 	import string.has;
 	import string.removeComments;
 	import string.replace;
+	import string.replace2;
 	import string.splitByLine;
 	import string.trim;
 
@@ -83,10 +84,10 @@ package snjdck.gpu.asset
 				if(shaderName in shaderDict){
 					throw new Error(replace("shader name '${0}' has been used!", [shaderName]));
 				}
-				var shaderCode:String = replace(obj.code, shaderDict);
-				if(Boolean(obj.args)){
-					shaderCode = replace(shaderCode, obj.args.split(","));
-				}
+				var shaderCode:String = replace2(obj.code, shaderDict);
+//				if(Boolean(obj.args)){
+//					shaderCode = replace(shaderCode, obj.args.split(","));
+//				}
 				shaderDict[shaderName] = shaderCode;
 			}
 			

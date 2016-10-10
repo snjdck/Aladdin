@@ -45,5 +45,13 @@ package snjdck.g3d.rendersystem
 			assert(info != null);
 			info.addItem(item);
 		}
+		
+		public function clear():void
+		{
+			for(var i:int=0; i<systemCount; ++i){
+				var info:SystemInfo = systemList[i];
+				info.clear();
+			}
+		}
 	}
 }

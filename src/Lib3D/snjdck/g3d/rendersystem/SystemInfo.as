@@ -23,6 +23,11 @@ package snjdck.g3d.rendersystem
 			}
 		}
 		
+		public function clear():void
+		{
+			itemList.length = itemCount = 0;
+		}
+		
 		public function render(context3d:GpuContext, passIndex:int):void
 		{
 			if(itemCount <= 0){
@@ -32,7 +37,6 @@ package snjdck.g3d.rendersystem
 			for(var i:int=0; i<itemCount; ++i){
 				system.render(context3d, itemList[i]);
 			}
-			itemList.length = itemCount = 0;
 		}
 	}
 }

@@ -1,11 +1,23 @@
 package snjdck.g3d.core
 {
+	import flash.display3D.Context3DBlendFactor;
+	import flash.display3D.Context3DCompareMode;
+	import flash.display3D.Context3DTextureFormat;
+	import flash.display3D.Context3DTriangleFace;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.geom.Quaternion;
+	import snjdck.g3d.lights.LightInstanceData;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.rendersystem.subsystems.RenderPass;
+	import snjdck.gpu.BlendMode;
+	import snjdck.gpu.asset.AssetMgr;
+	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
+	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.gpu.render.instance.InstanceRender;
 	
 	import stdlib.constant.Unit;
 	
@@ -40,6 +52,11 @@ package snjdck.g3d.core
 			viewFrusum.resize(width, height);
 			constData[0] = 0.5 * width;
 			constData[1] = 0.5 * height;
+			if(geometryTexture != null){
+				geometryTexture.dispose();
+			}
+			geometryTexture = new GpuRenderTarget(width, height, Context3DTextureFormat.RGBA_HALF_FLOAT);
+			geometryTexture.enableDepthAndStencil = true;
 		}
 		
 		public function update(timeElapsed:int):void
@@ -57,7 +74,18 @@ package snjdck.g3d.core
 		override public function draw(context3d:GpuContext):void
 		{
 			context3d.setVc(0, constData);
-			super.draw(context3d);
+			system.render(context3d, RenderPass.MATERIAL_PASS);
+			
+			geometryTexture.setRenderToSelfAndClear(context3d);
+			system.render(context3d, RenderPass.GEOMETRY_PASS);
+			context3d.renderTarget = null;
+			
+			context3d.texture = geometryTexture;
+			context3d.program = AssetMgr.Instance.getProgram("light_pass");
+			context3d.blendMode = BlendMode.MULTIPLY;
+			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
+			context3d.setFc(0, new <Number>[Math.SQRT1_2, 0, Math.SQRT1_2, 1, 0.3, 0.7, 0, 1]);
+			InstanceRender.Instance.drawQuad(context3d, lightInstanceData, 1);
 		}
 		
 		override public function isInSight(bound:AABB):Boolean
@@ -93,5 +121,7 @@ package snjdck.g3d.core
 			_worldMatrix.copyColumnTo(2, result);
 		}
 		*/
+		private var geometryTexture:GpuRenderTarget;
+		private const lightInstanceData:LightInstanceData = new LightInstanceData();
 	}
 }

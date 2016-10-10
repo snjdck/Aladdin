@@ -2,8 +2,6 @@ package snjdck.g3d.parser
 {
 	import flash.display3D.Context3DVertexBufferFormat;
 	
-	import array.copy;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.mesh.BoneData;
@@ -21,14 +19,15 @@ package snjdck.g3d.parser
 		static public const WORLD_MATRIX_OFFSET:int = 5;
 		static public const BONE_MATRIX_OFFSET:int = 8;
 		
-		private var _vertexCount:uint;
-		private var _faceCount:uint;
+		private var _vertexCount:int;
 		
-		private var posData:Vector.<Number>;
-		private var uvData:Vector.<Number>;
-		private var indexData:Vector.<uint>;
+		public var posData:Vector.<Number>;
+		public var normalData:Vector.<Number>;
+		public var uvData:Vector.<Number>;
+		public var indexData:Vector.<uint>;
 		
 		private var gpuPosBuffer:GpuVertexBuffer;
+		private var gpuNormalBuffer:GpuVertexBuffer;
 		private var gpuUvBuffer:GpuVertexBuffer;
 		private var gpuIndexBuffer:GpuIndexBuffer;
 		
@@ -36,19 +35,13 @@ package snjdck.g3d.parser
 		
 		ns_g3d var boneData:BoneData;
 		
-		public function Geometry(vertexData:Vector.<Number>, indexData:Vector.<uint>)
+		public function Geometry(vertexCount:int)
 		{
-			this._vertexCount = vertexData.length / 5;
-			this._faceCount = indexData.length / 3;
+			this._vertexCount = vertexCount;
 			
-			this.posData = new Vector.<Number>(vertexCount*3, true);
-			this.uvData = new Vector.<Number>(vertexCount*2, true);
-			this.indexData = indexData;
-			
-			for(var i:int=0; i<vertexCount; i++){
-				array.copy(vertexData, posData, 3, i*5, i*3);
-				array.copy(vertexData, uvData, 2, i*5+3, i*2);
-			}
+			posData = new Vector.<Number>(vertexCount*3, true);
+			normalData = new Vector.<Number>(vertexCount*3, true);
+			uvData = new Vector.<Number>(vertexCount*2, true);
 		}
 		
 		public function getPosData():Vector.<Number>
@@ -61,6 +54,10 @@ package snjdck.g3d.parser
 			if(gpuPosBuffer){
 				gpuPosBuffer.dispose();
 				gpuPosBuffer = null;
+			}
+			if(gpuNormalBuffer){
+				gpuNormalBuffer.dispose();
+				gpuNormalBuffer = null;
 			}
 			if(gpuUvBuffer){
 				gpuUvBuffer.dispose();
@@ -103,6 +100,9 @@ package snjdck.g3d.parser
 			if(null == gpuPosBuffer){
 				gpuPosBuffer = GpuAssetFactory.CreateGpuVertexBuffer(posData, 3);
 			}
+			if(null == gpuNormalBuffer){
+				gpuNormalBuffer = GpuAssetFactory.CreateGpuVertexBuffer(normalData, 3);
+			}
 			if(null == gpuUvBuffer){
 				gpuUvBuffer = GpuAssetFactory.CreateGpuVertexBuffer(uvData, 2);
 			}
@@ -113,12 +113,16 @@ package snjdck.g3d.parser
 			if(context3d.isVaSlotInUse(1)){
 				context3d.setVertexBufferAt(1, gpuUvBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
 			}
+			if(context3d.isVaSlotInUse(4)){
+				context3d.setVertexBufferAt(4, gpuNormalBuffer, 0, Context3DVertexBufferFormat.FLOAT_3);
+			}
 			if(context3d.isVaSlotInUse(2) && boneData != null){
 				boneData.uploadBoneData(context3d, boneStateGroup);
 			}
 			context3d.drawTriangles(gpuIndexBuffer);
 			
 			context3d.markRecoverableGpuAsset(gpuPosBuffer);
+			context3d.markRecoverableGpuAsset(gpuNormalBuffer);
 			context3d.markRecoverableGpuAsset(gpuUvBuffer);
 			context3d.markRecoverableGpuAsset(gpuIndexBuffer);
 		}

@@ -16,7 +16,7 @@ package snjdck.g3d.rendersystem.subsystems
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.shader.ShaderName;
 	
-	internal class TerrainRender implements ISystem
+	internal class TerrainRender extends ISystem
 	{
 		static private const COUNT_PER_VERTEX:int = 3;
 		
@@ -46,9 +46,22 @@ package snjdck.g3d.rendersystem.subsystems
 			createQuadListIndices(1, indexData);
 			indexBuffer = new GpuIndexBuffer(indexData.length);
 			indexBuffer.upload(indexData);
+			regPass(RenderPass.GEOMETRY_PASS, null);
 		}
 		
-		public function onDrawBegin(context3d:GpuContext):void
+		override protected function onGeometryPass(context3d:GpuContext):void
+		{
+			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
+			context3d.blendMode = BlendMode.NORMAL;
+			context3d.setCulling(Context3DTriangleFace.BACK);
+			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TERRAIN + "_geom");
+			
+			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldMatrix);
+			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
+			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_1);
+		}
+		
+		override protected function onMaterialPass(context3d:GpuContext):void
 		{
 			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 			context3d.blendMode = BlendMode.NORMAL;
@@ -60,11 +73,13 @@ package snjdck.g3d.rendersystem.subsystems
 			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_1);
 		}
 		
-		public function render(context3d:GpuContext, item:Object):void
+		override public function render(context3d:GpuContext, item:Object):void
 		{
 			var quad:TerrainQuad = item as TerrainQuad;
-			context3d.setTextureAt(0, quad.tex0);
-			context3d.setTextureAt(1, quad.tex1);
+			if(context3d.isFsSlotInUse(0)){
+				context3d.setTextureAt(0, quad.tex0);
+				context3d.setTextureAt(1, quad.tex1);
+			}
 			context3d.setVc(Geometry.BONE_MATRIX_OFFSET, quad.vcConst);
 //			context3d.setFc(0, quad.fcConst);
 			context3d.drawTriangles(indexBuffer);
