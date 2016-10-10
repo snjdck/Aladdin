@@ -162,7 +162,7 @@ package snjdck.gpu.asset
 			context3d.setRenderToTexture(
 				_renderTarget.getRawGpuAsset(context3d),
 				_renderTarget.enableDepthAndStencil,
-				_renderTarget.antiAlias, 0
+				_renderTarget.antiAlias, 0, colorOutputIndex
 			);
 		}
 		
