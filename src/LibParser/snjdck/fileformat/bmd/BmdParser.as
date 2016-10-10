@@ -136,6 +136,13 @@ package snjdck.fileformat.bmd
 				var posData:Vector.<Number> = subMesh.geometry.getPosData();
 				keyFrameMatrix.transformVectors(posData, posData);
 			}
+			lastKeyFrameTransform.translation.setTo(0, 0, 0);
+			lastKeyFrameTransform.toMatrix(keyFrameMatrix);
+			for each(subMesh in mesh.subMeshes){
+				subMesh.geometry.boneData = null;
+				var normalData:Vector.<Number> = subMesh.geometry.normalData;
+				keyFrameMatrix.transformVectors(normalData, normalData);
+			}
 		}
 		
 		private function readBone(id:int):void
@@ -272,27 +279,36 @@ package snjdck.fileformat.bmd
 			var subMesh:SubMesh = mesh.createSubMesh();
 			subMesh.materialName = readFixedString(buffer, 32);
 			
-			var vertexData:Vector.<Number> = new Vector.<Number>(triangleCount * 15);
-			var indexBuffer:Vector.<uint> = new Vector.<uint>(triangleCount * 3);
+			const vertextCount:int = triangleCount * 3;
+			var geometry:Geometry = new Geometry(vertextCount);
+			var indexBuffer:Vector.<uint> = new Vector.<uint>(vertextCount);
 			
-			var boneData:BoneData = new BoneData(triangleCount * 3);
+			var boneData:BoneData = new BoneData(vertextCount);
 
-			for(var i:int=0; i<indexBuffer.length; i++){
+			for(var i:int=0; i<vertextCount; i++){
 				var index:int = i * 3;
 				var t1:int = 4 * triangleDict[index];//pos
 				var t2:int = 2 * triangleDict[index+2];//uv
+				var t3:int = 3 * triangleDict[index+1];//normal
 				boneData.assignBone(i, vertexDict[t1], 1);
-				array.setValue(vertexData, i*5, [vertexDict[t1+1], vertexDict[t1+2], vertexDict[t1+3], uvDict[t2], uvDict[t2+1]]);
+				geometry.posData[i*3  ] = vertexDict[t1+1];
+				geometry.posData[i*3+1] = vertexDict[t1+2];
+				geometry.posData[i*3+2] = vertexDict[t1+3];
+				geometry.normalData[i*3  ] = norDict[t3];
+				geometry.normalData[i*3+1] = norDict[t3+1];
+				geometry.normalData[i*3+2] = norDict[t3+2];
+				geometry.uvData[i*2  ] = uvDict[t2];
+				geometry.uvData[i*2+1] = uvDict[t2+1];
 				indexBuffer[i] = i;
 			}
 			
 			boneData.adjustBoneWeight();
-			var geometry:Geometry = new Geometry(vertexData, indexBuffer);
+			geometry.indexData = indexBuffer;
 			geometry.boneData = boneData;
 			geometry.calculateBound();
 			
 			subMesh.geometry = geometry;
-			trace("骨骼数量:", geometry.numBones, "材质名称:", subMesh.materialName);
+//			trace("骨骼数量:", geometry.numBones, "材质名称:", subMesh.materialName);
 		}
 	}
 }

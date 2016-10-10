@@ -3,6 +3,7 @@ package snjdck.fileformat.ogre
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
+	import array.copy;
 	import array.setValue;
 	
 	import snjdck.fileformat.ogre.support.MeshChunkID;
@@ -111,7 +112,15 @@ package snjdck.fileformat.ogre
 					break;
 				}
 			}
-			return new Geometry(vertexData, indexData);
+			var vertexCount:int = vertexData.length / 5;
+			var geometry:Geometry = new Geometry(vertexCount);
+			geometry.indexData = indexData;
+			for(var i:int=0; i<vertexCount; ++i){
+				array.copy(vertexData, geometry.posData, 3, i*5, i*3);
+				array.copy(vertexData, geometry.uvData, 2, i*5+3, i*2);
+			}
+			return geometry;
+//			return new Geometry(vertexData, indexData);
 		}
 		
 		private function readMesh():void

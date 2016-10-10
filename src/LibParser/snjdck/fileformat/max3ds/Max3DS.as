@@ -4,6 +4,8 @@ package snjdck.fileformat.max3ds
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
+	import array.copy;
+	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
@@ -80,7 +82,13 @@ package snjdck.fileformat.max3ds
 					break;
 				case ChunkID.INDICES:
 					readIndices(buffer.readUnsignedShort());
-					subMesh.geometry = new Geometry(vertexData, indexData);
+					var vertexCount:int = vertexData.length / 5;
+					subMesh.geometry = new Geometry(vertexCount);
+					subMesh.geometry.indexData = indexData;
+					for(var i:int=0; i<vertexCount; ++i){
+						array.copy(vertexData, subMesh.geometry.posData, 3, i*5, i*3);
+						array.copy(vertexData, subMesh.geometry.uvData, 2, i*5+3, i*2);
+					}
 					break;
 				case ChunkID.MESH_MATER:
 					subMesh.materialName = materialDict[readString(buffer)];

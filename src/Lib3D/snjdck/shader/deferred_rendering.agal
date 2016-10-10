@@ -1,0 +1,47 @@
+#vc0 (1,2)
+#vc1 world transform for x
+#vc2 world transform for y
+#vc3 fontW, charW, 0, 1
+
+#vc[va0.z+4] x, y, ux, uy
+
+#fc0 color
+
+@test_pass
+vt0.xy = va0 + va0
+vt0.x  = vt0.x - va0.w
+vt0.y  = va0.w - vt0.y
+vt0.zw = va0.w
+op = vt0
+v0 = va0
+oc = tex: v0, fs0<clamp,linear>
+
+@light_pass
+vt0.xy = va0 + va0
+vt0.x  = vt0.x - va0.w
+vt0.y  = va0.w - vt0.y
+vt0.zw = va0.w
+op = vt0
+v0 = va0
+ft0 = tex: v0, fs0<clamp,linear>
+ft0.xyz = nrm: ft0.xyz
+ft0.x = dp3: ft0, fc0
+ft0.x *= fc1.y
+oc = ft0.x + fc1.x
+
+@object_geom
+vt0 = va0
+${objectImp.vs}
+vt0.w = vt0.z
+vt0.xyz = m33: va4, vc5
+v0 = vt0
+oc = v0
+
+@bone_ani_geom
+${bone_ani_pos.vs}
+${objectImp.vs}
+vt0.w = vt0.z
+${bone_ani_normal.vs}
+vt0.xyz = m33: vt0, vc5
+v0 = vt0
+oc = v0

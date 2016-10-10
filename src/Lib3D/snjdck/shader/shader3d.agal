@@ -24,44 +24,56 @@ vt1.xyz = vt3.xyz + vt4.xyz
 vt1.xyz += vt1.xyz					#乘以2
 vt1.xyz += vt2.xyz
 
-@bone.vs<va0,${0}>
-vt1 = vc[${1}]
-${quaternion.vs}
-vt1.xyz = add: vt1, vc[${1}+1]		#偏移
+@bone.vs
+vt1 = vc[${0}]
+${quaternion.vs|va0}
+vt1.xyz = add: vt1, vc[${0}+1]		#偏移
 
-@bone1.vs<va2.x>
-${bone.vs}
+@bone_ani_pos.vs
+
+${bone.vs|va2.x}
 vt0.xyz = vt1 * va2.y				#骨骼权重
 
-@bone2.vs<va2.z>
-${bone.vs}
+${bone.vs|va2.z}
 vt1.xyz *= va2.w					#骨骼权重
 vt0.xyz += vt1
 
-@bone3.vs<va3.x>
-${bone.vs}
+${bone.vs|va3.x}
 vt1.xyz *= va3.y					#骨骼权重
 vt0.xyz += vt1
 
-@bone4.vs<va3.z>
-${bone.vs}
+${bone.vs|va3.z}
 vt1.xyz *= va3.w					#骨骼权重
 vt0.xyz += vt1
 
-@bone_ani_pos.vs
-${bone1.vs}
-${bone2.vs}
-${bone3.vs}
-${bone4.vs}
 vt0.w = va0
 
+@bone_ani_normal.vs
+vt1 = vc[va2.x]
+${quaternion.vs|va4}
+vt0.xyz = vt1 * va2.y				#骨骼权重
+
+vt1 = vc[va2.z]
+${quaternion.vs|va4}
+vt1.xyz *= va2.w					#骨骼权重
+vt0.xyz += vt1
+
+vt1 = vc[va3.x]
+${quaternion.vs|va4}
+vt1.xyz *= va3.y					#骨骼权重
+vt0.xyz += vt1
+
+vt1 = vc[va3.z]
+${quaternion.vs|va4}
+vt1.xyz *= va3.w					#骨骼权重
+vt0.xyz += vt1
 #===============================================================
 
-@camera3d.vs<vt0>
+@camera3d.vs
 #世界 -> 相机
 vt0.xyz -= vc2
 vt1 = vc1
-${quaternion.vs}
+${quaternion.vs|vt0}
 #投影
 vt1.z -= vc0.w
 vt0.xyz = vt1 / vc0
@@ -81,21 +93,21 @@ kil:ft1.x
 oc = ft0
 #===============================================================
 
-@bone_ani<rgba>
+@bone_ani
 ${bone_ani_pos.vs}
-${objectImp.agal}
+${objectImp.agal|rgba}
 
-@bone_ani_dxt5<dxt5>
+@bone_ani_dxt5
 ${bone_ani_pos.vs}
-${objectImp.agal}
+${objectImp.agal|dxt5}
 
-@object<rgba>
+@object
 vt0 = va0
-${objectImp.agal}
+${objectImp.agal|rgba}
 
-@object_dxt5<dxt5>
+@object_dxt5
 vt0 = va0
-${objectImp.agal}
+${objectImp.agal|dxt5}
 
 @billboard
 vt0 = va0 + vc8.zzww	#将图片中心点从左上角改到正中

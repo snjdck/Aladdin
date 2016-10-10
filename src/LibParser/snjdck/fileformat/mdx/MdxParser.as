@@ -264,11 +264,15 @@ package snjdck.fileformat.mdx
 			}
 			readUvas(ba);
 			var uvList:Vector.<Number> = readUvbs(ba);
-			var geom:Geometry = new Geometry(mergeVertexUV(vertexList, uvList), vertexIndex);
+			const vertexCount:int = uvList.length >> 1;
+			var geom:Geometry = new Geometry(vertexCount);
+			geom.indexData = vertexIndex;
+			geom.posData = vertexList;
+			geom.uvData = uvList;
+//			var geom:Geometry = new Geometry(mergeVertexUV(vertexList, uvList), vertexIndex);
 			subMesh.geometry = geom;
 			subMesh.materialName = texList[materialList[materialId][0]];
 			
-			var vertexCount:int = uvList.length >> 1;
 			var boneData:BoneData = new BoneData(vertexCount);
 			for(var i:int=0; i<vertexCount; ++i){
 				boneData.assignBone(i, bind[i], 1);

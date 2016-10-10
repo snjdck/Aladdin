@@ -42,6 +42,6 @@ ft0 = tex: v0, fs0<clamp,linear,${0}>
 ft0 *= fc0
 oc = ft0 + fc1
 #========================
-@image<rgba>			${image.raw}
-@image_dxt5<dxt5>		${image.raw}
+@image			${image.raw|rgba}
+@image_dxt5		${image.raw|dxt5}
 #========================
