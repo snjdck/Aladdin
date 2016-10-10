@@ -90,7 +90,7 @@ package snjdck.g3d.entities
 			}
 		}
 		
-		private function getBoneAttachments(boneName:String):DisplayObjectContainer3D
+		public function getBoneAttachments(boneName:String):DisplayObjectContainer3D
 		{
 			var bone:Bone = skeleton.getBoneByName(boneName);
 			if(null == bone){
@@ -106,21 +106,6 @@ package snjdck.g3d.entities
 				}
 			}
 			return attachments as DisplayObjectContainer3D;
-		}
-		
-		public function bindEntityToBone(boneName:String, entity:Object3D):void
-		{
-			getBoneAttachments(boneName).addChild(entity);
-		}
-		
-		public function unbindEntityFromBone(boneName:String, entity:Object3D):void
-		{
-			getBoneAttachments(boneName).removeChild(entity);
-		}
-		
-		public function unbindAllEntitiesFromBone(boneName:String):void
-		{
-			getBoneAttachments(boneName).removeAllChildren();
 		}
 		
 		public function set aniName(value:String):void
@@ -143,11 +128,6 @@ package snjdck.g3d.entities
 				otherMesh.mergeBound(bound.localBound);
 			}
 			bound.markWorldBoundDirty();
-		}
-		
-		public function hideSubMeshAt(index:int):void
-		{
-//			meshGroup.hideSubMeshAt(index);
 		}
 	}
 }
