@@ -43,16 +43,24 @@ package snjdck.gpu.render.instance
 		{
 			var numRegisterPerInstance:int = instanceData.numRegisterPerInstance;
 			var numRegisterReserved:int = instanceData.numRegisterReserved;
-			var maxInstanceCountPerBatch:int = (MAX_VC_COUNT - numRegisterReserved) / numRegisterPerInstance;
+			var maxInstanceCountPerBatch:int = numRegisterPerInstance > 0 ? (MAX_VC_COUNT - numRegisterReserved) / numRegisterPerInstance : 0x4000;
 			var batchCount:int = Math.ceil(totalInstanceCount / maxInstanceCountPerBatch);
 			var maxInstanceCountWillUse:int = Math.min(totalInstanceCount, maxInstanceCountPerBatch);
 			gpuData.initGpuData(context3d, maxInstanceCountWillUse);
-			instanceData.initConstData(constData);
+			if(numRegisterReserved > 0){
+				instanceData.initConstData(constData);
+				if(numRegisterPerInstance <= 0){
+					context3d.setVc(0, constData, numRegisterReserved);
+				}
+			}
 			for(var i:int=0; i<batchCount; ++i){
 				var fromIndex:int = i * maxInstanceCountPerBatch;
 				var count:int = Math.min(maxInstanceCountPerBatch, totalInstanceCount - fromIndex);
-				instanceData.updateConstData(constData, fromIndex, count);
-				context3d.setVc(0, constData, numRegisterReserved + numRegisterPerInstance * count);
+				if(numRegisterPerInstance > 0){
+					instanceData.updateConstData(constData, fromIndex, count);
+					var numRegisters:int = numRegisterReserved + numRegisterPerInstance * count;
+					context3d.setVc(0, constData, numRegisters);
+				}
 				gpuData.drawTriangles(context3d, count);
 			}
 		}

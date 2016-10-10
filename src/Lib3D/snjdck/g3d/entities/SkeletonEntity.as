@@ -129,5 +129,9 @@ package snjdck.g3d.entities
 			}
 			bound.markWorldBoundDirty();
 		}
+		
+		public function hideSubMeshAt(index:int):void
+		{
+		}
 	}
 }

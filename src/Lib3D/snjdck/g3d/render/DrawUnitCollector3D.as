@@ -1,15 +1,12 @@
 package snjdck.g3d.render
 {
-	import flash.display3D.Context3DCompareMode;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.rendersystem.RenderSystem;
-	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
+	import snjdck.g3d.rendersystem.subsystems.RenderPass;
 	import snjdck.g3d.rendersystem.subsystems.RenderSystemFactory;
-	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
@@ -18,7 +15,7 @@ package snjdck.g3d.render
 	{
 		private const drawUnitList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
 		
-		private const system:RenderSystem = RenderSystemFactory.CreateRenderSystem();
+		protected const system:RenderSystem = RenderSystemFactory.CreateRenderSystem();
 		
 		public function DrawUnitCollector3D(){}
 		
@@ -50,7 +47,7 @@ package snjdck.g3d.render
 		
 		public function draw(context3d:GpuContext):void
 		{
-			system.render(context3d);
+			system.render(context3d, RenderPass.MATERIAL_PASS);
 		}
 		
 		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void

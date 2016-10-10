@@ -6,7 +6,7 @@ package snjdck.gpu.register
 
 	final public class VertexRegister
 	{
-		private const slotCount:int = 4;
+		private const slotCount:int = 8;
 		
 		private var slotUseInfo:Vector.<Boolean>;
 		private var slotData:Vector.<GpuVertexBuffer>;

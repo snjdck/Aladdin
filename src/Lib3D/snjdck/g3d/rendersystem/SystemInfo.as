@@ -23,12 +23,12 @@ package snjdck.g3d.rendersystem
 			}
 		}
 		
-		public function render(context3d:GpuContext):void
+		public function render(context3d:GpuContext, passIndex:int):void
 		{
 			if(itemCount <= 0){
 				return;
 			}
-			system.onDrawBegin(context3d);
+			system.activePass(context3d, passIndex);
 			for(var i:int=0; i<itemCount; ++i){
 				system.render(context3d, itemList[i]);
 			}

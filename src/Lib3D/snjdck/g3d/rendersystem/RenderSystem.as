@@ -12,11 +12,11 @@ package snjdck.g3d.rendersystem
 		{
 		}
 		
-		public function render(context3d:GpuContext):void
+		public function render(context3d:GpuContext, passIndex:int):void
 		{
 			for(var i:int=0; i<systemCount; ++i){
 				var info:SystemInfo = systemList[i];
-				info.render(context3d);
+				info.render(context3d, passIndex);
 			}
 		}
 		
