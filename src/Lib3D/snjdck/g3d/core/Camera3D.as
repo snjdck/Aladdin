@@ -1,23 +1,19 @@
 package snjdck.g3d.core
 {
-	import flash.display3D.Context3DBlendFactor;
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DTextureFormat;
-	import flash.display3D.Context3DTriangleFace;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.geom.Quaternion;
-	import snjdck.g3d.lights.LightInstanceData;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPass;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.AssetMgr;
-	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
-	import snjdck.gpu.render.instance.InstanceRender;
+	import snjdck.gpu.render.ScreenDrawer;
 	
 	import stdlib.constant.Unit;
 	
@@ -83,9 +79,9 @@ package snjdck.g3d.core
 			context3d.texture = geometryTexture;
 			context3d.program = AssetMgr.Instance.getProgram("light_pass");
 			context3d.blendMode = BlendMode.MULTIPLY;
-			context3d.setDepthTest(false, Context3DCompareMode.ALWAYS);
+			context3d.setDepthTest(false, Context3DCompareMode.LESS);
 			context3d.setFc(0, new <Number>[Math.SQRT1_2, 0, Math.SQRT1_2, 1, 0.3, 0.7, 0, 1]);
-			InstanceRender.Instance.drawQuad(context3d, lightInstanceData, 1);
+			ScreenDrawer.Draw(context3d);
 		}
 		
 		override public function isInSight(bound:AABB):Boolean
@@ -122,6 +118,5 @@ package snjdck.g3d.core
 		}
 		*/
 		private var geometryTexture:GpuRenderTarget;
-		private const lightInstanceData:LightInstanceData = new LightInstanceData();
 	}
 }

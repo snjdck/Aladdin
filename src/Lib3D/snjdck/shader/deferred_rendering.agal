@@ -17,10 +17,9 @@ v0 = va0
 oc = tex: v0, fs0<clamp,linear>
 
 @light_pass
-vt0.xy = va0 + va0
-vt0.x  = vt0.x - va0.w
-vt0.y  = va0.w - vt0.y
-vt0.zw = va0.w
+vt0.xyz = va0 + va0
+vt0.x   = vt0.x - va0.w
+vt0.yw  = va0.w - vt0.yyzz
 op = vt0
 v0 = va0
 ft0 = tex: v0, fs0<clamp,linear>
