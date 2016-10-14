@@ -1,32 +1,39 @@
-#vc0 (1,2)
-#vc1 world transform for x
-#vc2 world transform for y
-#vc3 fontW, charW, 0, 1
 
-#vc[va0.z+4] x, y, ux, uy
-
-#fc0 color
-
-@test_pass
-vt0.xy = va0 + va0
-vt0.x  = vt0.x - va0.w
-vt0.y  = va0.w - vt0.y
-vt0.zw = va0.w
-op = vt0
-v0 = va0
-oc = tex: v0, fs0<clamp,linear>
-
-@light_pass
+@deferred_pass.agal
 vt0.xyz = va0 + va0
 vt0.x   = vt0.x - va0.w
 vt0.yw  = va0.w - vt0.yyzz
 op = vt0
 v0 = va0
-ft0 = tex: v0, fs0<clamp,linear>
+ft0 = tex: v0, fs0<clamp>
+
+@draw_tex
+${deferred_pass.agal}
+oc = ft0.w
+
+@light_pass
+${deferred_pass.agal}
+ft1.xy = v0
+ft1.z = ft0.w
+
+ft1.xyz -= fc0
+ft1.xyz *= fc1
+ft1.xyz = m33: ft1.xyz, fc4
+ft1.xyz /= fc2
+ft1.xyz += fc0
+
+ft1.w = tex: ft1.xy, fs1<clamp>
+ft1.w += fc0.w
+ft2.x = sge: ft1.w, ft1.z
+
 ft0.xyz = nrm: ft0.xyz
-ft0.x = dp3: ft0, fc0
-ft0.x *= fc1.y
-oc = ft0.x + fc1.x
+ft0.w = dp3: ft0, fc3
+ft0.w = sat: ft0.w
+
+ft2.x *= ft0.w
+ft2.y = fc2.w - ft2.x
+ft2.y *= fc3.w
+oc = ft2.x + ft2.y
 
 @object_geom
 vt0 = va0

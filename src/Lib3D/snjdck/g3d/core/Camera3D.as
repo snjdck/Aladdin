@@ -2,6 +2,8 @@ package snjdck.g3d.core
 {
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DTextureFormat;
+	import flash.geom.Matrix3D;
+	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
@@ -21,8 +23,8 @@ package snjdck.g3d.core
 	
 	final public class Camera3D extends DrawUnitCollector3D
 	{
-		static public var zNear	:Number = -10000;
-		static public var zFar	:Number =  10000;
+		static public var zNear	:Number = -2000;
+		static public var zFar	:Number =  2000;
 		
 		private const viewFrusum:ViewFrustum = new ViewFrustum();
 		
@@ -53,6 +55,13 @@ package snjdck.g3d.core
 			}
 			geometryTexture = new GpuRenderTarget(width, height, Context3DTextureFormat.RGBA_HALF_FLOAT);
 			geometryTexture.enableDepthAndStencil = true;
+			
+			if(shadowTexture != null){
+				shadowTexture.dispose();
+			}
+			shadowTexture = new GpuRenderTarget(2048, 2048, Context3DTextureFormat.BGRA);
+			shadowTexture.enableDepthAndStencil = true;
+			
 		}
 		
 		public function update(timeElapsed:int):void
@@ -74,15 +83,45 @@ package snjdck.g3d.core
 			
 			geometryTexture.setRenderToSelfAndClear(context3d);
 			system.render(context3d, RenderPass.GEOMETRY_PASS);
+			//draw shadow map
+			//*
+			lightConstData[0] = lightConstData[1] = 1024;
+			lightConstData[2] = zFar - zNear;
+			lightConstData[3] = zNear;
+			tempRot.fromEulerAngles(135 * Unit.RADIAN, 0, -90 * Unit.RADIAN);
+			tempRot.w *= -1;
+			lightConstData[4] = tempRot.x;
+			lightConstData[5] = tempRot.y;
+			lightConstData[6] = tempRot.z;
+			lightConstData[7] = tempRot.w;
+			context3d.setVc(0, lightConstData, 2);
+			
+			shadowTexture.setRenderToSelfAndClear(context3d);
+			context3d.setColorMask(false, false, false, true);
+			system.render(context3d, RenderPass.GEOMETRY_PASS);
+			context3d.setColorMask(true, true, true, true);
 			context3d.renderTarget = null;
 			
-			context3d.texture = geometryTexture;
+			tempRot.multiply(rotation, mat);
+			mat.toMatrix(matrix, v);
+			
+			context3d.setTextureAt(0, geometryTexture);
+			context3d.setTextureAt(1, shadowTexture);
 			context3d.program = AssetMgr.Instance.getProgram("light_pass");
 			context3d.blendMode = BlendMode.MULTIPLY;
 			context3d.setDepthTest(false, Context3DCompareMode.LESS);
-			context3d.setFc(0, new <Number>[Math.SQRT1_2, 0, Math.SQRT1_2, 1, 0.3, 0.7, 0, 1]);
+			context3d.setFc(0, new <Number>[
+				0.5, 0.5, zNear/(zNear-zFar), 0.0022,
+				context3d.backBufferWidth, -context3d.backBufferHeight, zFar-zNear, 0,
+				2048, -2048, zFar-zNear, 1,
+				Math.SQRT1_2, 0, Math.SQRT1_2, 0.4
+			], 4);
+			context3d.setFcM(4, matrix);
 			ScreenDrawer.Draw(context3d);
 		}
+		static private var mat:Quaternion = new Quaternion();
+		static private var matrix:Matrix3D = new Matrix3D();
+		static private var v:Vector3D = new Vector3D();
 		
 		override public function isInSight(bound:AABB):Boolean
 		{
@@ -118,5 +157,8 @@ package snjdck.g3d.core
 		}
 		*/
 		private var geometryTexture:GpuRenderTarget;
+		private var shadowTexture:GpuRenderTarget;
+		private var lightConstData:Vector.<Number> = new Vector.<Number>(8);
+		static private const tempRot:Quaternion = new Quaternion();
 	}
 }

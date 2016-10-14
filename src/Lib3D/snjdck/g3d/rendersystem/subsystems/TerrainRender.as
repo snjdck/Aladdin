@@ -46,7 +46,6 @@ package snjdck.g3d.rendersystem.subsystems
 			createQuadListIndices(1, indexData);
 			indexBuffer = new GpuIndexBuffer(indexData.length);
 			indexBuffer.upload(indexData);
-			regPass(RenderPass.GEOMETRY_PASS, null);
 		}
 		
 		override protected function onGeometryPass(context3d:GpuContext):void
@@ -58,7 +57,7 @@ package snjdck.g3d.rendersystem.subsystems
 			
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldMatrix);
 			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_1);
+//			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_1);
 		}
 		
 		override protected function onMaterialPass(context3d:GpuContext):void
