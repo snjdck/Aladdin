@@ -71,12 +71,11 @@ vt0.xyz += vt1
 
 @camera3d.vs
 #世界 -> 相机
-vt0.xyz -= vc2
-vt1 = vc1
-${quaternion.vs|vt0}
+vt0.xyz -= vc4
+vt0.xyz = m33: vt0, vc1
 #投影
-vt1.z -= vc0.w
-vt0.xyz = vt1 / vc0
+vt0.z -= vc0.w
+vt0.xyz = vt0 / vc0
 op = vt0
 
 @objectImp.vs

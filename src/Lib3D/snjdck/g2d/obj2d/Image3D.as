@@ -16,7 +16,7 @@ package snjdck.g2d.obj2d
 	
 	public class Image3D extends DisplayObject2D
 	{
-		static public const MVP:Vector.<Number> = new <Number>[0,0,2000,-1000,0,0,0,1,0,0,0,0];
+		static public const MVP:Vector.<Number> = new <Number>[0,0,2000,-1000,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0];
 		
 		private var isMatrixDirty:Boolean = true;
 		
