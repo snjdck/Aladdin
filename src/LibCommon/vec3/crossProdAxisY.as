@@ -5,8 +5,6 @@ package vec3
 	[Inline]
 	public function crossProdAxisY(v:Vector3D, result:Vector3D):void
 	{
-		result.x = -v.z;
-		result.y = 0;
-		result.z = v.x;
+		result.setTo(-v.z, 0, v.x);
 	}
 }
