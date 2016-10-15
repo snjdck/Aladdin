@@ -102,7 +102,7 @@ package snjdck.g3d.core
 			context3d.setColorMask(true, true, true, true);
 			context3d.renderTarget = null;
 			
-			tempRot.multiply(rotation, mat);
+			tempRot.prepend(rotation, mat);
 			mat.toMatrix(matrix, v);
 			
 			context3d.setTextureAt(0, geometryTexture);

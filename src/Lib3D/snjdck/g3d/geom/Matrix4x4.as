@@ -28,7 +28,7 @@ package snjdck.g3d.geom
 		{
 			rotation.rotateVector(other.translation, tempVector);
 			vec3.add(translation, tempVector, result.translation);
-			rotation.multiply(other.rotation, result.rotation);
+			rotation.prepend(other.rotation, result.rotation);
 		}
 		
 		public function invert():void

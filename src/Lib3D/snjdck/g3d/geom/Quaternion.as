@@ -172,7 +172,7 @@ package snjdck.g3d.geom
 		 *     + (a0*b3 + a1*b2 - a2*b1 + a3*b0).k
 		 */
 		[Inline]
-		public function multiply(other:Quaternion, result:Quaternion):void
+		public function prepend(other:Quaternion, result:Quaternion):void
 		{
 			var tx:* = other.x;
 			var ty:* = other.y;
