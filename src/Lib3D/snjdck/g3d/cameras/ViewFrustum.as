@@ -1,4 +1,4 @@
-package snjdck.g3d.core
+package snjdck.g3d.cameras
 {
 	import flash.geom.Vector3D;
 	

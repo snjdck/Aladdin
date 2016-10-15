@@ -2,7 +2,7 @@ package snjdck.g3d
 {
 	import flash.events.MouseEvent;
 	
-	import snjdck.g3d.core.Camera3D;
+	import snjdck.g3d.cameras.Camera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;

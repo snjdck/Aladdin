@@ -1,7 +1,7 @@
 ﻿package snjdck.quadtree
 {
 	import snjdck.g3d.bound.AABB;
-	import snjdck.g3d.core.ViewFrustum;
+	import snjdck.g3d.cameras.ViewFrustum;
 
 	/**
 	 * 00 01

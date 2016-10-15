@@ -1,4 +1,4 @@
-package snjdck.g3d.core
+package snjdck.g3d.cameras
 {
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DTextureFormat;
@@ -15,6 +15,7 @@ package snjdck.g3d.core
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.g3d.core.Object3D;
 	
 	use namespace ns_g3d;
 	
