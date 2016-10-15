@@ -22,7 +22,7 @@ package snjdck.g3d.obj3d
 		
 		public function BillBoard()
 		{
-			blendMode = BlendMode.NORMAL;
+//			blendMode = BlendMode.NORMAL;
 			
 			var s:int = 128 * 128;
 			bound.setMinMax(-s, -s, 0, s, s, 0);

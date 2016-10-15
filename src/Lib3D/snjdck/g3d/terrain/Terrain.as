@@ -39,7 +39,6 @@ package snjdck.g3d.terrain
 		
 		public function Terrain()
 		{
-			blendMode = BlendMode.NORMAL;
 			name = "ground";
 			/*
 			area.center = new Vector3D();

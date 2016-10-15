@@ -26,7 +26,7 @@ package snjdck.g3d.obj3d
 		
 		public function Line3D()
 		{
-			blendMode = BlendMode.NORMAL;
+//			blendMode = BlendMode.NORMAL;
 		}
 		
 		public function setPt(from:Vector3D, to:Vector3D):void

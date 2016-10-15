@@ -8,7 +8,6 @@ package snjdck.g3d.core
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.render.DrawUnitCollector3D;
-	import snjdck.gpu.BlendMode;
 	
 	use namespace ns_g3d;
 	
@@ -24,7 +23,7 @@ package snjdck.g3d.core
 		
 		public var mouseEnabled:Boolean;
 		
-		private var _blendMode:BlendMode;
+//		private var _blendMode:BlendMode;
 		public var visible:Boolean;
 		
 		public const mouseDownSignal:Signal = new Signal();
@@ -34,7 +33,7 @@ package snjdck.g3d.core
 		{
 			visible = true;
 			mouseEnabled = true;
-			_blendMode = BlendMode.NORMAL;
+//			_blendMode = BlendMode.NORMAL;
 		}
 		
 		override protected function get parentWorldTransform():Matrix3D
@@ -72,7 +71,7 @@ package snjdck.g3d.core
 		{
 			return _parent;
 		}
-
+/*
 		public function get blendMode():BlendMode
 		{
 			return _blendMode;
@@ -92,7 +91,7 @@ package snjdck.g3d.core
 		{
 			_blendMode = value ? BlendMode.NORMAL : BlendMode.ALPHAL;
 		}
-		
+		*/
 		public function removeFromParent():void
 		{
 			if(null != parent){
