@@ -64,7 +64,7 @@ package snjdck.g3d.lights
 			shadowMap.setRenderToSelfAndClear(context3d);
 			context3d.setVc(0, constVc, 4);
 			context3d.setColorMask(false, false, false, true);
-			render3d.render(context3d, RenderPass.GEOMETRY_PASS);
+			render3d.render(context3d, RenderPass.DEPTH_PASS);
 			context3d.setColorMask(true, true, true, true);
 		}
 		

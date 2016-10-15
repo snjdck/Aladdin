@@ -16,7 +16,7 @@ package snjdck.g3d.rendersystem.subsystems
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.shader.ShaderName;
 	
-	internal class TerrainRender extends ISystem
+	internal class TerrainRender implements ISystem
 	{
 		static private const COUNT_PER_VERTEX:int = 3;
 		
@@ -25,8 +25,14 @@ package snjdck.g3d.rendersystem.subsystems
 		private var vertexBuffer:GpuVertexBuffer;
 		private var indexBuffer:GpuIndexBuffer;
 		
+		private var geometryShaderName:String;
+		private var depthShaderName:String;
+		
 		public function TerrainRender()
 		{
+			geometryShaderName = ShaderName.TERRAIN + "_geom";
+			depthShaderName = ShaderName.TERRAIN + "_depth";
+			
 			var vertexData:Vector.<Number> = new Vector.<Number>(4 * COUNT_PER_VERTEX);
 			var offset:int = 0;
 			offset += COUNT_PER_VERTEX;
@@ -48,31 +54,27 @@ package snjdck.g3d.rendersystem.subsystems
 			indexBuffer.upload(indexData);
 		}
 		
-		override protected function onGeometryPass(context3d:GpuContext):void
+		public function activePass(context3d:GpuContext, passIndex:int):void
 		{
 			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 			context3d.blendMode = BlendMode.NORMAL;
 			context3d.setCulling(Context3DTriangleFace.BACK);
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TERRAIN + "_geom");
 			
 			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldMatrix);
 			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-//			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_1);
-		}
-		
-		override protected function onMaterialPass(context3d:GpuContext):void
-		{
-			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
-			context3d.blendMode = BlendMode.NORMAL;
-			context3d.setCulling(Context3DTriangleFace.BACK);
-			context3d.program = AssetMgr.Instance.getProgram(ShaderName.TERRAIN);
 			
-			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldMatrix);
-			context3d.setVertexBufferAt(0, vertexBuffer, 0, Context3DVertexBufferFormat.FLOAT_2);
-			context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_1);
+			if(passIndex == RenderPass.MATERIAL_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(ShaderName.TERRAIN);
+				context3d.setVertexBufferAt(1, vertexBuffer, 2, Context3DVertexBufferFormat.FLOAT_1);
+			}else if(passIndex == RenderPass.GEOMETRY_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(geometryShaderName);
+			}else if(passIndex == RenderPass.DEPTH_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(depthShaderName);
+				
+			}
 		}
 		
-		override public function render(context3d:GpuContext, item:Object):void
+		public function render(context3d:GpuContext, item:Object):void
 		{
 			var quad:TerrainQuad = item as TerrainQuad;
 			if(context3d.isFsSlotInUse(0)){

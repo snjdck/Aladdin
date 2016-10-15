@@ -49,3 +49,10 @@ vt0.w = vt0.z
 vt0.xyz = m33: va0.zzw, vc5
 v0 = vt0
 oc = v0
+
+@terrain_quad_depth
+vt0 = va0 * vc8.zzww
+vt0.xy += vc8
+${objectImp.vs}
+v0 = vt0.z
+oc = v0

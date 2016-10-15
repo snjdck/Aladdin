@@ -9,34 +9,35 @@ package snjdck.g3d.rendersystem.subsystems
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	
-	internal class OpaqueRender extends ISystem
+	internal class OpaqueRender implements ISystem
 	{
 		private var shaderName:String;
 		private var geometryShaderName:String;
+		private var depthShaderName:String;
 		
 		public function OpaqueRender(shaderName:String)
 		{
 			this.shaderName = shaderName;
 			geometryShaderName = shaderName + "_geom";
+			depthShaderName = shaderName + "_depth";
 		}
 		
-		override protected function onGeometryPass(context3d:GpuContext):void
+		public function activePass(context3d:GpuContext, passIndex:int):void
 		{
 			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
 			context3d.blendMode = BlendMode.NORMAL;
 			context3d.setCulling(Context3DTriangleFace.BACK);
-			context3d.program = AssetMgr.Instance.getProgram(geometryShaderName);
+			if(passIndex == RenderPass.MATERIAL_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(shaderName);
+			}else if(passIndex == RenderPass.GEOMETRY_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(geometryShaderName);
+			}else if(passIndex == RenderPass.DEPTH_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(depthShaderName);
+				
+			}
 		}
 		
-		override protected function onMaterialPass(context3d:GpuContext):void
-		{
-			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
-			context3d.blendMode = BlendMode.NORMAL;
-			context3d.setCulling(Context3DTriangleFace.BACK);
-			context3d.program = AssetMgr.Instance.getProgram(shaderName);
-		}
-		
-		override public function render(context3d:GpuContext, item:Object):void
+		public function render(context3d:GpuContext, item:Object):void
 		{
 			var drawUnit:IDrawUnit3D = item as IDrawUnit3D;
 			drawUnit.draw(context3d);

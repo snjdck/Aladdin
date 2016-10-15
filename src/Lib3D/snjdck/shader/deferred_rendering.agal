@@ -51,3 +51,15 @@ ${bone_ani_normal.vs}
 vt0.xyz = m33: vt0, vc5
 v0 = vt0
 oc = v0
+
+@object_depth
+vt0 = va0
+${objectImp.vs}
+v0 = vt0.z
+oc = v0
+
+@bone_ani_depth
+${bone_ani_pos.vs}
+${objectImp.vs}
+v0 = vt0.z
+oc = v0
