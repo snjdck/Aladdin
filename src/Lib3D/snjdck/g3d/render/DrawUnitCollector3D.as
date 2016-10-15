@@ -3,6 +3,7 @@ package snjdck.g3d.render
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bound.AABB;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.lights.ILight3D;
 	import snjdck.g3d.pickup.Ray;
 	import snjdck.g3d.rendersystem.RenderSystem;
 	import snjdck.g3d.rendersystem.subsystems.RenderPass;
@@ -16,6 +17,7 @@ package snjdck.g3d.render
 		private const drawUnitList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
 		
 		protected const system:RenderSystem = RenderSystemFactory.CreateRenderSystem();
+		private var lightList:Vector.<ILight3D> = new Vector.<ILight3D>();
 		
 		public function DrawUnitCollector3D(){}
 		
@@ -23,6 +25,17 @@ package snjdck.g3d.render
 		{
 			system.clear();
 			drawUnitList.length = 0;
+			lightList.length = 0;
+		}
+		
+		public function getLightCount():int
+		{
+			return lightList.length;
+		}
+		
+		public function getLightAt(index:int):ILight3D
+		{
+			return lightList[index];
 		}
 		
 		public function isInSight(bound:AABB):Boolean
@@ -44,6 +57,11 @@ package snjdck.g3d.render
 			if(drawUnit is IDrawUnit3D){
 				drawUnitList.push(drawUnit);
 			}
+		}
+		
+		public function addLight(light:ILight3D):void
+		{
+			lightList.push(light);
 		}
 		
 		public function draw(context3d:GpuContext):void
