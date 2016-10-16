@@ -85,14 +85,15 @@ package snjdck.g3d.cameras
 			geometryTexture.setRenderToSelfAndClear(context3d);
 			system.render(context3d, RenderPass.GEOMETRY_PASS);
 			
+			context3d.setColorMask(false, false, false, true);
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
 				light = getLightAt(lightIndex);
 				light.drawShadowMap(context3d, system);
 			}
+			context3d.setColorMask(true, true, true, true);
 			
 			context3d.renderTarget = null;
 			context3d.setTextureAt(0, geometryTexture);
-			context3d.program = AssetMgr.Instance.getProgram("light_pass");
 			context3d.blendMode = BlendMode.MULTIPLY;
 			context3d.setDepthTest(false, Context3DCompareMode.LESS);
 			

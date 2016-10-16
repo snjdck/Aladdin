@@ -74,8 +74,14 @@ vt0.xyz += vt1
 vt0.xyz -= vc4
 vt0.xyz = m33: vt0, vc1
 #投影
+vt1.x = sge: vt0.w, vc0.y
+vt1.y = vt0.z * vt1.x
+vt1.x = vt0.w - vt1.x
+vt1.z = vt1.x + vt1.y
+
 vt0.z -= vc0.w
 vt0.xyz = vt0 / vc0
+vt0.xy /= vt1.z
 op = vt0
 
 @objectImp.vs

@@ -68,9 +68,6 @@ package snjdck.gpu.asset
 		public function clear(red:Number=0.0, green:Number=0.0, blue:Number=0.0, alpha:Number=1.0, depth:Number=1.0, stencil:uint=0, mask:uint=0xFFFFFFFF):void
 		{
 			context3d.clear(red, green, blue, alpha, depth, stencil, mask);
-			if(_renderTarget != null){
-				_renderTarget._hasCleared = true;
-			}
 		}
 		
 		public function present():void
@@ -149,11 +146,8 @@ package snjdck.gpu.asset
 			setRenderToTexture(value, 0);
 		}
 		
-		public function setRenderToTexture(texture:GpuRenderTarget, colorOutputIndex:int):void
+		public function setRenderToTexture(texture:GpuRenderTarget, surfaceSelector:int):void
 		{
-			if(_renderTarget == texture){
-				return;
-			}
 			_renderTarget = texture;
 			if(null == _renderTarget){
 				context3d.setRenderToBackBuffer();
@@ -162,7 +156,8 @@ package snjdck.gpu.asset
 			context3d.setRenderToTexture(
 				_renderTarget.getRawGpuAsset(context3d),
 				_renderTarget.enableDepthAndStencil,
-				_renderTarget.antiAlias, 0, colorOutputIndex
+				_renderTarget.antiAlias,
+				surfaceSelector, 0
 			);
 		}
 		

@@ -10,6 +10,7 @@ package snjdck.g3d.lights
 	import snjdck.g3d.rendersystem.RenderSystem;
 	import snjdck.g3d.rendersystem.subsystems.RenderPass;
 	import snjdck.g3d.utils.RotationMatrix;
+	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.render.ScreenDrawer;
@@ -63,9 +64,7 @@ package snjdck.g3d.lights
 		{
 			shadowMap.setRenderToSelfAndClear(context3d);
 			context3d.setVc(0, constVc, 4);
-			context3d.setColorMask(false, false, false, true);
 			render3d.render(context3d, RenderPass.DEPTH_PASS);
-			context3d.setColorMask(true, true, true, true);
 		}
 		
 		public function drawLight(context3d:GpuContext, cameraTransform:Matrix3D):void
@@ -78,6 +77,7 @@ package snjdck.g3d.lights
 			constFc[5]  = -context3d.backBufferHeight;
 			constFc[15] =  environmentBrightness;
 			
+			context3d.program = AssetMgr.Instance.getProgram("light_pass");
 			context3d.setTextureAt(1, shadowMap);
 			context3d.setFc(0, constFc, 7);
 			ScreenDrawer.Draw(context3d);

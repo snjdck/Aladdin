@@ -7,9 +7,30 @@ op = vt0
 v0 = va0
 ft0 = tex: v0, fs0<clamp>
 
-@draw_tex
+@point_light_pass
 ${deferred_pass.agal}
-oc = ft0.w
+ft1.xy = v0
+ft1.z = ft0.w
+
+ft1.xyz -= fc0
+ft1.xyz *= fc1
+ft1.xyz = m33: ft1.xyz, fc4
+ft1.xyz += fc2
+ft1.xyz -= fc3
+ft1.xyz = nrm: ft1.xyz
+
+ft1.w = tex: ft1.xy, fs1<clamp>
+ft1.w += fc0.w
+ft2.x = sge: ft1.w, ft1.z
+
+ft0.xyz = nrm: ft0.xyz
+ft0.w = dp3: ft0, fc3
+ft0.w = sat: ft0.w
+
+ft2.x *= ft0.w
+ft2.y = fc2.w - ft2.x
+ft2.y *= fc3.w
+oc = ft2.x + ft2.y
 
 @light_pass
 ${deferred_pass.agal}

@@ -7,7 +7,6 @@ package snjdck.g2d.filter
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.gpu.asset.GpuContext;
-	import snjdck.gpu.asset.GpuProgram;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.asset.IGpuTexture;
 	

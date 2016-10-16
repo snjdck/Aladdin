@@ -20,9 +20,7 @@ package snjdck.g2d.filter
 		{
 			context3d.renderTarget = renderTarget;
 			context3d.setScissorRect(rect);
-			if(!renderTarget.hasCleared()){
-				context3d.clearStencil();
-			}
+			context3d.clearStencil();
 //			context3d.texture = gpuTexture;
 			render2d.pushScreen(renderTarget.width, renderTarget.height);
 			render2d.drawTexture(context3d, gpuTexture);
