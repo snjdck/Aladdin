@@ -14,12 +14,14 @@ package snjdck.g3d.rendersystem.subsystems
 		private var shaderName:String;
 		private var geometryShaderName:String;
 		private var depthShaderName:String;
+		private var depthCubeShaderName:String;
 		
 		public function OpaqueRender(shaderName:String)
 		{
 			this.shaderName = shaderName;
 			geometryShaderName = shaderName + "_geom";
 			depthShaderName = shaderName + "_depth";
+			depthCubeShaderName = shaderName + "_depth_cube";
 		}
 		
 		public function activePass(context3d:GpuContext, passIndex:int):void
@@ -33,7 +35,8 @@ package snjdck.g3d.rendersystem.subsystems
 				context3d.program = AssetMgr.Instance.getProgram(geometryShaderName);
 			}else if(passIndex == RenderPass.DEPTH_PASS){
 				context3d.program = AssetMgr.Instance.getProgram(depthShaderName);
-				
+			}else if(passIndex == RenderPass.DEPTH_CUBE_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(depthCubeShaderName);
 			}
 		}
 		

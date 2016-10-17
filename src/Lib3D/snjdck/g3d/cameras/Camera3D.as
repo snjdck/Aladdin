@@ -88,7 +88,7 @@ package snjdck.g3d.cameras
 			context3d.setColorMask(false, false, false, true);
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
 				light = getLightAt(lightIndex);
-				light.drawShadowMap(context3d, system);
+				light.drawShadowMap(context3d, system, viewFrusum.center);
 			}
 			context3d.setColorMask(true, true, true, true);
 			

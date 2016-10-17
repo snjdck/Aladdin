@@ -27,11 +27,13 @@ package snjdck.g3d.rendersystem.subsystems
 		
 		private var geometryShaderName:String;
 		private var depthShaderName:String;
+		private var depthCubeShaderName:String;
 		
 		public function TerrainRender()
 		{
 			geometryShaderName = ShaderName.TERRAIN + "_geom";
 			depthShaderName = ShaderName.TERRAIN + "_depth";
+			depthCubeShaderName = ShaderName.TERRAIN + "_depth_cube";
 			
 			var vertexData:Vector.<Number> = new Vector.<Number>(4 * COUNT_PER_VERTEX);
 			var offset:int = 0;
@@ -70,7 +72,8 @@ package snjdck.g3d.rendersystem.subsystems
 				context3d.program = AssetMgr.Instance.getProgram(geometryShaderName);
 			}else if(passIndex == RenderPass.DEPTH_PASS){
 				context3d.program = AssetMgr.Instance.getProgram(depthShaderName);
-				
+			}else if(passIndex == RenderPass.DEPTH_CUBE_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(depthCubeShaderName);
 			}
 		}
 		
