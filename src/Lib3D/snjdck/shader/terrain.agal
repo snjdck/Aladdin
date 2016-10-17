@@ -56,3 +56,13 @@ vt0.xy += vc8
 ${objectImp.vs}
 v0 = vt0.z
 oc = v0
+
+@terrain_quad_depth_cube
+vt0 = va0 * vc8.zzww
+vt0.xy += vc8
+${objectImp.vs}
+vt2.w = vc0.z
+v0 = vt2
+ft0.x = dp3: v0, v0
+ft0.x = sqt: ft0.x
+oc = ft0.x / v0.w

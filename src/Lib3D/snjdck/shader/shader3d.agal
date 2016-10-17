@@ -71,13 +71,13 @@ vt0.xyz += vt1
 
 @camera3d.vs
 #世界 -> 相机
-vt0.xyz -= vc4
-vt0.xyz = m33: vt0, vc1
+vt2.xyz = vt0 - vc4
+vt0.xyz = m33: vt2.xyz, vc1
 #投影
-vt1.x = sge: vt0.w, vc0.y
-vt1.y = vt0.z * vt1.x
-vt1.x = vt0.w - vt1.x
-vt1.z = vt1.x + vt1.y
+vt1.x = sge: vt0.w, vc0.y	#是否透视模式
+vt1.y = vt0.w - vt1.x		#是否等轴模式
+vt1.z = vt0.z * vt1.x
+vt1.z = vt1.z + vt1.y
 
 vt0.z -= vc0.w
 vt0.xyz = vt0 / vc0

@@ -15,24 +15,20 @@ ft1.z = ft0.w
 ft1.xyz -= fc0
 ft1.xyz *= fc1
 ft1.xyz = m33: ft1.xyz, fc4
-ft1.xyz += fc2
-ft1.xyz -= fc3
-ft1.xyz = nrm: ft1.xyz
+ft1.xyz += fc2	#camera position - light position
+ft2.w = dp3: ft1.xyz, ft1.xyz
+ft2.w = sqt: ft2.w
+ft2.w /= fc1.z
 
-ft1.w = tex: ft1.xy, fs1<clamp>
+ft1.w = tex: ft1.xyz, fs1<cube,clamp>
 ft1.w += fc0.w
-ft2.x = sge: ft1.w, ft1.z
+ft2.x = sge: ft1.w, ft2.w
 
-ft0.xyz = nrm: ft0.xyz
-ft0.w = dp3: ft0, fc3
-ft0.w = sat: ft0.w
-
-ft2.x *= ft0.w
-ft2.y = fc2.w - ft2.x
+ft2.y = fc1.w - ft2.x
 ft2.y *= fc3.w
 oc = ft2.x + ft2.y
 
-@light_pass
+@direction_light_pass
 ${deferred_pass.agal}
 ft1.xy = v0
 ft1.z = ft0.w
@@ -52,7 +48,7 @@ ft0.w = dp3: ft0, fc3
 ft0.w = sat: ft0.w
 
 ft2.x *= ft0.w
-ft2.y = fc2.w - ft2.x
+ft2.y = fc1.w - ft2.x
 ft2.y *= fc3.w
 oc = ft2.x + ft2.y
 
@@ -84,3 +80,21 @@ ${bone_ani_pos.vs}
 ${objectImp.vs}
 v0 = vt0.z
 oc = v0
+
+@object_depth_cube
+vt0 = va0
+${objectImp.vs}
+vt2.w = vc0.z
+v0 = vt2
+ft0.x = dp3: v0, v0
+ft0.x = sqt: ft0.x
+oc = ft0.x / v0.w
+
+@bone_ani_depth_cube
+${bone_ani_pos.vs}
+${objectImp.vs}
+vt2.w = vc0.z
+v0 = vt2
+ft0.x = dp3: v0, v0
+ft0.x = sqt: ft0.x
+oc = ft0.x / v0.w
