@@ -99,7 +99,7 @@ package snjdck.g3d.cameras
 			
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
 				light = getLightAt(lightIndex);
-				light.drawLight(context3d, viewMatrix.transformInvert);
+				light.drawLight(context3d, viewMatrix.transformInvert, viewFrusum.center);
 			}
 		}
 		
