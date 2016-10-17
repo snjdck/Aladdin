@@ -14,6 +14,7 @@ package snjdck.g3d.lights
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	import snjdck.gpu.render.ScreenDrawer;
+	import snjdck.gpu.support.GpuConstData;
 	
 	use namespace ns_g3d;
 	
@@ -23,7 +24,6 @@ package snjdck.g3d.lights
 		static public const SHADOW_MAP_SIZE:int = 2048;
 		
 		public var environmentBrightness:Number = 0.4;
-		public var castShadows:Boolean;
 		
 		private var shadowMap:GpuRenderTarget;
 		private const constVc:Vector.<Number> = new Vector.<Number>(20);
@@ -35,21 +35,13 @@ package snjdck.g3d.lights
 		{
 			viewMatrix = new RotationMatrix(Vector3D.Z_AXIS, direction);
 			
-			constVc[0] = constVc[1] = SHADOW_MAP_SIZE >> 1;
-			constVc[2] = Camera3D.zRange;
-			constVc[3] = Camera3D.zNear;
-			viewMatrix.transform.copyRawDataTo(constVc, 4, true);
+			GpuConstData.SetNumber(constVc, 0, SHADOW_MAP_SIZE >> 1, SHADOW_MAP_SIZE >> 1, Camera3D.zRange, Camera3D.zNear);
+			GpuConstData.SetMatrix(constVc, 1, viewMatrix.transform);
 			
-			constFc[0] = constFc[1] = 0.5;
-			constFc[2] = -Camera3D.zNear / Camera3D.zRange;
-			constFc[3] = SHADOW_BIAS;
-			constFc[6] = constFc[10] = Camera3D.zRange;
-			constFc[8] = SHADOW_MAP_SIZE;
-			constFc[9] = -SHADOW_MAP_SIZE;
-			constFc[11] = 1;
-			constFc[12] = -direction.x;
-			constFc[13] = -direction.y;
-			constFc[14] = -direction.z;
+			GpuConstData.SetNumber(constFc, 0, 0.5, 0.5, -Camera3D.zNear / Camera3D.zRange, SHADOW_BIAS);
+			GpuConstData.SetNumber(constFc, 1, 0, 0, Camera3D.zRange, 1);
+			GpuConstData.SetNumber(constFc, 2, SHADOW_MAP_SIZE, -SHADOW_MAP_SIZE, Camera3D.zRange, 1);
+			GpuConstData.SetNumber(constFc, 3, -direction.x, -direction.y, -direction.z, 0);
 			
 			shadowMap = new GpuRenderTarget(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 			shadowMap.enableDepthAndStencil = true;
@@ -60,26 +52,27 @@ package snjdck.g3d.lights
 			collector.addLight(this);
 		}
 		
-		public function drawShadowMap(context3d:GpuContext, render3d:RenderSystem):void
+		public function drawShadowMap(context3d:GpuContext, render3d:RenderSystem, cameraPosition:Vector3D):void
 		{
+			GpuConstData.SetVector(constVc, 4, cameraPosition);
+			context3d.setVc(0, constVc);
 			shadowMap.setRenderToSelfAndClear(context3d);
-			context3d.setVc(0, constVc, 4);
 			render3d.render(context3d, RenderPass.DEPTH_PASS);
 		}
 		
-		public function drawLight(context3d:GpuContext, cameraTransform:Matrix3D):void
+		public function drawLight(context3d:GpuContext, cameraRotation:Matrix3D, cameraPosition:Vector3D):void
 		{
-			matrix.copyFrom(cameraTransform);
+			matrix.copyFrom(cameraRotation);
 			matrix.append(viewMatrix.transform);
-			matrix.copyRawDataTo(constFc, 16, true);
+			GpuConstData.SetMatrix(constFc, 4, matrix);
 			
 			constFc[4]  =  context3d.backBufferWidth;
 			constFc[5]  = -context3d.backBufferHeight;
 			constFc[15] =  environmentBrightness;
 			
-			context3d.program = AssetMgr.Instance.getProgram("light_pass");
-			context3d.setTextureAt(1, shadowMap);
 			context3d.setFc(0, constFc, 7);
+			context3d.program = AssetMgr.Instance.getProgram("direction_light_pass");
+			context3d.setTextureAt(1, shadowMap);
 			ScreenDrawer.Draw(context3d);
 		}
 		
