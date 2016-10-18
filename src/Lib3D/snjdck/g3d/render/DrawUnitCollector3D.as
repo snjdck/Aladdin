@@ -12,7 +12,7 @@ package snjdck.g3d.render
 	
 	use namespace ns_g3d;
 
-	public class DrawUnitCollector3D
+	public class DrawUnitCollector3D extends Object3D
 	{
 		private const drawUnitList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
 		
@@ -69,7 +69,7 @@ package snjdck.g3d.render
 			system.render(context3d, RenderPass.MATERIAL_PASS);
 		}
 		
-		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
+		public function pickup(worldRay:Ray, result:Vector.<Object3D>):void
 		{
 			if(drawUnitList.length <= 0)
 				return;

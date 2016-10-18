@@ -44,6 +44,7 @@ package snjdck.g3d.lights
 			GpuConstData.SetNumber(constFc, 3, -direction.x, -direction.y, -direction.z, 0);
 			
 			shadowMap = new GpuRenderTarget(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+			shadowMap.backgroundColor = 0xFF000000;
 			shadowMap.enableDepthAndStencil = true;
 		}
 		

@@ -2,7 +2,7 @@
 {
 	import snjdck.g3d.bounds.AABB;
 	import snjdck.g3d.cameras.ClassifyResult;
-	import snjdck.g3d.cameras.ViewFrustum;
+	import snjdck.g3d.cameras.IViewFrustum;
 
 	/**
 	 * 00 01
@@ -96,7 +96,7 @@
 			}while(targetTree != null);
 		}
 		
-		public function getObjectsInFrustum(viewFrustum:ViewFrustum, result:Array):void
+		public function getObjectsInFrustum(viewFrustum:IViewFrustum, result:Array):void
 		{
 			var currentNode:QuadTree = this;
 			for(;;){

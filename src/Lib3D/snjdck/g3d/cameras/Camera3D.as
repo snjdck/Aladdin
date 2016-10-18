@@ -12,14 +12,12 @@ package snjdck.g3d.cameras
 	import snjdck.g3d.rendersystem.subsystems.RenderPass;
 	import snjdck.g3d.utils.RotationMatrix;
 	import snjdck.gpu.BlendMode;
-	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
-	import snjdck.g3d.core.Object3D;
 	
 	use namespace ns_g3d;
 	
-	final public class Camera3D extends DrawUnitCollector3D
+	final public class Camera3D extends DrawUnitCollector3D implements ICamera3D
 	{
 		static public var zNear	:Number = -2000;
 		static public var zRange:Number =  4000;
@@ -28,9 +26,12 @@ package snjdck.g3d.cameras
 		
 		private var viewMatrix:RotationMatrix;
 		
-		public var bindTarget:Object3D;
+//		public var bindTarget:Object3D;
 		
 		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
+		
+		private var _width:int;
+		private var _height:int;
 		
 		public function Camera3D()
 		{
@@ -44,6 +45,11 @@ package snjdck.g3d.cameras
 		
 		public function setScreenSize(width:int, height:int):void
 		{
+			if(_width == width && _height == height){
+				return;
+			}
+			_width = width;
+			_height = height;
 			viewFrusum.resize(width, height);
 			constData[0] = 0.5 * width;
 			constData[1] = 0.5 * height;
@@ -53,6 +59,15 @@ package snjdck.g3d.cameras
 			}
 		}
 		
+		override public function onUpdate(timeElapsed:int):void
+		{
+			worldTransform.copyColumnTo(3, viewFrusum.center);
+			constData[16] = viewFrusum.center.x;
+			constData[17] = viewFrusum.center.y;
+			constData[18] = viewFrusum.center.z;
+		}
+		
+		/*
 		public function update(timeElapsed:int):void
 		{
 			if(bindTarget != null){
@@ -64,7 +79,7 @@ package snjdck.g3d.cameras
 				constData[16] = constData[17] = constData[18] = 0;
 			}
 		}
-		
+		*/
 		override public function draw(context3d:GpuContext):void
 		{
 			context3d.setVc(0, constData);
@@ -124,7 +139,7 @@ package snjdck.g3d.cameras
 			matrix44.transformVector(_worldMatrixInvert, input, output);
 		}
 		//*/
-		public function getViewFrustum():ViewFrustum
+		public function getViewFrustum():IViewFrustum
 		{
 			return viewFrusum;
 		}

@@ -3,6 +3,7 @@ package snjdck.g3d
 	import flash.events.MouseEvent;
 	
 	import snjdck.g3d.cameras.Camera3D;
+	import snjdck.g3d.cameras.ICamera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
@@ -14,7 +15,7 @@ package snjdck.g3d
 	final public class Scene3D implements IScene
 	{
 		public const root:DisplayObjectContainer3D = new DisplayObjectContainer3D();
-		public const camera:Camera3D = new Camera3D();
+//		public const camera:Camera3D = new Camera3D();
 		
 		private const ray:Ray = new Ray();
 		
@@ -23,6 +24,8 @@ package snjdck.g3d
 		
 		private var _width:int;
 		private var _height:int;
+		
+		private const cameraList:Vector.<ICamera3D> = new Vector.<ICamera3D>();
 		
 		public function Scene3D()
 		{
@@ -33,22 +36,38 @@ package snjdck.g3d
 		public function update(timeElapsed:int):void
 		{
 			root.onUpdate(timeElapsed);
-			camera.update(timeElapsed);
-			camera.clear();
-			root.collectDrawUnit(camera);
+			cameraList.length = 0;
+			root.traverse(__collectCameras, false);
+			for each(var camera:Camera3D in cameraList){
+				camera.setScreenSize(_width, _height);
+				camera.clear();
+				root.collectDrawUnit(camera);
+			}
+//			camera.update(timeElapsed);
+		}
+		
+		private function __collectCameras(item:Object3D):void
+		{
+			if(item is ICamera3D){
+				cameraList.push(item);
+			}
 		}
 		
 		public function draw(context3d:GpuContext):void
 		{
-			camera.draw(context3d);
+			for each(var camera:Camera3D in cameraList){
+				camera.draw(context3d);
+			}
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void{}
 		
 		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void
 		{
-			camera.getSceneRay(stageX, stageY, ray);
-			camera.hitTest(ray, result);
+			for each(var camera:Camera3D in cameraList){
+				camera.getSceneRay(stageX, stageY, ray);
+				camera.pickup(ray, result);
+			}
 		}
 		
 		public function notifyEvent(evtType:String):Boolean
@@ -83,7 +102,6 @@ package snjdck.g3d
 		{
 			_width = width;
 			_height = height;
-			camera.setScreenSize(_width, _height);
 		}
 		
 		public function get stageWidth():int

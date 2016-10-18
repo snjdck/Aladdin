@@ -10,6 +10,7 @@ package snjdck.g3d.terrain
 	
 	import snjdck.fileformat.image.BmpParser;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.cameras.ICamera3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.entities.IEntity;
 	import snjdck.g3d.pickup.Ray;
@@ -285,7 +286,7 @@ package snjdck.g3d.terrain
 		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
 		{
 			result.length = 0;
-			quadTree.getObjectsInFrustum(scene.camera.getViewFrustum(), result);
+			quadTree.getObjectsInFrustum((collector as ICamera3D).getViewFrustum(), result);
 			
 			for(var i:int=result.length-1; i>=0; --i){
 				var sceneItem:SceneItem = result[i] as SceneItem;
