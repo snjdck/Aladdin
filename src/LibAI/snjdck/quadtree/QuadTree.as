@@ -1,6 +1,7 @@
 ﻿package snjdck.quadtree
 {
 	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.cameras.ClassifyResult;
 	import snjdck.g3d.cameras.ViewFrustum;
 
 	/**
@@ -100,7 +101,7 @@
 			var currentNode:QuadTree = this;
 			for(;;){
 				switch(viewFrustum.classify(currentNode.bound)){
-					case ViewFrustum.INTERECT:
+					case ClassifyResult.INTERECT:
 						if(currentNode.hasItem){
 							for each(var item:IQuadTreeItem in currentNode.itemList){
 								if(viewFrustum.classify(item.getBound()) <= 0){
@@ -112,7 +113,7 @@
 							list_1.push.apply(null, currentNode.nodeList);
 						}
 						break;
-					case ViewFrustum.CONTAINS:
+					case ClassifyResult.CONTAINS:
 						currentNode.collectObjsRecursively(result);
 						break;
 				}

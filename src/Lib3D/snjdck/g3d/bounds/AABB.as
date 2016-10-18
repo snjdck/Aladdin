@@ -8,11 +8,12 @@ package snjdck.g3d.bounds
 	import matrix44.transformBound;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.cameras.IViewFrustum;
 	import snjdck.g3d.pickup.Ray;
 	
 	use namespace ns_g3d;
 
-	public class AABB
+	public class AABB implements IBound
 	{
 		public const center:Vector3D = new Vector3D();
 		public const halfSize:Vector3D = new Vector3D();
@@ -60,13 +61,6 @@ package snjdck.g3d.bounds
 				&& (minZ <= pt.z) && (pt.z <= maxZ);
 		}
 		
-		public function hitTest(other:AABB):Boolean
-		{
-			return !((minX >= other.maxX) || (maxX <= other.minX)
-				||   (minY >= other.maxY) || (maxY <= other.minY)
-				||   (minZ >= other.maxZ) || (maxZ <= other.minZ));
-		}
-		
 		[Inline]
 		public function get minX():Number
 		{
@@ -102,7 +96,7 @@ package snjdck.g3d.bounds
 		{
 			return center.z + halfSize.z;
 		}
-		/*
+		//*
 		public function getProjectLen(axis:Vector3D):Number
 		{
 			return halfSize.x * Math.abs(axis.x) + halfSize.y * Math.abs(axis.y) + halfSize.z * Math.abs(axis.z);
@@ -114,7 +108,7 @@ package snjdck.g3d.bounds
 				&& (Math.abs(ab.y) - other.getProjectLen(Vector3D.Y_AXIS) < halfSize.y)
 				&& (Math.abs(ab.z) - other.getProjectLen(Vector3D.Z_AXIS) < halfSize.z);
 		}
-		*/
+		//*/
 		//*
 		public function transform(matrix:Matrix3D, result:AABB):void
 		{
@@ -154,6 +148,28 @@ package snjdck.g3d.bounds
 			if(this.minZ > other.minZ) return false;
 			if(this.maxZ < other.maxZ) return false;
 			return true;
+		}
+		
+		public function hitTest(other:IBound):Boolean
+		{
+			return other.hitTestBox(this);
+		}
+		
+		public function hitTestSphere(other:Sphere):Boolean
+		{
+			return other.hitTestBox(this);
+		}
+		
+		public function hitTestBox(other:AABB):Boolean
+		{
+			return !((minX >= other.maxX) || (maxX <= other.minX)
+				||   (minY >= other.maxY) || (maxY <= other.minY)
+				||   (minZ >= other.maxZ) || (maxZ <= other.minZ));
+		}
+		
+		public function classify(viewFrusum:IViewFrustum):int
+		{
+			return viewFrusum.classifyBox(this);
 		}
 	}
 }
