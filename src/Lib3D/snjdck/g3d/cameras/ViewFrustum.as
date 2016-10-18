@@ -2,7 +2,7 @@ package snjdck.g3d.cameras
 {
 	import flash.geom.Vector3D;
 	
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bounds.AABB;
 	
 	import vec3.subtract;
 

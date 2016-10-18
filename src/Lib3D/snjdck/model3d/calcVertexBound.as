@@ -1,6 +1,6 @@
 package snjdck.model3d
 {
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bounds.AABB;
 
 	public function calcVertexBound(vertexList:Vector.<Number>, outputBound:AABB, countPerElement:int=3):void
 	{

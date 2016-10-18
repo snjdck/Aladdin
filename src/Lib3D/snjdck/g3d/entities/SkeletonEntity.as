@@ -5,7 +5,7 @@ package snjdck.g3d.entities
 	import array.del;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bounds.AABB;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Matrix4x4;

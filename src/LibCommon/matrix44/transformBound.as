@@ -2,7 +2,7 @@ package matrix44
 {
 	import flash.geom.Matrix3D;
 	
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bounds.AABB;
 
 	public function transformBound(matrix:Matrix3D, source:AABB, result:AABB):void
 	{

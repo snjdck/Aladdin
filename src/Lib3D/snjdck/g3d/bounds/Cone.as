@@ -1,4 +1,4 @@
-package snjdck.g3d.bound
+package snjdck.g3d.bounds
 {
 	import flash.geom.Vector3D;
 	

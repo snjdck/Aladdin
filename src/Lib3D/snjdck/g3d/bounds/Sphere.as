@@ -1,10 +1,10 @@
-package snjdck.g3d.bound
+package snjdck.g3d.bounds
 {
 	import flash.geom.Vector3D;
 	
 	import vec3.subtract;
 
-	public class Sphere
+	public class Sphere implements IBound
 	{
 		public const center:Vector3D = new Vector3D();
 		
@@ -39,5 +39,15 @@ package snjdck.g3d.bound
 		}
 		
 		static protected const ab:Vector3D = new Vector3D();
+		
+		public function hitTest(other:IBound):Boolean
+		{
+			return other.hitTestSphere(this);
+		}
+		
+		public function hitTestBox(other:AABB):Boolean
+		{
+			return false;
+		}
 	}
 }

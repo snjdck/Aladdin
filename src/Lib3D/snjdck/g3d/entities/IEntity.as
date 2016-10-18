@@ -1,6 +1,6 @@
 package snjdck.g3d.entities
 {
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bounds.AABB;
 
 	public interface IEntity
 	{

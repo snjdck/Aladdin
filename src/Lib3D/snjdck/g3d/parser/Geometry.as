@@ -3,7 +3,7 @@ package snjdck.g3d.parser
 	import flash.display3D.Context3DVertexBufferFormat;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bounds.AABB;
 	import snjdck.g3d.mesh.BoneData;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.gpu.asset.GpuAssetFactory;

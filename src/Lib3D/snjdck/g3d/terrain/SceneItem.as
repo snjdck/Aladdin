@@ -1,6 +1,6 @@
 package snjdck.g3d.terrain
 {
-	import snjdck.g3d.bound.AABB;
+	import snjdck.g3d.bounds.AABB;
 	import snjdck.g3d.entities.IEntity;
 	import snjdck.quadtree.IQuadTreeItem;
 	
