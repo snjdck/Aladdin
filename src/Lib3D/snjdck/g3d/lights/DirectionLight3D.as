@@ -5,8 +5,8 @@ package snjdck.g3d.lights
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.cameras.Camera3D;
+	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
 	import snjdck.g3d.rendersystem.subsystems.RenderPass;
 	import snjdck.g3d.utils.RotationMatrix;
@@ -48,7 +48,7 @@ package snjdck.g3d.lights
 			shadowMap.enableDepthAndStencil = true;
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:IDrawUnitCollector3D):void
 		{
 			collector.addLight(this);
 		}

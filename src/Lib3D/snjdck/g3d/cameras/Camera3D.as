@@ -5,19 +5,23 @@ package snjdck.g3d.cameras
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.bounds.IBound;
+	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.lights.ILight3D;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.rendersystem.RenderSystem;
 	import snjdck.g3d.rendersystem.subsystems.RenderPass;
+	import snjdck.g3d.rendersystem.subsystems.RenderSystemFactory;
 	import snjdck.g3d.utils.RotationMatrix;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.gpu.support.GpuConstData;
 	
 	use namespace ns_g3d;
 	
-	final public class Camera3D extends DrawUnitCollector3D implements ICamera3D
+	public class Camera3D extends Object3D implements ICamera3D
 	{
 		static public var zNear	:Number = -2000;
 		static public var zRange:Number =  4000;
@@ -26,7 +30,10 @@ package snjdck.g3d.cameras
 		
 		private var viewMatrix:RotationMatrix;
 		
-//		public var bindTarget:Object3D;
+		private const drawUnitList:Vector.<IDrawUnit3D> = new Vector.<IDrawUnit3D>();
+		
+		private const system:RenderSystem = RenderSystemFactory.CreateRenderSystem();
+		private var lightList:Vector.<ILight3D> = new Vector.<ILight3D>();
 		
 		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
 		
@@ -40,7 +47,7 @@ package snjdck.g3d.cameras
 			viewMatrix = new RotationMatrix(Vector3D.Z_AXIS, direction);
 			constData[2] = zRange;
 			constData[3] = zNear;
-			viewMatrix.transform.copyRawDataTo(constData, 4, true);
+			GpuConstData.SetMatrix(constData, 1, viewMatrix.transform);
 		}
 		
 		public function setScreenSize(width:int, height:int):void
@@ -67,20 +74,7 @@ package snjdck.g3d.cameras
 			constData[18] = viewFrusum.center.z;
 		}
 		
-		/*
-		public function update(timeElapsed:int):void
-		{
-			if(bindTarget != null){
-				bindTarget.worldTransform.copyColumnTo(3, viewFrusum.center);
-				constData[16] = viewFrusum.center.x;
-				constData[17] = viewFrusum.center.y;
-				constData[18] = viewFrusum.center.z;
-			}else{
-				constData[16] = constData[17] = constData[18] = 0;
-			}
-		}
-		*/
-		override public function draw(context3d:GpuContext):void
+		public function draw(context3d:GpuContext):void
 		{
 			context3d.setVc(0, constData);
 			system.render(context3d, RenderPass.MATERIAL_PASS);
@@ -118,7 +112,7 @@ package snjdck.g3d.cameras
 			}
 		}
 		
-		override public function isInSight(bound:AABB):Boolean
+		public function isInSight(bound:IBound):Boolean
 		{
 			return viewFrusum.classify(bound) <= 0;
 		}
@@ -143,6 +137,7 @@ package snjdck.g3d.cameras
 		{
 			return viewFrusum;
 		}
+		
 		/*
 		public function getCameraZ(result:Vector3D):void
 		{
@@ -150,5 +145,41 @@ package snjdck.g3d.cameras
 		}
 		*/
 		private var geometryTexture:GpuRenderTarget;
+		
+		public function clear():void
+		{
+			system.clear();
+			drawUnitList.length = 0;
+			lightList.length = 0;
+		}
+		
+		public function getLightCount():int
+		{
+			return lightList.length;
+		}
+		
+		public function getLightAt(index:int):ILight3D
+		{
+			return lightList[index];
+		}
+		
+		public function addDrawUnit(drawUnit:IDrawUnit3D, priority:int):void
+		{
+			system.addItem(drawUnit, priority);
+			drawUnitList.push(drawUnit);
+		}
+		
+		public function addLight(light:ILight3D):void
+		{
+			lightList.push(light);
+		}
+		
+		public function pickup(worldRay:Ray, result:Vector.<Object3D>):void
+		{
+			if(drawUnitList.length <= 0)
+				return;
+			for each(var drawUnit:IDrawUnit3D in drawUnitList)
+			drawUnit.hitTest(worldRay, result);
+		}
 	}
 }

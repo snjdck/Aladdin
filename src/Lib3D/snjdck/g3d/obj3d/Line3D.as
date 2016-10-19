@@ -3,12 +3,11 @@ package snjdck.g3d.obj3d
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
-	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.render.instance.IInstanceData;
@@ -50,10 +49,10 @@ package snjdck.g3d.obj3d
 		static private const zAxis:Vector3D = new Vector3D();
 		static private const buffer:Vector.<Number> = new Vector.<Number>(4, true);
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:IDrawUnitCollector3D):void
 		{
 			if(canRender){
-				collector.addItem(this, RenderPriority.LINE_3D);
+				collector.addDrawUnit(this, RenderPriority.LINE_3D);
 			}
 		}
 		

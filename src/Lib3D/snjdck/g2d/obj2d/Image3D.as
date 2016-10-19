@@ -6,9 +6,9 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.cameras.DefaultCamera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g2d;
@@ -16,12 +16,10 @@ package snjdck.g2d.obj2d
 	
 	public class Image3D extends DisplayObject2D
 	{
-		static public const MVP:Vector.<Number> = new <Number>[0,0,2000,-1000,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0];
-		
 		private var isMatrixDirty:Boolean = true;
 		
 		public const root3d:DisplayObjectContainer3D = new DisplayObjectContainer3D();
-		private const collector:DrawUnitCollector3D = new DrawUnitCollector3D();
+		private var camera3d:DefaultCamera3D = new DefaultCamera3D();
 		
 		public function Image3D(w:int, h:int)
 		{
@@ -46,19 +44,17 @@ package snjdck.g2d.obj2d
 				isMatrixDirty = false;
 			}
 			root3d.onUpdate(timeElapsed);
-			collector.clear();
-			root3d.collectDrawUnit(collector);
+			camera3d.clear();
+			root3d.collectDrawUnit(camera3d);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
 			if(root3d.numChildren > 0){
-				MVP[0] = 0.5 * context3d.bufferWidth;
-				MVP[1] = 0.5 * context3d.bufferHeight;
-				context3d.setVc(0, MVP);
+				camera3d.setScreenSize(context3d.bufferWidth, context3d.bufferHeight);
 				context3d.clearDepth();
 				context3d.save();
-				collector.draw(context3d);
+				camera3d.draw(context3d);
 				context3d.restore();
 			}
 		}

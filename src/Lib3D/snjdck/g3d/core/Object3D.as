@@ -6,8 +6,8 @@ package snjdck.g3d.core
 	
 	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	
 	use namespace ns_g3d;
 	
@@ -23,7 +23,6 @@ package snjdck.g3d.core
 		
 		public var mouseEnabled:Boolean;
 		
-//		private var _blendMode:BlendMode;
 		public var visible:Boolean;
 		
 		public const mouseDownSignal:Signal = new Signal();
@@ -33,7 +32,6 @@ package snjdck.g3d.core
 		{
 			visible = true;
 			mouseEnabled = true;
-//			_blendMode = BlendMode.NORMAL;
 		}
 		
 		override protected function get parentWorldTransform():Matrix3D
@@ -45,7 +43,7 @@ package snjdck.g3d.core
 		}
 		
 		public function onUpdate(timeElapsed:int):void{}
-		ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void{}
+		ns_g3d function collectDrawUnit(collector:IDrawUnitCollector3D):void{}
 		
 		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
 		{
@@ -71,27 +69,7 @@ package snjdck.g3d.core
 		{
 			return _parent;
 		}
-/*
-		public function get blendMode():BlendMode
-		{
-			return _blendMode;
-		}
-
-		public function set blendMode(value:BlendMode):void
-		{
-			_blendMode = value;
-		}
 		
-		public function get opaque():Boolean
-		{
-			return BlendMode.NORMAL == _blendMode;
-		}
-		
-		public function set opaque(value:Boolean):void
-		{
-			_blendMode = value ? BlendMode.NORMAL : BlendMode.ALPHAL;
-		}
-		*/
 		public function removeFromParent():void
 		{
 			if(null != parent){

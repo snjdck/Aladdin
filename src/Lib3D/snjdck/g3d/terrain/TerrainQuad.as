@@ -5,14 +5,17 @@ package snjdck.g3d.terrain
 	import flash.geom.Vector3D;
 	
 	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.parser.Geometry;
+	import snjdck.g3d.pickup.Ray;
+	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.quadtree.IQuadTreeItem;
 
-	public class TerrainQuad implements IQuadTreeItem
+	public class TerrainQuad implements IQuadTreeItem, IDrawUnit3D
 	{
 		public var tex0:IGpuTexture;
 		public var tex1:IGpuTexture;
@@ -145,5 +148,18 @@ package snjdck.g3d.terrain
 		{
 			return aabb;
 		}
+		
+		public function draw(context3d:GpuContext):void
+		{
+			// TODO Auto Generated method stub
+			
+		}
+		
+		public function hitTest(worldRay:Ray, result:Vector.<Object3D>):void
+		{
+			// TODO Auto Generated method stub
+			
+		}
+		
 	}
 }

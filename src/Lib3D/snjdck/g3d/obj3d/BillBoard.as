@@ -2,17 +2,15 @@ package snjdck.g3d.obj3d
 {
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
-	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.support.QuadRender;
-	import snjdck.shader.ShaderName;
 	
 	use namespace ns_g3d;
 	
@@ -33,11 +31,11 @@ package snjdck.g3d.obj3d
 			return bound.hitRay(localRay, mouseLocation);
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:IDrawUnitCollector3D):void
 		{
 			super.collectDrawUnit(collector);
 			if(collector.isInSight(bound)){
-				collector.addItem(this, RenderPriority.BILLBOARD);
+				collector.addDrawUnit(this, RenderPriority.BILLBOARD);
 			}
 		}
 		/*

@@ -1,7 +1,7 @@
 package snjdck.g3d.core
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.render.DrawUnitCollector3D;
+	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	
 	use namespace ns_g3d;
 
@@ -24,7 +24,7 @@ package snjdck.g3d.core
 			}
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:IDrawUnitCollector3D):void
 		{
 			for each(var child:Object3D in _childList){
 				if(child.isVisible()){

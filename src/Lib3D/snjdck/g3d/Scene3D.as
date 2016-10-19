@@ -15,7 +15,6 @@ package snjdck.g3d
 	final public class Scene3D implements IScene
 	{
 		public const root:DisplayObjectContainer3D = new DisplayObjectContainer3D();
-//		public const camera:Camera3D = new Camera3D();
 		
 		private const ray:Ray = new Ray();
 		
@@ -43,7 +42,6 @@ package snjdck.g3d
 				camera.clear();
 				root.collectDrawUnit(camera);
 			}
-//			camera.update(timeElapsed);
 		}
 		
 		private function __collectCameras(item:Object3D):void
@@ -65,6 +63,9 @@ package snjdck.g3d
 		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void
 		{
 			for each(var camera:Camera3D in cameraList){
+				if(!camera.mouseEnabled){
+					continue;
+				}
 				camera.getSceneRay(stageX, stageY, ray);
 				camera.pickup(ray, result);
 			}

@@ -2,11 +2,11 @@ package snjdck.g3d.entities
 {
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.gpu.asset.GpuContext;
@@ -33,10 +33,10 @@ package snjdck.g3d.entities
 			bound.markWorldBoundDirty();
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:IDrawUnitCollector3D):void
 		{
 			if(collector.isInSight(worldBound)){
-				collector.addItem(this, RenderPriority.STATIC_OBJECT);
+				collector.addDrawUnit(this, RenderPriority.STATIC_OBJECT);
 			}
 		}
 		

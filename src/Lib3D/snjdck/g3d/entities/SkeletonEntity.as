@@ -6,13 +6,13 @@ package snjdck.g3d.entities
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.g3d.render.DrawUnitCollector3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.g3d.skeleton.Bone;
@@ -56,7 +56,7 @@ package snjdck.g3d.entities
 			boneStateGroup.stepAnimation(timeElapsed * 0.001);
 		}
 		
-		override ns_g3d function collectDrawUnit(collector:DrawUnitCollector3D):void
+		override ns_g3d function collectDrawUnit(collector:IDrawUnitCollector3D):void
 		{
 			if(collector.isInSight(worldBound)){
 				if(boneStateGroup.isDirty){
@@ -66,7 +66,7 @@ package snjdck.g3d.entities
 						updateBoneAttachments(getChildAt(i));
 					}
 				}
-				collector.addItem(this, RenderPriority.SKELETON_OBJECT);
+				collector.addDrawUnit(this, RenderPriority.SKELETON_OBJECT);
 				super.collectDrawUnit(collector);
 			}
 		}
