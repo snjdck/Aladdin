@@ -6,6 +6,7 @@ package snjdck.g3d.cameras
 	public interface ICamera3D extends IDrawUnitCollector3D
 	{
 		function setScreenSize(width:int, height:int):void;
+		function get depth():int;
 		
 		function clear():void;
 		function draw(context3d:GpuContext):void;

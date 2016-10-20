@@ -1,4 +1,4 @@
-package snjdck.g3d.cameras
+package snjdck.g2d.obj2d
 {
 	import flash.geom.Matrix3D;
 	
@@ -6,12 +6,14 @@ package snjdck.g3d.cameras
 	import snjdck.g3d.lights.ILight3D;
 	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
-	import snjdck.g3d.rendersystem.subsystems.RenderPass;
+	import snjdck.g3d.rendersystem.subsystems.RenderType;
 	import snjdck.g3d.rendersystem.subsystems.RenderSystemFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.support.GpuConstData;
+	import snjdck.g3d.cameras.ICamera3D;
+	import snjdck.g3d.cameras.IViewFrustum;
 	
-	public class DefaultCamera3D implements ICamera3D
+	internal class Image3DCamera implements ICamera3D
 	{
 		static private const cameraMatrix:Matrix3D = new Matrix3D();
 		
@@ -21,7 +23,7 @@ package snjdck.g3d.cameras
 		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
 		private var system:RenderSystem;
 		
-		public function DefaultCamera3D()
+		public function Image3DCamera()
 		{
 			system = RenderSystemFactory.CreateRenderSystem();
 			
@@ -40,7 +42,7 @@ package snjdck.g3d.cameras
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.setVc(0, constData);
-			system.render(context3d, RenderPass.MATERIAL_PASS);
+			system.render(context3d, RenderType.MATERIAL);
 		}
 		
 		public function clear():void
@@ -75,6 +77,19 @@ package snjdck.g3d.cameras
 		public function getViewFrustum():IViewFrustum
 		{
 			return null;
+		}
+		
+		public function markTag(value:uint):void
+		{
+		}
+		
+		public function unmarkTag(value:uint):void
+		{
+		}
+		
+		public function get depth():int
+		{
+			return 0;
 		}
 	}
 }

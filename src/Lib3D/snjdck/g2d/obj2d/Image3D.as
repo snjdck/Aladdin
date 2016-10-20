@@ -6,7 +6,6 @@ package snjdck.g2d.obj2d
 	import snjdck.g2d.impl.DisplayObject2D;
 	import snjdck.g2d.render.Render2D;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.cameras.DefaultCamera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.gpu.asset.GpuContext;
@@ -16,7 +15,7 @@ package snjdck.g2d.obj2d
 	
 	public class Image3D extends DisplayObject2D
 	{
-		static private const camera3d:DefaultCamera3D = new DefaultCamera3D();
+		static private const camera3d:Image3DCamera = new Image3DCamera();
 		private var isMatrixDirty:Boolean = true;
 		
 		public const root3d:DisplayObjectContainer3D = new DisplayObjectContainer3D();
