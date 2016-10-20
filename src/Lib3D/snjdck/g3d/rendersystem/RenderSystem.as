@@ -1,6 +1,6 @@
 package snjdck.g3d.rendersystem
 {
-	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnit3D;
 	import snjdck.gpu.asset.GpuContext;
 
 	public class RenderSystem

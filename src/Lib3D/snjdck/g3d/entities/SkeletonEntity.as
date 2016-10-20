@@ -6,14 +6,14 @@ package snjdck.g3d.entities
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bounds.IBound;
-	import snjdck.g3d.cameras.IDrawUnitCollector3D;
+	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.Mesh;
 	import snjdck.g3d.mesh.SubMesh;
 	import snjdck.g3d.parser.Geometry;
-	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.BoneStateGroup;

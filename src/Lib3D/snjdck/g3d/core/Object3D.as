@@ -6,7 +6,7 @@ package snjdck.g3d.core
 	
 	import snjdck.g3d.Scene3D;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.cameras.IDrawUnitCollector3D;
+	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.pickup.Ray;
 	
 	use namespace ns_g3d;
@@ -20,6 +20,7 @@ package snjdck.g3d.core
 		public var id:int;
 		public var name:String;
 		public var userData:*;
+		private var _tag:uint;
 		
 		public var mouseEnabled:Boolean;
 		
@@ -34,6 +35,16 @@ package snjdck.g3d.core
 			mouseEnabled = true;
 		}
 		
+		public function get tag():uint
+		{
+			return _tag;
+		}
+
+		public function set tag(value:uint):void
+		{
+			_tag = value;
+		}
+
 		override protected function get parentWorldTransform():Matrix3D
 		{
 			if(parent == null){

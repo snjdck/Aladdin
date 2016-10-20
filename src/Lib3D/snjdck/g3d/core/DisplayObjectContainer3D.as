@@ -1,7 +1,7 @@
 package snjdck.g3d.core
 {
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.cameras.IDrawUnitCollector3D;
+	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	
 	use namespace ns_g3d;
 

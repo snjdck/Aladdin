@@ -1,4 +1,4 @@
-package snjdck.g3d.render
+package snjdck.g3d.renderer
 {
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;

@@ -5,7 +5,7 @@ package snjdck.g3d.lights
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.cameras.Camera3D;
-	import snjdck.g3d.cameras.IDrawUnitCollector3D;
+	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
 	import snjdck.g3d.rendersystem.subsystems.RenderType;

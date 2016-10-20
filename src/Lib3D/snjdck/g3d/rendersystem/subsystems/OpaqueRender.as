@@ -3,7 +3,7 @@ package snjdck.g3d.rendersystem.subsystems
 	import flash.display3D.Context3DCompareMode;
 	import flash.display3D.Context3DTriangleFace;
 	
-	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.ISystem;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.AssetMgr;

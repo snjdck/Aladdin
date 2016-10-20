@@ -4,7 +4,7 @@ package snjdck.g2d.obj2d
 	
 	import snjdck.g3d.bounds.IBound;
 	import snjdck.g3d.lights.ILight3D;
-	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
 	import snjdck.g3d.rendersystem.subsystems.RenderType;
 	import snjdck.g3d.rendersystem.subsystems.RenderSystemFactory;
