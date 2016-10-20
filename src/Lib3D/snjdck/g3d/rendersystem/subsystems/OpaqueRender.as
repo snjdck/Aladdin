@@ -15,6 +15,7 @@ package snjdck.g3d.rendersystem.subsystems
 		private var geometryShaderName:String;
 		private var depthShaderName:String;
 		private var depthCubeShaderName:String;
+		private var heroShaderName:String;
 		
 		public function OpaqueRender(shaderName:String)
 		{
@@ -22,21 +23,28 @@ package snjdck.g3d.rendersystem.subsystems
 			geometryShaderName = shaderName + "_geom";
 			depthShaderName = shaderName + "_depth";
 			depthCubeShaderName = shaderName + "_depth_cube";
+			heroShaderName = shaderName + "_hero";
 		}
 		
-		public function activePass(context3d:GpuContext, passIndex:int):void
+		public function activePass(context3d:GpuContext, renderType:int):void
 		{
-			context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
-			context3d.blendMode = BlendMode.NORMAL;
+			if(renderType == RenderType.HERO_PASS){
+				context3d.setDepthTest(false, Context3DCompareMode.GREATER);
+			}else{
+				context3d.setDepthTest(true, Context3DCompareMode.LESS_EQUAL);
+			}
 			context3d.setCulling(Context3DTriangleFace.BACK);
-			if(passIndex == RenderPass.MATERIAL_PASS){
+			context3d.blendMode = BlendMode.NORMAL;
+			if(renderType == RenderType.MATERIAL){
 				context3d.program = AssetMgr.Instance.getProgram(shaderName);
-			}else if(passIndex == RenderPass.GEOMETRY_PASS){
+			}else if(renderType == RenderType.GEOMETRY){
 				context3d.program = AssetMgr.Instance.getProgram(geometryShaderName);
-			}else if(passIndex == RenderPass.DEPTH_PASS){
+			}else if(renderType == RenderType.DEPTH){
 				context3d.program = AssetMgr.Instance.getProgram(depthShaderName);
-			}else if(passIndex == RenderPass.DEPTH_CUBE_PASS){
+			}else if(renderType == RenderType.DEPTH_CUBE){
 				context3d.program = AssetMgr.Instance.getProgram(depthCubeShaderName);
+			}else if(renderType == RenderType.HERO_PASS){
+				context3d.program = AssetMgr.Instance.getProgram(heroShaderName);
 			}
 		}
 		

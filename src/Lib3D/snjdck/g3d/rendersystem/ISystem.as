@@ -4,7 +4,7 @@ package snjdck.g3d.rendersystem
 
 	public interface ISystem
 	{
-		function activePass(context3d:GpuContext, passIndex:int):void;
+		function activePass(context3d:GpuContext, renderType:int):void;
 		function render(context3d:GpuContext, item:Object):void;
 	}
 }

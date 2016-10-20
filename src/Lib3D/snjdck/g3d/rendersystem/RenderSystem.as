@@ -1,5 +1,6 @@
 package snjdck.g3d.rendersystem
 {
+	import snjdck.g3d.render.IDrawUnit3D;
 	import snjdck.gpu.asset.GpuContext;
 
 	public class RenderSystem
@@ -12,11 +13,11 @@ package snjdck.g3d.rendersystem
 		{
 		}
 		
-		public function render(context3d:GpuContext, passIndex:int):void
+		public function render(context3d:GpuContext, renderType:int, tagFilter:uint=0):void
 		{
 			for(var i:int=0; i<systemCount; ++i){
 				var info:SystemInfo = systemList[i];
-				info.render(context3d, passIndex);
+				info.render(context3d, renderType, tagFilter);
 			}
 		}
 		
@@ -39,7 +40,7 @@ package snjdck.g3d.rendersystem
 			++systemCount;
 		}
 		
-		public function addItem(item:Object, priority:int):void
+		public function addItem(item:IDrawUnit3D, priority:int):void
 		{
 			var info:SystemInfo = priorityDict[priority];
 			assert(info != null);
