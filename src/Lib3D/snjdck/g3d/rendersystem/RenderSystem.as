@@ -13,7 +13,7 @@ package snjdck.g3d.rendersystem
 		{
 		}
 		
-		public function render(context3d:GpuContext, renderType:int, tagFilter:uint=0):void
+		public function render(context3d:GpuContext, renderType:int, tagFilter:uint=0xFFFFFF):void
 		{
 			for(var i:int=0; i<systemCount; ++i){
 				var info:SystemInfo = systemList[i];
@@ -21,6 +21,7 @@ package snjdck.g3d.rendersystem
 			}
 		}
 		
+		/** priority越大越先渲染 */
 		public function regSystem(system:ISystem, priority:int):void
 		{
 			var info:SystemInfo = new SystemInfo(system, priority);

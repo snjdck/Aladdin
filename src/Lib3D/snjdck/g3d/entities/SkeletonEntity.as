@@ -6,29 +6,29 @@ package snjdck.g3d.entities
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bounds.IBound;
-	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.drawunits.SkeletonDrawUnit3D;
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.Mesh;
-	import snjdck.g3d.mesh.SubMesh;
-	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.renderer.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
 	import snjdck.g3d.skeleton.Bone;
 	import snjdck.g3d.skeleton.BoneStateGroup;
 	import snjdck.g3d.skeleton.Skeleton;
-	import snjdck.gpu.asset.GpuContext;
 	
 	use namespace ns_g3d;
 	
-	public class SkeletonEntity extends DisplayObjectContainer3D implements IDrawUnit3D, IEntity
+	public class SkeletonEntity extends DisplayObjectContainer3D implements IEntity
 	{
 		private const meshList:Array = [];
 		private var skeleton:Skeleton;
 		
 		private var boneStateGroup:BoneStateGroup;
 		private var bound:EntityBound;
+		
+		private var drawUnit:IDrawUnit3D;
 		
 		public function SkeletonEntity(mesh:Mesh)
 		{
@@ -37,6 +37,7 @@ package snjdck.g3d.entities
 			boneStateGroup = new BoneStateGroup(skeleton);
 			aniName = skeleton.getAnimationNames()[0];
 			addMesh(mesh);
+			drawUnit = new SkeletonDrawUnit3D(this, meshList, boneStateGroup);
 		}
 		
 		public function get worldBound():IBound
@@ -66,7 +67,7 @@ package snjdck.g3d.entities
 						updateBoneAttachments(getChildAt(i));
 					}
 				}
-				collector.addDrawUnit(this, RenderPriority.SKELETON_OBJECT);
+				collector.addDrawUnit(drawUnit, RenderPriority.SKELETON_OBJECT);
 				super.collectDrawUnit(collector);
 			}
 		}
@@ -79,16 +80,6 @@ package snjdck.g3d.entities
 		}
 		
 		static private const boneMatrix:Matrix3D = new Matrix3D();
-		
-		public function draw(context3d:GpuContext):void
-		{
-			context3d.setVcM(Geometry.WORLD_MATRIX_OFFSET, worldTransform);
-			for each(var mesh:Mesh in meshList){
-				for each(var subMesh:SubMesh in mesh.subMeshes){
-					subMesh.draw(context3d, boneStateGroup);
-				}
-			}
-		}
 		
 		public function getBoneAttachments(boneName:String):DisplayObjectContainer3D
 		{

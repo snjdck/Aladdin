@@ -10,21 +10,18 @@ package snjdck.g3d.terrain
 	
 	import snjdck.fileformat.image.BmpParser;
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.cameras.ICamera3D;
-	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.entities.IEntity;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.DrawUnitCollector3D;
-	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.rendersystem.subsystems.RenderPriority;
-	import snjdck.gpu.BlendMode;
+	import snjdck.g3d.rendersystem.subsystems.RenderTag;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuAssetFactory;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.quadtree.QuadTree;
-	import snjdck.shader.ShaderName;
 	
 	import stdlib.constant.Unit;
 	
@@ -292,10 +289,13 @@ package snjdck.g3d.terrain
 			for(var i:int=result.length-1; i>=0; --i){
 				var sceneItem:SceneItem = result[i] as SceneItem;
 				if(sceneItem != null){
+					collector.markTag(RenderTag.ITEM);
 					(sceneItem.entity as Object3D).collectDrawUnit(collector);
+					collector.unmarkTag(RenderTag.ITEM);
 				}
 				if(result[i] is TerrainQuad){
 					collector.addDrawUnit(result[i], RenderPriority.TERRAIN);
+					(result[i] as TerrainQuad).tag = RenderTag.TERRAIN;
 				}
 			}
 			collector.addDrawUnit(this, RenderPriority.STATIC_OBJECT);

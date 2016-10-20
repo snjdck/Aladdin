@@ -9,10 +9,12 @@ package snjdck.g3d.cameras
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.lights.ILight3D;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
-	import snjdck.g3d.rendersystem.subsystems.RenderPass;
 	import snjdck.g3d.rendersystem.subsystems.RenderSystemFactory;
+	import snjdck.g3d.rendersystem.subsystems.RenderTag;
+	import snjdck.g3d.rendersystem.subsystems.RenderType;
+	import snjdck.g3d.terrain.Terrain;
 	import snjdck.g3d.utils.RotationMatrix;
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
@@ -77,7 +79,9 @@ package snjdck.g3d.cameras
 		public function draw(context3d:GpuContext):void
 		{
 			context3d.setVc(0, constData);
-			system.render(context3d, RenderPass.MATERIAL_PASS);
+			system.render(context3d, RenderType.MATERIAL, ~(RenderTag.HERO | RenderTag.TERRAIN));
+			system.render(context3d, RenderType.HERO_PASS, RenderTag.HERO);
+			system.render(context3d, RenderType.MATERIAL, RenderTag.HERO | RenderTag.TERRAIN);
 			
 			const lightCount:int = getLightCount();
 			var lightIndex:int, light:ILight3D;
@@ -92,7 +96,7 @@ package snjdck.g3d.cameras
 			}
 			
 			geometryTexture.setRenderToSelfAndClear(context3d);
-			system.render(context3d, RenderPass.GEOMETRY_PASS);
+			system.render(context3d, RenderType.GEOMETRY);
 			
 			context3d.setColorMask(false, false, false, true);
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
@@ -165,6 +169,7 @@ package snjdck.g3d.cameras
 		
 		public function addDrawUnit(drawUnit:IDrawUnit3D, priority:int):void
 		{
+			drawUnit.tag = _tag;
 			system.addItem(drawUnit, priority);
 			drawUnitList.push(drawUnit);
 		}
@@ -181,5 +186,25 @@ package snjdck.g3d.cameras
 			for each(var drawUnit:IDrawUnit3D in drawUnitList)
 			drawUnit.hitTest(worldRay, result);
 		}
+		
+		private var _prevTag:uint;
+		private var _tag:uint;
+		
+		public function markTag(value:uint):void
+		{
+			_prevTag = _tag;
+			_tag = value;
+		}
+		
+		public function unmarkTag(value:uint):void
+		{
+			_tag = _prevTag;
+		}
+		
+		public function get depth():int
+		{
+			return 0;
+		}
+		
 	}
 }

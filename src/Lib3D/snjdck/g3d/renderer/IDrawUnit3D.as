@@ -9,6 +9,8 @@ package snjdck.g3d.renderer
 		/** camera3d用于billboard修正方向和判断subMesh可见性  */
 		function draw(context3d:GpuContext):void;
 		
+//		function get target():Object3D;
+		
 		function get tag():uint;
 		function set tag(value:uint):void;
 		

@@ -37,8 +37,7 @@ package snjdck.g3d.rendersystem
 			system.activePass(context3d, renderType);
 			for(var i:int=0; i<itemCount; ++i){
 				var item:IDrawUnit3D = itemList[i];
-//				if(item.tag == tagFilter){
-				if((item.tag & tagFilter) == tagFilter){
+				if(isTagMatch(item.tag, tagFilter)){
 					system.render(context3d, item);
 				}
 			}
@@ -48,12 +47,16 @@ package snjdck.g3d.rendersystem
 		{
 			for(var i:int=0; i<itemCount; ++i){
 				var item:IDrawUnit3D = itemList[i];
-//				if(item.tag == tagFilter){
-				if((item.tag & tagFilter) == tagFilter){
+				if(isTagMatch(item.tag, tagFilter)){
 					return true;
 				}
 			}
 			return false;
+		}
+		
+		static private function isTagMatch(tag:uint, filter:uint):Boolean
+		{
+			return tag == 0 || (tag & filter) > 0;
 		}
 	}
 }

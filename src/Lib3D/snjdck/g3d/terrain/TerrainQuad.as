@@ -8,7 +8,7 @@ package snjdck.g3d.terrain
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.parser.Geometry;
 	import snjdck.g3d.pickup.Ray;
-	import snjdck.g3d.render.IDrawUnit3D;
+	import snjdck.g3d.renderer.IDrawUnit3D;
 	import snjdck.gpu.GpuColor;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuVertexBuffer;
@@ -161,5 +161,16 @@ package snjdck.g3d.terrain
 			
 		}
 		
+		private var _tag:uint;
+		
+		public function set tag(value:uint):void
+		{
+			_tag = value;
+		}
+		
+		public function get tag():uint
+		{
+			return _tag;
+		}
 	}
 }

@@ -8,9 +8,10 @@ package snjdck.g3d.lights
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.cameras.Camera3D;
-	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
+	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
+	import snjdck.g3d.rendersystem.subsystems.RenderTag;
 	import snjdck.g3d.rendersystem.subsystems.RenderType;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
@@ -56,7 +57,7 @@ package snjdck.g3d.lights
 				GpuConstData.SetVector(constVc, 4, offset);
 				context3d.setVc(0, constVc);
 				shadowMap.setRenderToSelfAndClear(context3d, i);
-				render3d.render(context3d, RenderType.DEPTH_CUBE);
+				render3d.render(context3d, RenderType.DEPTH_CUBE, ~RenderTag.TERRAIN);
 			}
 		}
 		
