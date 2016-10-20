@@ -5,7 +5,7 @@ package snjdck.g3d.entities
 	import array.del;
 	
 	import snjdck.g3d.ns_g3d;
-	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.bounds.IBound;
 	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
@@ -39,7 +39,7 @@ package snjdck.g3d.entities
 			addMesh(mesh);
 		}
 		
-		public function get worldBound():AABB
+		public function get worldBound():IBound
 		{
 			return bound.worldBound;
 		}
