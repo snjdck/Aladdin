@@ -16,10 +16,10 @@ package snjdck.g2d.obj2d
 	
 	public class Image3D extends DisplayObject2D
 	{
+		static private const camera3d:DefaultCamera3D = new DefaultCamera3D();
 		private var isMatrixDirty:Boolean = true;
 		
 		public const root3d:DisplayObjectContainer3D = new DisplayObjectContainer3D();
-		private var camera3d:DefaultCamera3D = new DefaultCamera3D();
 		
 		public function Image3D(w:int, h:int)
 		{
@@ -44,19 +44,20 @@ package snjdck.g2d.obj2d
 				isMatrixDirty = false;
 			}
 			root3d.onUpdate(timeElapsed);
-			camera3d.clear();
-			root3d.collectDrawUnit(camera3d);
 		}
 		
 		override protected function onDraw(render2d:Render2D, context3d:GpuContext):void
 		{
-			if(root3d.numChildren > 0){
-				camera3d.setScreenSize(context3d.bufferWidth, context3d.bufferHeight);
-				context3d.clearDepth();
-				context3d.save();
-				camera3d.draw(context3d);
-				context3d.restore();
+			if(root3d.numChildren <= 0){
+				return;
 			}
+			root3d.collectDrawUnit(camera3d);
+			camera3d.setScreenSize(context3d.bufferWidth, context3d.bufferHeight);
+			context3d.clearDepth();
+			context3d.save();
+			camera3d.draw(context3d);
+			context3d.restore();
+			camera3d.clear();
 		}
 		
 		override protected function onLocalMatrixDirty():void

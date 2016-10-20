@@ -37,7 +37,7 @@ package snjdck.g3d
 			root.onUpdate(timeElapsed);
 			cameraList.length = 0;
 			root.traverse(__collectCameras, false);
-			for each(var camera:Camera3D in cameraList){
+			for each(var camera:ICamera3D in cameraList){
 				camera.setScreenSize(_width, _height);
 				camera.clear();
 				root.collectDrawUnit(camera);

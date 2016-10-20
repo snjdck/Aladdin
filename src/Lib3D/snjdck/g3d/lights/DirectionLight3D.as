@@ -8,7 +8,7 @@ package snjdck.g3d.lights
 	import snjdck.g3d.cameras.IDrawUnitCollector3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
-	import snjdck.g3d.rendersystem.subsystems.RenderPass;
+	import snjdck.g3d.rendersystem.subsystems.RenderType;
 	import snjdck.g3d.utils.RotationMatrix;
 	import snjdck.gpu.asset.AssetMgr;
 	import snjdck.gpu.asset.GpuContext;
@@ -58,7 +58,7 @@ package snjdck.g3d.lights
 			GpuConstData.SetVector(constVc, 4, cameraPosition);
 			context3d.setVc(0, constVc);
 			shadowMap.setRenderToSelfAndClear(context3d);
-			render3d.render(context3d, RenderPass.DEPTH_PASS);
+			render3d.render(context3d, RenderType.DEPTH);
 		}
 		
 		public function drawLight(context3d:GpuContext, cameraRotation:Matrix3D, cameraPosition:Vector3D):void
