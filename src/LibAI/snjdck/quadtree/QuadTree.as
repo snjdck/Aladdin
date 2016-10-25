@@ -101,7 +101,7 @@
 			var currentNode:QuadTree = this;
 			for(;;){
 				switch(viewFrustum.classify(currentNode.bound)){
-					case ClassifyResult.INTERECT:
+					case ClassifyResult.INTERSECT:
 						if(currentNode.hasItem){
 							for each(var item:IQuadTreeItem in currentNode.itemList){
 								if(viewFrustum.classify(item.getBound()) <= 0){

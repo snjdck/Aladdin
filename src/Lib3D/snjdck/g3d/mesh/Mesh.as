@@ -4,6 +4,7 @@ package snjdck.g3d.mesh
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.bounds.AABB;
+	import snjdck.g3d.bounds.IBound;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.entities.IEntity;
 	import snjdck.g3d.entities.SkeletonEntity;
@@ -16,6 +17,8 @@ package snjdck.g3d.mesh
 	{
 		ns_g3d const subMeshes:Array = [];
 		ns_g3d var skeleton:Skeleton;
+		
+		private const animationBoundDict:Object = {};
 		
 		public function Mesh(){}
 		
@@ -57,6 +60,24 @@ package snjdck.g3d.mesh
 				array.pushIfNotHas(result, subMesh.materialName);
 			}
 			return result;
+		}
+		
+		public function getAnimationBound(skeleton:Skeleton, animationName:String):AABB
+		{
+			var subMesh:SubMesh;
+			if(subMeshCount == 1){
+				subMesh = subMeshes[0];
+				return subMesh.getAnimationBound(skeleton, animationName);
+			}
+			var bound:AABB = animationBoundDict[animationName];
+			if(null == bound){
+				bound = new AABB();
+				animationBoundDict[animationName] = bound;
+				for each(subMesh in subMeshes){
+					bound.merge(subMesh.getAnimationBound(skeleton, animationName));
+				}
+			}
+			return bound;
 		}
 	}
 }

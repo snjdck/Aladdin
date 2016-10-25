@@ -28,7 +28,7 @@ package snjdck.g3d.cameras
 		static public var zNear	:Number = -1000;
 		static public var zRange:Number =  4000;
 		static public var zOffset:Number = -1500;
-		static public var fov:Number = Math.tan(30 * Unit.RADIAN * 0.5);
+		static public var fov:Number = Math.tan(60 * Unit.RADIAN * 0.5);
 		
 		private const viewFrusum:ViewFrustum = new ViewFrustum();
 		
@@ -43,6 +43,8 @@ package snjdck.g3d.cameras
 		private var _height:int;
 		
 		private const projectionData:ProjectionData = new ProjectionData();
+		
+		private const cameraPosition:Vector3D = new Vector3D();
 		
 		public function Camera3D()
 		{
@@ -62,8 +64,9 @@ package snjdck.g3d.cameras
 			}
 			_width = width;
 			_height = height;
-			viewFrusum.resize(width, height);
 			projectionData.setViewPort(width, height, fov);
+			projectionData.calcViewFrustum(viewFrusum);
+			viewFrusum.updateTransform(viewMatrix.transformInvert);
 			if(geometryTexture != null){
 				geometryTexture.dispose();
 				geometryTexture = null;
@@ -72,7 +75,8 @@ package snjdck.g3d.cameras
 		
 		override public function onUpdate(timeElapsed:int):void
 		{
-			worldTransform.copyColumnTo(3, viewFrusum.center);
+			worldTransform.copyColumnTo(3, cameraPosition);
+			viewFrusum.updatePosition(cameraPosition);
 		}
 		
 		public function draw(context3d:GpuContext):void
@@ -101,7 +105,7 @@ package snjdck.g3d.cameras
 			context3d.setColorMask(false, false, false, true);
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
 				light = getLightAt(lightIndex);
-				light.drawShadowMap(context3d, system, viewFrusum.center);
+				light.drawShadowMap(context3d, system, cameraPosition);
 			}
 			context3d.setColorMask(true, true, true, true);
 			
@@ -112,12 +116,13 @@ package snjdck.g3d.cameras
 			
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
 				light = getLightAt(lightIndex);
-				light.drawLight(context3d, viewMatrix.transformInvert, viewFrusum.center);
+				light.drawLight(context3d, viewMatrix.transformInvert, cameraPosition);
 			}
 		}
 		
 		public function isInSight(bound:IBound):Boolean
 		{
+			return true;
 			return viewFrusum.classify(bound) <= 0;
 		}
 		/**
@@ -192,6 +197,5 @@ package snjdck.g3d.cameras
 		{
 			return 0;
 		}
-		
 	}
 }

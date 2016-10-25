@@ -53,9 +53,14 @@ package snjdck.g3d.bounds
 			return ab.lengthSquared < totalRadius * totalRadius;
 		}
 		
-		public function classify(viewFrusum:IViewFrustum):int
+		public function onClassify(viewFrusum:IViewFrustum):int
 		{
 			return viewFrusum.classifySphere(this);
+		}
+		
+		public function onHitTest(viewFrusum:IViewFrustum):Boolean
+		{
+			return viewFrusum.hitTestSphere(this);
 		}
 	}
 }

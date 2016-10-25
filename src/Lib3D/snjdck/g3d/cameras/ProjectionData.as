@@ -1,5 +1,6 @@
 package snjdck.g3d.cameras
 {
+	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import snjdck.gpu.asset.GpuContext;
@@ -11,6 +12,7 @@ package snjdck.g3d.cameras
 		
 		private var halfHeightRecip:Number;
 		private var halfFovYRecip:Number;
+		private var aspectRatio:Number;
 		
 		public function ProjectionData(useOrthoMode:Boolean=false)
 		{
@@ -33,6 +35,7 @@ package snjdck.g3d.cameras
 				constData[1] = halfFovY;
 				halfHeightRecip = 2 / height;
 				halfFovYRecip = 1 / halfFovY;
+				aspectRatio = width / height;
 			}
 		}
 		
@@ -81,6 +84,28 @@ package snjdck.g3d.cameras
 				position.setTo(0, 0, zOffset);
 				direction.setTo(screenX * halfHeightRecip, screenY * halfHeightRecip, halfFovYRecip);
 			}
+		}
+		
+		public function calcViewFrustum(viewFrustum:ViewFrustum):void
+		{
+			var tl:Vector3D = new Vector3D(-aspectRatio,  1, halfFovYRecip);
+			var tr:Vector3D = new Vector3D( aspectRatio,  1, halfFovYRecip);
+			var bl:Vector3D = new Vector3D(-aspectRatio, -1, halfFovYRecip);
+			var br:Vector3D = new Vector3D( aspectRatio, -1, halfFovYRecip);
+			
+			var tp:Vector3D = tr.crossProduct(tl);
+			var lp:Vector3D = tl.crossProduct(bl);
+			
+			tp.normalize();
+			lp.normalize();
+			
+			tp.w = tp.z * zOffset;
+			lp.w = lp.z * zOffset;
+			
+			viewFrustum.addPlane(tp, 0);
+			viewFrustum.addPlane(lp, 1);
+			viewFrustum.addPlane(new Vector3D(0, -tp.y, tp.z, tp.w), 2);
+			viewFrustum.addPlane(new Vector3D(-lp.x, 0, lp.z, lp.w), 3);
 		}
 	}
 }

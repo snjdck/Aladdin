@@ -9,9 +9,9 @@ package snjdck.g3d.skeleton
 	{
 		public var loopMode:int;
 		
-		private var skeleton:Skeleton;
-		private var animation:Animation;
-		private var position:Number;
+		ns_g3d var skeleton:Skeleton;
+		ns_g3d var animation:Animation;
+		ns_g3d var position:Number;
 		
 		public var isDirty:Boolean;
 		

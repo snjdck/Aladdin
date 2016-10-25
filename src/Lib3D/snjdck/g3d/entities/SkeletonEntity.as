@@ -25,6 +25,7 @@ package snjdck.g3d.entities
 		private const meshList:Array = [];
 		private var skeleton:Skeleton;
 		
+		private var animationName:String;
 		private var boneStateGroup:BoneStateGroup;
 		private var bound:EntityBound;
 		
@@ -102,11 +103,13 @@ package snjdck.g3d.entities
 		public function set aniName(value:String):void
 		{
 			boneStateGroup.changeAnimation(value);
+			animationName = value;
 		}
 		
 		public function addMesh(mesh:Mesh):void
 		{
 			meshList.push(mesh);
+			bound.localBound.merge(mesh.getAnimationBound(skeleton, animationName));
 			mesh.mergeBound(bound.localBound);
 			bound.markWorldBoundDirty();
 		}
@@ -116,6 +119,7 @@ package snjdck.g3d.entities
 			array.del(meshList, mesh);
 			bound.localBound.clear();
 			for each(var otherMesh:Mesh in meshList){
+				bound.localBound.merge(otherMesh.getAnimationBound(skeleton, animationName));
 				otherMesh.mergeBound(bound.localBound);
 			}
 			bound.markWorldBoundDirty();

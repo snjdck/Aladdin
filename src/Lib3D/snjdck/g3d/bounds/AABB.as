@@ -167,9 +167,14 @@ package snjdck.g3d.bounds
 				||   (minZ >= other.maxZ) || (maxZ <= other.minZ));
 		}
 		
-		public function classify(viewFrusum:IViewFrustum):int
+		public function onClassify(viewFrusum:IViewFrustum):int
 		{
 			return viewFrusum.classifyBox(this);
+		}
+		
+		public function onHitTest(viewFrusum:IViewFrustum):Boolean
+		{
+			return viewFrusum.hitTestBox(this);
 		}
 	}
 }

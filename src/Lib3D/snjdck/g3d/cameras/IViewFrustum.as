@@ -9,5 +9,9 @@ package snjdck.g3d.cameras
 		function classify(bound:IBound):int;
 		function classifySphere(bound:Sphere):int;
 		function classifyBox(bound:AABB):int;
+		
+		function hitTest(bound:IBound):Boolean;
+		function hitTestSphere(bound:Sphere):Boolean;
+		function hitTestBox(bound:AABB):Boolean;
 	}
 }

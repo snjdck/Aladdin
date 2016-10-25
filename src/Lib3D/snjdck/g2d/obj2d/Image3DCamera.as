@@ -3,15 +3,15 @@ package snjdck.g2d.obj2d
 	import flash.geom.Matrix3D;
 	
 	import snjdck.g3d.bounds.IBound;
+	import snjdck.g3d.cameras.ICamera3D;
+	import snjdck.g3d.cameras.IViewFrustum;
 	import snjdck.g3d.lights.ILight3D;
 	import snjdck.g3d.renderer.IDrawUnit3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
-	import snjdck.g3d.rendersystem.subsystems.RenderType;
 	import snjdck.g3d.rendersystem.subsystems.RenderSystemFactory;
+	import snjdck.g3d.rendersystem.subsystems.RenderType;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.support.GpuConstData;
-	import snjdck.g3d.cameras.ICamera3D;
-	import snjdck.g3d.cameras.IViewFrustum;
 	
 	internal class Image3DCamera implements ICamera3D
 	{
@@ -20,7 +20,7 @@ package snjdck.g2d.obj2d
 		static public var zNear	:Number = -2000;
 		static public var zRange:Number =  4000;
 		
-		private const constData:Vector.<Number> = new Vector.<Number>(20, true);
+		private const constData:Vector.<Number> = new Vector.<Number>(24, true);
 		private var system:RenderSystem;
 		
 		public function Image3DCamera()
@@ -30,7 +30,8 @@ package snjdck.g2d.obj2d
 			constData[2] = zRange;
 			constData[3] = zNear;
 			
-			GpuConstData.SetMatrix(constData, 1, cameraMatrix);
+			GpuConstData.SetNumber(constData, 1, 0, 1, 0, 0);
+			GpuConstData.SetMatrix(constData, 2, cameraMatrix);
 		}
 		
 		public function setScreenSize(width:int, height:int):void
@@ -41,7 +42,7 @@ package snjdck.g2d.obj2d
 		
 		public function draw(context3d:GpuContext):void
 		{
-			context3d.setVc(0, constData);
+			context3d.setVc(0, constData, 5);
 			system.render(context3d, RenderType.MATERIAL);
 		}
 		

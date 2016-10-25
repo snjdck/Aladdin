@@ -7,6 +7,7 @@ package snjdck.g3d.bounds
 	import matrix44.transformVector;
 	
 	import snjdck.g3d.ns_g3d;
+	import snjdck.g3d.cameras.IViewFrustum;
 	
 	import vec3.crossProd;
 	import vec3.crossProdAxisX;
