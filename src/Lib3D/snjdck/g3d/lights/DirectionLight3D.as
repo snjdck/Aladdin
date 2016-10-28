@@ -5,6 +5,7 @@ package snjdck.g3d.lights
 	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.cameras.Camera3D;
+	import snjdck.g3d.cameras.ProjectionData;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.renderer.IDrawUnitCollector3D;
 	import snjdck.g3d.rendersystem.RenderSystem;
@@ -27,21 +28,22 @@ package snjdck.g3d.lights
 		public var environmentBrightness:Number = 0.4;
 		
 		private var shadowMap:GpuRenderTarget;
-		private const constVc:Vector.<Number> = new Vector.<Number>(20);
 		private const constFc:Vector.<Number> = new Vector.<Number>(32);
 		private const direction:Vector3D = new Vector3D(-Math.SQRT1_2, 0, -Math.SQRT1_2);
+		private const projectionData:ProjectionData = new ProjectionData(true);
 		private var viewMatrix:RotationMatrix;
 		
 		public function DirectionLight3D()
 		{
 			viewMatrix = new RotationMatrix(Vector3D.Z_AXIS, direction);
 			
-			GpuConstData.SetNumber(constVc, 0, SHADOW_MAP_SIZE >> 1, SHADOW_MAP_SIZE >> 1, Camera3D.zRange, Camera3D.zNear);
-			GpuConstData.SetMatrix(constVc, 1, viewMatrix.transform);
+			projectionData.zNear = Camera3D.zNear;
+			projectionData.zRange = Camera3D.zRange;
+			projectionData.setViewPort(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 			
 			GpuConstData.SetNumber(constFc, 0, 0.5, 0.5, -Camera3D.zNear / Camera3D.zRange, SHADOW_BIAS);
-			GpuConstData.SetNumber(constFc, 1, 0, 0, Camera3D.zRange, 1);
-			GpuConstData.SetNumber(constFc, 2, SHADOW_MAP_SIZE, -SHADOW_MAP_SIZE, Camera3D.zRange, 1);
+			GpuConstData.SetNumber(constFc, 1, 0, Camera3D.fov, Camera3D.zRange, 1);
+			GpuConstData.SetNumber(constFc, 2, SHADOW_MAP_SIZE, -SHADOW_MAP_SIZE, Camera3D.zRange, Camera3D.zOffset);
 			GpuConstData.SetNumber(constFc, 3, -direction.x, -direction.y, -direction.z, 0);
 			
 			shadowMap = new GpuRenderTarget(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
@@ -56,8 +58,10 @@ package snjdck.g3d.lights
 		
 		public function drawShadowMap(context3d:GpuContext, render3d:RenderSystem, cameraPosition:Vector3D):void
 		{
-			GpuConstData.SetVector(constVc, 4, cameraPosition);
-			context3d.setVc(0, constVc);
+			matrix.copyFrom(viewMatrix.transform);
+			matrix.prependTranslation(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
+			context3d.setVcM(2, matrix);
+			projectionData.upload(context3d);
 			shadowMap.setRenderToSelfAndClear(context3d);
 			render3d.render(context3d, RenderType.DEPTH, ~RenderTag.TERRAIN);
 		}
@@ -68,8 +72,8 @@ package snjdck.g3d.lights
 			matrix.append(viewMatrix.transform);
 			GpuConstData.SetMatrix(constFc, 4, matrix);
 			
-			constFc[4]  =  context3d.backBufferWidth;
-			constFc[5]  = -context3d.backBufferHeight;
+			constFc[4]  =  constFc[5] * context3d.backBufferWidth / context3d.backBufferHeight;
+//			constFc[5]  = -context3d.backBufferHeight;
 			constFc[15] =  environmentBrightness;
 			
 			context3d.setFc(0, constFc, 7);

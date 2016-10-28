@@ -48,7 +48,7 @@ package snjdck.g3d.bounds
 		
 		public function hitTestBox(other:AABB):Boolean
 		{
-			vec3.subtract(other.center, center, ab);
+			vec3.subtract(other._center, center, ab);
 			var totalRadius:Number = radius + other.getProjectLen(ab);
 			return ab.lengthSquared < totalRadius * totalRadius;
 		}

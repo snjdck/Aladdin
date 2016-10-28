@@ -28,7 +28,7 @@ package snjdck.g3d.cameras
 		static public var zNear	:Number = -1000;
 		static public var zRange:Number =  4000;
 		static public var zOffset:Number = -1500;
-		static public var fov:Number = Math.tan(60 * Unit.RADIAN * 0.5);
+		static public var fov:Number = Math.tan(40 * Unit.RADIAN * 0.5);
 		
 		private const viewFrusum:ViewFrustum = new ViewFrustum();
 		

@@ -27,10 +27,7 @@
 			this.parent = parent;
 			this.centerX = centerX;
 			this.centerY = centerY;
-			bound.center.x = centerX;
-			bound.center.y = centerY;
-			bound.halfSize.x = halfSize;
-			bound.halfSize.y = halfSize;
+			bound.setCenterAndHalfSize(centerX, centerY, 0, halfSize, halfSize, 0);
 			if(halfSize > minSize){
 				createChildren(halfSize >> 1, minSize);
 			}
@@ -87,7 +84,7 @@
 				targetTree.hasItem = true;
 			}
 			var nodeBound:AABB = item.getBound();
-			if(nodeBound.halfSize.z <= 0){
+			if(nodeBound.halfSizeZ <= 0){
 				return;
 			}
 			do{

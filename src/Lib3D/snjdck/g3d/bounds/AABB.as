@@ -13,103 +13,147 @@ package snjdck.g3d.bounds
 	
 	use namespace ns_g3d;
 
-	public class AABB implements IBound
+	final public class AABB implements IBound
 	{
-		public const center:Vector3D = new Vector3D();
-		public const halfSize:Vector3D = new Vector3D();
+		public const _center:Vector3D = new Vector3D();
 		
-		public function AABB(){}
+		private var _halfSizeX:Number;
+		private var _halfSizeY:Number;
+		private var _halfSizeZ:Number;
+		
+		private var _minX:Number;
+		private var _minY:Number;
+		private var _minZ:Number;
+		
+		private var _maxX:Number;
+		private var _maxY:Number;
+		private var _maxZ:Number;
+		
+		public function AABB()
+		{
+			clear();
+		}
+		
+		public function get halfSizeX():Number
+		{
+			return _halfSizeX;
+		}
+		
+		public function get halfSizeY():Number
+		{
+			return _halfSizeY;
+		}
+		
+		public function get halfSizeZ():Number
+		{
+			return _halfSizeZ;
+		}
 		
 		public function clear():void
 		{
-			center.setTo(0, 0, 0);
-			halfSize.setTo(0, 0, 0);
+			_center.setTo(0, 0, 0);
+			_halfSizeX = _halfSizeY = _halfSizeZ = 0;
+			_minX = _minY = _minZ = 0;
+			_maxX = _maxY = _maxZ = 0;
+		}
+		
+		public function setCenterAndHalfSize(cx:Number, cy:Number, cz:Number, sx:Number, sy:Number, sz:Number):void
+		{
+			_center.x = cx;
+			_center.y = cy;
+			_center.z = cz;
+			
+			_halfSizeX = sx;
+			_halfSizeY = sy;
+			_halfSizeZ = sz;
+			
+			_minX = cx - sx;
+			_minY = cy - sy;
+			_minZ = cz - sz;
+			
+			_maxX = cx + sx;
+			_maxY = cy + sy;
+			_maxZ = cz + sz;
 		}
 		
 		public function setMinMax(minX:Number, minY:Number, minZ:Number, maxX:Number, maxY:Number, maxZ:Number):void
 		{
-			center.x = 0.5 * (minX + maxX);
-			center.y = 0.5 * (minY + maxY);
-			center.z = 0.5 * (minZ + maxZ);
+			_center.x = 0.5 * (minX + maxX);
+			_center.y = 0.5 * (minY + maxY);
+			_center.z = 0.5 * (minZ + maxZ);
 			
-			halfSize.x = 0.5 * (maxX - minX);
-			halfSize.y = 0.5 * (maxY - minY);
-			halfSize.z = 0.5 * (maxZ - minZ);
+			_halfSizeX = 0.5 * (maxX - minX);
+			_halfSizeY = 0.5 * (maxY - minY);
+			_halfSizeZ = 0.5 * (maxZ - minZ);
+			
+			_minX = minX;
+			_minY = minY;
+			_minZ = minZ;
+			
+			_maxX = maxX;
+			_maxY = maxY;
+			_maxZ = maxZ;
 		}
-		/*
-		public function setCenterAndSize($center:Vector3D, size:Vector3D):void
-		{
-			center.copyFrom($center);
-			halfSize.copyFrom(size);
-			halfSize.scaleBy(0.5);
-		}
-		*/
+		
 		public function hitRay(ray:Ray, hit:Vector3D):Boolean
 		{
-			return containsPt(ray.getPt((minX - ray.pos.x) / ray.dir.x, hit))
-				|| containsPt(ray.getPt((maxX - ray.pos.x) / ray.dir.x, hit))
-				|| containsPt(ray.getPt((minY - ray.pos.y) / ray.dir.y, hit))
-				|| containsPt(ray.getPt((maxY - ray.pos.y) / ray.dir.y, hit))
-				|| containsPt(ray.getPt((minZ - ray.pos.z) / ray.dir.z, hit))
-				|| containsPt(ray.getPt((maxZ - ray.pos.z) / ray.dir.z, hit));
+			return containsPt(ray.getPt((_minX - ray.pos.x) / ray.dir.x, hit))
+				|| containsPt(ray.getPt((_maxX - ray.pos.x) / ray.dir.x, hit))
+				|| containsPt(ray.getPt((_minY - ray.pos.y) / ray.dir.y, hit))
+				|| containsPt(ray.getPt((_maxY - ray.pos.y) / ray.dir.y, hit))
+				|| containsPt(ray.getPt((_minZ - ray.pos.z) / ray.dir.z, hit))
+				|| containsPt(ray.getPt((_maxZ - ray.pos.z) / ray.dir.z, hit));
 		}
 		
 		public function containsPt(pt:Vector3D):Boolean
 		{
-			return (minX <= pt.x) && (pt.x <= maxX)
-				&& (minY <= pt.y) && (pt.y <= maxY)
-				&& (minZ <= pt.z) && (pt.z <= maxZ);
+			return (_minX <= pt.x) && (pt.x <= _maxX)
+				&& (_minY <= pt.y) && (pt.y <= _maxY)
+				&& (_minZ <= pt.z) && (pt.z <= _maxZ);
 		}
 		
-		[Inline]
 		public function get minX():Number
 		{
-			return center.x - halfSize.x;
+			return _minX;
 		}
 		
-		[Inline]
 		public function get maxX():Number
 		{
-			return center.x + halfSize.x;
+			return _maxX;
 		}
 		
-		[Inline]
 		public function get minY():Number
 		{
-			return center.y - halfSize.y;
+			return _minY;
 		}
 		
-		[Inline]
 		public function get maxY():Number
 		{
-			return center.y + halfSize.y;
+			return _maxY;
 		}
 		
-		[Inline]
 		public function get minZ():Number
 		{
-			return center.z - halfSize.z;
+			return _minZ;
 		}
 		
-		[Inline]
 		public function get maxZ():Number
 		{
-			return center.z + halfSize.z;
+			return _maxZ;
 		}
-		//*
+		
 		public function getProjectLen(axis:Vector3D):Number
 		{
-			return halfSize.x * Math.abs(axis.x) + halfSize.y * Math.abs(axis.y) + halfSize.z * Math.abs(axis.z);
+			return _halfSizeX * Math.abs(axis.x) + _halfSizeY * Math.abs(axis.y) + _halfSizeZ * Math.abs(axis.z);
 		}
 		
 		public function hitTestAxis(other:IBoundingBox, ab:Vector3D):Boolean
 		{
-			return (Math.abs(ab.x) - other.getProjectLen(Vector3D.X_AXIS) < halfSize.x)
-				&& (Math.abs(ab.y) - other.getProjectLen(Vector3D.Y_AXIS) < halfSize.y)
-				&& (Math.abs(ab.z) - other.getProjectLen(Vector3D.Z_AXIS) < halfSize.z);
+			return (Math.abs(ab.x) - other.getProjectLen(Vector3D.X_AXIS) < _halfSizeX)
+				&& (Math.abs(ab.y) - other.getProjectLen(Vector3D.Y_AXIS) < _halfSizeY)
+				&& (Math.abs(ab.z) - other.getProjectLen(Vector3D.Z_AXIS) < _halfSizeZ);
 		}
-		//*/
-		//*
+		
 		public function transform(matrix:Matrix3D, result:AABB):void
 		{
 			transformBound(matrix, this, result);
@@ -117,8 +161,19 @@ package snjdck.g3d.bounds
 		
 		public function copyFrom(other:AABB):void
 		{
-			center.copyFrom(other.center);
-			halfSize.copyFrom(other.halfSize);
+			_center.copyFrom(other._center);
+			
+			_halfSizeX = other._halfSizeX;
+			_halfSizeY = other._halfSizeY;
+			_halfSizeZ = other._halfSizeZ;
+			
+			_minX = other._minX;
+			_minY = other._minY;
+			_minZ = other._minZ;
+			
+			_maxX = other._maxX;
+			_maxY = other._maxY;
+			_maxZ = other._maxZ;
 		}
 		
 		public function merge(other:AABB):void
@@ -128,15 +183,24 @@ package snjdck.g3d.bounds
 		
 		public function mergeZ(other:AABB):void
 		{
-			var minZ:Number = this.minZ < other.minZ ? this.minZ : other.minZ;
-			var maxZ:Number = this.maxZ > other.maxZ ? this.maxZ : other.maxZ;
-			center.z = 0.5 * (minZ + maxZ);
-			halfSize.z = 0.5 * (maxZ - minZ);
+			var needUpdate:Boolean = false;
+			if(_minZ > other._minZ){
+				_minZ = other._minZ;
+				needUpdate = true;
+			}
+			if(_maxZ < other._maxZ){
+				_maxZ = other._maxZ;
+				needUpdate = true;
+			}
+			if(needUpdate){
+				_center.z  = 0.5 * (_maxZ + _minZ);
+				_halfSizeZ = 0.5 * (_maxZ - _minZ);
+			}
 		}
 		
 		public function isEmpty():Boolean
 		{
-			return halfSize.x <= 0 || halfSize.y <= 0 || halfSize.z <= 0;
+			return _halfSizeX <= 0 || _halfSizeY <= 0 || _halfSizeZ <= 0;
 		}
 		
 		public function contains(other:AABB):Boolean

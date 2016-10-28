@@ -1,40 +1,21 @@
 
 @deferred_pass.agal
 vt0.xyz = va0 + va0
-vt0.x   = vt0.x - va0.w
 vt0.yw  = va0.w - vt0.yyzz
+vt0.x   = vt0.x - va0.w
 op = vt0
-v0 = va0
+v0.xy = va0
+v0.zw = vt0.xxxy
 ft0 = tex: v0, fs0<clamp>
-
-@point_light_pass
-${deferred_pass.agal}
-ft1.xy = v0
-ft1.z = ft0.w
-
-ft1.xyz -= fc0
-ft1.xyz *= fc1
-ft1.xyz = m33: ft1.xyz, fc4
-ft1.xyz += fc2	#camera position - light position
-ft2.w = dp3: ft1.xyz, ft1.xyz
-ft2.w = sqt: ft2.w
-ft2.w /= fc1.z
-
-ft1.w = tex: ft1.xyz, fs1<cube,clamp>
-ft1.w += fc0.w
-ft2.x = sge: ft1.w, ft2.w
-
-ft2.y = fc1.w - ft2.x
-ft2.y *= fc3.w
-oc = ft2.x + ft2.y
 
 @direction_light_pass
 ${deferred_pass.agal}
-ft1.xy = v0
-ft1.z = ft0.w
+ft1.z  = ft0.w - fc0
+ft1.z *= fc2
+ft1.w = ft1.z - fc2.w
+ft1.xy = ft1.w * fc1
+ft1.xy *= v0.zw
 
-ft1.xyz -= fc0
-ft1.xyz *= fc1
 ft1.xyz = m33: ft1.xyz, fc4
 ft1.xyz /= fc2
 ft1.xyz += fc0
@@ -81,20 +62,14 @@ ${objectImp.vs}
 v0 = vt0.z
 oc = v0
 
-@object_depth_cube
+@object_hero
 vt0 = va0
 ${objectImp.vs}
-vt2.w = vc0.z
-v0 = vt2
-ft0.x = dp3: v0, v0
-ft0.x = sqt: ft0.x
-oc = ft0.x / v0.w
+v0 = vt0.w
+oc = v0
 
-@bone_ani_depth_cube
+@bone_ani_hero
 ${bone_ani_pos.vs}
 ${objectImp.vs}
-vt2.w = vc0.z
-v0 = vt2
-ft0.x = dp3: v0, v0
-ft0.x = sqt: ft0.x
-oc = ft0.x / v0.w
+v0 = vt0.w
+oc = v0

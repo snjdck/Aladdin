@@ -27,12 +27,12 @@ package snjdck.g3d.terrain
 		
 		public function get width():Number
 		{
-			return bound.halfSize.x * 2;
+			return bound.halfSizeX * 2;
 		}
 		
 		public function get height():Number
 		{
-			return bound.halfSize.y * 2;
+			return bound.halfSizeY * 2;
 		}
 		
 		public function getBound():AABB

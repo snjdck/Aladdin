@@ -32,7 +32,6 @@ package snjdck.g3d.terrain
 		public function TerrainQuad(terrain:Terrain)
 		{
 			this.terrain = terrain;
-			aabb.halfSize.setTo(width >> 1, height >> 1, 0);
 		}
 		
 		public function setLight(value:uint):void
@@ -75,8 +74,7 @@ package snjdck.g3d.terrain
 			
 			
 //			fcConst[3] = blend;
-			
-			aabb.center.setTo(x + aabb.halfSize.x, y + aabb.halfSize.y, 0);
+			aabb.setMinMax(x, y, 0, x+width, y+height, 0);
 			/*
 			var offset:int = 0;
 			vertexData[offset  ] = x;

@@ -1,6 +1,5 @@
 package snjdck.g3d.cameras
 {
-	import flash.geom.Matrix3D;
 	import flash.geom.Vector3D;
 	
 	import snjdck.gpu.asset.GpuContext;
@@ -102,10 +101,42 @@ package snjdck.g3d.cameras
 			tp.w = tp.z * zOffset;
 			lp.w = lp.z * zOffset;
 			
+			var bp:Vector3D = new Vector3D(0, -tp.y, tp.z, tp.w);
+			var rp:Vector3D = new Vector3D(-lp.x, 0, lp.z, lp.w);
+			
 			viewFrustum.addPlane(tp, 0);
 			viewFrustum.addPlane(lp, 1);
-			viewFrustum.addPlane(new Vector3D(0, -tp.y, tp.z, tp.w), 2);
-			viewFrustum.addPlane(new Vector3D(-lp.x, 0, lp.z, lp.w), 3);
+			viewFrustum.addPlane(bp, 2);
+			viewFrustum.addPlane(rp, 3);
+			/*
+			var xAxis:Vector3D = new Vector3D();
+			var yAxis:Vector3D = new Vector3D();
+			
+			cameraTransformInvert.copyColumnTo(0, xAxis);
+			cameraTransformInvert.copyColumnTo(1, yAxis);
+			xAxis = cameraTransformInvert.deltaTransformVector(Vector3D.X_AXIS);
+			yAxis = cameraTransformInvert.deltaTransformVector(Vector3D.Y_AXIS);
+			
+			var t1:Vector3D = tl.crossProduct(yAxis);
+			var t2:Vector3D = yAxis.crossProduct(br);
+			var t3:Vector3D = xAxis.crossProduct(tr);
+			var t4:Vector3D = bl.crossProduct(xAxis);
+			
+			t1.normalize();
+			t2.normalize();
+			t3.normalize();
+			t4.normalize();
+			
+			t1.w = t1.z * zOffset;
+			t2.w = t2.z * zOffset;
+			t3.w = t3.z * zOffset;
+			t4.w = t4.z * zOffset;
+			
+			viewFrustum.addPlane(t1, 4);
+			viewFrustum.addPlane(t2, 5);
+			viewFrustum.addPlane(t3, 6);
+			viewFrustum.addPlane(t4, 7);
+			//*/
 		}
 	}
 }
