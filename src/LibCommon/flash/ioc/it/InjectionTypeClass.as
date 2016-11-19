@@ -4,7 +4,7 @@ package flash.ioc.it
 	import flash.ioc.IInjector;
 
 	[ExcludeClass]
-	final public class InjectionTypeClass implements IInjectionType
+	public class InjectionTypeClass implements IInjectionType
 	{
 		private var realInjector:IInjector;
 		private var cls:Class;

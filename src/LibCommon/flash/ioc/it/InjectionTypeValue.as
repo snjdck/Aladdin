@@ -8,7 +8,6 @@ package flash.ioc.it
 	{
 		private var realInjector:IInjector;
 		private var needInject:Boolean;
-		private var hasInjected:Boolean;
 		private var val:Object;
 		
 		public function InjectionTypeValue(val:Object, needInject:Boolean, realInjector:IInjector)
@@ -20,9 +19,9 @@ package flash.ioc.it
 		
 		public function getValue(injector:IInjector, id:String):Object
 		{
-			if(needInject && !hasInjected){
+			if(needInject){
 				realInjector.injectInto(val);
-				hasInjected = true;
+				needInject = false;
 			}
 			return val;
 		}
