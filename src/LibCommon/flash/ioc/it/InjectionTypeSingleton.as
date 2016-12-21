@@ -15,7 +15,8 @@ package flash.ioc.it
 		override public function getValue(injector:IInjector, id:String):Object
 		{
 			if(null == val){
-				val = super.getValue(injector, id);
+				val = new cls();
+				realInjector.injectInto(val);
 			}
 			return val;
 		}

@@ -6,8 +6,8 @@ package flash.ioc.it
 	[ExcludeClass]
 	public class InjectionTypeClass implements IInjectionType
 	{
-		private var realInjector:IInjector;
-		private var cls:Class;
+		protected var realInjector:IInjector;
+		protected var cls:Class;
 		
 		public function InjectionTypeClass(realInjector:IInjector, cls:Class)
 		{

@@ -20,8 +20,8 @@ package flash.ioc.it
 		public function getValue(injector:IInjector, id:String):Object
 		{
 			if(needInject){
-				realInjector.injectInto(val);
 				needInject = false;
+				realInjector.injectInto(val);
 			}
 			return val;
 		}

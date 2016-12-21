@@ -34,6 +34,12 @@ package flash.ioc
 			return id ? (key + "@" + id) : key;
 		}
 		
+		private function getMetaKey(keyClsOrName:Object):String
+		{
+			var key:String = TypeCast.CastClsToStr(keyClsOrName);
+			return key + "@";
+		}
+		
 		public function mapValue(keyCls:Class, value:Object, id:String=null, needInject:Boolean=true, realInjector:IInjector=null):void
 		{
 			if(value != null){
@@ -69,6 +75,11 @@ package flash.ioc
 			ruleDict[getKey(keyCls, id)] = rule;
 		}
 		
+		public function mapMetaRule(keyCls:Class, rule:IInjectionType):void
+		{
+			ruleDict[getMetaKey(keyCls)] = rule;
+		}
+		
 		public function unmap(keyCls:Class, id:String=null):void
 		{
 			deleteKey(ruleDict, getKey(keyCls, id));
@@ -79,28 +90,25 @@ package flash.ioc
 			return ruleDict[key];
 		}
 		
-		private function getInjectionType(key:String):IInjectionType
+		private function getRule(key:String, inherit:Boolean=true):IInjectionType
 		{
-			var injectionType:IInjectionType;
-			var injector:IInjector = this;
+			if(!inherit){
+				return ruleDict[key];
+			}
+			var rule:IInjectionType;
+			var injector:Injector = this;
 			do{
-				injectionType = injector.getMapping(key);
-				injector = injector.parent;
-			}while(!injectionType && injector);
-			return injectionType;
+				rule = injector.getRule(key, false);
+				if(rule) return rule;
+				injector = injector.parent as Injector;
+			}while(injector);
+			return null;
 		}
 		
 		public function getInstance(keyClsOrName:Object, id:String=null):*
 		{
-			var injectionType:IInjectionType = getInjectionType(getKey(keyClsOrName, id));
-			if(injectionType){
-				return injectionType.getValue(this, null);
-			}
-			if(!Boolean(id)){
-				return null;
-			}
-			injectionType = getInjectionType(getKey(keyClsOrName));
-			return injectionType && injectionType.getValue(this, id);
+			var rule:IInjectionType = getRule(getKey(keyClsOrName, id)) || getRule(getMetaKey(keyClsOrName));
+			return rule && rule.getValue(this, id);
 		}
 		
 		public function injectInto(target:Object):void
