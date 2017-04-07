@@ -22,6 +22,21 @@ package snjdck.ui.scale9bitmap
 		{
 			return new Scale9Bitmap(infoDict[id]);
 		}
+
+		public function regBitmapInfo(id:String, bitmapData:BitmapData, scale9Grid:Rectangle):void
+		{
+			infoDict[id] = new Scale9BitmapInfo(bitmapData, scale9Grid);
+		}
+
+		public function delBitmapInfo(id:String):void
+		{
+			delete infoDict[id];
+		}
+
+		public function hasBitmapInfo(id:String):Boolean
+		{
+			return infoDict[id] != null;
+		}
 		
 		public function load(url:String):void
 		{
@@ -40,7 +55,7 @@ package snjdck.ui.scale9bitmap
 				}
 				var item:Sprite = new clazz();
 				var bmd:BitmapData = (item.getChildAt(0) as Bitmap).bitmapData;
-				infoDict[name] = new Scale9BitmapInfo(bmd, item.scale9Grid);
+				regBitmapInfo(name, bmd, item.scale9Grid);
 			}
 		}
 	}
