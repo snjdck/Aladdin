@@ -8,6 +8,7 @@
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibAI"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/UnitTest"/>
       <compilerSourcePathEntry kind="1" linkType="1" path="src/LibParser"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="src/LibEditor"/>
     </compilerSourcePath>
     <libraryPath defaultLinkType="0">
       <libraryPathEntry kind="4" path="">
