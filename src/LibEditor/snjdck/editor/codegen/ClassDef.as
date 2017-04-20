@@ -45,31 +45,61 @@ package snjdck.editor.codegen
 		
 		public function ClassDef()
 		{
+			genPropCode(uiXML, "this");
 			for each(var childDef:XML in uiXML.children()){
-				var childName:String = calcChildName();
-				var childType:String = childDef.name();
-				constructorCode.push("var " + childName + ":" + childType + " = new " + childType + "()");
-				var importPath:String = childDef["@runtime"];
-				if(Boolean(importPath)){
-					importList.push(importPath);
-				}
-				var varName:String = childDef["@var"];
-				if(Boolean(varName)){
-					constructorCode.push(varName + " = " + childName);
-					fieldDict[varName] = childType;
-				}
-				
-				for each(var prop:XML in childDef.attributes()){
-					constructorCode.push(childName + "." + prop.name() + " = " + prop);
-				}
-				constructorCode.push("\n");
-				++_childCount;
+				parse(childDef, "this");
 			}
 		}
 		
-		private function calcChildName():String
+		private function parse(targetDef:XML, parent:String):void
 		{
-			return "child_" + _childCount;
+			var targetName:String = calcTargetName();
+			var targetType:String = targetDef.name();
+			
+			var varName:String = targetDef["@var"];
+			if(Boolean(varName)){
+				targetName = varName;
+				constructorCode.push(targetName + " = new " + targetType + "()");
+				fieldDict[targetName] = targetType;
+			}else{
+				constructorCode.push("var " + targetName + ":" + targetType + " = new " + targetType + "()");
+			}
+			
+			constructorCode.push(parent + ".addChild(" + targetName + ")");
+			
+			var importPath:String = targetDef["@runtime"];
+			if(Boolean(importPath)){
+				importList.push(importPath);
+			}
+			
+			genPropCode(targetDef, targetName);
+			
+			if(targetDef.hasSimpleContent()){
+				return;
+			}
+			for each(var childDef:XML in targetDef.children()){
+				parse(childDef, targetName);
+			}
+		}
+		
+		private function genPropCode(targetDef:XML, targetName:String):void
+		{
+			for each(var prop:XML in targetDef.attributes()){
+				var key:String = prop.name();
+				switch(key){
+					case "var":
+					case "runtime":
+						continue;
+				}
+				var value:String = prop.toString();
+				constructorCode.push(targetName + "." + key + " = " + value);
+			}
+			constructorCode.push("\n");
+		}
+		
+		private function calcTargetName():String
+		{
+			return "child_" + (_childCount++);
 		}
 		
 		public function toString():String
@@ -79,13 +109,13 @@ package snjdck.editor.codegen
 			for each(var importName:String in importList){
 				addLine("import " + importName + ";");
 			}
-			addLine("\n");
+			addLine("");
 			addLine("public class ${className} extends ${parentClassName}");
 			beginDefine();
 			for(var fieldName:String in fieldDict){
 				addLine("public var " + fieldName + ":" + fieldDict[fieldName] + ";");
 			}
-			addLine("\n");
+			addLine("");
 			addLine("public function ${className}()");
 			beginDefine();
 			for each(var code:String in constructorCode){
@@ -94,7 +124,7 @@ package snjdck.editor.codegen
 			endDefine();
 			endDefine();
 			endDefine();
-			return _lineList.join("\n").replace(/(\t*\n){3}/g, "\n\n").replace(/\n;/g, "");
+			return _lineList.join("\n").replace(/\n;/g, "");
 		}
 		
 		private function addLine(line:String):void
