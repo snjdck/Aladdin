@@ -7,11 +7,8 @@ package snjdck.agalc.helper
 		}
 		
 		var writeMask:uint = 0;
-		
-		for(var i:int=0; i<flags.length; i++){
+		for(var i:int=0, n:int=flags.length; i<n; ++i)
 			writeMask |= 1 << char2val(flags, i);
-		}
-		
 		return writeMask;
 	}
 }

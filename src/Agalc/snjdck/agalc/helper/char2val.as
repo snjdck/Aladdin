@@ -6,6 +6,7 @@ package snjdck.agalc.helper
 		{
 			case "x":
 			case "r":
+			case "_":
 				return 0;
 			case "y":
 			case "g":

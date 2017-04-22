@@ -9,8 +9,8 @@ package snjdck.agalc.helper
 		var swizzle:uint = 0;
 		var shift:int;
 		
-		for(var i:int=0; i<4; i++){
-			if(i<flags.length){
+		for(var i:int=0, n:int=flags.length; i<4; ++i){
+			if(i < n){
 				shift = char2val(flags, i);
 			}
 			swizzle |= shift << (i << 1);
