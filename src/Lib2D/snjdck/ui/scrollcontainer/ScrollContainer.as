@@ -24,8 +24,8 @@ package snjdck.ui.scrollcontainer
 			addChild(adapter.displayObject);
 			addChild(scrollBar);
 			
-			scrollBar.viewSize = adapter.viewSize;
-			scrollBar.pageSize = adapter.pageSize;
+			scrollBar.viewSize = adapter.viewSizeY;
+			scrollBar.pageSize = adapter.pageSizeY;
 			scrollBar.addEventListener(Event.SCROLL, __onScroll);
 			
 			addEventListener(MouseEvent.MOUSE_WHEEL, __onMouseWheel);
@@ -33,7 +33,7 @@ package snjdck.ui.scrollcontainer
 		
 		private function __onScroll(evt:Event):void
 		{
-			adapter.updateView(scrollBar.value);
+			adapter.updateViewY(scrollBar.value);
 		}
 		
 		private function __onMouseWheel(evt:MouseEvent):void
@@ -44,18 +44,18 @@ package snjdck.ui.scrollcontainer
 		override public function set width(value:Number):void
 		{
 			_width = value;
-			adapter.updateWidth(value);
+			adapter.updateViewW(value);
 		}
 		
 		override public function set height(value:Number):void
 		{
 			_height = value;
-			adapter.updateHeight(value);
+			adapter.updateViewH(value);
 		}
 		
 		protected function updateScrollBarLength(value:Number):void
 		{
-			scrollBar.viewSize = adapter.viewSize;
+			scrollBar.viewSize = adapter.viewSizeY;
 			scrollBar.length = value;
 			scrollBar.visible = scrollBar.canScroll();
 		}

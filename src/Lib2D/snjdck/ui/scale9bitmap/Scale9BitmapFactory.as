@@ -6,6 +6,7 @@ package snjdck.ui.scale9bitmap
 	import flash.display.LoaderInfo;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.geom.Rectangle;
 	import flash.net.URLRequest;
 	import flash.system.ApplicationDomain;
 	import flash.utils.getQualifiedSuperclassName;

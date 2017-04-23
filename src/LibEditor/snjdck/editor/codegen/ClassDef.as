@@ -1,36 +1,41 @@
 package snjdck.editor.codegen
 {
+	import flash.reflection.typeinfo.TypeInfo;
+	import flash.system.ApplicationDomain;
+	
+	import array.pushIfNotHas;
+	
+	import avmplus.describeType2;
+	
+	import string.repeat;
+	import string.replace;
+
 	public class ClassDef
 	{
-		protected static var uiXML:XML =
-			<View width="960" height="540">
-			  <TeachRecordView x="223" y="119" var="teachRecordView" runtime="modules.dataquery.classinfo.TeachRecordView"/>
-			  <Box x="411" y="95" var="studentDataMenu">
-				<Button label="个人成绩" skin="png.comp.button" y="0" x="0"/>
-				<Button label="基本信息" skin="png.comp.button" x="80" y="0"/>
-				<Button label="积分贡献" skin="png.comp.button" x="160" y="0"/>
-			  </Box>
-			  <ClassProgressView x="2" y="2" var="classProgressView" runtime="modules.dataquery.classinfo.ClassProgressView"/>
-			  <Button label="班级数据" skin="png.comp.button" x="292" y="64" var="classDataBtn"/>
-			  <Button label="小组数据" skin="png.comp.button" x="392" y="64" var="teamDataBtn"/>
-			  <Button label="学生数据" skin="png.comp.button" x="492" y="64" stateNum="3" var="studentDataBtn"/>
-			  <Button label="APP数据" skin="png.comp.button" x="592" y="64" var="appDataBtn"/>
-			  <Box x="214" y="96" visible="false" var="classDataMenu">
-				<Button label="课程进度" skin="png.comp.button" y="0" x="0" var="classProgress"/>
-				<Button label="教学记录" skin="png.comp.button" x="80" y="0" var="teachRecord"/>
-				<Button label="课程总结" skin="png.comp.button" x="160" y="0"/>
-			  </Box>
-			  <Box x="392" y="97" var="groupDataMenu">
-				<Button label="小组信息" skin="png.comp.button"/>
-			  </Box>
-			  <Box x="512" y="94" var="appDataMenu">
-				<Button label="时间数据" skin="png.comp.button" y="0" x="0"/>
-				<Button label="单词收藏" skin="png.comp.button" x="84" y="0"/>
-				<Button label="单词检测" skin="png.comp.button" x="168" y="0"/>
-				<Button label="课后检测" skin="png.comp.button" x="252" y="0"/>
-			  </Box>
-			  <ClassSummaryView x="3" y="-3" var="classSummaryView" runtime="modules.dataquery.classinfo.ClassSummaryView"/>
-			</View>;
+		static public const domain:ApplicationDomain = new ApplicationDomain();
+		static private const packageDict:Object = {};
+		static private const infoDict:Object = {};
+		static private function getPackage(clsName:String):String
+		{
+			if(packageDict[clsName] == null){
+				throw new Error();
+			}
+			return packageDict[clsName];
+		}
+		
+		static public function init():void
+		{
+			var list:Vector.<String> = domain.getQualifiedDefinitionNames();
+			for(var i:int=0, n:int=list.length; i<n; ++i){
+				var name:String = list[i];
+				var info:TypeInfo = new TypeInfo(describeType2(domain.getDefinition(name)));
+				if(info.isExtends("flash.display::DisplayObject")){
+					var key:String = name.split("::").pop();
+					packageDict[key] = name.replace("::", ".");
+					infoDict[key] = info.variables;
+				}
+			}
+		}
 		
 		public var packageName:String;
 		public var importList:Array = [];
@@ -45,56 +50,108 @@ package snjdck.editor.codegen
 		
 		public function ClassDef()
 		{
-			genPropCode(uiXML, "this");
-			for each(var childDef:XML in uiXML.children()){
-				parse(childDef, "this");
+		}
+		
+		public function set fullName(value:String):void
+		{
+			var index:int = value.lastIndexOf(".");
+			if(index < 0){
+				packageName = "";
+				className = value;
+			}else{
+				packageName = value.slice(0, index);
+				className = value.slice(index+1);
 			}
 		}
 		
-		private function parse(targetDef:XML, parent:String):void
+		public function loadXML(xml:XML, fileDict:Object):void
+		{
+			parentClassName = xml.name();
+			genPropCode(xml, "this", parentClassName);
+			addImport(getPackage(parentClassName));
+			
+			for each(var childDef:XML in xml.children()){
+				parse(childDef, "this", fileDict);
+			}
+			importList.sort();
+		}
+		
+		private function addImport(path:String):void
+		{
+			var list:Array = path.split(".");
+			list.pop();
+			if(list.join(".") == packageName){
+				return;
+			}
+			pushIfNotHas(importList, path);
+		}
+		
+		private function parse(targetDef:XML, parent:String, fileDict:Object):void
 		{
 			var targetName:String = calcTargetName();
 			var targetType:String = targetDef.name();
 			
+			var importPath:String = targetDef["@runtime"];
+			if(Boolean(importPath)){
+				addImport(importPath);
+			}else if(targetType == "UIView"){
+				addImport(targetDef["@source"].slice(0, -4).split("/").join("."));
+			}else{
+				addImport(getPackage(targetType));
+			}
+			
+			if(targetType == "UIView"){
+				if(importPath){
+					targetType = importPath.split(".").pop();
+				}else{
+					targetType = targetDef["@source"].slice(0, -4).split("/").pop();
+				}
+			}
+			
 			var varName:String = targetDef["@var"];
 			if(Boolean(varName)){
 				targetName = varName;
-				constructorCode.push(targetName + " = new " + targetType + "()");
+				constructorCode.push(replace("${0} = new ${1}();", [targetName, targetType]));
 				fieldDict[targetName] = targetType;
 			}else{
-				constructorCode.push("var " + targetName + ":" + targetType + " = new " + targetType + "()");
+				constructorCode.push(replace("var ${0}:${1} = new ${1}();", [targetName, targetType]));
 			}
 			
-			constructorCode.push(parent + ".addChild(" + targetName + ")");
+			constructorCode.push(replace("${0}.addChild(${1});", [parent, targetName]));
 			
-			var importPath:String = targetDef["@runtime"];
-			if(Boolean(importPath)){
-				importList.push(importPath);
+			if(targetDef.name().toString() == "UIView"){
+				targetType = fileDict[targetDef["@source"]].name();
 			}
+			genPropCode(targetDef, targetName, targetType);
 			
-			genPropCode(targetDef, targetName);
-			
-			if(targetDef.hasSimpleContent()){
-				return;
-			}
 			for each(var childDef:XML in targetDef.children()){
-				parse(childDef, targetName);
+				parse(childDef, targetName, fileDict);
 			}
 		}
 		
-		private function genPropCode(targetDef:XML, targetName:String):void
+		private function genPropCode(targetDef:XML, targetName:String, targetType:String):void
 		{
 			for each(var prop:XML in targetDef.attributes()){
 				var key:String = prop.name();
-				switch(key){
-					case "var":
-					case "runtime":
-						continue;
+				var info:Object = infoDict[targetType][key];
+				if(info == null){
+					continue;
 				}
-				var value:String = prop.toString();
-				constructorCode.push(targetName + "." + key + " = " + value);
+				var value:String = genValueString(info.type, prop);
+				constructorCode.push(replace("${0}.${1} = ${2};", [targetName, key, value]));
 			}
-			constructorCode.push("\n");
+			constructorCode.push("");
+		}
+		
+		private function genValueString(type:String, value:String):String
+		{
+			switch(type){
+				case "String":
+					return replace('"${0}"', [value]);
+				case "Boolean":
+					return (value == "true").toString();
+			}
+			return value;
 		}
 		
 		private function calcTargetName():String
@@ -107,24 +164,24 @@ package snjdck.editor.codegen
 			addLine("package ${packageName}");
 			beginDefine();
 			for each(var importName:String in importList){
-				addLine("import " + importName + ";");
+				addLine(replace("import ${0};", [importName]));
 			}
 			addLine("");
 			addLine("public class ${className} extends ${parentClassName}");
 			beginDefine();
 			for(var fieldName:String in fieldDict){
-				addLine("public var " + fieldName + ":" + fieldDict[fieldName] + ";");
+				addLine(replace("public var ${0}:${1};", [fieldName, fieldDict[fieldName]]));
 			}
 			addLine("");
 			addLine("public function ${className}()");
 			beginDefine();
 			for each(var code:String in constructorCode){
-				addLine(code + ";");
+				addLine(code);
 			}
 			endDefine();
 			endDefine();
 			endDefine();
-			return _lineList.join("\n").replace(/\n;/g, "");
+			return replace(_lineList.join("\n"), this);
 		}
 		
 		private function addLine(line:String):void
@@ -134,11 +191,7 @@ package snjdck.editor.codegen
 		
 		private function printTab(count:int):String
 		{
-			var result:String = "";
-			for(var i:int=0; i<count; ++i){
-				result += "\t";
-			}
-			return result;
+			return repeat("\t", count);
 		}
 		
 		private function beginDefine():void

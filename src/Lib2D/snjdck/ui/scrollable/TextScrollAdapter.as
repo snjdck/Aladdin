@@ -16,7 +16,7 @@ package snjdck.ui.scrollable
 		{
 			this.textField = textField;
 			textField.addEventListener(Event.CHANGE, __onTextChanged);
-			_pageSize = pageSize;
+			_pageSize = pageSizeY;
 		}
 		
 		public function get displayObject():DisplayObject
@@ -52,20 +52,10 @@ package snjdck.ui.scrollable
 			}
 		}
 		
-		public function updateWidth(value:Number):void
-		{
-			textField.width = value;
-		}
-		
-		public function updateHeight(value:Number):void
-		{
-			textField.height = value;
-		}
-		
 		private function __onTextChanged(evt:Event):void
 		{
-			if(_pageSize != pageSize){
-				_pageSize = pageSize;
+			if(_pageSize != pageSizeY){
+				_pageSize = pageSizeY;
 				_pageSizeChangedSignal.notify();
 			}
 		}
@@ -73,6 +63,29 @@ package snjdck.ui.scrollable
 		public function get onPageSizeChanged():ISignal
 		{
 			return _pageSizeChangedSignal;
+		}
+		
+		public function updateViewH(value:Number):void
+		{
+			textField.height = value;
+		}
+		
+		public function updateViewW(value:Number):void
+		{
+			textField.width = value;
+		}
+		
+		public function updateViewX(value:Number):void
+		{
+			textField.scrollH = textField.maxScrollH * value;
+		}
+		
+		public function updateViewY(value:Number):void
+		{
+			var newValue:int = 1 + (textField.maxScrollV - 1) * value;
+			if(textField.scrollV != newValue){
+				textField.scrollV = newValue;
+			}
 		}
 	}
 }
