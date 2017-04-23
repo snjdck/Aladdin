@@ -1,0 +1,4 @@
+<View width="600" height="400" sceneColor="0xffffff" layers="1,1,0,0,第 1 层">
+  <Image skin="png.comp.bg" x="-2" y="0" layer="1" width="603" height="399"/>
+  <UIView source="test/Test2.xml" x="5" y="64" layer="1" var="temp" runtime="snjdck.AAA"/>
+</View>

@@ -1,0 +1,4 @@
+<View width="600" height="400" sceneColor="0xffffff" layers="1,1,0,0,第 1 层">
+  <Button label="label" skin="png.comp.button" x="154" y="112" layer="1"/>
+  <CheckBox label="label" skin="png.comp.checkbox" x="311" y="120" layer="1"/>
+</View>
