@@ -86,6 +86,11 @@ package snjdck.editor.codegen
 			pushIfNotHas(importList, path);
 		}
 		
+		private function addCode(template:String, args:Array=null):void
+		{
+			constructorCode.push(replace(template, args));
+		}
+		
 		private function parse(targetDef:XML, parent:String, fileDict:Object):void
 		{
 			var targetName:String = calcTargetName();
@@ -111,13 +116,13 @@ package snjdck.editor.codegen
 			var varName:String = targetDef["@var"];
 			if(Boolean(varName)){
 				targetName = varName;
-				constructorCode.push(replace("${0} = new ${1}();", [targetName, targetType]));
+				addCode("${0} = new ${1}();", [targetName, targetType]);
 				fieldDict[targetName] = targetType;
 			}else{
-				constructorCode.push(replace("var ${0}:${1} = new ${1}();", [targetName, targetType]));
+				addCode("var ${0}:${1} = new ${1}();", [targetName, targetType]);
 			}
 			
-			constructorCode.push(replace("${0}.addChild(${1});", [parent, targetName]));
+			addCode("${0}.addChild(${1});", [parent, targetName]);
 			
 			if(targetDef.name().toString() == "UIView"){
 				targetType = fileDict[targetDef["@source"]].name();
@@ -138,9 +143,9 @@ package snjdck.editor.codegen
 					continue;
 				}
 				var value:String = genValueString(info.type, prop);
-				constructorCode.push(replace("${0}.${1} = ${2};", [targetName, key, value]));
+				addCode("${0}.${1} = ${2};", [targetName, key, value]);
 			}
-			constructorCode.push("");
+			addCode("");
 		}
 		
 		private function genValueString(type:String, value:String):String

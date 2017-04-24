@@ -44,14 +44,6 @@ package snjdck.ui.scrollable
 			return textField.numLines;
 		}
 		
-		public function updateView(value:Number):void
-		{
-			var newValue:int = 1 + (textField.maxScrollV - 1) * value;
-			if(textField.scrollV != newValue){
-				textField.scrollV = newValue;
-			}
-		}
-		
 		private function __onTextChanged(evt:Event):void
 		{
 			if(_pageSize != pageSizeY){
