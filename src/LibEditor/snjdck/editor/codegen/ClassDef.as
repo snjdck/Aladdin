@@ -14,8 +14,8 @@ package snjdck.editor.codegen
 	{
 		static public const domain:ApplicationDomain = new ApplicationDomain();
 		static private const packageDict:Object = {};
-		static private const infoDict:Object = {};
-		static private function getPackage(clsName:String):String
+		static internal const infoDict:Object = {};
+		static public function getPackage(clsName:String):String
 		{
 			if(packageDict[clsName] == null){
 				throw new Error();
