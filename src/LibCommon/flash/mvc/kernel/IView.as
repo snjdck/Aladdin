@@ -1,13 +1,9 @@
 package flash.mvc.kernel
 {
-	import flash.mvc.view.Mediator;
-
 	public interface IView
 	{
-		function regMediator(mediator:Mediator):void;
-		function delMediator(mediator:Mediator):void;
-		function hasMediator(mediator:Mediator):Boolean;
-		
-		function mapView(viewComponent:Object, mediatorCls:Class):void;
+		function regMediator(mediator:IMediator):void;
+		function delMediator(mediator:IMediator):void;
+		function hasMediator(mediator:IMediator):Boolean;
 	}
 }

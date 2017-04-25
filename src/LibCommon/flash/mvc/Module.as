@@ -4,13 +4,13 @@ package flash.mvc
 	import flash.ioc.Injector;
 	import flash.mvc.controller.Controller;
 	import flash.mvc.kernel.IController;
+	import flash.mvc.kernel.IMediator;
 	import flash.mvc.kernel.IModel;
 	import flash.mvc.kernel.INotifier;
 	import flash.mvc.kernel.IView;
 	import flash.mvc.model.Model;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
-	import flash.mvc.view.Mediator;
 	import flash.mvc.view.View;
 	
 	use namespace ns_mvc;
@@ -78,17 +78,17 @@ package flash.mvc
 			return model.hasProxy(proxyCls);
 		}
 		
-		final public function regMediator(mediator:Mediator):void
+		final public function regMediator(mediator:IMediator):void
 		{
 			view.regMediator(mediator);
 		}
 		
-		final public function delMediator(mediator:Mediator):void
+		final public function delMediator(mediator:IMediator):void
 		{
 			view.delMediator(mediator);
 		}
 		
-		final public function hasMediator(mediator:Mediator):Boolean
+		final public function hasMediator(mediator:IMediator):Boolean
 		{
 			return view.hasMediator(mediator);
 		}
@@ -111,11 +111,6 @@ package flash.mvc
 		final public function execCmd(cmdCls:Class):void
 		{
 			controller.execCmd(cmdCls);
-		}
-		
-		final public function mapView(viewComponent:Object, mediatorCls:Class):void
-		{
-			view.mapView(viewComponent, mediatorCls);
 		}
 		
 		virtual public function initAllModels():void		{}

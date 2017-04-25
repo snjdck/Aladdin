@@ -1,15 +1,17 @@
 package flash.mvc.view
 {
+	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.ioc.IInjector;
 	import flash.mvc.Module;
 	import flash.mvc.ns_mvc;
+	import flash.mvc.kernel.IMediator;
 	import flash.mvc.kernel.IView;
 	import flash.mvc.notification.Msg;
-	import flash.reflection.getTypeName;
-	import flash.utils.Dictionary;
+	import flash.utils.DisplayUtil;
 	
-	import dict.deleteKey;
-	import dict.hasValue;
+	import array.del;
+	import array.has;
 	
 	use namespace ns_mvc;
 
@@ -21,52 +23,61 @@ package flash.mvc.view
 		[Inject]
 		public var injector:IInjector;
 		
-		private const mediatorRefs:Object = new Dictionary();
+		private const mediatorList:Vector.<IMediator> = new Vector.<IMediator>();
 		
 		public function View()
 		{
 		}
 		
-		public function regMediator(mediator:Mediator):void
-		{
-			if(!hasMediator(mediator)){
-				mediatorRefs[mediator.viewComponent] = mediator;
-				mediator.regToModule(module);
-			}
-		}
-		
-		public function delMediator(mediator:Mediator):void
+		public function regMediator(mediator:IMediator):void
 		{
 			if(hasMediator(mediator)){
-				deleteKey(mediatorRefs, mediator.viewComponent);
-				mediator.delFromModule();
+				return;
+			}
+			mediatorList.push(mediator);
+			DisplayUtil.Traverse(mediator as DisplayObject, __onTraverse);
+		}
+		
+		private function __onTraverse(target:DisplayObject):void
+		{
+			if(target is IMediator){
+				injector.injectInto(target);
 			}
 		}
 		
-		public function hasMediator(mediator:Mediator):Boolean
+		public function delMediator(mediator:IMediator):void
 		{
-			return hasValue(mediatorRefs, mediator);
+			array.del(mediatorList, mediator);
+		}
+		
+		public function hasMediator(mediator:IMediator):Boolean
+		{
+			return array.has(mediatorList, mediator);
 		}
 		
 		ns_mvc function notifyMediators(msg:Msg):void
 		{
-			for each(var mediator:Mediator in mediatorRefs){
+			for each(var mediator:IMediator in mediatorList){
 				if(msg.isProcessCanceled()){
 					break;
 				}
-				mediator.handleMsg(msg);
+				Traverse(mediator as DisplayObject, msg);
 			}
 		}
 		
-		public function mapView(viewComponent:Object, mediatorCls:Class):void
+		static private function Traverse(target:DisplayObject, msg:Msg):void
 		{
-			if(null == viewComponent.name){
-				viewComponent.name = getTypeName(viewComponent, true);
+			var container:DisplayObjectContainer = target as DisplayObjectContainer;
+			var mediator:IMediator = target as IMediator;
+			if(mediator != null){
+				mediator.handleMsg(msg);
 			}
-			injector.injectInto(viewComponent);
-			var mediator:Mediator = new mediatorCls(viewComponent);
-			injector.injectInto(mediator);
-			regMediator(mediator);
+			if(container == null){
+				return;
+			}
+			for(var i:int=0, n:int=container.numChildren; i<n; ++i){
+				Traverse(container.getChildAt(i), msg);
+			}
 		}
 	}
 }
