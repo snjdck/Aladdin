@@ -1,9 +1,5 @@
 package flash.mvc.notification
 {
-	import flash.mvc.ns_mvc;
-
-	use namespace ns_mvc;
-
 	public class MsgName
 	{
 		private var desc:String;
@@ -16,26 +12,6 @@ package flash.mvc.notification
 		public function toString():String
 		{
 			return desc;
-		}
-		
-		private var parent:MsgName;
-		ns_mvc var isReply:Boolean;
-		
-		private function createSubMsg(isReply:Boolean):MsgName
-		{
-			var msgName:MsgName = new MsgName();
-			msgName.parent = this;
-			msgName.isReply = isReply;
-			return msgName;
-		}
-		
-		private var reply:MsgName;
-		final public function get REPLY():MsgName
-		{
-			if(parent){
-				return null;
-			}
-			return reply ||= createSubMsg(true);
 		}
 	}
 }

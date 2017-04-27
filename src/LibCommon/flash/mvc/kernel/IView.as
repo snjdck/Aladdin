@@ -1,9 +1,9 @@
 package flash.mvc.kernel
 {
+	import flash.mvc.notification.Msg;
+
 	public interface IView
 	{
-		function regMediator(mediator:IMediator):void;
-		function delMediator(mediator:IMediator):void;
-		function hasMediator(mediator:IMediator):Boolean;
+		function handleMsg(msg:Msg):void;
 	}
 }

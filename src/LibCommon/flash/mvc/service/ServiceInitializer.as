@@ -10,7 +10,7 @@ package flash.mvc.service
 	
 	import string.replace;
 
-	final public class ServiceInitializer
+	final internal class ServiceInitializer
 	{
 		private var serviceDefList:Array;
 		

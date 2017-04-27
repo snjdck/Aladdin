@@ -49,7 +49,7 @@ package flash.utils
 			if(null == container){
 				return;
 			}
-			for(var i:int=container.numChildren-1; i>=0; i--){
+			for(var i:int=0, n:int=container.numChildren; i<n; ++i){
 				Traverse(container.getChildAt(i), handler);
 			}
 		}

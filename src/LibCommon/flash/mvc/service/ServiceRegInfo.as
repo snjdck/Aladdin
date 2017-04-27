@@ -3,7 +3,7 @@ package flash.mvc.service
 	import flash.ioc.IInjector;
 	import flash.ioc.ip.InjectionPoint;
 
-	final public class ServiceRegInfo
+	final internal class ServiceRegInfo
 	{
 		public var serviceInterface:Class;
 		public var serviceClass:Class;

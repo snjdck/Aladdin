@@ -2,44 +2,32 @@ package flash.mvc
 {
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
-	import flash.mvc.controller.Controller;
-	import flash.mvc.kernel.IController;
-	import flash.mvc.kernel.IMediator;
-	import flash.mvc.kernel.IModel;
+	import flash.mvc.kernel.ICommand;
 	import flash.mvc.kernel.INotifier;
 	import flash.mvc.kernel.IView;
-	import flash.mvc.model.Model;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
-	import flash.mvc.view.View;
+	import flash.utils.Dictionary;
 	
-	use namespace ns_mvc;
+	import array.del;
+	import array.has;
 	
-	public class Module implements INotifier, IModel, IView, IController
+	public class Module implements INotifier
 	{
-		private var application:Application;
-		
 		protected const injector:IInjector = new Injector();
 		
-		private const model:Model = new Model();
-		private const view:View = new View();
-		private const controller:Controller = new Controller();
+		private const viewList:Vector.<IView> = new Vector.<IView>();
+		private const commandDict:Object = new Dictionary();
 		
 		public function Module()
 		{
-			injector.mapValue(IInjector, injector);
-			injector.mapValue(Module, this);
-			
-			injector.injectInto(model);
-			injector.injectInto(view);
-			injector.injectInto(controller);
+			injector.mapValue(Module, this, null, false);
+			injector.mapValue(IInjector, injector, null, false);
 		}
 		
-		final ns_mvc function onRegisted(theApplication:Application):void
+		internal function set applicationInjector(value:IInjector):void
 		{
-			assert(null == application, "module has been registed yet!");
-			application = theApplication;
-			injector.parent = theApplication.getInjector();
+			injector.parent = value;
 		}
 		
 		final public function regService(serviceInterface:Class, serviceClass:Class, asLocal:Boolean=false):void
@@ -47,76 +35,84 @@ package flash.mvc
 			if(asLocal){
 				injector.mapSingleton(serviceInterface, serviceClass);
 			}else{
-				application.regService(serviceInterface, serviceClass, injector);
+				injector.parent.mapSingleton(serviceInterface, serviceClass, null, injector);
 			}
 		}
 		
 		final public function notify(msgName:MsgName, msgData:Object=null):Boolean
 		{
-			return notifyImp(new Msg(msgName, msgData, this));
-		}
-		
-		final ns_mvc function notifyImp(msg:Msg):Boolean
-		{
-			view.notifyMediators(msg);
-			controller.execCmds(msg);
+			var msg:Msg = new Msg(msgName, msgData);
+			notifyViews(msg);
+			execCommand(msg);
 			return !msg.isDefaultPrevented();
 		}
 		
-		final public function regProxy(proxyCls:Class):void
+		final public function regModel(modelType:Class, model:Object):void
 		{
-			model.regProxy(proxyCls);
+			injector.mapValue(modelType, model);
 		}
 		
-		final public function delProxy(proxyCls:Class):void
+		final public function delModel(modelType:Class):void
 		{
-			model.delProxy(proxyCls);
+			injector.unmap(modelType);
 		}
 		
-		final public function hasProxy(proxyCls:Class):Boolean
+		final public function regView(view:IView):void
 		{
-			return model.hasProxy(proxyCls);
+			if(hasView(view))
+				return;
+			viewList.push(view);
+			injector.injectInto(view);
 		}
 		
-		final public function regMediator(mediator:IMediator):void
+		final public function delView(view:IView):void
 		{
-			view.regMediator(mediator);
+			array.del(viewList, view);
 		}
 		
-		final public function delMediator(mediator:IMediator):void
+		final public function hasView(view:IView):Boolean
 		{
-			view.delMediator(mediator);
+			return array.has(viewList, view);
 		}
 		
-		final public function hasMediator(mediator:IMediator):Boolean
+		private function notifyViews(msg:Msg):void
 		{
-			return view.hasMediator(mediator);
+			for each(var view:IView in viewList){
+				if(msg.isProcessCanceled())
+					break;
+				view.handleMsg(msg);
+			}
 		}
 		
-		final public function regCmd(msgName:MsgName, cmdCls:Class):void
+		final public function regCmd(msgName:MsgName, command:ICommand):void
 		{
-			controller.regCmd(msgName, cmdCls);
+			commandDict[msgName] = command;
+			injector.injectInto(command);
 		}
 		
-		final public function delCmd(msgName:MsgName, cmdCls:Class):void
+		final public function delCmd(msgName:MsgName):void
 		{
-			controller.delCmd(msgName, cmdCls);
+			delete commandDict[msgName];
 		}
 		
-		final public function hasCmd(msgName:MsgName, cmdCls:Class):Boolean
+		final public function hasCmd(msgName:MsgName):Boolean
 		{
-			return controller.hasCmd(msgName, cmdCls);
+			return commandDict[msgName] != null;
 		}
 		
-		final public function execCmd(cmdCls:Class):void
+		private function execCommand(msg:Msg):void
 		{
-			controller.execCmd(cmdCls);
+			if(msg.isProcessCanceled())
+				return;
+			var command:ICommand = commandDict[msg.name];
+			if(command != null)
+				command.exec(msg);
 		}
 		
 		virtual public function initAllModels():void		{}
 		virtual public function initAllServices():void		{}
 		virtual public function initAllViews():void			{}
-		virtual public function initAllControllers():void	{}
+		virtual public function initAllCommands():void		{}
 		virtual public function onStartup():void			{}
 	}
 }

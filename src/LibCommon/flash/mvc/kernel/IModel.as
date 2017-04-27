@@ -1,9 +1,6 @@
 package flash.mvc.kernel
 {
-	public interface IModel
+	public interface IModel extends INotifier
 	{
-		function regProxy(proxyCls:Class):void;
-		function delProxy(proxyCls:Class):void;
-		function hasProxy(proxyCls:Class):Boolean;
 	}
 }

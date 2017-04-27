@@ -2,71 +2,43 @@ package flash.mvc
 {
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
-	//import flash.mvc.service.ServiceInitializer;
-	import flash.mvc.service.ServiceRegInfo;
-	import flash.reflection.getTypeName;
+	import flash.utils.getQualifiedClassName;
 	
-	import dict.hasKey;
-	
-	use namespace ns_mvc;
-
 	public class Application
 	{
 		private const injector:IInjector = new Injector();
 		private const moduleDict:Object = {};
-		//private var serviceInitializer:ServiceInitializer;
 		private var hasStartup:Boolean;
 		
 		public function Application()
 		{
-			//serviceInitializer = new ServiceInitializer();
 			injector.mapValue(Application, this, null, false);
 			injector.mapValue(IInjector, injector, null, false);
 		}
 		
 		public function regModule(module:Module):void
 		{
-			module.onRegisted(this);
-			injector.injectInto(module);
-			var moduleName:String = getTypeName(module, true);
-			
-			if(hasKey(moduleDict, moduleName)){
+			var moduleName:String = getQualifiedClassName(module);
+			if(moduleName in moduleDict)
 				throw new ArgumentError(moduleName + " has registered yet!");
-			}else{
-				moduleDict[moduleName] = module;
-			}
+			moduleDict[moduleName] = module;
+			module.applicationInjector = injector;
 			
 			if(hasStartup)
 			{
 				module.initAllModels();
 				module.initAllServices();
 				module.initAllViews();
-				module.initAllControllers();
+				module.initAllCommands();
 				module.onStartup();
 			}
 		}
 		
-		public function regService(serviceInterface:Class, serviceClass:Class, moduleInjector:IInjector=null):void
-		{
-			var serviceRegInfo:ServiceRegInfo = new ServiceRegInfo(serviceInterface, serviceClass, moduleInjector || injector);
-			if(hasStartup){
-				serviceRegInfo.regService(injector);
-			}else{
-				//serviceInitializer.regService(serviceRegInfo);
-				injector.mapSingleton(serviceInterface, serviceClass, null, moduleInjector);
-			}
-		}
-		
-		public function getInjector():IInjector
-		{
-			return injector;
-		}
-		
 		public function startup():void
 		{
-			if(false == hasStartup){
-				onStartup();
+			if(!hasStartup){
 				hasStartup = true;
+				onStartup();
 			}
 		}
 		
@@ -79,14 +51,12 @@ package flash.mvc
 			for each(module in moduleDict){
 				module.initAllServices();
 			}
-			//serviceInitializer.initialize(injector);
 			for each(module in moduleDict){
 				module.initAllViews();
 			}
 			for each(module in moduleDict){
-				module.initAllControllers();
+				module.initAllCommands();
 			}
-			//serviceInitializer = null;
 			for each(module in moduleDict){
 				module.onStartup();
 			}
