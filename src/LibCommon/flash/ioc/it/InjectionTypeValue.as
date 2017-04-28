@@ -4,26 +4,27 @@ package flash.ioc.it
 	import flash.ioc.IInjectionType;
 
 	[ExcludeClass]
-	final public class InjectionTypeValue implements IInjectionType
+	public class InjectionTypeValue implements IInjectionType
 	{
 		private var realInjector:IInjector;
 		private var needInject:Boolean;
-		private var val:Object;
+		private var value:Object;
 		
-		public function InjectionTypeValue(val:Object, needInject:Boolean, realInjector:IInjector)
+		public function InjectionTypeValue(value:Object, needInject:Boolean, realInjector:IInjector)
 		{
 			this.realInjector = realInjector;
 			this.needInject = needInject;
-			this.val = val;
+			this.value = value;
 		}
 		
 		public function getValue(injector:IInjector, id:String):Object
 		{
 			if(needInject){
 				needInject = false;
-				realInjector.injectInto(val);
+				realInjector.injectInto(value);
+				realInjector = null;
 			}
-			return val;
+			return value;
 		}
 	}
 }

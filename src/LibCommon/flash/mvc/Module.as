@@ -1,6 +1,5 @@
 package flash.mvc
 {
-	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
 	import flash.mvc.kernel.IController;
 	import flash.mvc.kernel.IHandler;
@@ -14,24 +13,24 @@ package flash.mvc
 	
 	public class Module implements INotifier
 	{
-		protected const injector:IInjector = new Injector();
+		protected const injector:Injector = new Injector();
 		
 		private const handlerList:Vector.<IHandler> = new Vector.<IHandler>();
 		
 		public function Module()
 		{
 			injector.mapValue(Module, this, null, false);
-			injector.mapValue(IInjector, injector, null, false);
+			injector.mapValue(Injector, injector, null, false);
 		}
 		
-		internal function set applicationInjector(value:IInjector):void
+		internal function set applicationInjector(value:Injector):void
 		{
 			injector.parent = value;
 		}
 		
 		final public function regService(serviceInterface:Class, serviceClass:Class, asLocal:Boolean=false):void
 		{
-			var target:IInjector = asLocal ? injector : injector.parent;
+			var target:Injector = asLocal ? injector : injector.parent;
 			target.mapSingleton(serviceInterface, serviceClass, null, injector);
 		}
 		

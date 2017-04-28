@@ -5,36 +5,25 @@ package flash.ioc
 	import flash.ioc.it.InjectionTypeSingleton;
 	import flash.ioc.it.InjectionTypeValue;
 	import flash.reflection.getType;
-	import flash.support.TypeCast;
+	import flash.utils.getQualifiedClassName;
 	
-	import dict.deleteKey;
-
 	public class Injector implements IInjector
 	{
+		public var parent:Injector;
+		
 		private const ruleDict:Object = {};
-		private var _parent:IInjector;
 		
 		public function Injector(){}
-		
-		public function get parent():IInjector
-		{
-			return _parent;
-		}
 
-		public function set parent(value:IInjector):void
+		private function calcKey(type:Class, id:String=null):String
 		{
-			_parent = value;
-		}
-
-		private function getKey(keyClsOrName:Object, id:String=null):String
-		{
-			var key:String = TypeCast.CastClsToStr(keyClsOrName);
+			var key:String = getQualifiedClassName(type);
 			return id ? (key + "@" + id) : key;
 		}
 		
-		private function getMetaKey(keyClsOrName:Object):String
+		private function calcMetaKey(type:Class):String
 		{
-			var key:String = TypeCast.CastClsToStr(keyClsOrName);
+			var key:String = getQualifiedClassName(type);
 			return key + "@";
 		}
 		
@@ -68,24 +57,19 @@ package flash.ioc
 			mapRule(keyCls, rule, id);
 		}
 		
-		public function mapRule(keyCls:Class, rule:IInjectionType, id:String=null):void
+		public function mapRule(type:Class, rule:IInjectionType, id:String=null):void
 		{
-			ruleDict[getKey(keyCls, id)] = rule;
+			ruleDict[calcKey(type, id)] = rule;
 		}
 		
-		public function mapMetaRule(keyCls:Class, rule:IInjectionType):void
+		public function mapMetaRule(type:Class, rule:IInjectionType):void
 		{
-			ruleDict[getMetaKey(keyCls)] = rule;
+			ruleDict[calcMetaKey(type)] = rule;
 		}
 		
-		public function unmap(keyCls:Class, id:String=null):void
+		public function unmap(type:Class, id:String=null):void
 		{
-			deleteKey(ruleDict, getKey(keyCls, id));
-		}
-		
-		public function getMapping(key:String):IInjectionType
-		{
-			return ruleDict[key];
+			delete ruleDict[calcKey(type, id)];
 		}
 		
 		private function getRule(key:String, inherit:Boolean=true):IInjectionType
@@ -98,14 +82,14 @@ package flash.ioc
 			do{
 				rule = injector.getRule(key, false);
 				if(rule) return rule;
-				injector = injector.parent as Injector;
+				injector = injector.parent;
 			}while(injector);
 			return null;
 		}
 		
-		public function getInstance(keyClsOrName:Object, id:String=null):*
+		public function getInstance(type:Class, id:String=null):*
 		{
-			var rule:IInjectionType = getRule(getKey(keyClsOrName, id)) || getRule(getMetaKey(keyClsOrName));
+			var rule:IInjectionType = getRule(calcKey(type, id)) || getRule(calcMetaKey(type));
 			return rule && rule.getValue(this, id);
 		}
 		

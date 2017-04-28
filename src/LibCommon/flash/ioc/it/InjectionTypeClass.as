@@ -7,19 +7,19 @@ package flash.ioc.it
 	public class InjectionTypeClass implements IInjectionType
 	{
 		protected var realInjector:IInjector;
-		protected var cls:Class;
+		protected var klass:Class;
 		
-		public function InjectionTypeClass(realInjector:IInjector, cls:Class)
+		public function InjectionTypeClass(realInjector:IInjector, klass:Class)
 		{
 			this.realInjector = realInjector;
-			this.cls = cls;
+			this.klass = klass;
 		}
 		
 		public function getValue(injector:IInjector, id:String):Object
 		{
-			var val:Object = new cls();
-			realInjector.injectInto(val);
-			return val;
+			var value:Object = new klass();
+			realInjector.injectInto(value);
+			return value;
 		}
 	}
 }

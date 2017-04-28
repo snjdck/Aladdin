@@ -3,22 +3,24 @@ package flash.ioc.it
 	import flash.ioc.IInjector;
 
 	[ExcludeClass]
-	final public class InjectionTypeSingleton extends InjectionTypeClass
+	public class InjectionTypeSingleton extends InjectionTypeClass
 	{
-		private var val:Object;
+		private var value:Object;
 		
-		public function InjectionTypeSingleton(realInjector:IInjector, cls:Class)
+		public function InjectionTypeSingleton(realInjector:IInjector, klass:Class)
 		{
-			super(realInjector, cls);
+			super(realInjector, klass);
 		}
 		
 		override public function getValue(injector:IInjector, id:String):Object
 		{
-			if(null == val){
-				val = new cls();
-				realInjector.injectInto(val);
+			if(null == value){
+				value = new klass();
+				realInjector.injectInto(value);
+				realInjector = null;
+				klass = null;
 			}
-			return val;
+			return value;
 		}
 	}
 }

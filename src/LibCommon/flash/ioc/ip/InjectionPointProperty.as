@@ -1,19 +1,20 @@
 package flash.ioc.ip
 {
-	import flash.ioc.IInjector;
 	import flash.ioc.IInjectionPoint;
+	import flash.ioc.IInjector;
+	import flash.utils.getDefinitionByName;
 
 	internal class InjectionPointProperty implements IInjectionPoint
 	{
 		private var name:String;
 		private var info:Object;
-		private var argType:String;
+		private var argType:Class;
 		
 		public function InjectionPointProperty(name:String, info:Object, argType:String)
 		{
 			this.name = name;
 			this.info = info;
-			this.argType = argType;
+			this.argType = getDefinitionByName(argType) as Class;
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void

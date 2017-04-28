@@ -1,19 +1,18 @@
 package flash.mvc
 {
-	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
 	import flash.utils.getQualifiedClassName;
 	
 	public class Application
 	{
-		private const injector:IInjector = new Injector();
+		private const injector:Injector = new Injector();
 		private const moduleDict:Object = {};
 		private var hasStartup:Boolean;
 		
 		public function Application()
 		{
 			injector.mapValue(Application, this, null, false);
-			injector.mapValue(IInjector, injector, null, false);
+			injector.mapValue(Injector, injector, null, false);
 		}
 		
 		public function regModule(module:Module):void
