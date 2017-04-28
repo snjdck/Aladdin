@@ -14,9 +14,7 @@ package flash.ioc
 		private const ruleDict:Object = {};
 		private var _parent:IInjector;
 		
-		public function Injector()
-		{
-		}
+		public function Injector(){}
 		
 		public function get parent():IInjector
 		{

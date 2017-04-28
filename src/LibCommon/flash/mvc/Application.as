@@ -29,7 +29,7 @@ package flash.mvc
 				module.initAllModels();
 				module.initAllServices();
 				module.initAllViews();
-				module.initAllCommands();
+				module.initAllControllers();
 				module.onStartup();
 			}
 		}
@@ -55,7 +55,7 @@ package flash.mvc
 				module.initAllViews();
 			}
 			for each(module in moduleDict){
-				module.initAllCommands();
+				module.initAllControllers();
 			}
 			for each(module in moduleDict){
 				module.onStartup();

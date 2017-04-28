@@ -2,12 +2,12 @@ package flash.mvc
 {
 	import flash.ioc.IInjector;
 	import flash.ioc.Injector;
-	import flash.mvc.kernel.ICommand;
+	import flash.mvc.kernel.IController;
+	import flash.mvc.kernel.IHandler;
 	import flash.mvc.kernel.INotifier;
 	import flash.mvc.kernel.IView;
 	import flash.mvc.notification.Msg;
 	import flash.mvc.notification.MsgName;
-	import flash.utils.Dictionary;
 	
 	import array.del;
 	import array.has;
@@ -16,8 +16,7 @@ package flash.mvc
 	{
 		protected const injector:IInjector = new Injector();
 		
-		private const viewList:Vector.<IView> = new Vector.<IView>();
-		private const commandDict:Object = new Dictionary();
+		private const handlerList:Vector.<IHandler> = new Vector.<IHandler>();
 		
 		public function Module()
 		{
@@ -32,18 +31,18 @@ package flash.mvc
 		
 		final public function regService(serviceInterface:Class, serviceClass:Class, asLocal:Boolean=false):void
 		{
-			if(asLocal){
-				injector.mapSingleton(serviceInterface, serviceClass);
-			}else{
-				injector.parent.mapSingleton(serviceInterface, serviceClass, null, injector);
-			}
+			var target:IInjector = asLocal ? injector : injector.parent;
+			target.mapSingleton(serviceInterface, serviceClass, null, injector);
 		}
 		
 		final public function notify(msgName:MsgName, msgData:Object=null):Boolean
 		{
 			var msg:Msg = new Msg(msgName, msgData);
-			notifyViews(msg);
-			execCommand(msg);
+			for each(var handler:IHandler in handlerList){
+				if(msg.isProcessCanceled())
+					break;
+				handler.handleMsg(msg);
+			}
 			return !msg.isDefaultPrevented();
 		}
 		
@@ -59,60 +58,36 @@ package flash.mvc
 		
 		final public function regView(view:IView):void
 		{
-			if(hasView(view))
-				return;
-			viewList.push(view);
-			injector.injectInto(view);
+			regHandler(view);
 		}
 		
 		final public function delView(view:IView):void
 		{
-			array.del(viewList, view);
+			array.del(handlerList, view);
 		}
 		
-		final public function hasView(view:IView):Boolean
+		final public function regController(controller:IController):void
 		{
-			return array.has(viewList, view);
+			regHandler(controller);
 		}
 		
-		private function notifyViews(msg:Msg):void
+		final public function delController(controller:IController):void
 		{
-			for each(var view:IView in viewList){
-				if(msg.isProcessCanceled())
-					break;
-				view.handleMsg(msg);
-			}
+			array.del(handlerList, controller);
 		}
 		
-		final public function regCmd(msgName:MsgName, command:ICommand):void
+		private function regHandler(handler:IHandler):void
 		{
-			commandDict[msgName] = command;
-			injector.injectInto(command);
-		}
-		
-		final public function delCmd(msgName:MsgName):void
-		{
-			delete commandDict[msgName];
-		}
-		
-		final public function hasCmd(msgName:MsgName):Boolean
-		{
-			return commandDict[msgName] != null;
-		}
-		
-		private function execCommand(msg:Msg):void
-		{
-			if(msg.isProcessCanceled())
+			if(has(handlerList, handler))
 				return;
-			var command:ICommand = commandDict[msg.name];
-			if(command != null)
-				command.exec(msg);
+			handlerList.push(handler);
+			injector.injectInto(handler);
 		}
 		
 		virtual public function initAllModels():void		{}
 		virtual public function initAllServices():void		{}
 		virtual public function initAllViews():void			{}
-		virtual public function initAllCommands():void		{}
+		virtual public function initAllControllers():void	{}
 		virtual public function onStartup():void			{}
 	}
 }
