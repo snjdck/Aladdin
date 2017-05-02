@@ -18,8 +18,9 @@ package flash.ioc.it
 		public function getValue(injector:IInjector, id:String):Object
 		{
 			if(null != realInjector){
-				realInjector.injectInto(value);
+				injector = realInjector;
 				realInjector = null;
+				injector.injectInto(value);
 			}
 			return value;
 		}
