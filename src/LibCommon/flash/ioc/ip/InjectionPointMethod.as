@@ -29,7 +29,7 @@ package flash.ioc.ip
 		{
 			var count:int = argTypes.length;
 			var result:Array = new Array(count);
-			for(var i:int=0; i<count; i++){
+			for(var i:int=0; i<count; ++i){
 				result[i] = injector.getInstance(argTypes[i]);
 			}
 			return result;

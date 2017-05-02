@@ -23,38 +23,22 @@ package flash.ioc
 		
 		private function calcMetaKey(type:Class):String
 		{
-			var key:String = getQualifiedClassName(type);
-			return key + "@";
+			return getQualifiedClassName(type) + "@";
 		}
 		
 		public function mapValue(keyCls:Class, value:Object, id:String=null, needInject:Boolean=true, realInjector:IInjector=null):void
 		{
-			if(value != null){
-				assert(value is keyCls, "type don't match!");
-			}
-			if(null == realInjector){
-				realInjector = this;
-			}
-			var rule:IInjectionType = new InjectionTypeValue(value, needInject, realInjector);
-			mapRule(keyCls, rule, id);
+			mapRule(keyCls, new InjectionTypeValue(needInject ? realInjector || this : null, value), id);
 		}
 		
 		public function mapClass(keyCls:Class, valueCls:Class=null, id:String=null, realInjector:IInjector=null):void
 		{
-			if(null == realInjector){
-				realInjector = this;
-			}
-			var rule:IInjectionType = new InjectionTypeClass(realInjector, valueCls || keyCls);
-			mapRule(keyCls, rule, id);
+			mapRule(keyCls, new InjectionTypeClass(realInjector || this, valueCls || keyCls), id);
 		}
 		
 		public function mapSingleton(keyCls:Class, valueCls:Class=null, id:String=null, realInjector:IInjector=null):void
 		{
-			if(null == realInjector){
-				realInjector = this;
-			}
-			var rule:IInjectionType = new InjectionTypeSingleton(realInjector, valueCls || keyCls);
-			mapRule(keyCls, rule, id);
+			mapRule(keyCls, new InjectionTypeSingleton(realInjector || this, valueCls || keyCls), id);
 		}
 		
 		public function mapRule(type:Class, rule:IInjectionType, id:String=null):void

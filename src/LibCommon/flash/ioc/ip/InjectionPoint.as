@@ -3,10 +3,10 @@ package flash.ioc.ip
 	import flash.ioc.IInjectionPoint;
 	import flash.ioc.IInjector;
 	import flash.reflection.getTypeInfo;
-	import flash.reflection.getTypeName;
 	import flash.reflection.typeinfo.MethodInfo;
 	import flash.reflection.typeinfo.TypeInfo;
 	import flash.reflection.typeinfo.VariableInfo;
+	import flash.utils.getQualifiedClassName;
 
 	[ExcludeClass]
 	final public class InjectionPoint implements IInjectionPoint
@@ -16,7 +16,7 @@ package flash.ioc.ip
 		
 		static public function Fetch(clsRef:Class):InjectionPoint
 		{
-			var clsName:String = getTypeName(clsRef);
+			var clsName:String = getQualifiedClassName(clsRef);
 			if(null == injectionPointDict[clsName]){
 				injectionPointDict[clsName] = new InjectionPoint(clsRef);
 			}
