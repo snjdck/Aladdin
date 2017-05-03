@@ -1,9 +1,5 @@
-package flash.ioc.ip
+package flash.ioc
 {
-	import flash.ioc.IInjectionPoint;
-	import flash.ioc.IInjector;
-	import flash.utils.getDefinitionByName;
-
 	internal class InjectionPointMethod implements IInjectionPoint
 	{
 		private var methodName:String;
@@ -12,7 +8,7 @@ package flash.ioc.ip
 		public function InjectionPointMethod(methodName:String, argTypes:Array)
 		{
 			this.methodName = methodName;
-			this.argTypes = argTypes.map(toClass);
+			this.argTypes = argTypes;
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
@@ -33,11 +29,6 @@ package flash.ioc.ip
 				result[i] = injector.getInstance(argTypes[i]);
 			}
 			return result;
-		}
-		
-		static private function toClass(type:String, index:int, array:Array):Class
-		{
-			return getDefinitionByName(type) as Class;
 		}
 	}
 }

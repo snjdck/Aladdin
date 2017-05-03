@@ -1,9 +1,8 @@
 package flash.ioc
 {
-	[ExcludeClass]
-	public interface IInjector
+	internal interface IInjector
 	{
-		function getInstance(type:Class, id:String=null):*;
+		function getInstance(type:*, id:String=null):*;
 		function injectInto(target:Object):void;
 	}
 }

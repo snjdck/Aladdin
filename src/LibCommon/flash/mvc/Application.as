@@ -5,7 +5,7 @@ package flash.mvc
 	
 	public class Application
 	{
-		private const injector:Injector = new Injector();
+		protected const injector:Injector = new Injector();
 		private const moduleDict:Object = {};
 		private var hasStartup:Boolean;
 		

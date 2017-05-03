@@ -1,33 +1,30 @@
-package flash.ioc.ip
+package flash.ioc
 {
-	import flash.ioc.IInjectionPoint;
-	import flash.ioc.IInjector;
 	import flash.reflection.getTypeInfo;
 	import flash.reflection.typeinfo.MethodInfo;
 	import flash.reflection.typeinfo.TypeInfo;
 	import flash.reflection.typeinfo.VariableInfo;
 	import flash.utils.getQualifiedClassName;
 
-	[ExcludeClass]
-	final public class InjectionPoint implements IInjectionPoint
+	internal class InjectionPoint implements IInjectionPoint
 	{
 		static private const TAG_INJECT:String = "Inject";
 		static private const injectionPointDict:Object = {};
 		
-		static public function Fetch(clsRef:Class):InjectionPoint
+		static public function Fetch(target:Object):InjectionPoint
 		{
-			var clsName:String = getQualifiedClassName(clsRef);
+			var clsName:String = getQualifiedClassName(target);
 			if(null == injectionPointDict[clsName]){
-				injectionPointDict[clsName] = new InjectionPoint(clsRef);
+				injectionPointDict[clsName] = new InjectionPoint(target);
 			}
 			return injectionPointDict[clsName];
 		}
 		
 		private const injectionPointList:Array = [];
 		
-		public function InjectionPoint(clsRef:Class)
+		public function InjectionPoint(target:Object)
 		{
-			var clsInfo:TypeInfo = getTypeInfo(clsRef);
+			var clsInfo:TypeInfo = getTypeInfo(target);
 			for each(var methodNode:MethodInfo in clsInfo.methods){
 				if(methodNode.hasMetaTag(TAG_INJECT)){
 					addMethodPoint(methodNode, methodNode.parameters.length > 0);

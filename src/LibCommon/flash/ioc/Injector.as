@@ -1,10 +1,5 @@
 package flash.ioc
 {
-	import flash.ioc.ip.InjectionPoint;
-	import flash.ioc.it.InjectionTypeClass;
-	import flash.ioc.it.InjectionTypeSingleton;
-	import flash.ioc.it.InjectionTypeValue;
-	import flash.reflection.getType;
 	import flash.utils.getQualifiedClassName;
 	
 	public class Injector implements IInjector
@@ -15,15 +10,10 @@ package flash.ioc
 		
 		public function Injector(){}
 
-		private function calcKey(type:Class, id:String=null):String
+		private function calcKey(type:*, id:String=null, isMeta:Boolean=false):String
 		{
-			var key:String = getQualifiedClassName(type);
-			return id ? (key + "@" + id) : key;
-		}
-		
-		private function calcMetaKey(type:Class):String
-		{
-			return getQualifiedClassName(type) + "@";
+			var key:String = type is Class ? getQualifiedClassName(type) : type;
+			return isMeta ? (key + "@") : Boolean(id) ? (key + "@" + id) : key;
 		}
 		
 		public function mapValue(keyCls:Class, value:Object, id:String=null, needInject:Boolean=true, realInjector:IInjector=null):void
@@ -48,7 +38,7 @@ package flash.ioc
 		
 		public function mapMetaRule(type:Class, rule:IInjectionType):void
 		{
-			ruleDict[calcMetaKey(type)] = rule;
+			ruleDict[calcKey(type, null, true)] = rule;
 		}
 		
 		public function unmap(type:Class, id:String=null):void
@@ -71,15 +61,15 @@ package flash.ioc
 			return null;
 		}
 		
-		public function getInstance(type:Class, id:String=null):*
+		public function getInstance(type:*, id:String=null):*
 		{
-			var rule:IInjectionType = getRule(calcKey(type, id)) || getRule(calcMetaKey(type));
+			var rule:IInjectionType = getRule(calcKey(type, id)) || getRule(calcKey(type, id, true));
 			return rule && rule.getValue(this, id);
 		}
 		
 		public function injectInto(target:Object):void
 		{
-			var ip:IInjectionPoint = InjectionPoint.Fetch(getType(target));
+			var ip:IInjectionPoint = InjectionPoint.Fetch(target);
 			ip.injectInto(target, this);
 		}
 	}

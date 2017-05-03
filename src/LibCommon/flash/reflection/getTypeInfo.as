@@ -1,12 +1,13 @@
 package flash.reflection
 {
-	import avmplus.describeType2;
-	
 	import flash.reflection.typeinfo.TypeInfo;
+	import flash.utils.getQualifiedClassName;
+	
+	import avmplus.describeType2;
 
 	public function getTypeInfo(target:Object):TypeInfo
 	{
-		var typeName:String = getTypeName(target);
+		var typeName:String = getQualifiedClassName(target);
 		return cache[typeName] ||= new TypeInfo(describeType2(target));
 	}
 }

@@ -1,9 +1,6 @@
-package flash.ioc.it
+package flash.ioc
 {
-	import flash.ioc.IInjector;
-
-	[ExcludeClass]
-	public class InjectionTypeSingleton extends InjectionTypeClass
+	internal class InjectionTypeSingleton extends InjectionTypeClass
 	{
 		private var value:Object;
 		

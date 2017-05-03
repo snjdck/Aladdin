@@ -1,10 +1,6 @@
-package flash.ioc.it
+package flash.ioc
 {
-	import flash.ioc.IInjector;
-	import flash.ioc.IInjectionType;
-
-	[ExcludeClass]
-	public class InjectionTypeValue implements IInjectionType
+	internal class InjectionTypeValue implements IInjectionType
 	{
 		private var realInjector:IInjector;
 		private var value:Object;
