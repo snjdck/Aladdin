@@ -2,8 +2,8 @@ package flash.ioc
 {
 	internal class InjectionTypeClass implements IInjectionType
 	{
-		protected var realInjector:IInjector;
-		protected var klass:Class;
+		private var realInjector:IInjector;
+		private var klass:Class;
 		
 		public function InjectionTypeClass(realInjector:IInjector, klass:Class)
 		{

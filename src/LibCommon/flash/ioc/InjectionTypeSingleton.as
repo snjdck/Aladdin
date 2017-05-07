@@ -1,15 +1,18 @@
 package flash.ioc
 {
-	internal class InjectionTypeSingleton extends InjectionTypeClass
+	internal class InjectionTypeSingleton implements IInjectionType
 	{
+		private var realInjector:IInjector;
+		private var klass:Class;
 		private var value:Object;
 		
 		public function InjectionTypeSingleton(realInjector:IInjector, klass:Class)
 		{
-			super(realInjector, klass);
+			this.realInjector = realInjector;
+			this.klass = klass;
 		}
 		
-		override public function getValue(injector:IInjector, id:String):Object
+		public function getValue(injector:IInjector, id:String):Object
 		{
 			if(null == value){
 				value = new klass();
