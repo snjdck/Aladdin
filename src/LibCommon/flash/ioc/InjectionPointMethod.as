@@ -2,26 +2,26 @@ package flash.ioc
 {
 	internal class InjectionPointMethod implements IInjectionPoint
 	{
-		private var methodName:String;
+		private var name:String;
 		private var argTypes:Array;
 		
-		public function InjectionPointMethod(methodName:String, argTypes:Array)
+		public function InjectionPointMethod(name:String, argTypes:Array)
 		{
-			this.methodName = methodName;
+			this.name = name;
 			this.argTypes = argTypes;
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
 		{
-			var method:Function = target[methodName];
+			var method:Function = target[name];
 			if(null == argTypes || 0 == argTypes.length){
 				method();
 			}else{
-				method.apply(null, getInstances(injector));
+				method.apply(null, getArgs(injector));
 			}
 		}
 		
-		private function getInstances(injector:IInjector):Array
+		private function getArgs(injector:IInjector):Array
 		{
 			var count:int = argTypes.length;
 			var result:Array = new Array(count);

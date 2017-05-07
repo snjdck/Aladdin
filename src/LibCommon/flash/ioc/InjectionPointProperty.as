@@ -4,20 +4,20 @@ package flash.ioc
 	{
 		private var name:String;
 		private var info:Object;
-		private var argType:String;
+		private var type:String;
 		
-		public function InjectionPointProperty(name:String, info:Object, argType:String)
+		public function InjectionPointProperty(name:String, info:Object, type:String)
 		{
 			this.name = name;
 			this.info = info;
-			this.argType = argType;
+			this.type = type;
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
 		{
-			var val:Object = injector.getInstance(argType, info[0]);
-			if(null != val){
-				target[name] = val;
+			var value:Object = injector.getInstance(type, info[0]);
+			if(null != value){
+				target[name] = value;
 			}
 		}
 	}

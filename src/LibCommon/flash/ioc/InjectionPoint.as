@@ -14,56 +14,33 @@ package flash.ioc
 		static public function Fetch(target:Object):InjectionPoint
 		{
 			var clsName:String = getQualifiedClassName(target);
-			if(null == injectionPointDict[clsName]){
+			if(null == injectionPointDict[clsName])
 				injectionPointDict[clsName] = new InjectionPoint(target);
-			}
 			return injectionPointDict[clsName];
 		}
 		
-		private const injectionPointList:Array = [];
+		private const injectionPointList:Vector.<IInjectionPoint> = new Vector.<IInjectionPoint>();
 		
 		public function InjectionPoint(target:Object)
 		{
 			var clsInfo:TypeInfo = getTypeInfo(target);
-			for each(var methodNode:MethodInfo in clsInfo.methods){
-				if(methodNode.hasMetaTag(TAG_INJECT)){
-					addMethodPoint(methodNode, methodNode.parameters.length > 0);
-				}
-			}
-			for each(var varNode:VariableInfo in clsInfo.variables){
-				if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite()){
-					addPropertyPoint(varNode);
-				}
-			}
-		}
-		
-		private function addPropertyPoint(varNode:VariableInfo):void
-		{
-			injectionPointList.unshift(new InjectionPointProperty(
-				varNode.name,
-				varNode.getMetaTagValue(TAG_INJECT),
-				varNode.type
-			));
-		}
-		
-		private function addMethodPoint(methodNode:MethodInfo, toHeadFlag:Boolean):void
-		{
-			var injectionPoint:IInjectionPoint = new InjectionPointMethod(
-				methodNode.name,
-				methodNode.parameters
-			);
-			if(toHeadFlag){
-				injectionPointList.unshift(injectionPoint);
-			}else{
-				injectionPointList.push(injectionPoint);
-			}
+			for each(var methodNode:MethodInfo in clsInfo.methods)
+				if(methodNode.hasMetaTag(TAG_INJECT))
+					injectionPointList.insertAt(
+						methodNode.parameters.length > 0 ? 0 : injectionPointList.length,
+						new InjectionPointMethod(methodNode.name, methodNode.parameters)
+					);
+			for each(var varNode:VariableInfo in clsInfo.variables)
+				if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite())
+					injectionPointList.unshift(
+						new InjectionPointProperty(varNode.name, varNode.getMetaTagValue(TAG_INJECT), varNode.type)
+					);
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
 		{
-			for each(var injectionPoint:IInjectionPoint in injectionPointList){
+			for each(var injectionPoint:IInjectionPoint in injectionPointList)
 				injectionPoint.injectInto(target, injector);
-			}
 		}
 	}
 }
