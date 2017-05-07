@@ -1,8 +1,7 @@
 package flash.mvc.impl
 {
-	import flash.mvc.kernel.IModel;
-	import flash.mvc.notification.MsgName;
 	import flash.mvc.Module;
+	import flash.mvc.kernel.IModel;
 	
 	public class Model implements IModel
 	{
@@ -11,7 +10,7 @@ package flash.mvc.impl
 		
 		public function Model(){}
 		
-		public function notify(msgName:MsgName, msgData:Object=null):Boolean
+		public function notify(msgName:Object, msgData:Object=null):Boolean
 		{
 			return module.notify(msgName, msgData);
 		}

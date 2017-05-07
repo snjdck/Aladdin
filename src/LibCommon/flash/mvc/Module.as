@@ -34,7 +34,7 @@ package flash.mvc
 			target.mapSingleton(serviceInterface, serviceClass, null, injector);
 		}
 		
-		final public function notify(msgName:MsgName, msgData:Object=null):Boolean
+		final public function notify(msgName:Object, msgData:Object=null):Boolean
 		{
 			var msg:Msg = new Msg(msgName, msgData);
 			for each(var handler:IHandler in handlerList){

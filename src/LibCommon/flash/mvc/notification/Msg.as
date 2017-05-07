@@ -2,16 +2,16 @@ package flash.mvc.notification
 {
 	public class Msg
 	{
-		private var _name:MsgName;
+		private var _name:Object;
 		private var _data:Object;
 		
-		public function Msg(name:MsgName, data:Object)
+		public function Msg(name:Object, data:Object)
 		{
 			this._name = name;
 			this._data = data;
 		}
 		
-		public function get name():MsgName
+		public function get name():Object
 		{
 			return _name;
 		}
