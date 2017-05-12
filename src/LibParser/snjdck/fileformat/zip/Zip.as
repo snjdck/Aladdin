@@ -7,17 +7,15 @@ package snjdck.fileformat.zip
 	{
 		static private const file:ZipFile = new ZipFile();
 		
-		static public function Parse(zipBytes:ByteArray, filenameEncoding:String="utf-8"):Object
+		static public function Parse(zipBytes:ByteArray):Object
 		{
 			zipBytes.endian = Endian.LITTLE_ENDIAN;
 			
 			var result:Object = {};
 			
 			while(zipBytes.bytesAvailable > 0){
-				if(zipBytes.readUnsignedInt() != 0x04034b50){
+				if(zipBytes.readUnsignedInt() != 0x04034b50)
 					break;
-				}
-				file.filenameEncoding = filenameEncoding;
 				file.read(zipBytes);
 				result[file.getName()] = file.getData();
 			}

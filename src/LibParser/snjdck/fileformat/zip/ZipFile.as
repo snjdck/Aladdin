@@ -1,6 +1,7 @@
 package snjdck.fileformat.zip
 {
 	import flash.utils.ByteArray;
+	import flash.utils.CompressionAlgorithm;
 
 	internal class ZipFile
 	{
@@ -9,15 +10,12 @@ package snjdck.fileformat.zip
 		
 		private var _encrypted:Boolean;
 		private var _hasDataDescriptor:Boolean;
-		public var filenameEncoding:String;
 		
 		private var _isCompressed:Boolean;
 		private var _fileName:String;
 		private var _data:ByteArray;
 		
-		public function ZipFile()
-		{
-		}
+		public function ZipFile(){}
 		
 		public function getName():String
 		{
@@ -100,7 +98,7 @@ package snjdck.fileformat.zip
 				case 0:						//COMPRESSION_NONE
 					break;
 				case 14:					//LZMA
-					_data.uncompress("lzma");
+					_data.uncompress(CompressionAlgorithm.LZMA);
 					break;
 				default:
 					trace("Compression method " + _compressionMethod + " is not supported.");
@@ -111,27 +109,23 @@ package snjdck.fileformat.zip
 		{
 			ba.position += 2;			//version
 			
-			const flag:uint = ba.readUnsignedShort();
+			const flags:uint = ba.readUnsignedShort();
 			_compressionMethod = ba.readUnsignedShort();
 			
 			_isCompressed = _compressionMethod > 0;
 			
-			_encrypted = (flag & 0x01) !== 0;
-			_hasDataDescriptor = (flag & 0x08) !== 0;
-			
-			if((flag & 800) !== 0){
-				filenameEncoding = "utf-8";
-			}
+			_encrypted = (flags & 0x01) !== 0;
+			_hasDataDescriptor = (flags & 0x08) !== 0;
 			
 			ba.position += 4;			//last modified time and date
 			ba.position += 4;			//crc32
 			_sizeCompressed = ba.readUnsignedInt();
 			ba.position += 4;			//sizeUncompressed
 			
-			const sizeFilename:uint = ba.readUnsignedShort();
+			const sizeFileName:uint = ba.readUnsignedShort();
 			const sizeExtra:uint = ba.readUnsignedShort();
 			
-			_fileName = ba.readUTFBytes(sizeFilename);
+			_fileName = ba.readUTFBytes(sizeFileName);
 			ba.position += sizeExtra;
 		}
 	}
