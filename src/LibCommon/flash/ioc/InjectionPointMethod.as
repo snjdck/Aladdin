@@ -14,10 +14,10 @@ package flash.ioc
 		public function injectInto(target:Object, injector:IInjector):void
 		{
 			var method:Function = target[name];
-			if(null == argTypes || 0 == argTypes.length){
-				method();
-			}else{
+			if(argTypes.length > 0){
 				method.apply(null, getArgs(injector));
+			}else{
+				method();
 			}
 		}
 		
