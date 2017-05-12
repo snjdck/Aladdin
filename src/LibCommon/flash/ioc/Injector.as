@@ -48,14 +48,12 @@ package flash.ioc
 		
 		private function getRule(key:String, inherit:Boolean=true):IInjectionType
 		{
-			if(!inherit){
-				return ruleDict[key];
-			}
+			if (!inherit) return ruleDict[key];
 			var rule:IInjectionType;
 			var injector:Injector = this;
 			do{
-				rule = injector.getRule(key, false);
-				if(rule) return rule;
+				rule = injector.ruleDict[key];
+				if (rule) return rule;
 				injector = injector.parent;
 			}while(injector);
 			return null;
