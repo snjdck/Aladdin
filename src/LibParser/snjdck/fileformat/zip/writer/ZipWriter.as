@@ -9,22 +9,24 @@ package snjdck.fileformat.zip.writer
 		
 		private const fileDict:Object = {};
 		private var time:uint;
+		private var entryCount:int;
 		
 		public function ZipWriter()
 		{
 			time = calcTime();
 		}
 		
-		public function addFile(name:String, data:ByteArray):void
+		public function addFile(name:String, data:ByteArray, needCompress:Boolean=false):void
 		{
-			fileDict[name] = data;
+			fileDict[name] = new ZipEntry(name, data, needCompress);
+			++entryCount;
 		}
 		
-		public function addString(name:String, data:String):void
+		public function addString(name:String, data:String, needCompress:Boolean=false):void
 		{
 			var ba:ByteArray = new ByteArray();
 			ba.writeUTFBytes(data);
-			addFile(name, ba);
+			addFile(name, ba, needCompress);
 		}
 		
 		public function toByteArray():ByteArray
@@ -32,18 +34,16 @@ package snjdck.fileformat.zip.writer
 			var ba:ByteArray = new ByteArray();
 			ba.endian = Endian.LITTLE_ENDIAN;
 			
-			var entryList:Array = [];
 			var entry:ZipEntry;
 			
-			for(var fileName:String in fileDict){
-				entry = new ZipEntry(fileName, fileDict[fileName], ba.position);
-				entryList.push(entry);
+			for each(entry in fileDict){
+				entry.offset = ba.position;
 				writeFileEntry(ba, entry);
 			}
 			var offset:uint = ba.position;
-			for each(entry in entryList)
+			for each(entry in fileDict)
 				writeDirectoryEntry(ba, entry);
-			writeEnd(ba, entryList.length, ba.position - offset, offset);
+			writeEnd(ba, entryCount, ba.position - offset, offset);
 			
 			ba.position = 0;
 			return ba;
@@ -88,10 +88,11 @@ package snjdck.fileformat.zip.writer
 		private function writeInfo(ba:ByteArray, entry:ZipEntry):void
 		{
 			ba.writeShort(Version);
-			ba.writeUnsignedInt(0);
+			ba.writeShort(0);
+			ba.writeShort(entry.compressionMethod);
 			ba.writeUnsignedInt(time);
 			ba.writeUnsignedInt(entry.crc32);
-			ba.writeUnsignedInt(entry.sizeData);
+			ba.writeUnsignedInt(entry.sizeCompressedData);
 			ba.writeUnsignedInt(entry.sizeData);
 		}
 		

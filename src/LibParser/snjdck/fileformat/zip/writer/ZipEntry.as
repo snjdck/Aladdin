@@ -13,15 +13,21 @@ package snjdck.fileformat.zip.writer
 		public var crc32:uint;
 		public var sizeName:uint;
 		public var sizeData:uint;
+		public var sizeCompressedData:uint;
+		public var compressionMethod:int;
 		
-		public function ZipEntry(name:String, data:ByteArray, offset:uint)
+		public function ZipEntry(name:String, data:ByteArray, needCompress:Boolean)
 		{
 			this.name = name;
 			this.data = data;
-			this.offset = offset;
-			crc32 = CRC32.Compute(data);
 			sizeName = calcByteSize(name);
+			crc32 = CRC32.Compute(data);
 			sizeData = data.length;
+			if(needCompress && data.length > 0){
+				compressionMethod = 8;
+				data.deflate();
+			}
+			sizeCompressedData = data.length;
 		}
 	}
 }

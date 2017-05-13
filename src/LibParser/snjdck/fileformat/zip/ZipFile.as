@@ -1,7 +1,6 @@
 package snjdck.fileformat.zip
 {
 	import flash.utils.ByteArray;
-	import flash.utils.CompressionAlgorithm;
 
 	internal class ZipFile
 	{
@@ -96,9 +95,6 @@ package snjdck.fileformat.zip
 					_data.inflate();
 					break;
 				case 0:						//COMPRESSION_NONE
-					break;
-				case 14:					//LZMA
-					_data.uncompress(CompressionAlgorithm.LZMA);
 					break;
 				default:
 					trace("Compression method " + _compressionMethod + " is not supported.");
