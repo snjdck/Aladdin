@@ -4,14 +4,14 @@
 	
 	final public class Base64
 	{
-		static public function Encode(normalString:String):String
+		static public function EncodeString(normalString:String):String
 		{
 			buffer.clear();
 			buffer.writeUTFBytes(normalString);
-			return EncodeImp(buffer);
+			return Encode(buffer);
 		}
 				
-		static public function Decode(base64String:String):String
+		static public function DecodeString(base64String:String):String
 		{
 			buffer.clear();
 			DecodeImp(base64String, buffer);
@@ -19,19 +19,24 @@
 			return buffer.readUTFBytes(buffer.length);
 		}
 		
-		static private function EncodeImp(data:ByteArray):String
+		static public function Decode(base64String:String):ByteArray
+		{
+			var ba:ByteArray = new ByteArray();
+			DecodeImp(base64String, ba);
+			return ba;
+		}
+		
+		static public function Encode(data:ByteArray):String
 		{
 			var output:Array = [];
-			for(var i:int=0,n:int=data.length; i<n; i+=3)
+			for(var i:int=0, n:int=data.length; i<n; i+=3)
 			{
-				var a:int = data[i];
-				var b:int = data[i+1];
-				var c:int = data[i+2];
+				var value:int = data[i] << 16 | data[i+1] << 8 | data[i+2];
 				
-				var t1:int = (a & 0xFC) >> 2;
-				var t2:int = ((a & 0x03) << 4) | (b >> 4);
-				var t3:int = ((b & 0x0F) << 2) | (c >> 6);
-				var t4:int = c & 0x3F;
+				var t1:int = value >> 18;
+				var t2:int = value >> 12 & 0x3F;
+				var t3:int = value >>  6 & 0x3F;
+				var t4:int = value & 0x3F;
 				
 				if (i+1 >= n) t3 = 64;
 				if (i+2 >= n) t4 = 64;
@@ -43,21 +48,19 @@
 		
 		static private function DecodeImp(data:String, output:ByteArray):void
 		{
-			for(var i:int=0,n:int=data.length; i<n; i+=4)
+			for(var i:int=0, n:int=data.length; i<n; i+=4)
 			{
 				var t1:int = charList.indexOf(data.charAt(i));
 				var t2:int = charList.indexOf(data.charAt(i+1));
 				var t3:int = charList.indexOf(data.charAt(i+2));
 				var t4:int = charList.indexOf(data.charAt(i+3));
 				
-				var a:int = (t1 << 2) | ((t2 >> 4) & 0x03);
-				var b:int = ((t2 & 0x0F) << 4) | ((t3 >> 2) & 0x0F);
-				var c:int = ((t3 & 0x03) << 6) | t4;
+				var value:int = t1 << 18 | t2 << 12 | t3 << 6 | t4;
 				
-				output.writeByte(a);
+				output.writeByte(value >> 16);
 				
-				if (t3 < 64) output.writeByte(b);
-				if (t4 < 64) output.writeByte(c);
+				if (t3 < 64) output.writeByte(value >> 8 & 0xFF);
+				if (t4 < 64) output.writeByte(value & 0xFF);
 			}
 		}
 		

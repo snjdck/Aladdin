@@ -1,4 +1,4 @@
-package stdlib.checksum
+package flash.crypto
 {
 	import flash.utils.ByteArray;
 	
