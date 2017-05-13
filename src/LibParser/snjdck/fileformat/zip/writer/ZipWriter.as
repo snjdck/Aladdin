@@ -82,7 +82,7 @@ package snjdck.fileformat.zip.writer
 			ba.writeShort(entryCount);
 			ba.writeUnsignedInt(dirSize);
 			ba.writeUnsignedInt(dirOffset);
-			ba.writeUTF("");
+			ba.writeShort(0);
 		}
 		
 		private function writeInfo(ba:ByteArray, entry:ZipEntry):void
