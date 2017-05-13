@@ -1,6 +1,7 @@
 package snjdck.fileformat.zip.writer
 {
 	import flash.utils.ByteArray;
+	import flash.utils.DateUtil;
 	import flash.utils.Endian;
 
 	public class ZipWriter
@@ -13,7 +14,7 @@ package snjdck.fileformat.zip.writer
 		
 		public function ZipWriter()
 		{
-			time = calcTime();
+			time = DateUtil.Time2UInt(new Date());
 		}
 		
 		public function addFile(name:String, data:ByteArray, needCompress:Boolean=false):void
@@ -94,17 +95,6 @@ package snjdck.fileformat.zip.writer
 			ba.writeUnsignedInt(entry.crc32);
 			ba.writeUnsignedInt(entry.sizeCompressedData);
 			ba.writeUnsignedInt(entry.sizeData);
-		}
-		
-		static private function calcTime():uint
-		{
-			var d:Date = new Date();
-			return d.seconds >> 1
-				| d.minutes << 5
-				| d.hours << 11
-				| d.day << 16
-				| (d.month + 1) << 21
-				| (d.fullYear - 1980 & 0x7F) << 25;
 		}
 	}
 }

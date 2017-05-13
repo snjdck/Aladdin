@@ -42,5 +42,15 @@ package flash.utils
 			var seconds:uint = value % 60;
 			return formatInt(hours) + ":" + formatInt(minutes) + ":" + formatInt(seconds);
 		}
+		
+		static public function Time2UInt(date:Date):uint
+		{
+			return date.seconds >> 1
+				|  date.minutes << 5
+				|  date.hours << 11
+				|  date.day << 16
+				| (date.month + 1) << 21
+				| (date.fullYear - 1980 & 0x7F) << 25;
+		}
 	}
 }
