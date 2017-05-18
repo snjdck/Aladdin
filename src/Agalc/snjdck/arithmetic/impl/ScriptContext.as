@@ -12,11 +12,6 @@ package snjdck.arithmetic.impl
 			this.parent = parent;
 		}
 		
-		public function hasParent():Boolean
-		{
-			return parent != null;
-		}
-		
 		public function getValue(key:String):*
 		{
 			if(hasKey(key, false)){
