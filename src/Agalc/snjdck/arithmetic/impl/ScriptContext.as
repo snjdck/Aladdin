@@ -12,6 +12,11 @@ package snjdck.arithmetic.impl
 			this.parent = parent;
 		}
 		
+		public function hasParent():Boolean
+		{
+			return parent != null;
+		}
+		
 		public function getValue(key:String):*
 		{
 			if(hasKey(key, false)){
@@ -55,7 +60,7 @@ package snjdck.arithmetic.impl
 			delete dataDict[key];
 		}
 		
-		public function createChildContext():IScriptContext
+		public function createChild():IScriptContext
 		{
 			return new ScriptContext(this);
 		}

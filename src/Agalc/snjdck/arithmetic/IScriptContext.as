@@ -10,6 +10,7 @@ package snjdck.arithmetic
 		function getValue(key:String):*;
 		function setValue(key:String, value:Object):void;
 		
-		function createChildContext():IScriptContext;
+		function hasParent():Boolean;
+		function createChild():IScriptContext;
 	}
 }
