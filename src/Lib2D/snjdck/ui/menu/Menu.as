@@ -1,6 +1,7 @@
 package snjdck.ui.menu
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
@@ -16,6 +17,8 @@ package snjdck.ui.menu
 		private var isLayoutDirty:Boolean;
 		
 		public const clickSignal:Signal = new Signal(MenuItem);
+		
+		public var themeColor:uint = 0xFFFFFF;
 		
 		public function Menu()
 		{
@@ -52,6 +55,7 @@ package snjdck.ui.menu
 		
 		public function addSeparator():void
 		{
+			isLayoutDirty = true;
 			itemList.push(new Separator());
 		}
 		
@@ -61,28 +65,32 @@ package snjdck.ui.menu
 			item.subMenu = subMenu;
 		}
 		
-		public function layout():void
+		private function layout():void
 		{
-			if(!isLayoutDirty){
-				return;
+			if(isLayoutDirty){
+				isLayoutDirty = false;
+				DrawTool.RenderMenu(this, itemList);
 			}
-			isLayoutDirty = false;
-			
-			var maxWidth:Number = marginLeft + calcWidth() + marginRight;
-			
-			DrawTool.DrawMenuBG(graphics, maxWidth + margin * 2, calcHeight() + margin * 2);
-			graphics.beginFill(0xCCCCCC);
-			
-			var nextY:Number = margin;
-			for each(var item:IMenuItem in itemList){
-				item.render(this, maxWidth, nextY);
-				nextY += item.getHeight();
-			}
-			
-			graphics.endFill();
 		}
 		
-		private function calcWidth():int
+		internal function show(parent:DisplayObjectContainer, offsetX:Number, offsetY:Number=0):void
+		{
+			layout();
+			parent.addChild(this);
+			
+			if(offsetX + width > stage.stageWidth){
+				x = stage.stageWidth - width;
+			}else{
+				x = offsetX;
+			}
+			if(offsetY + height > stage.stageHeight){
+				y = stage.stageHeight - height;
+			}else{
+				y = offsetY;
+			}
+		}
+		
+		internal function calcWidth():int
 		{
 			var maxWidth:int = 0;
 			for each(var item:IMenuItem in itemList){
@@ -91,7 +99,7 @@ package snjdck.ui.menu
 			return maxWidth;
 		}
 		
-		private function calcHeight():int
+		internal function calcHeight():int
 		{
 			var nextY:int = 0;
 			for each(var item:IMenuItem in itemList){
@@ -100,26 +108,34 @@ package snjdck.ui.menu
 			return nextY;
 		}
 		
+		private function removeOldMenu(stage:Stage):void
+		{
+			for(var i:int=stage.numChildren-1; i>=0; --i){
+				var menu:Menu = stage.getChildAt(i) as Menu;
+				if(menu != null){
+					menu.onClose();
+				}
+			}
+		}
+		
 		public function display(stage:Stage, stageX:Number, stageY:Number):void
 		{
-			layout();
-			x = stageX;
-			y = stageY;
-			clickSignal.add(__onClose);
+			removeOldMenu(stage);
+			show(stage, stageX, stageY);
+			clickSignal.add(onClose);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
-			stage.addChild(this);
 		}
 		
 		private function __onMouseDown(evt:MouseEvent):void
 		{
 			if(!contains(evt.target as DisplayObject)){
-				__onClose();
+				onClose();
 			}
 		}
 		
-		private function __onClose(_:Object=null):void
+		private function onClose(_:Object=null):void
 		{
-			clickSignal.del(__onClose);
+			clickSignal.del(onClose);
 			stage.removeEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
 			stage.removeChild(this);
 		}

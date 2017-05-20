@@ -10,14 +10,15 @@ package snjdck.ui.menu
 
 	internal class DrawTool
 	{
-		static public function DrawMenuBG(g:Graphics, w:Number, h:Number):void
+		static public function DrawMenuBG(menu:Menu, w:Number, h:Number):void
 		{
+			var g:Graphics = menu.graphics;
 			g.clear();
 			g.beginFill(0x999999);
 			g.drawRect(-1,-1,w+2,h+2);
 			g.drawRect(0,0,w,h);
 			g.endFill();
-			g.beginFill(0xFFFFFF);
+			g.beginFill(menu.themeColor);
 			g.drawRect(0, 0, w, h);
 			g.endFill();
 		}
@@ -52,6 +53,22 @@ package snjdck.ui.menu
 			g.lineTo(0, size * 2);
 			
 			return sp;
+		}
+		
+		static public function RenderMenu(menu:Menu, itemList:Vector.<IMenuItem>):void
+		{
+			var maxWidth:Number = menu.marginLeft + menu.calcWidth() + menu.marginRight;
+			
+			DrawMenuBG(menu, maxWidth + menu.margin * 2, menu.calcHeight() + menu.margin * 2);
+			menu.graphics.beginFill(0xCCCCCC);
+			
+			var nextY:Number = menu.margin;
+			for each(var item:IMenuItem in itemList){
+				item.render(menu, maxWidth, nextY);
+				nextY += item.getHeight();
+			}
+			
+			menu.graphics.endFill();
 		}
 	}
 }

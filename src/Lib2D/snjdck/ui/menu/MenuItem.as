@@ -4,8 +4,6 @@ package snjdck.ui.menu
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
 	
 	import lambda.apply;
 	
@@ -61,11 +59,11 @@ package snjdck.ui.menu
 				return;
 			}
 			var testItem:MenuItem = item;
-			lambda.apply(testItem.handler);
 			while(testItem != null){
 				testItem.menu.clickSignal.notify(item);
 				testItem = testItem.menu.parent as MenuItem;
 			}
+			lambda.apply(item.handler);
 		}
 		
 		public function set enabled(value:Boolean):void
@@ -92,9 +90,7 @@ package snjdck.ui.menu
 		{
 			drawBG(0x80FF80, 1);
 			if(subMenu != null){
-				subMenu.layout();
-				addChild(subMenu);
-				subMenu.x = _width;
+				subMenu.show(this, _width);
 			}
 		}
 		
