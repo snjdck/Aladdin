@@ -1,79 +1,64 @@
 package snjdck.ui.menu
 {
 	import flash.display.DisplayObject;
-	import flash.display.Graphics;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.display.Stage;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.signals.Signal;
 	
-	import lambda.apply;
-	
 	public class Menu extends Sprite
 	{
-		private const itemList:Array = [];
+		public var margin:int = 2;
+		public var marginLeft:int = 20;
+		public var marginRight:int = 40;
+		
+		private const itemList:Vector.<IMenuItem> = new Vector.<IMenuItem>();
 		private var isLayoutDirty:Boolean;
 		
 		public const clickSignal:Signal = new Signal(MenuItem);
-		private var bg:Shape;
 		
 		public function Menu()
 		{
-			bg = new Shape();
-			addChild(bg);
+		}
+		
+		public function get numItems():int
+		{
+			return itemList.length;
+		}
+		
+		public function removeItemAt(index:int):void
+		{
+			isLayoutDirty = true;
+			var item:IMenuItem = itemList.removeAt(index);
+			if(item is DisplayObject){
+				removeChild(item as DisplayObject);
+			}
 		}
 		
 		public function addItem(label:String, handler:Object=null):MenuItem
 		{
 			isLayoutDirty = true;
 			var item:MenuItem = new MenuItem();
+			item.x = margin;
 			item.menu = this;
 			item.name = label;
 			item.label = label;
 			item.handler = handler;
 			addChild(item);
 			
-			item.addEventListener(MouseEvent.CLICK, __onClick);
 			itemList.push(item);
 			return item;
 		}
 		
 		public function addSeparator():void
 		{
-			itemList.push(null);
+			itemList.push(new Separator());
 		}
 		
 		public function addSubMenu(label:String, subMenu:Menu):void
 		{
 			var item:MenuItem = addItem(label);
 			item.subMenu = subMenu;
-		}
-		
-		private function __onClick(evt:MouseEvent):void
-		{
-			evt.stopPropagation();
-			var item:MenuItem = evt.currentTarget as MenuItem;
-			if(item.subMenu){
-				return;
-			}
-			var testItem:MenuItem = item;
-			lambda.apply(testItem.handler);
-			while(testItem != null){
-				testItem.menu.clickSignal.notify(item);
-				testItem = testItem.menu.parent as MenuItem;
-			}
-		}
-		
-		private function redraw(w:Number, h:Number):void
-		{
-			var g:Graphics = graphics;
-			g.clear();
-			g.lineStyle(0, 0x999999);
-			g.beginFill(0xFFFFFF);
-			g.drawRect(0, 0, w, h);
-			g.endFill();
 		}
 		
 		public function layout():void
@@ -83,43 +68,38 @@ package snjdck.ui.menu
 			}
 			isLayoutDirty = false;
 			
-			var item:MenuItem;
-			var maxWidth:Number = 0;
-			var nextY:Number = 0;
-			for each(item in itemList){
-				if (!item) continue;
-				maxWidth = Math.max(maxWidth, item.width);
+			var maxWidth:Number = marginLeft + calcWidth() + marginRight;
+			
+			DrawTool.DrawMenuBG(graphics, maxWidth + margin * 2, calcHeight() + margin * 2);
+			graphics.beginFill(0xCCCCCC);
+			
+			var nextY:Number = margin;
+			for each(var item:IMenuItem in itemList){
+				item.render(this, maxWidth, nextY);
+				nextY += item.getHeight();
 			}
 			
-			bg.graphics.clear();
-//			bg.graphics.lineStyle(0);
-			bg.graphics.beginFill(0xCCCCCC);
-			
-			for each(item in itemList){
-				if(item != null){
-					item.width = maxWidth;
-					item.y = nextY;
-					nextY += item.height;
-				}else{
-//					bg.graphics.moveTo(MenuItem.marginLeft, nextY);
-//					bg.graphics.lineTo(maxWidth - 4, nextY);
-					bg.graphics.drawRect(MenuItem.marginLeft, nextY, maxWidth - MenuItem.marginLeft - 4, 1);
-					nextY += 1;
-				}
-			}
-			
-			redraw(maxWidth, nextY);
+			graphics.endFill();
 		}
-		/*
-		public function addShadow():void
+		
+		private function calcWidth():int
 		{
-			var filter:DropShadowFilter = new DropShadowFilter();
-			filter.blurX = filter.blurY = 5;
-			filter.distance = 3;
-			filter.color = 0x333333;
-			filters = [filter];
+			var maxWidth:int = 0;
+			for each(var item:IMenuItem in itemList){
+				maxWidth = Math.max(maxWidth, item.getWidth());
+			}
+			return maxWidth;
 		}
-		//*/
+		
+		private function calcHeight():int
+		{
+			var nextY:int = 0;
+			for each(var item:IMenuItem in itemList){
+				nextY += item.getHeight();
+			}
+			return nextY;
+		}
+		
 		public function display(stage:Stage, stageX:Number, stageY:Number):void
 		{
 			layout();
@@ -127,7 +107,6 @@ package snjdck.ui.menu
 			y = stageY;
 			clickSignal.add(__onClose);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
-			stage.addEventListener(Event.DEACTIVATE, __onClose);
 			stage.addChild(this);
 		}
 		
@@ -142,17 +121,15 @@ package snjdck.ui.menu
 		{
 			clickSignal.del(__onClose);
 			stage.removeEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
-			stage.removeEventListener(Event.DEACTIVATE, __onClose);
 			stage.removeChild(this);
 		}
 		
 		public function forEach(handler:Object):void
 		{
-			for each(var item:MenuItem in itemList){
-				var skipFlag:Boolean = handler(item);
-				if(skipFlag){
+			for each(var test:IMenuItem in itemList){
+				var item:MenuItem = test as MenuItem;
+				if(!item || handler(item))
 					continue;
-				}
 				if(item.subMenu != null){
 					item.subMenu.forEach(handler);
 				}

@@ -1,15 +1,20 @@
 package snjdck.ui.menu
 {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	public class MenuItem extends Sprite
+	import lambda.apply;
+	
+	public class MenuItem extends Sprite implements IMenuItem
 	{
 		public var menu:Menu;
-		public var subMenu:Menu;
+		private var _subMenu:Menu;
+		
+		private var subMenuIcon:DisplayObject;
 		
 		private var tf:TextField;
 		
@@ -17,20 +22,50 @@ package snjdck.ui.menu
 		public var handler:Object;
 		
 		private var _width:Number = 0;
-		static public var marginLeft:int = 12;
-		static public var marginRight:int = 22;
 		
 		public function MenuItem()
 		{
-			tf = new TextField();
-			tf.x = marginLeft;
+			tf = DrawTool.CreateTextField(this);
 			tf.y = 2;
-			tf.defaultTextFormat = new TextFormat("宋体", 12);
-			tf.autoSize = TextFieldAutoSize.LEFT;
-			tf.selectable = false;
-			addChild(tf);
 			addEventListener(MouseEvent.ROLL_OVER, __onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT, __onMouseOut);
+			addEventListener(MouseEvent.CLICK, __onClick);
+		}
+		
+		public function get subMenu():Menu
+		{
+			return _subMenu;
+		}
+
+		public function set subMenu(value:Menu):void
+		{
+			_subMenu = value;
+			
+			if(_subMenu != null){
+				if(subMenuIcon == null){
+					subMenuIcon = DrawTool.CreateIcon();
+				}
+				if(subMenuIcon.parent != this){
+					addChild(subMenuIcon);
+				}
+			}else if(subMenuIcon && subMenuIcon.parent == this){
+				removeChild(subMenuIcon);
+			}
+		}
+
+		private function __onClick(evt:MouseEvent):void
+		{
+			evt.stopPropagation();
+			var item:MenuItem = evt.currentTarget as MenuItem;
+			if(item.subMenu){
+				return;
+			}
+			var testItem:MenuItem = item;
+			lambda.apply(testItem.handler);
+			while(testItem != null){
+				testItem.menu.clickSignal.notify(item);
+				testItem = testItem.menu.parent as MenuItem;
+			}
 		}
 		
 		public function set enabled(value:Boolean):void
@@ -55,44 +90,48 @@ package snjdck.ui.menu
 		
 		private function __onMouseOver(evt:MouseEvent):void
 		{
-			drawBG(0xFF00, 0.5);
+			drawBG(0x80FF80, 1);
 			if(subMenu != null){
 				subMenu.layout();
 				addChild(subMenu);
-				subMenu.x = _width - 2;
+				subMenu.x = _width;
 			}
 		}
 		
 		private function __onMouseOut(evt:MouseEvent):void
 		{
-			drawBG(0, 0);
+			drawBG();
 			if(subMenu != null){
 				removeChild(subMenu);
 			}
 		}
 		
-		override public function set width(value:Number):void
+		public function getWidth():Number
 		{
-			_width = value;
-			drawBG(0, 0);
+			return tf.width;
 		}
 		
-		private function drawBG(color:uint, alpha:Number):void
-		{
-			graphics.clear();
-			graphics.beginFill(color, alpha);
-			graphics.drawRect(2, 2, _width-4, height-4);
-			graphics.endFill();
-		}
-		
-		override public function get width():Number
-		{
-			return tf.width + marginLeft + marginRight;
-		}
-		
-		override public function get height():Number
+		public function getHeight():Number
 		{
 			return tf.height + 4;
+		}
+		
+		private function drawBG(color:uint=0, alpha:Number=0):void
+		{
+			DrawTool.DrawMenuItemBG(graphics, _width, getHeight(), color, alpha);
+		}
+		
+		public function render(menu:Menu, maxWidth:Number, nextY:Number):void
+		{
+			tf.x = menu.marginLeft;
+			y = nextY;
+			_width = maxWidth;
+			drawBG();
+			
+			if(_subMenu != null){
+				subMenuIcon.x = _width - 10;
+				subMenuIcon.y = 0.5 * (getHeight() - subMenuIcon.height);
+			}
 		}
 	}
 }
