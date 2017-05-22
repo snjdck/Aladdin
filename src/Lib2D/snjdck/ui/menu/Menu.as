@@ -3,7 +3,6 @@ package snjdck.ui.menu
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
-	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	import flash.signals.Signal;
 	
@@ -108,22 +107,23 @@ package snjdck.ui.menu
 			return nextY;
 		}
 		
-		private function removeOldMenu(stage:Stage):void
+		private function removeOldMenu(parent:DisplayObjectContainer):void
 		{
-			for(var i:int=stage.numChildren-1; i>=0; --i){
-				var menu:Menu = stage.getChildAt(i) as Menu;
+			for(var i:int=parent.numChildren-1; i>=0; --i){
+				var menu:Menu = parent.getChildAt(i) as Menu;
 				if(menu != null){
 					menu.onClose();
 				}
 			}
 		}
 		
-		public function display(stage:Stage, stageX:Number, stageY:Number):void
+		public function display(parent:DisplayObjectContainer, stageX:Number, stageY:Number):void
 		{
-			removeOldMenu(stage);
-			show(stage, stageX, stageY);
+			removeOldMenu(parent);
+			show(parent, stageX, stageY);
 			clickSignal.add(onClose);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
+			stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, __onMouseDown, true);
 		}
 		
 		private function __onMouseDown(evt:MouseEvent):void
@@ -137,6 +137,7 @@ package snjdck.ui.menu
 		{
 			clickSignal.del(onClose);
 			stage.removeEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
+			stage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, __onMouseDown, true);
 			stage.removeChild(this);
 		}
 		

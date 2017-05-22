@@ -88,7 +88,7 @@ package snjdck.ui.menu
 		
 		private function __onMouseOver(evt:MouseEvent):void
 		{
-			drawBG(0x80FF80, 1);
+			drawBG(0x91C9F7, 1);
 			if(subMenu != null){
 				subMenu.show(this, _width);
 			}
