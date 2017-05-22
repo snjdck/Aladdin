@@ -2,11 +2,8 @@ package snjdck.ui.menu
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
-	import flash.events.MouseEvent;
-	import flash.signals.Signal;
 	
-	public class Menu extends Sprite
+	public class Menu extends BaseMenu
 	{
 		public var margin:int = 2;
 		public var marginLeft:int = 20;
@@ -15,11 +12,9 @@ package snjdck.ui.menu
 		private const itemList:Vector.<IMenuItem> = new Vector.<IMenuItem>();
 		private var isLayoutDirty:Boolean;
 		
-		public const clickSignal:Signal = new Signal(MenuItem);
-		
 		public var themeColor:uint = 0xFFFFFF;
 		
-		public function Menu()
+		public function Menu(useCapture:Boolean=false)
 		{
 		}
 		
@@ -28,9 +23,14 @@ package snjdck.ui.menu
 			return itemList.length;
 		}
 		
+		public function getItemAt(index:int):MenuItem
+		{
+			return itemList[index] as MenuItem;
+		}
+		
 		public function removeItemAt(index:int):void
 		{
-			isLayoutDirty = true;
+			invalidate();
 			var item:IMenuItem = itemList.removeAt(index);
 			if(item is DisplayObject){
 				removeChild(item as DisplayObject);
@@ -39,7 +39,7 @@ package snjdck.ui.menu
 		
 		public function addItem(label:String, handler:Object=null):MenuItem
 		{
-			isLayoutDirty = true;
+			invalidate();
 			var item:MenuItem = new MenuItem();
 			item.x = margin;
 			item.menu = this;
@@ -54,7 +54,7 @@ package snjdck.ui.menu
 		
 		public function addSeparator():void
 		{
-			isLayoutDirty = true;
+			invalidate();
 			itemList.push(new Separator());
 		}
 		
@@ -64,17 +64,15 @@ package snjdck.ui.menu
 			item.subMenu = subMenu;
 		}
 		
-		private function layout():void
+		override protected function onDraw():void
 		{
-			if(isLayoutDirty){
-				isLayoutDirty = false;
+			if(itemList.length > 0){
 				DrawTool.RenderMenu(this, itemList);
 			}
 		}
 		
 		internal function show(parent:DisplayObjectContainer, offsetX:Number, offsetY:Number=0):void
 		{
-			layout();
 			parent.addChild(this);
 			
 			if(offsetX + width > stage.stageWidth){
@@ -107,38 +105,11 @@ package snjdck.ui.menu
 			return nextY;
 		}
 		
-		private function removeOldMenu(parent:DisplayObjectContainer):void
-		{
-			for(var i:int=parent.numChildren-1; i>=0; --i){
-				var menu:Menu = parent.getChildAt(i) as Menu;
-				if(menu != null){
-					menu.onClose();
-				}
-			}
-		}
-		
 		public function display(parent:DisplayObjectContainer, stageX:Number, stageY:Number):void
 		{
-			removeOldMenu(parent);
+			removeOtherMenus(parent);
 			show(parent, stageX, stageY);
-			clickSignal.add(onClose);
-			stage.addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
-			stage.addEventListener(MouseEvent.RIGHT_MOUSE_DOWN, __onMouseDown, true);
-		}
-		
-		private function __onMouseDown(evt:MouseEvent):void
-		{
-			if(!contains(evt.target as DisplayObject)){
-				onClose();
-			}
-		}
-		
-		private function onClose(_:Object=null):void
-		{
-			clickSignal.del(onClose);
-			stage.removeEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown, true);
-			stage.removeEventListener(MouseEvent.RIGHT_MOUSE_DOWN, __onMouseDown, true);
-			stage.removeChild(this);
+			listenCloseEvents();
 		}
 		
 		public function forEach(handler:Object):void

@@ -66,9 +66,19 @@ package snjdck.ui.menu
 			lambda.apply(item.handler);
 		}
 		
+		public function get enabled():Boolean
+		{
+			return true;
+		}
+		
 		public function set enabled(value:Boolean):void
 		{
 			
+		}
+		
+		public function get checked():Boolean
+		{
+			return false;
 		}
 		
 		public function set checked(value:Boolean):void
