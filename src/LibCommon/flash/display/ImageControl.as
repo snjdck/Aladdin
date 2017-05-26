@@ -1,10 +1,13 @@
 package flash.display
 {
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.utils.DisplayUtil;
 	import flash.utils.ShapeUtil;
+	
+	import snjdck.editor.codegen.ItemData;
 	
 	public class ImageControl extends Sprite
 	{
@@ -41,11 +44,26 @@ package flash.display
 			init();
 		}
 		
+		public function getTarget():DisplayObject
+		{
+			return _target;
+		}
+		
 		public function setTarget(target:DisplayObject):void
 		{
-			this._target = target;
-			var rect:Rectangle = target.getRect(parent);
-			onResize(rect.x, rect.y, rect.right, rect.bottom);
+			if(_target == target){
+				return;
+			}
+			
+			visible = target != null;
+			
+			_target = target;
+			
+			if(_target != null){
+				var rect:Rectangle = _target.getRect(parent);
+				onResize(rect.x, rect.y, rect.right, rect.bottom);
+				onMouseDown(this);
+			}
 		}
 		
 		private function init():void
@@ -62,6 +80,7 @@ package flash.display
 			bottomLeft = ShapeUtil.CreateCircle(size, color);
 			bottomRight = ShapeUtil.CreateCircle(size, color);
 			
+			visible = false;
 			DisplayUtil.AddChildren(this, [moveBtn, top, bottom, left, right, topLeft, topRight, bottomLeft, bottomRight]);
 			
 			addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown);
@@ -69,14 +88,19 @@ package flash.display
 		
 		private function __onMouseDown(evt:MouseEvent):void
 		{
+			onMouseDown(evt.target as Sprite);
+		}
+		
+		private function onMouseDown(target:Sprite):void
+		{
 			mouseChildren = false;
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
 			stage.addEventListener(MouseEvent.MOUSE_UP, __onMouseUp);
-
-			currentControl = evt.target as Sprite;
 			
-			mouseStageX = evt.stageX;
-			mouseStageY = evt.stageY;
+			currentControl = target;
+			
+			mouseStageX = stage.mouseX;
+			mouseStageY = stage.mouseY;
 			
 			oldTopLeftX = topLeft.x;
 			oldTopLeftY = topLeft.y;
@@ -124,6 +148,7 @@ package flash.display
 					doResize(0, 0, offsetX, 0);
 					break;
 				case moveBtn:
+				case this:
 					doResize(offsetX, offsetY, offsetX, offsetY);
 					break;
 			}
@@ -175,6 +200,13 @@ package flash.display
 			_target.y = pt.y;
 			_target.width = newWidth;
 			_target.height = newHeight;
+			dispatchEvent(new Event(Event.CHANGE));
+			
+			graphics.clear();
+			graphics.lineStyle(0, 0xFF0000);
+			graphics.beginFill(0, 0);
+			graphics.drawRect(pt.x, pt.y, newWidth, newHeight);
+			graphics.endFill();
 		}
 		
 		private function onTopLeftMove(offsetX:Number, offsetY:Number):void
@@ -244,5 +276,65 @@ package flash.display
 			
 			doResize(0, 0, offsetX, offsetY);
 		}
+		
+		static private const reserved:Array = ["x", "y", "width", "height"];
+		
+		public function setTargetProp(key:String, value:*):void
+		{
+			var offset:Number;
+			if(reserved.indexOf(key) < 0){
+				ItemData.setKey(_target, key, value);
+			}else{
+				onMouseDown(null);
+				switch(key){
+					case "x":
+						offset = value - _target.x;
+						doResize(offset, 0, offset, 0);
+						break;
+					case "y":
+						offset = value - _target.y;
+						doResize(0, offset, 0, offset);
+						break;
+					case "width":
+						doResize(0, 0, value - _target.width, 0);
+						break;
+					case "height":
+						doResize(0, 0, 0, value - _target.height);
+						break;
+				}
+				__onMouseUp(null);
+			}
+		}
+		/*
+		override public function set x(value:Number):void
+		{
+			var offset:Number = value - _target.x;
+			onMouseDown(null);
+			doResize(offset, 0, offset, 0);
+			__onMouseUp(null);
+		}
+		
+		override public function set y(value:Number):void
+		{
+			var offset:Number = value - _target.y;
+			onMouseDown(null);
+			doResize(0, offset, 0, offset);
+			__onMouseUp(null);
+		}
+		
+		override public function set width(value:Number):void
+		{
+			onMouseDown(null);
+			doResize(0, 0, value - _target.width, 0);
+			__onMouseUp(null);
+		}
+		
+		override public function set height(value:Number):void
+		{
+			onMouseDown(null);
+			doResize(0, 0, 0, value - _target.height);
+			__onMouseUp(null);
+		}
+		*/
 	}
 }
