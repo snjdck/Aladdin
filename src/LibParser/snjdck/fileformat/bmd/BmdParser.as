@@ -5,8 +5,6 @@ package snjdck.fileformat.bmd
 	import flash.utils.ByteArray;
 	import flash.utils.Endian;
 	
-	import array.setValue;
-	
 	import snjdck.g3d.ns_g3d;
 	import snjdck.g3d.geom.Matrix4x4;
 	import snjdck.g3d.mesh.BoneData;

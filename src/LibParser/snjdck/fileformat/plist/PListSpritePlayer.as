@@ -1,7 +1,5 @@
 package snjdck.fileformat.plist
 {
-	import dict.getKeys;
-	
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
@@ -69,7 +67,7 @@ package snjdck.fileformat.plist
 		
 		public function getAniNameList():Array
 		{
-			return dict.getKeys(config.frames);
+			return $dict.getKeys(config.frames);
 		}
 		
 		static private function prepareBitmapMatrix(matrix:Matrix, frame:Rectangle, sourceColorRect:Rectangle, rotated:Boolean):void
