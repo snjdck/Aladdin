@@ -5,8 +5,6 @@ package snjdck.ui.menu
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
-	import lambda.apply;
-	
 	public class MenuItem extends Sprite implements IMenuItem
 	{
 		public var menu:Menu;
@@ -63,7 +61,7 @@ package snjdck.ui.menu
 				testItem.menu.clickSignal.notify(item);
 				testItem = testItem.menu.parent as MenuItem;
 			}
-			lambda.apply(item.handler);
+			$lambda.apply(item.handler);
 		}
 		
 		public function get enabled():Boolean

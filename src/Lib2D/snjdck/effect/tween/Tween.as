@@ -1,10 +1,6 @@
 package snjdck.effect.tween
 {
-	import dict.deleteKey;
-	
 	import flash.support.Range;
-	
-	import lambda.call;
 
 	final public class Tween
 	{
@@ -88,12 +84,12 @@ package snjdck.effect.tween
 		{
 			position += timeElapsed;
 			
-			lambda.call(onUpdate);
+			$lambda.call(onUpdate);
 			
 			if(position >= duration)
 			{
 				this.stop();
-				lambda.call(onEnd);
+				$lambda.call(onEnd);
 			}
 		}
 		
@@ -143,7 +139,7 @@ package snjdck.effect.tween
 		{
 			for each(var tween:Tween in tweenList){
 				for(var propName:String in props){
-					deleteKey(tween.props, propName);
+					$dict.deleteKey(tween.props, propName);
 				}
 			}
 		}

@@ -5,8 +5,6 @@ package snjdck.effect.tween
 	import array.del;
 	import array.has;
 	
-	import dict.hasKey;
-	
 	import snjdck.clock.Clock;
 	import snjdck.clock.ITicker;
 
@@ -58,7 +56,7 @@ package snjdck.effect.tween
 		
 		private function getTweenList(target:Object):Vector.<Tween>
 		{
-			if(dict.hasKey(tweenDict, target) == false){
+			if($dict.hasKey(tweenDict, target) == false){
 				tweenDict[target] = new Vector.<Tween>();
 			}
 			return tweenDict[target];
