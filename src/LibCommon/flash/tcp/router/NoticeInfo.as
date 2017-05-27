@@ -2,8 +2,6 @@ package flash.tcp.router
 {
 	import flash.lang.ISerializable;
 	import flash.utils.IDataInput;
-	
-	import lambda.call;
 
 	internal class NoticeInfo
 	{
@@ -27,7 +25,7 @@ package flash.tcp.router
 				notice.readFrom(msgData);
 				assert(msgData.bytesAvailable == 0, "封包中有冗余数据!");
 			}
-			lambda.call(handler, notice);
+			$lambda.call(handler, notice);
 		}
 	}
 }

@@ -11,8 +11,6 @@ package flash.utils
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	import lambda.apply;
-	
 	final public class DisplayUtil
 	{
 		static public function InitStage(stage:Stage):void
@@ -118,7 +116,7 @@ package flash.utils
 		public function MoveWithPath(target:DisplayObject, speed:Number, pts:Object, callback:Object, fromIndex:int=0):void
 		{
 			if(fromIndex >= pts.length){
-				apply(callback);
+				$lambda.apply(callback);
 				return;
 			}
 			

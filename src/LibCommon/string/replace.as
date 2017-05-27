@@ -1,7 +1,5 @@
 package string
 {
-	import dict.hasKey;
-
 	/**
 	 * my ${a} is ${b}
 	 * <br/>
@@ -11,7 +9,7 @@ package string
 	{
 		return source.replace(/\$\{\s*([^{}\s]+)\s*\}/g, function():String{
 			var key:String = arguments[1];
-			if(hasKey(args, key)){
+			if($dict.hasKey(args, key)){
 				return args[key];
 			}
 			return arguments[0];

@@ -1,7 +1,5 @@
 package string
 {
-	import lambda.call;
-
 	public function replaceAll(input:String, key:String, handler:Object):String
 	{
 		var result:String = input;
@@ -12,7 +10,7 @@ package string
 			if(index < 0){
 				break;
 			}
-			var value:String = call(handler, key, ++count);
+			var value:String = $lambda.call(handler, key, ++count);
 			result = result.replace(key, value);
 			index += value.length;
 		}

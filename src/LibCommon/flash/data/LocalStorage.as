@@ -1,9 +1,6 @@
 package flash.data
 {
 	import flash.net.SharedObject;
-	
-	import dict.deleteKey;
-	import dict.hasKey;
 
 	final public class LocalStorage
 	{
@@ -26,12 +23,12 @@ package flash.data
 		
 		public function hasKey(keyName:String):Boolean
 		{
-			return dict.hasKey(so.data, keyName);
+			return $dict.hasKey(so.data, keyName);
 		}
 		
 		public function delKey(keyName:String):void
 		{
-			dict.deleteKey(so.data, keyName);
+			$dict.deleteKey(so.data, keyName);
 		}
 		
 		public function clear():void

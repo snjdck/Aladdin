@@ -1,13 +1,6 @@
 package flash.signals
 {
 	import flash.utils.Dictionary;
-	
-	import dict.clear;
-	import dict.deleteKey;
-	import dict.hasKey;
-	import dict.isEmpty;
-	
-	import lambda.apply;
 
 	public class Signal implements ISignal
 	{
@@ -23,12 +16,12 @@ package flash.signals
 		
 		public function notify(...args):void
 		{
-			if(dict.isEmpty(handlerMap)){
+			if($dict.isEmpty(handlerMap)){
 				return;
 			}
 			checkArgs(args);
 			for(var handler:* in handlerMap){
-				lambda.apply(handler, args);
+				$lambda.apply(handler, args);
 				if(handlerMap[handler]){//只监听一次,自动删除
 					del(handler);
 				}
@@ -42,17 +35,17 @@ package flash.signals
 		
 		public function del(handler:Function):void
 		{
-			dict.deleteKey(handlerMap, handler);
+			$dict.deleteKey(handlerMap, handler);
 		}
 		
 		public function delAll():void
 		{
-			dict.clear(handlerMap);
+			$dict.clear(handlerMap);
 		}
 		
 		public function has(handler:Function):Boolean
 		{
-			return dict.hasKey(handlerMap, handler);
+			return $dict.hasKey(handlerMap, handler);
 		}
 		
 		private function checkArgTypes(argTypes:Array):void

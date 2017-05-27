@@ -3,8 +3,6 @@ package flash.filesystem
 	import flash.events.Event;
 	import flash.net.FileReference;
 	
-	import lambda.execFunc;
-	
 	final public class FileIO
 	{
 		static private const fr:FileReference = new FileReference();
@@ -20,7 +18,7 @@ package flash.filesystem
 			{
 				fr.removeEventListener(Event.CANCEL, __onResult);
 				fr.removeEventListener(Event.COMPLETE, __onResult);
-				lambda.execFunc(handler, evt.type == Event.COMPLETE);
+				$lambda.execFunc(handler, evt.type == Event.COMPLETE);
 			}
 		}
 		

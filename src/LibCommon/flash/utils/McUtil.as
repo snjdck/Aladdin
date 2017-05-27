@@ -4,8 +4,6 @@ package flash.utils
 	import flash.events.Event;
 	import flash.events.listenEventOnce;
 	
-	import lambda.apply;
-	
 	import math.truncate;
 	
 	final public class McUtil
@@ -23,7 +21,7 @@ package flash.utils
 		{
 			AddFrameScript(mc, frameIndex, function():void{
 				AddFrameScript(mc, frameIndex, null);
-				apply(funcData);
+				$lambda.apply(funcData);
 			});
 		}
 		

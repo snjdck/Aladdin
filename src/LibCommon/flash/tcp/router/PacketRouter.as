@@ -6,8 +6,6 @@ package flash.tcp.router
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	
-	import dict.hasKey;
-	
 	import string.replace;
 
 	final public class PacketRouter
@@ -25,7 +23,7 @@ package flash.tcp.router
 		public function routePacket(packet:IPacket):void
 		{
 			var msgId:uint = packet.msgId;
-			assert(hasKey(responseDict, msgId), replace("msgId=${0} has not been registered yet!", [msgId]));
+			assert($dict.hasKey(responseDict, msgId), replace("msgId=${0} has not been registered yet!", [msgId]));
 			var info:Object = responseDict[msgId];
 			
 			if(info is NoticeInfo){
@@ -70,7 +68,7 @@ package flash.tcp.router
 		
 		static private function addKey(target:Object, key:Object, value:Object):void
 		{
-			assert(!hasKey(target, key), replace("key='${0}' has exist!", [key]));
+			assert(!$dict.hasKey(target, key), replace("key='${0}' has exist!", [key]));
 			target[key] = value;
 		}
 		

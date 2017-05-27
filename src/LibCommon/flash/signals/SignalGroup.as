@@ -1,7 +1,5 @@
 package flash.signals
 {
-	import dict.hasKey;
-
 	public class SignalGroup implements ISignalGroup
 	{
 		private const signalDict:Object = {};
@@ -15,14 +13,14 @@ package flash.signals
 		
 		public function removeListener(evtName:String, handler:Function):void
 		{
-			if(dict.hasKey(signalDict, evtName)){
+			if($dict.hasKey(signalDict, evtName)){
 				getSignal(evtName).del(handler);
 			}
 		}
 		
 		public function hasListener(evtName:String, handler:Function):Boolean
 		{
-			if(dict.hasKey(signalDict, evtName)){
+			if($dict.hasKey(signalDict, evtName)){
 				return getSignal(evtName).has(handler);
 			}
 			return false;
@@ -30,7 +28,7 @@ package flash.signals
 		
 		private function getSignal(evtName:String):Signal
 		{
-			if(!dict.hasKey(signalDict, evtName)){
+			if(!$dict.hasKey(signalDict, evtName)){
 				signalDict[evtName] = new Signal(Object);
 			}
 			return signalDict[evtName];
@@ -38,7 +36,7 @@ package flash.signals
 		
 		public function notify(evtName:String, arg:Object):void
 		{
-			if(dict.hasKey(signalDict, evtName)){
+			if($dict.hasKey(signalDict, evtName)){
 				getSignal(evtName).notify(arg);
 			}
 		}

@@ -6,8 +6,6 @@ package flash.mvc
 	import flash.system.ApplicationDomain;
 	import flash.system.LoaderContext;
 	
-	import lambda.apply;
-	
 	import string.trim;
 
 	public class ModuleConfigLoader
@@ -79,7 +77,7 @@ package flash.mvc
 				return;
 			}
 			if(null != callback){
-				lambda.apply(callback);
+				$lambda.apply(callback);
 			}else{
 				application.startup();
 			}

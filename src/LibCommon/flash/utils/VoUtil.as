@@ -1,12 +1,10 @@
 package flash.utils
 {
-	import lambda.apply;
-
 	final public class VoUtil
 	{
 		static public function Create(voData:Object, wrapper:Object):*
 		{
-			var vo:Object = lambda.apply(wrapper);
+			var vo:Object = $lambda.apply(wrapper);
 			for(var key:Object in voData){
 				SetProp(vo, key, voData[key]);
 			}

@@ -1,8 +1,5 @@
 package flash.tcp.error
 {
-	import dict.hasKey;
-	import dict.isEmpty;
-	
 	import flash.utils.Dictionary;
 
 	public class PacketErrorDict
@@ -16,13 +13,13 @@ package flash.tcp.error
 		
 		public function register(errorId:int, message:String):void
 		{
-			assert(dict.hasKey(errorDict, errorId) == false, "errorId repeat!");
+			assert($dict.hasKey(errorDict, errorId) == false, "errorId repeat!");
 			errorDict[errorId] = new PacketError(message, errorId);
 		}
 		
 		public function fetch(errorId:int):PacketError
 		{
-			assert(dict.hasKey(errorDict, errorId), "errorId has not register yet!");
+			assert($dict.hasKey(errorDict, errorId), "errorId has not register yet!");
 			return errorDict[errorId];
 		}
 		

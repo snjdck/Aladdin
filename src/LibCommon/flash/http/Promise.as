@@ -1,6 +1,5 @@
 package flash.http
 {
-	import lambda.call;
 	import flash.lang.ICloseable;
 
 	final internal class Promise implements ICloseable
@@ -31,7 +30,7 @@ package flash.http
 		private function notifyImp(ok:Boolean, data:*):void
 		{
 			ldr = null;
-			lambda.call(handler, ok, data);
+			$lambda.call(handler, ok, data);
 			handler = null;
 		}
 	}

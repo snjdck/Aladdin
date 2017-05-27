@@ -4,8 +4,6 @@ package flash.tcp.router
 	import flash.tcp.IPacket;
 	import flash.tcp.error.PacketError;
 	import flash.tcp.error.PacketErrorDict;
-	
-	import lambda.call;
 
 	internal class RequestInfo
 	{
@@ -43,7 +41,7 @@ package flash.tcp.router
 			var trait:CallbackTrait = callbackList.shift();
 			
 			if(packet.msgId == errorId){
-				lambda.call(trait.onError, packetErrorDict.fetch(packet.errorId));
+				$lambda.call(trait.onError, packetErrorDict.fetch(packet.errorId));
 				return;
 			}
 			var response:ISerializable = new responseType();
@@ -51,7 +49,7 @@ package flash.tcp.router
 			if(packet.msgData != null){
 				assert(packet.msgData.bytesAvailable == 0, "封包中有冗余数据!");
 			}
-			lambda.call(trait.onSuccess, response);
+			$lambda.call(trait.onSuccess, response);
 		}
 		
 		public function checkTimeout(now:int, requestTimeoutError:PacketError):void
@@ -62,7 +60,7 @@ package flash.tcp.router
 					return;//如果前面的都没超时,后面的也肯定没有超时
 				}
 				callbackList.shift();
-				lambda.call(trait.onError, requestTimeoutError);
+				$lambda.call(trait.onError, requestTimeoutError);
 			}
 		}
 	}

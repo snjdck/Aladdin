@@ -1,12 +1,10 @@
 package array
 {
-	import lambda.apply;
-
 	/**  @return list */
 	public function prepend(list:Array, items:Array):Array
 	{
 		if(items != null && items.length > 0)
-			lambda.apply(list.unshift, items);
+			list.unshift.apply(null, items);
 		return list;
 	}
 }

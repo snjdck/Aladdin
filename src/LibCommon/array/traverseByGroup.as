@@ -25,15 +25,13 @@ package array
 
 import flash.utils.Dictionary;
 
-import dict.hasKey;
-
 function groupByKey(list:Object, key:String):Object
 {
 	var hashMap:Object = new Dictionary();
 	
 	for each(var item:Object in list){
 		var value:Object = item[key];
-		if(hasKey(hashMap, value)){
+		if($dict.hasKey(hashMap, value)){
 			(hashMap[value] as Array).push(item);
 		}else{
 			hashMap[value] = [item];

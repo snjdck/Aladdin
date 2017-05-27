@@ -3,8 +3,6 @@ package flash.support
 	import array.del;
 	import array.has;
 	
-	import lambda.apply;
-	
 	import flash.reflection.getTypeName;
 
 	final public class ObjectPool
@@ -52,7 +50,7 @@ package flash.support
 		
 		private function createObject():Object
 		{
-			var obj:Object = apply(objType, objCtorArgs);
+			var obj:Object = $lambda.apply(objType, objCtorArgs);
 			refList.push(obj);
 			return obj;
 		}

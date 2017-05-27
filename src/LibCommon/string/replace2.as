@@ -1,7 +1,5 @@
 package string
 {
-	import dict.hasKey;
-
 	/**
 	 * my ${a} is ${b}
 	 * <br/>
@@ -16,7 +14,7 @@ package string
 				var subArgs:Array = key.slice(index+1).split(",");
 				key = key.slice(0, index);
 			}
-			if(!hasKey(args, key)){
+			if(!$dict.hasKey(args, key)){
 				return arguments[0];
 			}
 			if(subArgs != null){

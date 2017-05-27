@@ -6,8 +6,6 @@ package flash.support
 	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
 	
-	import lambda.call;
-	
 	import flash.http.loadData;
 	
 	import protocols.Rpc;
@@ -37,7 +35,7 @@ package flash.support
 					data = "amf data format error!";
 				}
 			}
-			lambda.call(handler, ok, data);
+			$lambda.call(handler, ok, data);
 		}
 		
 		static public function Get(path:String, extraData:Object, handler:Object, progress:Function=null, headerDict:Object=null):ICloseable
