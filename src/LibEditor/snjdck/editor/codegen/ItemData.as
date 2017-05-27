@@ -17,15 +17,10 @@ package snjdck.editor.codegen
 		private var target:DisplayObject;
 		private var keyDict:Object = {};
 		
-//		static private const reserved:Array = ["visible", "mouseChildren", ];
-		
 		public function ItemData(target:DisplayObject)
 		{
 			this.target = target;
 			target.metaData = this;
-//			keyDict["mouseEnabled"] = target["mouseEnabled"];
-//			keyDict["mouseChildren"] = target["mouseChildren"];
-//			keyDict["visible"] = target.visible;
 		}
 		
 		public function getKey(key:String):*
@@ -36,7 +31,7 @@ package snjdck.editor.codegen
 			}else{
 				value = keyDict[key];
 			}
-			if(value == null){
+			if(value == null || isNaN(value)){
 				value = "";
 			}
 			return value;

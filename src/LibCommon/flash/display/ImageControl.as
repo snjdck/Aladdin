@@ -60,10 +60,45 @@ package flash.display
 			_target = target;
 			
 			if(_target != null){
-				var rect:Rectangle = _target.getRect(parent);
-				onResize(rect.x, rect.y, rect.right, rect.bottom);
+				updateSelf();
 				onMouseDown(this);
 			}
+		}
+		
+		private function updateSelf():void
+		{
+			var rect:Rectangle = _target.getRect(parent);
+			onResize(rect.x, rect.y, rect.right, rect.bottom);
+		}
+		
+		private function isCenterXDefined():Boolean
+		{
+			return !isNaN(_target["centerX"]);
+		}
+		
+		private function isCenterYDefined():Boolean
+		{
+			return !isNaN(_target["centerY"]);
+		}
+		
+		private function isLeftDefined():Boolean
+		{
+			return !isNaN(_target["left"]);
+		}
+		
+		private function isRightDefined():Boolean
+		{
+			return !isNaN(_target["right"]);
+		}
+		
+		private function isTopDefined():Boolean
+		{
+			return !isNaN(_target["top"]);
+		}
+		
+		private function isBottomDefined():Boolean
+		{
+			return !isNaN(_target["bottom"]);
 		}
 		
 		private function init():void
@@ -118,37 +153,107 @@ package flash.display
 		
 		private function __onMouseMove(evt:MouseEvent):void
 		{
-			const offsetX:Number = evt.stageX - mouseStageX;
-			const offsetY:Number = evt.stageY - mouseStageY;
+			var offsetX:Number = evt.stageX - mouseStageX;
+			var offsetY:Number = evt.stageY - mouseStageY;
 			
 			switch(currentControl)
 			{
 				case topLeft:
-					onTopLeftMove(offsetX, offsetY);
+					if(isCenterXDefined() && isCenterYDefined()){
+						onTopLeftMove(offsetX, offsetY, true, true);
+					}else if(isCenterXDefined()){
+						if(!isTopDefined()){
+							onTopLeftMove(offsetX, offsetY, true, false);
+						}
+					}else if(isCenterYDefined()){
+						if(!isLeftDefined()){
+							onTopLeftMove(offsetX, offsetY, false, true);
+						}
+					}else if(!(isLeftDefined() || isTopDefined())){
+						onTopLeftMove(offsetX, offsetY);
+					}
 					break;
 				case topRight:
-					onTopRightMove(offsetX, offsetY);
+					if(isCenterXDefined() && isCenterYDefined()){
+						onTopRightMove(offsetX, offsetY, true, true);
+					}else if(isCenterXDefined()){
+						if(!isTopDefined()){
+							onTopRightMove(offsetX, offsetY, true, false);
+						}
+					}else if(isCenterYDefined()){
+						if(!isRightDefined()){
+							onTopRightMove(offsetX, offsetY, false, true);
+						}
+					}else if(!(isRightDefined() || isTopDefined())){
+						onTopRightMove(offsetX, offsetY);
+					}
 					break;
 				case bottomLeft:
-					onBottomLeftMove(offsetX, offsetY);
+					if(isCenterXDefined() && isCenterYDefined()){
+						onBottomLeftMove(offsetX, offsetY, true, true);
+					}else if(isCenterXDefined()){
+						if(!isBottomDefined()){
+							onBottomLeftMove(offsetX, offsetY, true, false);
+						}
+					}else if(isCenterYDefined()){
+						if(!isLeftDefined()){
+							onBottomLeftMove(offsetX, offsetY, false, true);
+						}
+					}else if(!(isLeftDefined() || isBottomDefined())){
+						onBottomLeftMove(offsetX, offsetY);
+					}
 					break;
 				case bottomRight:
-					onBottomRightMove(offsetX, offsetY);
+					if(isCenterXDefined() && isCenterYDefined()){
+						onBottomRightMove(offsetX, offsetY, true, true);
+					}else if(isCenterXDefined()){
+						if(!isBottomDefined()){
+							onBottomRightMove(offsetX, offsetY, true, false);
+						}
+					}else if(isCenterYDefined()){
+						if(!isRightDefined()){
+							onBottomRightMove(offsetX, offsetY, false, true);
+						}
+					}else if(!(isRightDefined() || isBottomDefined())){
+						onBottomRightMove(offsetX, offsetY);
+					}
 					break;
 				case top:
-					doResize(0, offsetY, 0, 0);
+					if(isCenterYDefined()){
+						doResize(0, offsetY, 0, -offsetY);
+					}else if(!isTopDefined()){
+						doResize(0, offsetY, 0, 0);
+					}
 					break;
 				case bottom:
-					doResize(0, 0, 0, offsetY);
+					if(isCenterYDefined()){
+						doResize(0, -offsetY, 0, offsetY);
+					}else if(!isBottomDefined()){
+						doResize(0, 0, 0, offsetY);
+					}
 					break;
 				case left:
-					doResize(offsetX, 0, 0, 0);
+					if(isCenterXDefined()){
+						doResize(offsetX, 0, -offsetX, 0);
+					}else if(!isLeftDefined()){
+						doResize(offsetX, 0, 0, 0);
+					}
 					break;
 				case right:
-					doResize(0, 0, offsetX, 0);
+					if(isCenterXDefined()){
+						doResize(-offsetX, 0, offsetX, 0);
+					}else if(!isRightDefined()){
+						doResize(0, 0, offsetX, 0);
+					}
 					break;
 				case moveBtn:
 				case this:
+					if(isCenterXDefined() || isLeftDefined() || isRightDefined()){
+						offsetX = 0;
+					}
+					if(isCenterYDefined() || isTopDefined() || isBottomDefined()){
+						offsetY = 0;
+					}
 					doResize(offsetX, offsetY, offsetX, offsetY);
 					break;
 			}
@@ -156,6 +261,9 @@ package flash.display
 		
 		private function doResize(offsetTopLeftX:Number, offsetTopLeftY:Number, offsetBottomRightX:Number, offsetBottomRightY:Number):void
 		{
+			if(offsetTopLeftX == 0 && offsetTopLeftY == 0 && offsetBottomRightX == 0 && offsetBottomRightY == 0){
+				return;
+			}
 			onResize(oldTopLeftX+offsetTopLeftX, oldTopLeftY+offsetTopLeftY, oldBottomRightX+offsetBottomRightX, oldBottomRightY+offsetBottomRightY);
 		}
 		
@@ -209,7 +317,7 @@ package flash.display
 			graphics.endFill();
 		}
 		
-		private function onTopLeftMove(offsetX:Number, offsetY:Number):void
+		private function onTopLeftMove(offsetX:Number, offsetY:Number, flagX:Boolean=false, flagY:Boolean=false):void
 		{
 			const imageWidth:Number = oldBottomRightX - oldTopLeftX;
 			const imageHeight:Number = oldBottomRightY - oldTopLeftY;
@@ -223,10 +331,10 @@ package flash.display
 				offsetY = - newScaleX * imageHeight;
 			}
 			
-			doResize(offsetX, offsetY, 0, 0);
+			doResize(offsetX, offsetY, (flagX ? -offsetX : 0), (flagY ? -offsetY : 0));
 		}
 		
-		private function onTopRightMove(offsetX:Number, offsetY:Number):void
+		private function onTopRightMove(offsetX:Number, offsetY:Number, flagX:Boolean=false, flagY:Boolean=false):void
 		{
 			const imageWidth:Number = oldBottomRightX - oldTopLeftX;
 			const imageHeight:Number = oldBottomRightY - oldTopLeftY;
@@ -240,10 +348,10 @@ package flash.display
 				offsetY = - newScaleX * imageHeight;
 			}
 			
-			doResize(0, offsetY, offsetX, 0);
+			doResize((flagX ? -offsetX : 0), offsetY, offsetX, (flagY ? -offsetY : 0));
 		}
 		
-		private function onBottomLeftMove(offsetX:Number, offsetY:Number):void
+		private function onBottomLeftMove(offsetX:Number, offsetY:Number, flagX:Boolean=false, flagY:Boolean=false):void
 		{
 			const imageWidth:Number = oldBottomRightX - oldTopLeftX;
 			const imageHeight:Number = oldBottomRightY - oldTopLeftY;
@@ -257,10 +365,10 @@ package flash.display
 				offsetY =   newScaleX * imageHeight;
 			}
 			
-			doResize(offsetX, 0, 0, offsetY);
+			doResize(offsetX, (flagY ? -offsetY : 0), (flagX ? -offsetX : 0), offsetY);
 		}
 		
-		private function onBottomRightMove(offsetX:Number, offsetY:Number):void
+		private function onBottomRightMove(offsetX:Number, offsetY:Number, flagX:Boolean=false, flagY:Boolean=false):void
 		{
 			const imageWidth:Number = oldBottomRightX - oldTopLeftX;
 			const imageHeight:Number = oldBottomRightY - oldTopLeftY;
@@ -274,67 +382,17 @@ package flash.display
 				offsetY = newScaleX * imageHeight;
 			}
 			
-			doResize(0, 0, offsetX, offsetY);
+			doResize((flagX ? -offsetX : 0), (flagY ? -offsetY : 0), offsetX, offsetY);
 		}
 		
-		static private const reserved:Array = ["x", "y", "width", "height"];
+		static private const reserved:Array = ["x", "y", "width", "height", "left", "right", "top", "bottom", "centerX", "centerY"];
 		
 		public function setTargetProp(key:String, value:*):void
 		{
-			var offset:Number;
-			if(reserved.indexOf(key) < 0){
-				ItemData.setKey(_target, key, value);
-			}else{
-				onMouseDown(null);
-				switch(key){
-					case "x":
-						offset = value - _target.x;
-						doResize(offset, 0, offset, 0);
-						break;
-					case "y":
-						offset = value - _target.y;
-						doResize(0, offset, 0, offset);
-						break;
-					case "width":
-						doResize(0, 0, value - _target.width, 0);
-						break;
-					case "height":
-						doResize(0, 0, 0, value - _target.height);
-						break;
-				}
-				__onMouseUp(null);
+			ItemData.setKey(_target, key, value);
+			if(reserved.indexOf(key) >= 0){
+				$.nextFrameDo(updateSelf);
 			}
 		}
-		/*
-		override public function set x(value:Number):void
-		{
-			var offset:Number = value - _target.x;
-			onMouseDown(null);
-			doResize(offset, 0, offset, 0);
-			__onMouseUp(null);
-		}
-		
-		override public function set y(value:Number):void
-		{
-			var offset:Number = value - _target.y;
-			onMouseDown(null);
-			doResize(0, offset, 0, offset);
-			__onMouseUp(null);
-		}
-		
-		override public function set width(value:Number):void
-		{
-			onMouseDown(null);
-			doResize(0, 0, value - _target.width, 0);
-			__onMouseUp(null);
-		}
-		
-		override public function set height(value:Number):void
-		{
-			onMouseDown(null);
-			doResize(0, 0, 0, value - _target.height);
-			__onMouseUp(null);
-		}
-		*/
 	}
 }

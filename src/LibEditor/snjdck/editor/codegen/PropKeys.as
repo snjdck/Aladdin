@@ -11,8 +11,8 @@ package snjdck.editor.codegen
 		
 		public function PropKeys()
 		{
-			infoDict["Button"] = ["var", "runtime", "x", "y", "width", "height", "name", "alpha", "visible", "mouseEnabled", "mouseChildren"];
-			infoDict["Image"] =  ["var", "runtime", "x", "y", "width", "height", "name", "alpha", "visible", "mouseEnabled", "mouseChildren"];
+			infoDict["Button"] = ["var", "name", "runtime", "x", "y", "width", "height", "left", "right", "top", "bottom", "centerX", "centerY"];
+			infoDict["Image"] =  ["var", "name", "runtime", "x", "y", "width", "height", "left", "right", "top", "bottom", "centerX", "centerY"];
 		}
 		
 		public function getKeys(type:String):Array

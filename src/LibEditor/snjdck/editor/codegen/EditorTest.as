@@ -17,6 +17,7 @@ package
 	
 	import morn.core.components.Button;
 	import morn.core.components.Image;
+	import morn.core.components.View;
 	import morn.core.handlers.Handler;
 	
 	import snjdck.editor.codegen.ClassDef;
@@ -40,13 +41,18 @@ package
 		private var control:ImageControl = new ImageControl();
 		private var inspector:PropInspector = new PropInspector(control);
 		
-		private var editArea:Sprite = new Sprite();
+		private var editArea:View = new View();
 		private var inspectorArea:Sprite = new Sprite();
 		
 		public function EditorTest()
 		{
+			
+			$.root = this;
 			inspectorArea.addChild(inspector);
 			inspectorArea.x = stage.stageWidth - 200;
+			
+			editArea.width = stage.stageWidth;
+			editArea.height = stage.stageHeight;
 			
 			addChild(editArea);
 			addChild(inspectorArea);

@@ -7,6 +7,7 @@ package snjdck.editor.codegen
 	import flash.reflection.getTypeName;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 	
 	public class PropInspector extends Sprite
 	{
@@ -19,25 +20,12 @@ package snjdck.editor.codegen
 			this.control = control;
 			
 			targetTxt = new TextField();
+			targetTxt.defaultTextFormat = new TextFormat("宋体", 12);
 			targetTxt.autoSize = TextFieldAutoSize.LEFT;
 			targetTxt.mouseEnabled = false;
 			addChild(targetTxt);
 			
 			opaqueBackground = 0xCCCC33;
-			/*
-			addItem("x");
-			addItem("y");
-			addItem("width");
-			addItem("height");
-//			addItem("var");
-			addItem("name");
-			addItem("alpha");
-			addItem("visible");
-			addItem("mouseEnabled");
-			addItem("mouseChildren");
-			*/
-			
-			
 			control.addEventListener(Event.CHANGE, __onTargetChange);
 		}
 		
