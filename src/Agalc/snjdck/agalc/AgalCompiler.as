@@ -7,8 +7,6 @@ package snjdck.agalc
 	import array.has;
 	import array.unique;
 	
-	import lambda.apply;
-	
 	import snjdck.agalc.arithmetic.TempRegFactory;
 	
 	import string.removeSpace;
@@ -114,7 +112,7 @@ package snjdck.agalc
 			var codeList:Array = [];
 			arith.parse(token).visit(codeList, tempRegFactory);
 			for each(var code:Array in codeList){
-				lambda.apply(writeArithmetic, code);
+				writeArithmetic.apply(null, code);
 			}
 		}
 		
