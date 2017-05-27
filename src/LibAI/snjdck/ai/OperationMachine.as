@@ -1,7 +1,5 @@
 package snjdck.ai
 {
-	import lambda.apply;
-	
 	import string.execRegExp;
 
 	public class OperationMachine
@@ -36,7 +34,7 @@ package snjdck.ai
 				var paramList:Array = execRegExp(pattern, input);
 				if (null == paramList) continue;
 				var method:Function = context[methodName];
-				return apply(method, paramList.slice(1));
+				return method.apply(null, paramList.slice(1));
 			}
 		}
 	}
