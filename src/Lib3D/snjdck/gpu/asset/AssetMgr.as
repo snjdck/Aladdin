@@ -7,9 +7,6 @@ package snjdck.gpu.asset
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
-	import dict.deleteKey;
-	import dict.hasKey;
-	
 	import snjdck.fileformat.bmd.BmdParser;
 	import snjdck.fileformat.image.BmpParser;
 	import snjdck.fileformat.image.TgaParser;
@@ -168,12 +165,12 @@ package snjdck.gpu.asset
 		public function delTexture(name:String):void
 		{
 			getTexture(name).dispose();
-			deleteKey(textureDict, name);
+			$dict.deleteKey(textureDict, name);
 		}
 		
 		public function hasTexture(name:String):Boolean
 		{
-			return hasKey(textureDict, name);
+			return $dict.hasKey(textureDict, name);
 		}
 		
 		public function getTexture(name:String):IGpuTexture
@@ -195,7 +192,7 @@ package snjdck.gpu.asset
 		public function getFile(name:String):ByteArray
 		{
 //			if(!fileDict.has(name)){
-			if(!hasKey(fileDict, name)){
+			if(!$dict.hasKey(fileDict, name)){
 				showError(name);
 				/*
 				var file:File;

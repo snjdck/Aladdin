@@ -3,8 +3,6 @@ package snjdck.gpu.asset
 	import flash.display3D.Context3D;
 	import flash.system.IsPlayerVersionHigherThan;
 	
-	import lambda.apply;
-	
 	internal class GpuAsset implements IGpuAsset
 	{
 		static protected const canUseBufferUsage:Boolean = IsPlayerVersionHigherThan(12);
@@ -63,10 +61,10 @@ package snjdck.gpu.asset
 				prevContext3d = context3d;
 			}
 			if(null == rawAsset){
-				rawAsset = lambda.apply(context3d[initName], initParams);
+				rawAsset = context3d[initName].apply(null, initParams);
 			}
 			if(isDataDirty && uploadName){
-				lambda.apply(rawAsset[uploadName], uploadParams);
+				rawAsset[uploadName].apply(null, uploadParams);
 				isDataDirty = false;
 			}
 			return rawAsset;

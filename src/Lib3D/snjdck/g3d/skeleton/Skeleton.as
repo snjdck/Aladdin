@@ -1,7 +1,5 @@
 package snjdck.g3d.skeleton
 {
-	import dict.getNumKeys;
-	
 	import snjdck.g3d.ns_g3d;
 	
 	use namespace ns_g3d;
@@ -91,12 +89,12 @@ package snjdck.g3d.skeleton
 		
 		public function getAnimationAmount():int
 		{
-			return dict.getNumKeys(animationDict);
+			return $dict.getNumKeys(animationDict);
 		}
 		
 		public function getAnimationNames():Array
 		{
-			return dict.getKeys(animationDict);
+			return $dict.getKeys(animationDict);
 		}
 		
 		public function updateBoneState(boneStateGroup:BoneStateGroup):void
