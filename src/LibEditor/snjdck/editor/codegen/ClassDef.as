@@ -14,7 +14,7 @@ package snjdck.editor.codegen
 	{
 		static public const domain:ApplicationDomain = new ApplicationDomain();
 		static private const packageDict:Object = {};
-		static internal const infoDict:Object = {};
+		static public const infoDict:Object = {};
 		static public function getPackage(clsName:String):String
 		{
 			if(packageDict[clsName] == null){
@@ -61,7 +61,7 @@ package snjdck.editor.codegen
 			return path;
 		}
 		
-		public function set fullName(value:String):void
+		private function set fullName(value:String):void
 		{
 			var index:int = value.lastIndexOf(".");
 			if(index < 0){
@@ -73,8 +73,10 @@ package snjdck.editor.codegen
 			}
 		}
 		
-		public function loadXML(xml:XML, fileDict:Object):void
+		public function loadXML(fileName:String, fileDict:Object):void
 		{
+			fullName = fileName.slice(0, -4).replace(/\//g, ".");
+			var xml:XML = fileDict[fileName];
 			parentClassName = xml.name();
 			genPropCode(xml, "this", fileDict);
 			addImport(getPackage(parentClassName));

@@ -49,7 +49,6 @@ package
 		
 		public function EditorTest()
 		{
-			
 			$.root = this;
 			inspectorArea.addChild(inspector);
 			inspectorArea.x = stage.stageWidth - 200;
@@ -71,8 +70,9 @@ package
 				context.allowCodeImport = true;
 				loadMedia(zip["library.swf"], function(ok:Boolean, _:Object):void{
 					ClassDef.init();
-//					init();
-					addControlRect();
+					App.loader.loadAssets(["assets/comp.swf", "assets/vector.swf"], new Handler(function():void{
+						controlList.loadXML(XML(FileUtil.ReadString(new File("F:/FlashWorkSpace/Aladdin/src/LibEditor/snjdck/editor/control.xml"))));
+					}));
 				}, null, context);
 			});
 			
@@ -88,11 +88,6 @@ package
 			}
 		}
 		
-		private function loadProgress(value:Number):void {
-			//加载进度
-			//trace("loaded", value);
-		}
-		
 		private function __onAddControl(item:Sprite):void
 		{
 			var pt:Point = editArea.globalToLocal(new Point(item.x, item.y));
@@ -102,10 +97,6 @@ package
 			new ItemData(item);
 			listenEvent(item);
 			EditItemMenu.Instance.attach(item);
-		}
-		
-		private function loadComplete():void {
-			controlList.loadXML(XML(FileUtil.ReadString(new File("F:/FlashWorkSpace/Aladdin/src/LibEditor/snjdck/editor/control.xml"))));
 		}
 		
 		private function listenEvent(target:InteractiveObject):void
@@ -129,34 +120,17 @@ package
 			var xml:XML = <View/>;
 			for(var i:int=0; i<editArea.numChildren; ++i){
 				var child:DisplayObject = editArea.getChildAt(i);
-//				var typeName:String = getTypeName(child, true);
-//				var node:XML = XML("<" + typeName + "/>")
 				xml.appendChild(PropKeys.Instance.castItemToXML(child));
-//				var keyList:Array = PropKeys.Instance.getKeys(typeName);
-//				for each(var key:String in keyList){
-//					setProp(node, child, key);
-//				}
 			}
 			FileUtil.WriteString(file.resolvePath("a.xml"), xml.toXMLString());
-			init();
-		}
-		
-//		private function setProp(xml:XML, target:DisplayObject, key:String):void
-//		{
-//			xml.@[key] = ItemData.getKey(target, key);
-//		}
-		
-		private function addControlRect():void
-		{
-			App.loader.loadAssets(["assets/comp.swf", "assets/vector.swf"], new Handler(loadComplete), new Handler(loadProgress));
+			export();
 		}
 		//*
 		private var file:File = new File("C:/Users/Administrator/Documents/MyMornUI/morn/pages");
-		private function init():void
+		private function export():void
 		{
 			var fileDict:Object = {};
-			
-			var writePath:File = new File("C:/Users/Administrator/Documents/MyMornUI/morn/release");
+			var writePath:File = file.resolvePath("../release");
 			
 			FileIO2.Traverse(file, function(f:File):Boolean{
 				var key:String = file.getRelativePath(f);
@@ -164,8 +138,7 @@ package
 			});
 			for(var fileName:String in fileDict){
 				var clsDef:ClassDef = new ClassDef();
-				clsDef.fullName = fileName.slice(0, -4).replace(/\//g, ".");
-				clsDef.loadXML(fileDict[fileName], fileDict);
+				clsDef.loadXML(fileName, fileDict);
 				FileUtil.WriteString(writePath.resolvePath(clsDef.filePath), clsDef.toString());
 			}
 		}
