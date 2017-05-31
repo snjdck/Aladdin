@@ -1,4 +1,4 @@
-package snjdck.ui
+package snjdck
 {
 	public class HousePrice
 	{
