@@ -24,17 +24,26 @@ package flash.ioc
 		public function InjectionPoint(target:Object)
 		{
 			var clsInfo:TypeInfo = getTypeInfo(target);
-			for each(var methodNode:MethodInfo in clsInfo.methods)
-				if(methodNode.hasMetaTag(TAG_INJECT))
-					injectionPointList.insertAt(
-						methodNode.parameters.length > 0 ? 0 : injectionPointList.length,
-						new InjectionPointMethod(methodNode.name, methodNode.parameters)
-					);
-			for each(var varNode:VariableInfo in clsInfo.variables)
-				if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite())
-					injectionPointList.unshift(
-						new InjectionPointProperty(varNode.name, varNode.getMetaTagValue(TAG_INJECT), varNode.type)
-					);
+			for each(var methodNode:MethodInfo in clsInfo.methods){
+				if(!methodNode.hasMetaTag(TAG_INJECT)){
+					continue;
+				}
+				if(methodNode.parameters.length == 0){
+					injectionPointList.push(new InjectionPointMethod0(methodNode.name));
+					continue;
+				}
+				injectionPointList.unshift(
+					new InjectionPointMethod(methodNode.name, methodNode.parameters)
+				);
+			}
+			for each(var varNode:VariableInfo in clsInfo.variables){
+				if(!(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite())){
+					continue;
+				}
+				injectionPointList.unshift(
+					new InjectionPointProperty(varNode.name, varNode.getMetaTagValue(TAG_INJECT), varNode.type)
+				);
+			}
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
