@@ -9,6 +9,7 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileIO2;
 	import flash.filesystem.FileUtil;
+	import flash.geom.Point;
 	import flash.http.loadMedia;
 	import flash.reflection.getTypeName;
 	import flash.support.Http;
@@ -24,6 +25,7 @@ package
 	import snjdck.editor.codegen.ItemData;
 	import snjdck.editor.codegen.PropInspector;
 	import snjdck.editor.codegen.PropKeys;
+	import snjdck.editor.control.ControlList;
 	import snjdck.editor.menu.EditItemMenu;
 	import snjdck.fileformat.zip.Zip;
 	
@@ -38,10 +40,11 @@ package
 	
 	public class EditorTest extends Sprite
 	{
+		private var editArea:View = new View();
 		private var control:ImageControl = new ImageControl();
 		private var inspector:PropInspector = new PropInspector(control);
+		private var controlList:ControlList = new ControlList();
 		
-		private var editArea:View = new View();
 		private var inspectorArea:Sprite = new Sprite();
 		
 		public function EditorTest()
@@ -54,7 +57,10 @@ package
 			editArea.width = stage.stageWidth;
 			editArea.height = stage.stageHeight;
 			
+			controlList.dropSignal.add(__onAddControl);
+			
 			addChild(editArea);
+			addChild(controlList);
 			addChild(inspectorArea);
 			addChild(control);
 			App.init(this);
@@ -71,6 +77,8 @@ package
 			});
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, __onKeyDown);
+			listenEvent(stage);
+			EditItemMenu.Instance.attach(control);
 		}
 		
 		private function __onKeyDown(evt:KeyboardEvent):void
@@ -85,25 +93,19 @@ package
 			//trace("loaded", value);
 		}
 		
+		private function __onAddControl(item:Sprite):void
+		{
+			var pt:Point = editArea.globalToLocal(new Point(item.x, item.y));
+			item.x = pt.x;
+			item.y = pt.y;
+			editArea.addChild(item);
+			new ItemData(item);
+			listenEvent(item);
+			EditItemMenu.Instance.attach(item);
+		}
+		
 		private function loadComplete():void {
-			//实例化场景
-			var btn:Button = new Button();
-			new ItemData(btn);
-			btn.skin = "png.comp.btn_close";
-			listenEvent(btn);
-			editArea.addChild(btn);
-			
-			var img:Image = new Image();
-			new ItemData(img);
-			img.skin = "png.comp.bg";
-			listenEvent(img);
-			editArea.addChild(img).x = 200;
-			
-			EditItemMenu.Instance.attach(btn);
-			EditItemMenu.Instance.attach(img);
-			EditItemMenu.Instance.attach(control);
-			
-			listenEvent(stage);
+			controlList.loadXML(XML(FileUtil.ReadString(new File("F:/FlashWorkSpace/Aladdin/src/LibEditor/snjdck/editor/control.xml"))));
 		}
 		
 		private function listenEvent(target:InteractiveObject):void

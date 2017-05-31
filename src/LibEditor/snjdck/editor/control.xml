@@ -1,0 +1,4 @@
+<control>
+<item class="morn.core.components.Button" skin="png.comp.btn_close"/>
+<item class="morn.core.components.Image" skin="png.comp.bg"/>
+</control>
