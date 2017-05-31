@@ -5,6 +5,8 @@ package snjdck.ui.layout
 
 	public class LayoutObject extends Sprite
 	{
+		static private const layoutMgr:LayoutManager = new LayoutManager();
+		
 		private var _centerX:Number;
 		private var _centerY:Number;
 		
@@ -78,7 +80,7 @@ package snjdck.ui.layout
 		private function invalidateLayout():void
 		{
 			if(!(isLayoutXDirty || isLayoutYDirty)){
-				LayoutManager.Instance.requestUpdate(this);
+				layoutMgr.requestUpdate(this);
 			}
 		}
 		

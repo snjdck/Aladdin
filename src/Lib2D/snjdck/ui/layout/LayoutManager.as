@@ -1,26 +1,18 @@
 package snjdck.ui.layout
 {
-	import flash.display.Shape;
 	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 
-	public class LayoutManager
+	internal class LayoutManager
 	{
-		static public const Instance:LayoutManager = new LayoutManager();
-		
 		private const updateList:Array = [];
-		private const eventSource:IEventDispatcher = new Shape();
 		
 		public function LayoutManager()
 		{
-			eventSource.addEventListener(Event.EXIT_FRAME, __onUpdate);
 		}
 		
 		private function __onUpdate(evt:Event):void
 		{
-			if(updateList.length <= 0){
-				return;
-			}
+			$.stage.removeEventListener(Event.RENDER, __onUpdate);
 			for each(var layoutObject:LayoutObject in updateList){
 				if(layoutObject.stage && layoutObject.visible){
 					layoutObject.reLayout();
@@ -40,6 +32,10 @@ package snjdck.ui.layout
 					updateList[i] = object;
 					return;
 				}
+			}
+			if(updateList.length <= 0){
+				$.stage.addEventListener(Event.RENDER, __onUpdate);
+				$.stage.invalidate();
 			}
 			updateList.push(object);
 		}
