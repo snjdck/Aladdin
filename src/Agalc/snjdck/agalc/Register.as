@@ -18,6 +18,7 @@ package snjdck.agalc
 			new Register("oc", TYPE_Output);
 			new Register("od", TYPE_DepthOutput);
 			new Register("iid",TYPE_InstanceID);
+			new Register("vs", TYPE_Sampler);
 		}
 		
 		static public const TYPE_Attribute		:uint = 0x0;	//va
