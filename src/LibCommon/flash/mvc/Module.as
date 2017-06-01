@@ -6,7 +6,6 @@ package flash.mvc
 	import flash.mvc.kernel.INotifier;
 	import flash.mvc.kernel.IView;
 	import flash.mvc.notification.Msg;
-	import flash.mvc.notification.MsgName;
 	
 	import array.del;
 	import array.has;
@@ -83,10 +82,10 @@ package flash.mvc
 			injector.injectInto(handler);
 		}
 		
-		virtual public function initAllModels():void		{}
-		virtual public function initAllServices():void		{}
-		virtual public function initAllViews():void			{}
-		virtual public function initAllControllers():void	{}
-		virtual public function onStartup():void			{}
+		virtual public function initAllModels		():void{}
+		virtual public function initAllServices		():void{}
+		virtual public function initAllViews		():void{}
+		virtual public function initAllControllers	():void{}
+		virtual public function onStartup			():void{}
 	}
 }

@@ -23,13 +23,8 @@ package flash.mvc
 			moduleDict[moduleName] = module;
 			module.applicationInjector = injector;
 			
-			if(hasStartup)
-			{
-				module.initAllModels();
-				module.initAllServices();
-				module.initAllViews();
-				module.initAllControllers();
-				module.onStartup();
+			if(hasStartup){
+				doStartup([module]);
 			}
 		}
 		
@@ -37,28 +32,18 @@ package flash.mvc
 		{
 			if(!hasStartup){
 				hasStartup = true;
-				onStartup();
+				doStartup(moduleDict);
 			}
 		}
 		
-		private function onStartup():void
+		private function doStartup(moduleList:Object):void
 		{
 			var module:Module;
-			for each(module in moduleDict){
-				module.initAllModels();
-			}
-			for each(module in moduleDict){
-				module.initAllServices();
-			}
-			for each(module in moduleDict){
-				module.initAllViews();
-			}
-			for each(module in moduleDict){
-				module.initAllControllers();
-			}
-			for each(module in moduleDict){
-				module.onStartup();
-			}
+			for each (module in moduleList) module.initAllModels();
+			for each (module in moduleList) module.initAllServices();
+			for each (module in moduleList) module.initAllViews();
+			for each (module in moduleList) module.initAllControllers();
+			for each (module in moduleList) module.onStartup();
 		}
 	}
 }
