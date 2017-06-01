@@ -3,6 +3,7 @@ package snjdck.editor.control
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.filters.DropShadowFilter;
 	import flash.geom.Point;
 	import flash.signals.Signal;
 	
@@ -35,6 +36,7 @@ package snjdck.editor.control
 			var item:ControlItem = evt.currentTarget as ControlItem;
 			var pt:Point = item.localToGlobal(new Point());
 			dragItem = item.create();
+			dragItem.filters = [new DropShadowFilter()];
 			dragItem.x = pt.x;
 			dragItem.y = pt.y;
 			dragItem.mouseEnabled = false;
@@ -52,6 +54,7 @@ package snjdck.editor.control
 				stage.removeChild(dragItem);
 			}else{
 				dragItem.mouseEnabled = true;
+				dragItem.filters = [];
 				dropSignal.notify(dragItem);
 			}
 			

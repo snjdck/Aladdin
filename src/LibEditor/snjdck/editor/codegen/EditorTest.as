@@ -1,6 +1,7 @@
 package 
 {
 	import flash.display.DisplayObject;
+	import flash.display.DisplayObjectContainer;
 	import flash.display.ImageControl;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
@@ -77,7 +78,7 @@ package
 			});
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, __onKeyDown);
-			listenEvent(stage);
+			stage.addEventListener(MouseEvent.MOUSE_DOWN, __onEdit);
 			EditItemMenu.Instance.attach(control);
 		}
 		
@@ -95,17 +96,33 @@ package
 			item.y = pt.y;
 			editArea.addChild(item);
 			new ItemData(item);
-			listenEvent(item);
+//			listenEvent(item);
 			EditItemMenu.Instance.attach(item);
 		}
-		
-		private function listenEvent(target:InteractiveObject):void
-		{
-			target.addEventListener(MouseEvent.MOUSE_DOWN, __onEdit);
-		}
+//		
+//		private function listenEvent(target:InteractiveObject):void
+//		{
+//			target.addEventListener(MouseEvent.MOUSE_DOWN, __onEdit);
+//		}
 		
 		private function __onEdit(evt:MouseEvent):void
 		{
+			if(evt.target == stage){
+				control.setTarget(null);
+				inspector.clearTargetInfo();
+				return;
+			}
+			if(!editArea.contains(evt.target as DisplayObject)){
+				return;
+			}
+			for(var i:int=editArea.numChildren-1; i>=0; --i){
+				var child:Sprite = editArea.getChildAt(i) as Sprite;
+				if(child.contains(evt.target as DisplayObject)){
+					control.setTarget(child);
+					return;
+				}
+			}
+			/*
 			var target:DisplayObject = evt.currentTarget as DisplayObject;
 			if(target != stage){
 				control.setTarget(target);
@@ -113,6 +130,7 @@ package
 				control.setTarget(null);
 				inspector.clearTargetInfo();
 			}
+			*/
 		}
 		
 		private function saveAll():void
