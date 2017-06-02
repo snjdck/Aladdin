@@ -29,6 +29,7 @@ package
 	import snjdck.editor.control.ControlList;
 	import snjdck.editor.menu.EditItemMenu;
 	import snjdck.fileformat.zip.Zip;
+	import snjdck.ui.tree.Tree;
 	
 	import stdlib.constant.KeyCode;
 	
@@ -39,6 +40,7 @@ package
 	Test2UI;
 	aUI;
 	
+	[SWF(width="1000", height="600")]
 	public class EditorTest extends Sprite
 	{
 		private var editArea:View = new View();
@@ -47,6 +49,8 @@ package
 		private var controlList:ControlList = new ControlList();
 		
 		private var inspectorArea:Sprite = new Sprite();
+		
+		private var fileTree:Tree = new Tree();
 		
 		public function EditorTest()
 		{
@@ -57,10 +61,14 @@ package
 			editArea.width = stage.stageWidth;
 			editArea.height = stage.stageHeight;
 			
+			fileTree.y = 300;
+			fileTree.dataProvider = genFileTree(file);
+			
 			controlList.dropSignal.add(__onAddControl);
 			
 			addChild(editArea);
 			addChild(controlList);
+			addChild(fileTree);
 			addChild(inspectorArea);
 			addChild(control);
 			App.init(this);
@@ -160,6 +168,19 @@ package
 				FileUtil.WriteString(writePath.resolvePath(clsDef.filePath), clsDef.toString());
 			}
 		}
+		
+		private function genFileTree(file:File):XML
+		{
+			var result:XML = <node/>;
+			result.@label = file.name;
+			if(file.isDirectory){
+				for each(var f:File in file.getDirectoryListing()){
+					result.appendChild(genFileTree(f));
+				}
+			}
+			return result;
+		}
 		//*/
 	}
 }
+
