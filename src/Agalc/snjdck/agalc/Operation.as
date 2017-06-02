@@ -44,7 +44,6 @@ package snjdck.agalc
 			new Operation("els", 0x20, 0, OP_NO_DEST);	//		else
 			new Operation("eif", 0x21, 0, OP_NO_DEST);	//		End an if or else block
 			
-//			new Operation("tld", 0x26, 3, OP_VERT_ONLY | OP_SPECIAL_TEX);	//src.xy -> uv, src.z -> cubemap side, src.w -> mipmap(0-high)
 			/*
 			new Operation("rep", 0x24, 1);	//		repeat vt0.x
 			new Operation("erp", 0x25, 0);	//		end repeat
@@ -57,6 +56,7 @@ package snjdck.agalc
 			new Operation("sgn", 0x2b, 2);	//		(sign) destination = (source1 < 0) ? (-1) : (source1 > 0 ? 1 : 0) - 不支持
 			new Operation("seq", 0x2c, 3);	//		==
 			new Operation("sne", 0x2d, 3);	//		!=
+			new Operation("tld", 0x2e, 3, OP_VERT_ONLY | OP_SPECIAL_TEX);	//src.xy -> uv, src.z -> cubemap side, src.w -> mipmap(0-high)
 		}
 		
 		static public const OP_SPECIAL_TEX		:uint = 0x8;
