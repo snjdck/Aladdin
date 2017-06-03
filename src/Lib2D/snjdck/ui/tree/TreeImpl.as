@@ -7,7 +7,8 @@ package snjdck.ui.tree
 
 	public class TreeImpl
 	{
-		private var childList:Array = [];
+		private var firstChild:TreeImpl;
+		private var nextSibling:TreeImpl;
 		private var parent:TreeImpl;
 		private var root:Tree;
 		private var level:int;
@@ -58,10 +59,10 @@ package snjdck.ui.tree
 		
 		internal function drawChildren(from:TreeImpl=null):void
 		{
-			var index:int = from ? childList.indexOf(from) + 1 : 0;
-			for(var i:int=index, n:int=childList.length; i<n; ++i){
-				var child:TreeImpl = childList[i];
+			var child:TreeImpl = from ? from.nextSibling : firstChild;
+			while(child != null){
 				child.draw();
+				child = child.nextSibling;
 			}
 			if(parent != null){
 				parent.drawChildren(this);
@@ -77,21 +78,28 @@ package snjdck.ui.tree
 				labelTxt.y = root.nextY;
 				root.nextY += labelTxt.height;
 			}
-			for(var i:int=0, n:int=childList.length; i<n; ++i){
-				var child:TreeImpl = childList[i];
+			var child:TreeImpl = firstChild;
+			while(child != null){
 				child.draw(visible && expandFlag);
+				child = child.nextSibling;
 			}
 		}
 		
 		public function set dataProvider(value:XML):void
 		{
+			firstChild = null;
 			_dataProvider = value;
-			childList.length = 0;
-			if(value.hasComplexContent()){
+			if(isBranch()){
+				var prevSibling:TreeImpl;
 				for each(var node:XML in value.children()){
 					var child:TreeImpl = new TreeImpl(root, this, level + 1);
 					child.dataProvider = node;
-					childList.push(child);
+					if(prevSibling != null){
+						prevSibling.nextSibling = child;
+					}else{
+						firstChild = child;
+					}
+					prevSibling = child;
 				}
 			}
 		}
