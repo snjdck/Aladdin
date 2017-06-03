@@ -1,12 +1,8 @@
 package snjdck.ui.menu
 {
 	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
 	import flash.display.Graphics;
 	import flash.display.Shape;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
 
 	internal class DrawTool
 	{
@@ -29,16 +25,6 @@ package snjdck.ui.menu
 			g.beginFill(color, alpha);
 			g.drawRect(0, 0, w, h);
 			g.endFill();
-		}
-		
-		static public function CreateTextField(parent:DisplayObjectContainer):TextField
-		{
-			var tf:TextField = new TextField();
-			tf.defaultTextFormat = new TextFormat("宋体", 12);
-			tf.autoSize = TextFieldAutoSize.LEFT;
-			tf.selectable = false;
-			parent.addChild(tf);
-			return tf;
 		}
 		
 		static public function CreateIcon():DisplayObject

@@ -5,6 +5,8 @@ package snjdck.ui.menu
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
+	import snjdck.ui.utils.TextFieldFactory;
+	
 	public class MenuItem extends Sprite implements IMenuItem
 	{
 		public var menu:Menu;
@@ -21,7 +23,7 @@ package snjdck.ui.menu
 		
 		public function MenuItem()
 		{
-			tf = DrawTool.CreateTextField(this);
+			tf = TextFieldFactory.Create(this);
 			tf.y = 2;
 			addEventListener(MouseEvent.ROLL_OVER, __onMouseOver);
 			addEventListener(MouseEvent.ROLL_OUT, __onMouseOut);

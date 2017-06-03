@@ -4,6 +4,8 @@ package snjdck.ui.menu
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
+	import snjdck.ui.utils.TextFieldFactory;
+	
 	public class WindowMenuItem extends Sprite
 	{
 		public var colorHover:uint = 0xCCE8FF;
@@ -15,7 +17,7 @@ package snjdck.ui.menu
 		
 		public function WindowMenuItem(label:String, menu:Menu)
 		{
-			tf = DrawTool.CreateTextField(this);
+			tf = TextFieldFactory.Create(this);
 			tf.text = label;
 			
 			this.menu = menu;

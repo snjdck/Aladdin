@@ -2,8 +2,8 @@ package snjdck.ui.tree
 {
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
+	
+	import snjdck.ui.utils.TextFieldFactory;
 
 	public class TreeImpl
 	{
@@ -23,12 +23,7 @@ package snjdck.ui.tree
 			this.root = root;
 			this.level = level;
 			
-			labelTxt = new TextField();
-			labelTxt.autoSize = TextFieldAutoSize.LEFT;
-			labelTxt.selectable = false;
-			labelTxt.defaultTextFormat = new TextFormat("微软雅黑", 12);
-			root.addChild(labelTxt);
-			
+			labelTxt = TextFieldFactory.Create(root);
 			labelTxt.addEventListener(MouseEvent.CLICK, __onClick);
 		}
 		
