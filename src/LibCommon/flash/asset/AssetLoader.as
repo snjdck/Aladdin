@@ -2,8 +2,6 @@ package flash.asset
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.net.URLRequest;
-	import flash.utils.ByteArray;
 	
 	import flash.support.Http;
 	import flash.http.loadMedia;

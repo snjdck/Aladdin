@@ -5,6 +5,8 @@ package snjdck.editor.codegen
 
 	public class ClassFactory
 	{
+		static public const Instance:ClassFactory = new ClassFactory();
+		
 		public function ClassFactory()
 		{
 		}
@@ -16,8 +18,7 @@ package snjdck.editor.codegen
 			if(targetType == "UIView"){
 				target = create(fileDict[targetDef["@source"]], fileDict);
 			}else{
-				var clazz:Object = ClassDef.domain.getDefinition(ClassDef.getPackage(targetType));
-				target = new clazz();
+				target = $lambda.apply(ClassDef.getPackage(targetType));
 			}
 			setProp(targetDef, target, fileDict);
 			for each(var childDef:XML in targetDef.children()){

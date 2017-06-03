@@ -5,14 +5,16 @@ package snjdck.editor.codegen
 
 	public class PropKeys
 	{
+		static private const sizeName:Array = ["x", "y", "width", "height", "centerX", "centerY", "left", "right", "top", "bottom"];
 		static public const Instance:PropKeys = new PropKeys();
 		
 		private var infoDict:Object = {};
 		
 		public function PropKeys()
 		{
-			infoDict["Button"] = ["var", "name", "runtime", "x", "y", "width", "height", "left", "right", "top", "bottom", "centerX", "centerY"];
-			infoDict["Image"] =  ["var", "name", "runtime", "x", "y", "width", "height", "left", "right", "top", "bottom", "centerX", "centerY"];
+			infoDict["Button"] = ["var", "name"].concat(sizeName);
+			infoDict["Image"] =  ["var", "name"].concat(sizeName);
+			infoDict["View"] =  ["name", "runtime"].concat(sizeName);
 		}
 		
 		public function getKeys(type:String):Array

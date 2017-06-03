@@ -1,12 +1,14 @@
 package flash.support
 {
+	import flash.http.loadData;
+	import flash.http.loadMedia;
 	import flash.lang.ICloseable;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
 	import flash.net.URLVariables;
+	import flash.system.ApplicationDomain;
+	import flash.system.LoaderContext;
 	import flash.utils.ByteArray;
-	
-	import flash.http.loadData;
 	
 	import protocols.Rpc;
 	
@@ -66,6 +68,21 @@ package flash.support
 			}
 			
 			return loadData(request, handler, progress, headerDict);
+		}
+		
+		static public function LoadDllList(dllList:Array, handler:Object, domain:ApplicationDomain=null):void
+		{
+			var context:LoaderContext = new LoaderContext(false, domain);
+			var count:int = dllList.length;
+			var index:int = 0;
+			(function():void{
+				if(index < count){
+					loadMedia(dllList[index], arguments.callee, null, context);
+					++index;
+				}else{
+					$lambda.apply(handler);
+				}
+			})();
 		}
 	}
 }
