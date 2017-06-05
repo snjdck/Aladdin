@@ -2,12 +2,11 @@ package flash.display
 {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	import flash.utils.DisplayUtil;
 	import flash.utils.ShapeUtil;
 	
 	import snjdck.editor.codegen.ItemData;
+	import snjdck.editor.codegen.PropKeys;
 	
 	public class ImageControl extends Sprite
 	{
@@ -67,8 +66,7 @@ package flash.display
 		
 		private function updateSelf():void
 		{
-			var rect:Rectangle = _target.getRect(parent);
-			onResize(rect.x, rect.y, rect.right, rect.bottom);
+			onResize(_target.x, _target.y, _target.x + _target.width, _target.y + _target.height);
 		}
 		
 		private function isCenterXDefined():Boolean
@@ -301,11 +299,8 @@ package flash.display
 			moveBtn.x = centerX;
 			moveBtn.y = topLeftY - 30;
 			
-			var pt:Point = new Point(topLeftX, topLeftY);
-			pt = _target.parent.globalToLocal(parent.localToGlobal(pt));
-			
-			_target.x = pt.x;
-			_target.y = pt.y;
+			_target.x = topLeftX;
+			_target.y = topLeftY;
 			_target.width = newWidth;
 			_target.height = newHeight;
 			dispatchEvent(new Event(Event.CHANGE));
@@ -313,7 +308,7 @@ package flash.display
 			graphics.clear();
 			graphics.lineStyle(0, 0xFF0000);
 			graphics.beginFill(0, 0);
-			graphics.drawRect(pt.x, pt.y, newWidth, newHeight);
+			graphics.drawRect(topLeftX, topLeftY, newWidth, newHeight);
 			graphics.endFill();
 		}
 		
@@ -385,12 +380,10 @@ package flash.display
 			doResize((flagX ? -offsetX : 0), (flagY ? -offsetY : 0), offsetX, offsetY);
 		}
 		
-		static private const reserved:Array = ["x", "y", "width", "height", "left", "right", "top", "bottom", "centerX", "centerY"];
-		
 		public function setTargetProp(key:String, value:*):void
 		{
 			ItemData.setKey(_target, key, value);
-			if(reserved.indexOf(key) >= 0){
+			if(PropKeys.sizeName.indexOf(key) >= 0){
 				$.nextFrameDo(updateSelf);
 			}
 		}
