@@ -26,6 +26,7 @@ package snjdck.ui.tree
 			
 			labelTxt = TextFieldFactory.Create(root);
 			labelTxt.addEventListener(MouseEvent.CLICK, __onClick);
+			labelTxt.addEventListener(MouseEvent.DOUBLE_CLICK, __onDoubleClick);
 		}
 		
 		public function get expandFlag():Boolean
@@ -54,6 +55,13 @@ package snjdck.ui.tree
 				expandFlag = !expandFlag;
 			}else{
 				root.clickSignal.notify(_dataProvider);
+			}
+		}
+		
+		private function __onDoubleClick(evt:MouseEvent):void
+		{
+			if(!isBranch()){
+				root.doubleClickSignal.notify(_dataProvider);
 			}
 		}
 		
@@ -102,6 +110,7 @@ package snjdck.ui.tree
 					prevSibling = child;
 				}
 			}
+			labelTxt.doubleClickEnabled = !isBranch();
 		}
 	}
 }

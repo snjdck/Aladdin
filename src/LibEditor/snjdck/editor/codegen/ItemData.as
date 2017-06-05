@@ -1,6 +1,8 @@
 package snjdck.editor.codegen
 {
 	import flash.display.DisplayObject;
+	
+	import math.isNumber;
 
 	public class ItemData
 	{
@@ -31,8 +33,11 @@ package snjdck.editor.codegen
 			}else{
 				value = keyDict[key];
 			}
-			if(value == null || isNaN(value)){
-				value = "";
+			if(value == null){
+				return "";
+			}
+			if(isNumber(value) && isNaN(value)){
+				return "";
 			}
 			return value;
 		}

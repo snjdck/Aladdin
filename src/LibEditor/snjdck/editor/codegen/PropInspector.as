@@ -57,8 +57,13 @@ package snjdck.editor.codegen
 		
 		private function __onTargetChange(evt:Event):void
 		{
+			changeTarget(control.getTarget());
+		}
+		
+		private function changeTarget(target:DisplayObject):void
+		{
 			targetTxt.visible = true;
-			var typeName:String = getTypeName(control.getTarget(), true);
+			var typeName:String = getTypeName(target, true);
 			
 			if(typeName != targetTxt.text){
 				while(itemList.length > 0){

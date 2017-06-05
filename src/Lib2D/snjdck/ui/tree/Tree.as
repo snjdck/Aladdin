@@ -9,6 +9,7 @@ package snjdck.ui.tree
 		internal var nextY:int;
 		
 		public const clickSignal:Signal = new Signal(XML);
+		public const doubleClickSignal:Signal = new Signal(XML);
 		
 		public function Tree()
 		{

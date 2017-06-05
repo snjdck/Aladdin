@@ -9,8 +9,6 @@ package snjdck.editor.control
 	
 	public class ControlList extends Sprite
 	{
-		private var itemList:Array = [];
-		
 		private var dragItem:Sprite;
 		
 		public const dropSignal:Signal = new Signal(Sprite);
@@ -26,8 +24,7 @@ package snjdck.editor.control
 				var item:ControlItem = new ControlItem(itemXML);
 				item.addEventListener(MouseEvent.MOUSE_DOWN, __onDrag);
 				addChild(item);
-				itemList.push(itemXML);
-				item.y = itemList.length * 30;
+				item.y = numChildren * 30;
 			}
 		}
 		

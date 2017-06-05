@@ -2,6 +2,7 @@ package snjdck.editor.codegen
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.Sprite;
 
 	public class ClassFactory
 	{
@@ -11,7 +12,7 @@ package snjdck.editor.codegen
 		{
 		}
 		
-		public function create(targetDef:XML, fileDict:Object):DisplayObject
+		public function create(targetDef:XML, fileDict:Object):Sprite
 		{
 			var target:DisplayObject;
 			var targetType:String = targetDef.name();
@@ -25,7 +26,7 @@ package snjdck.editor.codegen
 				var child:DisplayObject = create(childDef, fileDict);
 				(target as DisplayObjectContainer).addChild(child);
 			}
-			return target;
+			return target as Sprite;
 		}
 		
 		private function setProp(targetDef:XML, target:Object, fileDict:Object):void
@@ -41,6 +42,9 @@ package snjdck.editor.codegen
 					continue;
 				}
 				target[key] = calcValue(info.type, prop);
+			}
+			if(!targetDef.hasOwnProperty("@name")){
+				target.name = "";
 			}
 		}
 		

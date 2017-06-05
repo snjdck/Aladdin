@@ -2,6 +2,8 @@ package snjdck.editor.control
 {
 	import flash.display.Sprite;
 	
+	import snjdck.editor.codegen.ClassFactory;
+	
 	public class ControlItem extends Sprite
 	{
 		private var config:XML;
@@ -15,16 +17,8 @@ package snjdck.editor.control
 		
 		internal function create():Sprite
 		{
-			var item:Sprite = $lambda.apply(config["@class"].toString());
+			var item:Sprite = ClassFactory.Instance.create(config, null);
 			addChild(item);
-			for each(var node:XML in config.attributes()){
-				var key:String = node.name().toString();
-				var value:String = node.toString();
-				if(key == "class"){
-					continue;
-				}
-				item[key] = value;
-			}
 			return item;
 		}
 	}

@@ -41,6 +41,10 @@ package
 		
 		private var fileTree:Tree = new Tree();
 		
+		private var currentFilePath:String;
+		private var currentViewWidth:Number;
+		private var currentViewHeight:Number;
+		
 		public function EditorTest()
 		{
 			$.root = this;
@@ -53,6 +57,7 @@ package
 			fileTree.y = 300;
 			fileTree.dataProvider = genFileTree(rootFile);
 			fileTree.clickSignal.add(__onAddCustomView);
+			fileTree.doubleClickSignal.add(__onEditCustomView);
 			
 			controlList.dropSignal.add(__onAddControl);
 			
@@ -67,7 +72,7 @@ package
 				var zip:Object = Zip.Parse(data);
 				var context:LoaderContext = new LoaderContext(false, ClassDef.domain);
 				context.allowCodeImport = true;
-				loadMedia(zip["library.swf"], function(ok:Boolean, _:Object):void{
+				loadMedia(zip["library.swf"], function():void{
 					ClassDef.init();
 					Http.LoadDllList(["assets/comp.swf", "assets/vector.swf"], function():void{
 						controlList.loadXML(XML(FileUtil.ReadString(new File("F:/FlashWorkSpace/Aladdin/src/LibEditor/snjdck/editor/control.xml"))));
@@ -80,17 +85,49 @@ package
 			EditItemMenu.Instance.attach(control);
 		}
 		
-		private function __onAddCustomView(xml:XML):void
+		private function createItemByFilePath(path:String):Sprite
 		{
 			var fileDict:Object = genFileDict();
-			var child:Sprite = ClassFactory.Instance.create(fileDict[xml.@data], fileDict) as Sprite;
-			__onAddControl(child);
+			return ClassFactory.Instance.create(fileDict[path], fileDict);
+		}
+		
+		private function __onAddCustomView(xml:XML):void
+		{
+//			__onAddControl(createItemByFilePath(xml.@data));
+		}
+		
+		private function __onEditCustomView(xml:XML):void
+		{
+			trace("double click", xml.@data);
+			
+			currentFilePath = xml.@data;
+			var fileDict:Object = genFileDict();
+			var config:XML = fileDict[xml.@data];
+			currentViewWidth = parseFloat(config.@width);
+			currentViewHeight = parseFloat(config.@height);
+			var item:Sprite = ClassFactory.Instance.create(config, fileDict);
+			editArea.parent.addChildAt(item, 0);
+			editArea.parent.removeChild(editArea);
+			editArea = item as View;
+			for(var i:int=0; i<editArea.numChildren; ++i){
+				item = editArea.getChildAt(i) as Sprite;
+				new ItemData(item);
+				EditItemMenu.Instance.attach(item);
+			}
 		}
 		
 		private function __onKeyDown(evt:KeyboardEvent):void
 		{
-			if(evt.keyCode == KeyCode.S && evt.controlKey){
-				saveAll();
+			if(!evt.controlKey){
+				return;
+			}
+			switch(evt.keyCode){
+				case KeyCode.S:
+					saveAll();
+					break;
+				case KeyCode.E:
+					export();
+					break;
 			}
 		}
 		
@@ -125,13 +162,17 @@ package
 		
 		private function saveAll():void
 		{
+			if(currentFilePath == null){
+				return;
+			}
 			var xml:XML = <View/>;
+			xml.@width  = currentViewWidth;
+			xml.@height = currentViewHeight;
 			for(var i:int=0; i<editArea.numChildren; ++i){
 				var child:DisplayObject = editArea.getChildAt(i);
 				xml.appendChild(PropKeys.Instance.castItemToXML(child));
 			}
-			FileUtil.WriteString(rootFile.resolvePath("a.xml"), xml.toXMLString());
-			export();
+			FileUtil.WriteString(rootFile.resolvePath(currentFilePath), xml.toXMLString());
 		}
 		//*
 		private var rootFile:File = new File("C:/Users/Administrator/Documents/MyMornUI/morn/pages");
