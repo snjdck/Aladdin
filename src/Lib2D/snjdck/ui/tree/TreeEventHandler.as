@@ -1,6 +1,6 @@
 package snjdck.ui.tree
 {
-	import flash.display.Stage;
+	import flash.events.DragStartEventListener;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 
@@ -24,16 +24,11 @@ package snjdck.ui.tree
 			return tree.root;
 		}
 		
-		private function get stage():Stage
-		{
-			return tree.labelTxt.stage;
-		}
-		
 		private function init():void
 		{
 			labelTxt.addEventListener(MouseEvent.CLICK, __onClick);
 			labelTxt.addEventListener(MouseEvent.DOUBLE_CLICK, __onDoubleClick);
-			labelTxt.addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown);
+			new DragStartEventListener(labelTxt, __onDragStart);
 		}
 		
 		private function __onClick(evt:MouseEvent):void
@@ -52,22 +47,9 @@ package snjdck.ui.tree
 			}
 		}
 		
-		private function __onMouseDown(evt:MouseEvent):void
+		private function __onDragStart():void
 		{
-			stage.addEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
-			stage.addEventListener(MouseEvent.MOUSE_UP, __onMouseUp);
-		}
-		
-		private function __onMouseMove(evt:MouseEvent):void
-		{
-			__onMouseUp(evt);
 			root.dragSignal.notify(tree._dataProvider);
-		}
-		
-		private function __onMouseUp(evt:MouseEvent):void
-		{
-			stage.removeEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, __onMouseUp);
 		}
 	}
 }

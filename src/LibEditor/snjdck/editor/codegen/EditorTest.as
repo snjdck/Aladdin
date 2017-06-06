@@ -26,6 +26,7 @@ package
 	import snjdck.editor.codegen.PropKeys;
 	import snjdck.editor.control.ControlList;
 	import snjdck.editor.menu.EditItemMenu;
+	import snjdck.editor.preview.ItemPreview;
 	import snjdck.fileformat.zip.Zip;
 	import snjdck.ui.tree.Tree;
 	
@@ -42,6 +43,7 @@ package
 		private var inspectorArea:Sprite = new Sprite();
 		
 		private var fileTree:Tree = new Tree();
+		private var preview:ItemPreview = new ItemPreview();
 		
 		private var currentFilePath:String;
 		private var currentViewWidth:Number;
@@ -58,11 +60,12 @@ package
 			
 			fileTree.y = 300;
 			fileTree.dataProvider = genFileTree(rootFile);
-//			fileTree.clickSignal.add(__onAddCustomView);
+			fileTree.clickSignal.add(__onShowCustomViewPreview);
 			fileTree.doubleClickSignal.add(__onEditCustomView);
 			fileTree.dragSignal.add(__onAddCustomView);
 			
 			controlList.dragSignal.add(__onAddSystemControl);
+			controlList.clickSignal.add(__onShowSystemControlPreview);
 			
 			control.addEventListener(KeyboardEvent.KEY_DOWN, __onEditTarget);
 			
@@ -70,8 +73,11 @@ package
 			addChild(controlList);
 			addChild(fileTree);
 			addChild(inspectorArea);
+			addChild(preview);
 			addChild(control);
 			App.init(this);
+			
+			preview.x = stage.stageWidth - 200;
 			
 			Http.Get("MornUILib.swc", null, function(ok:Boolean, data:ByteArray):void{
 				var zip:Object = Zip.Parse(data);
@@ -108,10 +114,27 @@ package
 		
 		private function __onAddCustomView(xml:XML):void
 		{
-			__onAddSystemControl(createItemByFilePath(xml.@data));
+			addComponentToEditArea(createItemByFilePath(xml.@data));
 		}
 		
-		private function __onAddSystemControl(view:Sprite):void
+		private function __onAddSystemControl(config:XML):void
+		{
+			var view:Sprite = ClassFactory.Instance.create(config, null);
+			addComponentToEditArea(view);
+		}
+		
+		private function __onShowSystemControlPreview(config:XML):void
+		{
+			var view:Sprite = ClassFactory.Instance.create(config, null);
+			preview.showPreview(view);
+		}
+		
+		private function __onShowCustomViewPreview(config:XML):void
+		{
+			preview.showPreview(createItemByFilePath(config.@data));
+		}
+		
+		private function addComponentToEditArea(view:Sprite):void
 		{
 			view.filters = [new DropShadowFilter()];
 			view.x = stage.mouseX - view.width * 0.5;
