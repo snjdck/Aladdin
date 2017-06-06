@@ -4,7 +4,7 @@ package snjdck.ui.tree
 	
 	import snjdck.ui.utils.TextFieldFactory;
 
-	public class TreeImpl
+	internal class TreeImpl
 	{
 		private var firstChild:TreeImpl;
 		private var nextSibling:TreeImpl;

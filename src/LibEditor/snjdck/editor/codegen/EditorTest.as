@@ -64,6 +64,8 @@ package
 			
 			controlList.dragSignal.add(__onAddSystemControl);
 			
+			control.addEventListener(KeyboardEvent.KEY_DOWN, __onEditTarget);
+			
 			addChild(editArea);
 			addChild(controlList);
 			addChild(fileTree);
@@ -86,6 +88,14 @@ package
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, __onKeyDown);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, __onEdit);
 			EditItemMenu.Instance.attach(control);
+		}
+		
+		private function __onEditTarget(evt:KeyboardEvent):void
+		{
+			if(evt.keyCode == KeyCode.DELETE){
+				editArea.removeChild(control.getTarget());
+				control.setTarget(null);
+			}
 		}
 		
 		private function createItemByFilePath(path:String):Sprite

@@ -2,7 +2,9 @@ package snjdck.editor.menu
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
+	import flash.display.ImageControl;
 	import flash.events.ContextMenuEvent;
+	import flash.utils.DisplayUtil;
 
 	public class EditItemMenu extends ContextMenuBase
 	{
@@ -14,6 +16,7 @@ package snjdck.editor.menu
 			addItem("上移一层", __onTop);
 			addItem("下移一层", __onBottom);
 			addItem("移到底层", __onBottomMost);
+			addItem("删除", __onDelete).separatorBefore = true;
 		}
 		
 		private function __onTopMost(evt:ContextMenuEvent):void
@@ -53,6 +56,18 @@ package snjdck.editor.menu
 			var index:int = parent.getChildIndex(target);
 			if(index > 0){
 				parent.setChildIndex(target, 0);
+			}
+		}
+		
+		private function __onDelete(evt:ContextMenuEvent):void
+		{
+			var target:DisplayObject = evt.contextMenuOwner;
+			if(target is ImageControl){
+				var control:ImageControl = target as ImageControl;
+				DisplayUtil.RemoveSelf(control.getTarget());
+				control.setTarget(null);
+			}else{
+				DisplayUtil.RemoveSelf(target);
 			}
 		}
 	}

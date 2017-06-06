@@ -18,11 +18,12 @@ package snjdck.editor.menu
 			target.contextMenu = menu;
 		}
 		
-		protected function addItem(label:String, handler:Function):void
+		protected function addItem(label:String, handler:Function):ContextMenuItem
 		{
 			var item:ContextMenuItem = new ContextMenuItem(label);
 			item.addEventListener(ContextMenuEvent.MENU_ITEM_SELECT, handler);
 			menu.customItems.push(item);
+			return item;
 		}
 		
 		protected function getTarget(evt:ContextMenuEvent):DisplayObject

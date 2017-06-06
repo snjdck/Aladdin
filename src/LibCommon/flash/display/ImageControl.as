@@ -54,13 +54,16 @@ package flash.display
 				return;
 			}
 			
-			visible = target != null;
-			
 			_target = target;
 			
 			if(_target != null){
 				updateSelf();
 				onMouseDown(this);
+				stage.focus = this;
+				visible = true;
+			}else{
+				stage.focus = null;
+				visible = false;
 			}
 		}
 		

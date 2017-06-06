@@ -3,23 +3,21 @@ package snjdck.editor.control
 	import flash.display.Sprite;
 	
 	import snjdck.editor.codegen.ClassFactory;
+	import snjdck.ui.utils.TextFieldFactory;
 	
 	public class ControlItem extends Sprite
 	{
 		private var config:XML;
-		private var item:Sprite;
 		
 		public function ControlItem(config:XML)
 		{
 			this.config = config;
-			item = create();
+			TextFieldFactory.Create(this).text = config.name().toString();
 		}
 		
 		internal function create():Sprite
 		{
-			var item:Sprite = ClassFactory.Instance.create(config, null);
-			addChild(item);
-			return item;
+			return ClassFactory.Instance.create(config, null);
 		}
 	}
 }
