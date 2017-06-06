@@ -1,6 +1,5 @@
 package snjdck.ui.tree
 {
-	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
 	import snjdck.ui.utils.TextFieldFactory;
@@ -10,13 +9,13 @@ package snjdck.ui.tree
 		private var firstChild:TreeImpl;
 		private var nextSibling:TreeImpl;
 		private var parent:TreeImpl;
-		private var root:Tree;
+		internal var root:Tree;
 		private var level:int;
-		private var _dataProvider:XML;
+		internal var _dataProvider:XML;
 		
 		private var _expandFlag:Boolean;
 		
-		private var labelTxt:TextField;
+		internal var labelTxt:TextField;
 		
 		public function TreeImpl(root:Tree, parent:TreeImpl, level:int=0)
 		{
@@ -25,8 +24,8 @@ package snjdck.ui.tree
 			this.level = level;
 			
 			labelTxt = TextFieldFactory.Create(root);
-			labelTxt.addEventListener(MouseEvent.CLICK, __onClick);
-			labelTxt.addEventListener(MouseEvent.DOUBLE_CLICK, __onDoubleClick);
+			
+			new TreeEventHandler(this);
 		}
 		
 		public function get expandFlag():Boolean
@@ -44,25 +43,9 @@ package snjdck.ui.tree
 			}
 		}
 
-		private function isBranch():Boolean
+		public function isBranch():Boolean
 		{
 			return _dataProvider.hasComplexContent();
-		}
-		
-		private function __onClick(evt:MouseEvent):void
-		{
-			if(isBranch()){
-				expandFlag = !expandFlag;
-			}else{
-				root.clickSignal.notify(_dataProvider);
-			}
-		}
-		
-		private function __onDoubleClick(evt:MouseEvent):void
-		{
-			if(!isBranch()){
-				root.doubleClickSignal.notify(_dataProvider);
-			}
 		}
 		
 		internal function drawChildren(from:TreeImpl=null):void

@@ -9,9 +9,7 @@ package snjdck.editor.control
 	
 	public class ControlList extends Sprite
 	{
-		private var dragItem:Sprite;
-		
-		public const dropSignal:Signal = new Signal(Sprite);
+		public const dragSignal:Signal = new Signal(Sprite);
 		
 		public function ControlList()
 		{
@@ -31,31 +29,12 @@ package snjdck.editor.control
 		private function __onDrag(evt:MouseEvent):void
 		{
 			var item:ControlItem = evt.currentTarget as ControlItem;
-			var pt:Point = item.localToGlobal(new Point());
-			dragItem = item.create();
-			dragItem.filters = [new DropShadowFilter()];
-			dragItem.x = pt.x;
-			dragItem.y = pt.y;
-			dragItem.mouseEnabled = false;
-			stage.addChild(dragItem);
-			dragItem.startDrag();
-			stage.addEventListener(MouseEvent.MOUSE_UP, __onStopDrag);
-		}
-		
-		private function __onStopDrag(evt:MouseEvent):void
-		{
-			stage.removeEventListener(MouseEvent.MOUSE_UP, __onStopDrag);
-			dragItem.stopDrag();
-			
-			if(contains(evt.target as DisplayObject)){
-				stage.removeChild(dragItem);
-			}else{
-				dragItem.mouseEnabled = true;
-				dragItem.filters = [];
-				dropSignal.notify(dragItem);
-			}
-			
-			dragItem = null;
+//			var pt:Point = item.localToGlobal(new Point());
+//			var dragItem:Sprite = item.create();
+//			dragItem.filters = [new DropShadowFilter()];
+//			dragItem.x = pt.x;
+//			dragItem.y = pt.y;
+			dragSignal.notify(item.create());
 		}
 	}
 }

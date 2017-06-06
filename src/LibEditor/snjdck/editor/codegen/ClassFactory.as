@@ -1,5 +1,6 @@
 package snjdck.editor.codegen
 {
+	import flash.accessibility.AccessibilityProperties;
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -18,6 +19,7 @@ package snjdck.editor.codegen
 			var targetType:String = targetDef.name();
 			if(targetType == "UIView"){
 				target = create(fileDict[targetDef["@source"]], fileDict);
+				setViewSource(target, targetDef["@source"]);
 			}else{
 				target = $lambda.apply(ClassDef.getPackage(targetType));
 			}
@@ -57,6 +59,12 @@ package snjdck.editor.codegen
 					return value == "true";
 			}
 			return parseFloat(value);
+		}
+		
+		static public function setViewSource(target:DisplayObject, source:String):void
+		{
+			target.accessibilityProperties = new AccessibilityProperties();
+			target.accessibilityProperties.name = source;
 		}
 	}
 }

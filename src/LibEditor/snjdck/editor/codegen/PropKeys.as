@@ -15,6 +15,7 @@ package snjdck.editor.codegen
 			infoDict["Button"] = ["var", "name", "skin"].concat(sizeName);
 			infoDict["Image"] =  ["var", "name", "skin"].concat(sizeName);
 			infoDict["View"] =  ["name", "runtime"].concat(sizeName);
+			infoDict["UIView"] =  ["name", "runtime"].concat(sizeName);
 		}
 		
 		public function getKeys(type:String):Array
@@ -25,6 +26,11 @@ package snjdck.editor.codegen
 		public function castItemToXML(target:DisplayObject):XML
 		{
 			var typeName:String = getTypeName(target, true);
+			
+			if(typeName == "View"){
+				typeName = "UIView";
+			}
+			
 			var node:XML = XML("<" + typeName + "/>")
 			var keyList:Array = getKeys(typeName);
 			for each(var key:String in keyList){
@@ -33,6 +39,9 @@ package snjdck.editor.codegen
 					continue;
 				}
 				node.@[key] = value;
+			}
+			if(typeName == "UIView"){
+				node.@source = target.accessibilityProperties.name;
 			}
 			return node;
 		}

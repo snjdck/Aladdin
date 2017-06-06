@@ -8,6 +8,7 @@ package
 	import flash.filesystem.File;
 	import flash.filesystem.FileIO2;
 	import flash.filesystem.FileUtil;
+	import flash.filters.DropShadowFilter;
 	import flash.geom.Point;
 	import flash.http.loadMedia;
 	import flash.support.Http;
@@ -17,6 +18,7 @@ package
 	
 	import morn.core.components.View;
 	
+	import snjdck.editor.DragMgr;
 	import snjdck.editor.codegen.ClassDef;
 	import snjdck.editor.codegen.ClassFactory;
 	import snjdck.editor.codegen.ItemData;
@@ -56,10 +58,11 @@ package
 			
 			fileTree.y = 300;
 			fileTree.dataProvider = genFileTree(rootFile);
-			fileTree.clickSignal.add(__onAddCustomView);
+//			fileTree.clickSignal.add(__onAddCustomView);
 			fileTree.doubleClickSignal.add(__onEditCustomView);
+			fileTree.dragSignal.add(__onAddCustomView);
 			
-			controlList.dropSignal.add(__onAddControl);
+			controlList.dragSignal.add(__onAddSystemControl);
 			
 			addChild(editArea);
 			addChild(controlList);
@@ -88,12 +91,32 @@ package
 		private function createItemByFilePath(path:String):Sprite
 		{
 			var fileDict:Object = genFileDict();
-			return ClassFactory.Instance.create(fileDict[path], fileDict);
+			var item:Sprite = ClassFactory.Instance.create(fileDict[path], fileDict);
+			ClassFactory.setViewSource(item, path);
+			return item;
 		}
 		
 		private function __onAddCustomView(xml:XML):void
 		{
-//			__onAddControl(createItemByFilePath(xml.@data));
+			__onAddSystemControl(createItemByFilePath(xml.@data));
+		}
+		
+		private function __onAddSystemControl(view:Sprite):void
+		{
+			view.filters = [new DropShadowFilter()];
+			view.x = stage.mouseX - view.width * 0.5;
+			view.y = stage.mouseY - view.height * 0.5;
+			DragMgr.Instance.doDrag(view, __onStopDrag);
+		}
+		
+		private function __onStopDrag(dragItem:Sprite, evt:MouseEvent):void
+		{
+			if(dragItem.dropTarget == null || editArea.contains(dragItem.dropTarget as DisplayObject) || control.contains(dragItem.dropTarget)){
+				dragItem.filters = [];
+				addControlToEditArea(dragItem);
+			}else{
+				trace("del", dragItem.dropTarget, evt.target);
+			}
 		}
 		
 		private function __onEditCustomView(xml:XML):void
@@ -131,7 +154,7 @@ package
 			}
 		}
 		
-		private function __onAddControl(item:Sprite):void
+		private function addControlToEditArea(item:Sprite):void
 		{
 			var pt:Point = editArea.globalToLocal(new Point(item.x, item.y));
 			item.x = pt.x;
