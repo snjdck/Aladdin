@@ -4,12 +4,16 @@ package snjdck.editor.codegen
 	import flash.display.ImageControl;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.geom.Rectangle;
 	import flash.reflection.getTypeName;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	public class PropInspector extends Sprite
+	import snjdck.GDI;
+	import snjdck.ui.layout.LayoutObject;
+	
+	public class PropInspector extends LayoutObject
 	{
 		private var targetTxt:TextField;
 		private const itemList:Array = [];
@@ -25,8 +29,19 @@ package snjdck.editor.codegen
 			targetTxt.mouseEnabled = false;
 			addChild(targetTxt);
 			
-			opaqueBackground = 0xCCCC33;
 			control.addEventListener(Event.CHANGE, __onTargetChange);
+		}
+		
+		override public function get width():Number
+		{
+			return 200;
+		}
+		
+		override protected function onSizeChanged(wFlag:Boolean, hFlag:Boolean):void
+		{
+			graphics.clear();
+			graphics.beginFill(0xCCCC33);
+			GDI.drawRect(graphics, new Rectangle(0, 0, width, height));
 		}
 		
 		public function addItem(label:String):void

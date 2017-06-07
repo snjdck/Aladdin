@@ -1,9 +1,10 @@
 package snjdck.ui.layout
 {
 	import flash.display.DisplayObject;
-	import flash.display.Sprite;
+	
+	import snjdck.ui.Component;
 
-	public class LayoutObject extends Sprite
+	public class LayoutObject extends Component
 	{
 		static private const layoutMgr:LayoutManager = new LayoutManager();
 		
@@ -43,6 +44,8 @@ package snjdck.ui.layout
 		
 		public function reLayout():void
 		{
+			var wFlag:Boolean = false;
+			var hFlag:Boolean = false;
 			if(isLayoutXDirty){
 				if(!isNaN(_centerX)){
 					x = 0.5 * (parentWidth - width) + _centerX;
@@ -50,6 +53,7 @@ package snjdck.ui.layout
 					x = _left;
 					if(!isNaN(_right)){
 						super.width = parentWidth - (_left + _right);
+						wFlag = true;
 					}
 				}else if(!isNaN(_right)){
 					x = (parentWidth - width) - _right;
@@ -63,11 +67,15 @@ package snjdck.ui.layout
 					y = _top;
 					if(!isNaN(_bottom)){
 						super.height = parentHeight - (_top + _bottom);
+						hFlag = true;
 					}
 				}else if(!isNaN(_bottom)){
 					y = (parentHeight - height) - _bottom;
 				}
 				isLayoutYDirty = false;
+			}
+			if(wFlag || hFlag){
+				onSizeChanged(wFlag, hFlag);
 			}
 			for(var i:int=0, n:int=numChildren; i<n; ++i){
 				var child:LayoutObject = getChildAt(i) as LayoutObject;
@@ -217,5 +225,7 @@ package snjdck.ui.layout
 			}
 			return child;
 		}
+		
+		virtual protected function onSizeChanged(wFlag:Boolean, hFlag:Boolean):void{}
 	}
 }

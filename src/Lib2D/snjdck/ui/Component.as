@@ -11,12 +11,12 @@ package snjdck.ui
 		
 		override public function get width():Number
 		{
-			return _width;
+			return isNaN(_width) ? super.width : _width;
 		}
 		
 		override public function get height():Number
 		{
-			return _height;
+			return isNaN(_height) ? super.height : _height;
 		}
 		
 		override public function set width(value:Number):void

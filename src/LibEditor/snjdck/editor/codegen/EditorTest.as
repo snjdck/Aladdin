@@ -40,7 +40,7 @@ package
 		private var inspector:PropInspector = new PropInspector(control);
 		private var controlList:ControlList = new ControlList();
 		
-		private var inspectorArea:Sprite = new Sprite();
+//		private var inspectorArea:Sprite = new Sprite();
 		
 		private var fileTree:Tree = new Tree();
 		private var preview:ItemPreview = new ItemPreview();
@@ -52,8 +52,8 @@ package
 		public function EditorTest()
 		{
 			$.root = this;
-			inspectorArea.addChild(inspector);
-			inspectorArea.x = stage.stageWidth - 200;
+//			inspectorArea.addChild(inspector);
+//			inspectorArea.x = stage.stageWidth - 200;
 			
 			editArea.width = stage.stageWidth;
 			editArea.height = stage.stageHeight;
@@ -72,12 +72,17 @@ package
 			addChild(editArea);
 			addChild(controlList);
 			addChild(fileTree);
-			addChild(inspectorArea);
+			addChild(inspector);
 			addChild(preview);
 			addChild(control);
 			App.init(this);
 			
-			preview.x = stage.stageWidth - 200;
+			preview.right = 0;
+			preview.bottom = 0;
+			
+			inspector.right = 0;
+			inspector.top = 0;
+			inspector.bottom = 200;
 			
 			Http.Get("MornUILib.swc", null, function(ok:Boolean, data:ByteArray):void{
 				var zip:Object = Zip.Parse(data);

@@ -1,14 +1,14 @@
 package snjdck.editor.preview
 {
 	import flash.display.DisplayObject;
-	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
 	import math.calcScaleRatio;
 	
 	import snjdck.GDI;
+	import snjdck.ui.layout.LayoutObject;
 	
-	public class ItemPreview extends Sprite
+	public class ItemPreview extends LayoutObject
 	{
 		private var w:int = 200;
 		private var h:int = 200;
