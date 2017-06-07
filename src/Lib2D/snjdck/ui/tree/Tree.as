@@ -5,6 +5,8 @@ package snjdck.ui.tree
 	
 	public class Tree extends Sprite
 	{
+		static private const pool:Array = [];
+		
 		private var rootTree:TreeImpl;
 		internal var nextY:int;
 		
@@ -19,10 +21,27 @@ package snjdck.ui.tree
 		
 		public function set dataProvider(value:XML):void
 		{
-			removeChildren();
+			while(numChildren > 0){
+				putLabel(getChildAt(numChildren-1) as TreeLabel);
+			}
 			rootTree.dataProvider = value;
 			nextY = 0;
 			rootTree.drawChildren();
+		}
+		
+		internal function getLabel(node:TreeImpl):TreeLabel
+		{
+			var tf:TreeLabel = pool.length > 0 ? pool.pop() : new TreeLabel();
+			addChild(tf);
+			tf.tree = node;
+			return tf;
+		}
+		
+		internal function putLabel(tf:TreeLabel):void
+		{
+			tf.tree = null;
+			removeChild(tf);
+			pool.push(tf);
 		}
 	}
 }

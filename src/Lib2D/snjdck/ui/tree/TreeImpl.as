@@ -1,9 +1,5 @@
 package snjdck.ui.tree
 {
-	import flash.text.TextField;
-	
-	import snjdck.ui.utils.TextFieldFactory;
-
 	internal class TreeImpl
 	{
 		private var firstChild:TreeImpl;
@@ -15,17 +11,13 @@ package snjdck.ui.tree
 		
 		private var _expandFlag:Boolean;
 		
-		internal var labelTxt:TextField;
+		internal var labelTxt:TreeLabel;
 		
 		public function TreeImpl(root:Tree, parent:TreeImpl, level:int=0)
 		{
 			this.parent = parent;
 			this.root = root;
 			this.level = level;
-			
-			labelTxt = TextFieldFactory.Create(root);
-			
-			new TreeEventHandler(this);
 		}
 		
 		public function get expandFlag():Boolean
@@ -62,12 +54,16 @@ package snjdck.ui.tree
 		
 		private function draw(visible:Boolean=true):void
 		{
-			labelTxt.visible = visible;
 			if(visible){
-				labelTxt.text = _dataProvider.@label;
-				labelTxt.x = level * 10;
+				if(labelTxt == null){
+					labelTxt = root.getLabel(this);
+					labelTxt.x = level * 10;
+				}
 				labelTxt.y = root.nextY;
 				root.nextY += labelTxt.height;
+			}else if(labelTxt != null){
+				root.putLabel(labelTxt);
+				labelTxt = null;
 			}
 			var child:TreeImpl = firstChild;
 			while(child != null){
@@ -78,7 +74,6 @@ package snjdck.ui.tree
 		
 		public function set dataProvider(value:XML):void
 		{
-			firstChild = null;
 			_dataProvider = value;
 			if(isBranch()){
 				var prevSibling:TreeImpl;
@@ -92,8 +87,9 @@ package snjdck.ui.tree
 					}
 					prevSibling = child;
 				}
+			}else{
+				firstChild = null;
 			}
-			labelTxt.doubleClickEnabled = !isBranch();
 		}
 	}
 }
