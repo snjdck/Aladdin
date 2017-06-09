@@ -1,6 +1,7 @@
 package 
 {
 	import flash.display.DisplayObject;
+	import flash.display.Graphics;
 	import flash.display.ImageControl;
 	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
@@ -19,6 +20,7 @@ package
 	import morn.core.components.View;
 	
 	import snjdck.editor.DragMgr;
+	import snjdck.editor.FunctionButtonView;
 	import snjdck.editor.codegen.ClassDef;
 	import snjdck.editor.codegen.ClassFactory;
 	import snjdck.editor.codegen.ItemData;
@@ -27,6 +29,7 @@ package
 	import snjdck.editor.control.ControlList;
 	import snjdck.editor.menu.EditItemMenu;
 	import snjdck.editor.preview.ItemPreview;
+	import snjdck.editor.selection.SelectionLayer;
 	import snjdck.fileformat.zip.Zip;
 	import snjdck.ui.tree.Tree;
 	
@@ -41,9 +44,11 @@ package
 		private var controlList:ControlList = new ControlList();
 		
 //		private var inspectorArea:Sprite = new Sprite();
+		private var funcBtnView:FunctionButtonView = new FunctionButtonView();
 		
 		private var fileTree:Tree = new Tree();
 		private var preview:ItemPreview = new ItemPreview();
+		private var selectionLayer:SelectionLayer = new SelectionLayer();
 		
 		private var currentFilePath:String;
 		private var currentViewWidth:Number;
@@ -68,6 +73,7 @@ package
 			controlList.clickSignal.add(__onShowSystemControlPreview);
 			
 			control.addEventListener(KeyboardEvent.KEY_DOWN, __onEditTarget);
+			funcBtnView.clickSignal.add(__onFuncBtn);
 			
 			addChild(editArea);
 			addChild(controlList);
@@ -75,6 +81,8 @@ package
 			addChild(inspector);
 			addChild(preview);
 			addChild(control);
+			addChild(selectionLayer);
+			addChild(funcBtnView);
 			App.init(this);
 			
 			preview.right = 0;
@@ -101,6 +109,32 @@ package
 			EditItemMenu.Instance.attach(control);
 		}
 		
+		private function __onFuncBtn(key:String):void
+		{
+			trace(key);
+		}
+		
+		private function drawEditAreaBG():void
+		{
+			var marginLeft:int = 100;
+			var marginRight:int = 200;
+			
+			editArea.x = marginLeft + 0.5 * (stage.stageWidth - marginLeft - marginRight - currentViewWidth);
+			editArea.y = 0.5 * (stage.stageHeight - currentViewHeight);
+			
+			control.x = editArea.x;
+			control.y = editArea.y;
+			
+			var g:Graphics = editArea.graphics;
+			g.clear();
+//			g.beginFill(0xCCCCCC);
+//			g.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+//			g.endFill();
+			g.beginFill(0x999999);
+			g.drawRect(0, 0, currentViewWidth, currentViewHeight);
+			g.endFill();
+		}
+		
 		private function __onEditTarget(evt:KeyboardEvent):void
 		{
 			if(evt.keyCode == KeyCode.DELETE){
@@ -119,11 +153,17 @@ package
 		
 		private function __onAddCustomView(xml:XML):void
 		{
+			if(null == currentFilePath){
+				return;
+			}
 			addComponentToEditArea(createItemByFilePath(xml.@data));
 		}
 		
 		private function __onAddSystemControl(config:XML):void
 		{
+			if(null == currentFilePath){
+				return;
+			}
 			var view:Sprite = ClassFactory.Instance.create(config, null);
 			addComponentToEditArea(view);
 		}
@@ -175,6 +215,7 @@ package
 				new ItemData(item);
 				EditItemMenu.Instance.attach(item);
 			}
+			drawEditAreaBG();
 		}
 		
 		private function __onKeyDown(evt:KeyboardEvent):void
@@ -204,7 +245,7 @@ package
 		
 		private function __onEdit(evt:MouseEvent):void
 		{
-			if(evt.target == stage){
+			if(evt.target == stage || evt.target == editArea){
 				control.setTarget(null);
 				inspector.clearTargetInfo();
 				return;
@@ -212,13 +253,27 @@ package
 			if(!editArea.contains(evt.target as DisplayObject)){
 				return;
 			}
+			var target:Sprite = findEvtTarget(evt);
+			if(evt.shiftKey){//多选模式
+				if(control.getTarget() == target){
+					control.setTarget(null);
+				}else{
+					selectionLayer.toggleSelection(target);
+				}
+			}else{
+				control.setTarget(target);
+			}
+		}
+		
+		private function findEvtTarget(evt:MouseEvent):Sprite
+		{
 			for(var i:int=editArea.numChildren-1; i>=0; --i){
 				var child:Sprite = editArea.getChildAt(i) as Sprite;
 				if(child.contains(evt.target as DisplayObject)){
-					control.setTarget(child);
-					return;
+					return child;
 				}
 			}
+			return null;
 		}
 		
 		private function saveAll():void
