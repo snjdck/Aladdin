@@ -15,6 +15,9 @@ def readS32(rawData, offset):
 	return result, count
 
 
+def writeS32(value):
+	return struct.pack("B", value)
+
 
 def encodeTag(tagType, tagBody):
 	tagBodySize = len(tagBody)
@@ -75,17 +78,21 @@ def genDoABC2Tag(symbol_list):
 	tagBody += b"\x00\x00\x00"
 
 	#string cache
-	tagBody += struct.pack("B", len(string_list)+1)#use s32
+	tagBody += writeS32(len(string_list)+1)
 	for line in string_list:
-		tagBody += struct.pack("B", len(line)) + line.encode()
+		tagBody += writeS32(len(line)) + line.encode()
 
 	#namespace cache
-	tagBody += struct.pack("B", len(package_list)+1)#use s32
+	tagBody += writeS32(len(package_list)+1)
 	for i in package_list:
-		tagBody += struct.pack("2B", 0x16, i+1)
+		tagBody += struct.pack("B", 0x16)
+		tagBody += writeS32(i+1)
+
+	#ns set
+	tagBody += writeS32(0)
 
 	#multiname cache
-	tagBody += struct.pack("2B", 0, len(export_class_list)+1)
+	tagBody += writeS32(len(export_class_list)+1)
 	for line in export_class_list:
 		index = line.rfind(".")
 		if index < 0:
@@ -94,43 +101,63 @@ def genDoABC2Tag(symbol_list):
 		else:
 			pIndex = package_list.index(string_list.index(line[0:index]))
 			cIndex = string_list.index(line[index+1:])
-		tagBody += struct.pack("3B", 7, pIndex+1, cIndex+1)
+		tagBody += struct.pack("B", 7)
+		tagBody += writeS32(pIndex+1)
+		tagBody += writeS32(cIndex+1)
 
 
 	#method info
-	tagBody += struct.pack("B", len(symbol_list) * 3)
+	tagBody += writeS32(len(symbol_list) * 3)
 	for symbol in symbol_list:
 		tagBody += struct.pack("3I", 0, 0, 0)
 
+	#metadata
+	tagBody += writeS32(0)
+
 	#class count
-	tagBody += struct.pack("2B", 0, len(symbol_list))
+	tagBody += writeS32(len(symbol_list))
 	for i in range(len(symbol_list)):
-		tagBody += struct.pack("6B", i + 1, len(export_class_list), 1, 0, i * 3 + 1, 0)
+		tagBody += writeS32(i + 1)
+		tagBody += writeS32(len(export_class_list))
+		tagBody += struct.pack("B", 1)
+		tagBody += writeS32(0)
+		tagBody += writeS32(i * 3 + 1)
+		tagBody += writeS32(0)
 	for i in range(len(symbol_list)):
-		tagBody += struct.pack("2B", i * 3 + 2, 0)
+		tagBody += writeS32(i * 3 + 2)
+		tagBody += writeS32(0)
+
 	#script count
-	tagBody += struct.pack("B", len(symbol_list))
+	tagBody += writeS32(len(symbol_list))
 	for i in range(len(symbol_list)):
-		tagBody += struct.pack("6B", i * 3, 1, i + 1, 4, 0, i)
+		tagBody += writeS32(i * 3)
+		tagBody += writeS32(1)
+		tagBody += writeS32(i + 1)
+		tagBody += struct.pack("2B", 4, 0)
+		tagBody += writeS32(i)
+
 	#method count
-	tagBody += struct.pack("B", len(symbol_list) * 3)
+	tagBody += writeS32(len(symbol_list) * 3)
 	for i in range(len(symbol_list)):
 		#constructor
-		tagBody += struct.pack("B", i * 3 + 1) + b"\x01\x01\x00\x01"
+		tagBody += writeS32(i * 3 + 1) + b"\x01\x01\x00\x01"
 		tagBody += b"\x06\xd0\x30\xd0\x49\x00"
 		tagBody += b"\x47\x00\x00"
 		#class init
-		tagBody += struct.pack("B", i * 3 + 2) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
+		tagBody += writeS32(i * 3 + 2) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
 		#script init
-		tagBody += struct.pack("B", i * 3) + b"\x03\x01\x00\x05"
-		tagBody += b"\x1a\xd0\x30\x65\x00"
-		tagBody += b"\x60"     + struct.pack("B", len(symbol_list) + 1)
-		tagBody += b"\x30\x60" + struct.pack("B", len(symbol_list) + 2)
-		tagBody += b"\x30\x60" + struct.pack("B", len(symbol_list) + 3)
-		tagBody += b"\x30\x60" + struct.pack("B", len(symbol_list) + 4)
-		tagBody += b"\x2a\x30\x58" + struct.pack("B", i)
-		tagBody += b"\x1d\x1d\x1d\x1d\x68" + struct.pack("B", i + 1)
-		tagBody += b"\x47\x00\x00"
+		tagBody += writeS32(i * 3) + b"\x03\x01\x00\x05"
+		instruction  = b"\xd0\x30\x65\x00"
+		instruction += b"\x60"     + writeS32(len(symbol_list) + 1)
+		instruction += b"\x30\x60" + writeS32(len(symbol_list) + 2)
+		instruction += b"\x30\x60" + writeS32(len(symbol_list) + 3)
+		instruction += b"\x30\x60" + writeS32(len(symbol_list) + 4)
+		instruction += b"\x2a\x30\x58" + writeS32(i)
+		instruction += b"\x1d\x1d\x1d\x1d\x68" + writeS32(i + 1)
+		instruction += b"\x47"
+		tagBody += writeS32(len(instruction))
+		tagBody += instruction
+		tagBody += b"\x00\x00"
 
 	return encodeTag(82, tagBody)
 
