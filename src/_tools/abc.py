@@ -140,9 +140,7 @@ def genDoABC2Tag(symbol_list):
 	tagBody += writeS32(len(symbol_list) * 3)
 	for i in range(len(symbol_list)):
 		#constructor
-		tagBody += writeS32(i * 3 + 1) + b"\x01\x01\x00\x01"
-		tagBody += b"\x06\xd0\x30\xd0\x49\x00"
-		tagBody += b"\x47\x00\x00"
+		tagBody += writeS32(i * 3 + 1) + b"\x01\x01\x00\x00\x04\xd0\x49\x00\x47\x00\x00"
 		#class init
 		tagBody += writeS32(i * 3 + 2) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
 		#script init
