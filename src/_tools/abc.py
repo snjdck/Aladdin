@@ -1,4 +1,8 @@
 import struct
+import sys
+import os
+
+from swf import *
 
 def readS32(rawData, offset):
 	result  = count = 0
@@ -130,23 +134,48 @@ def genDoABC2Tag(symbol_list):
 
 	return encodeTag(82, tagBody)
 
-def main():
-	symbol_list = ["bg_png"]
+def calcClassName(filePath):
+	name = filePath
+	index = name.rfind(".")
+	if index >= 0:
+		name = name[1+index:] + "/" + name[0:index]
+	name = name.replace(".", "_")
+	name = name.replace("/", ".")
+	name = name.replace("\\", ".")
+	return name
+	return "assets.images." + name
+
+def main(filePath):
+	if not os.path.exists(filePath):
+		return "file not exist."
+
+	symbol_list = []
+	path_list = []
+	if os.path.isfile(filePath):
+		symbol_list.append(calcClassName(os.path.basename(filePath)))
+		path_list.append(filePath)
+	else:
+		for parent, dirnames, filenames in os.walk(filePath):
+			for filename in filenames:
+				path = os.path.join(parent, filename)
+				filename = os.path.relpath(path, filePath)
+				symbol_list.append(calcClassName(filename))
+				path_list.append(path)
+
 	result = bytes()
 	result += b"\x08\x00\x00\x18\x01\x00"
 	result += b"\x44\x11\x09\x00\x00\x00"
 	for i in range(len(symbol_list)):
-		result += genImageTag(i+1, symbol_list[i])
+		result += genImageTag(i+1, path_list[i])
 	result += genDoABC2Tag(symbol_list)
 	result += genSymbolClassTag(symbol_list)
 	result += b"\x40\x00\x00\x00"
-	result =  struct.pack("<I", len(result)+8) + result
-	result =  b"\x46\x57\x53\x24" + result
-	with open("test.swf", "wb") as f:
-		f.write(result)
+	with open(os.path.dirname(filePath) + "/test.swf", "wb") as f:
+		f.write(encodeLzmaSWF(result, 0))
+
+	return "success."
 
 
 
-
-main()
-input()
+if __name__ == "__main__":
+	input(main(sys.argv[1]))
