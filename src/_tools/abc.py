@@ -85,8 +85,7 @@ def genDoABC2Tag(symbol_list):
 	#namespace cache
 	tagBody += writeS32(len(package_list)+1)
 	for line in package_list:
-		tagBody += struct.pack("B", 0x16)
-		tagBody += writeS32(string_list.index(line) + 1)
+		tagBody += b"\x16" + writeS32(string_list.index(line) + 1)
 
 	#ns set
 	tagBody += writeS32(0)
@@ -101,9 +100,7 @@ def genDoABC2Tag(symbol_list):
 		else:
 			pIndex = package_list.index(line[:index])
 			cIndex = string_list.index(line[index+1:])
-		tagBody += struct.pack("B", 7)
-		tagBody += writeS32(pIndex+1)
-		tagBody += writeS32(cIndex+1)
+		tagBody += b"\x07" + writeS32(pIndex+1) + writeS32(cIndex+1)
 
 
 	#method info
@@ -118,8 +115,7 @@ def genDoABC2Tag(symbol_list):
 	for i in range(len(symbol_list)):
 		tagBody += writeS32(i + 1)
 		tagBody += writeS32(len(export_class_list))
-		tagBody += struct.pack("B", 1)
-		tagBody += writeS32(0)
+		tagBody += b"\x01\x00"
 		tagBody += writeS32(i * 2 + 1)
 		tagBody += writeS32(0)
 	for i in range(len(symbol_list)):
@@ -132,7 +128,7 @@ def genDoABC2Tag(symbol_list):
 	tagBody += writeS32(len(symbol_list))
 	for i in range(len(symbol_list)):
 		tagBody += writeS32(i + 1)
-		tagBody += struct.pack("2B", 4, 0)
+		tagBody += b"\x04\x00"
 		tagBody += writeS32(i)
 
 	#method count
