@@ -144,14 +144,14 @@ def genDoABC2Tag(symbol_list):
 		#class init
 		tagBody += writeS32(i * 3 + 2) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
 		#script init
-		tagBody += writeS32(i * 3) + b"\x03\x01\x00\x05"
-		instruction  = b"\xd0\x30\x65\x00"
-		instruction += b"\x60"     + writeS32(len(symbol_list) + 1)
-		instruction += b"\x30\x60" + writeS32(len(symbol_list) + 2)
-		instruction += b"\x30\x60" + writeS32(len(symbol_list) + 3)
-		instruction += b"\x30\x60" + writeS32(len(symbol_list) + 4)
-		instruction += b"\x2a\x30\x58" + writeS32(i)
-		instruction += b"\x1d\x1d\x1d\x1d\x68" + writeS32(i + 1)
+		tagBody += writeS32(i * 3) + b"\x02\x01\x00\x05"
+		instruction  = b"\xd0\x30"
+		instruction += b"\x60" + writeS32(len(symbol_list) + 1) + b"\x30"
+		instruction += b"\x60" + writeS32(len(symbol_list) + 2) + b"\x30"
+		instruction += b"\x60" + writeS32(len(symbol_list) + 3) + b"\x30"
+		instruction += b"\x60" + writeS32(len(symbol_list) + 4) + b"\x30"
+		instruction += b"\xd0\x65\x04\x58" + writeS32(i)
+		instruction += b"\x68" + writeS32(i + 1)
 		instruction += b"\x47"
 		tagBody += writeS32(len(instruction))
 		tagBody += instruction
