@@ -75,11 +75,7 @@ def genDoABC2Tag(symbol_list):
 	export_class_list = symbol_list + ["Object", "flash.events.EventDispatcher", "flash.display.DisplayObject", "flash.display.Bitmap"]
 	string_list, package_list = calcStringList(export_class_list)
 
-	tagBody = bytes()
-	tagBody += b"\x01\x00\x00\x00"
-	tagBody += b"\x00"
-	tagBody += b"\x10\x00\x2e\x00"
-	tagBody += b"\x00\x00\x00"
+	tagBody = bytes.fromhex("01 00 00 00 00 10 00 2e 00 00 00 00")
 
 	#string cache
 	tagBody += writeS32(len(string_list)+1)
@@ -111,10 +107,8 @@ def genDoABC2Tag(symbol_list):
 
 
 	#method info
-	tagBody += writeS32(len(symbol_list) * 2 + 1)
-	tagBody += struct.pack("I", 0)
-	for symbol in symbol_list:
-		tagBody += struct.pack("2I", 0, 0)
+	count = len(symbol_list) * 2 + 1
+	tagBody += writeS32(count) + bytes(count * 4)
 
 	#metadata
 	tagBody += writeS32(0)
@@ -145,11 +139,11 @@ def genDoABC2Tag(symbol_list):
 	tagBody += writeS32(len(symbol_list) * 2 + 1)
 
 	for i in range(len(symbol_list)):
-		tagBody += writeS32(i * 2 + 1) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
-		tagBody += writeS32(i * 2 + 2) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
+		tagBody += writeS32(i * 2 + 1) + bytes.fromhex("00 01 00 00 01 47 00 00")
+		tagBody += writeS32(i * 2 + 2) + bytes.fromhex("00 01 00 00 01 47 00 00")
 
 	#script init
-	tagBody += b"\x00\x02\x01\x00\x05"
+	tagBody += bytes.fromhex("00 02 01 00 05")
 	instruction  = b"\xd0\x30"
 	instruction += b"\x60" + writeS32(len(symbol_list) + 1) + b"\x30"
 	instruction += b"\x60" + writeS32(len(symbol_list) + 2) + b"\x30"
@@ -175,7 +169,6 @@ def calcClassName(filePath):
 	name = name.replace("/", ".")
 	name = name.replace("\\", ".")
 	return name
-	return "assets.images." + name
 
 
 def main(filePath):
@@ -195,14 +188,12 @@ def main(filePath):
 				symbol_list.append(calcClassName(filename))
 				path_list.append(path)
 
-	result = bytes()
-	result += b"\x08\x00\x00\x18\x01\x00"
-	result += b"\x44\x11\x09\x00\x00\x00"
+	result = bytes.fromhex("08 00 00 18 01 00") + bytes.fromhex("44 11 09 00 00 00")
 	for i in range(len(symbol_list)):
 		result += genImageTag(i+1, path_list[i])
 	result += genDoABC2Tag(symbol_list)
 	result += genSymbolClassTag(symbol_list)
-	result += b"\x40\x00\x00\x00"
+	result += bytes.fromhex("40 00 00 00")
 	with open(os.path.dirname(filePath) + "/test.swf", "wb") as f:
 		f.write(encodeLzmaSWF(result, 0))
 
