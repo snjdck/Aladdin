@@ -16,7 +16,9 @@ def readS32(rawData, offset):
 
 
 def writeS32(value):
-	return struct.pack("B", value)
+	if value < 0x80:
+		return struct.pack("B", value)
+	return struct.pack("2B", 0x80 | (value & 0xFF), value >> 7)
 
 
 def encodeTag(tagType, tagBody):
@@ -107,9 +109,10 @@ def genDoABC2Tag(symbol_list):
 
 
 	#method info
-	tagBody += writeS32(len(symbol_list) * 3)
+	tagBody += writeS32(len(symbol_list) * 2 + 1)
+	tagBody += struct.pack("I", 0)
 	for symbol in symbol_list:
-		tagBody += struct.pack("3I", 0, 0, 0)
+		tagBody += struct.pack("2I", 0, 0)
 
 	#metadata
 	tagBody += writeS32(0)
@@ -121,43 +124,45 @@ def genDoABC2Tag(symbol_list):
 		tagBody += writeS32(len(export_class_list))
 		tagBody += struct.pack("B", 1)
 		tagBody += writeS32(0)
-		tagBody += writeS32(i * 3 + 1)
+		tagBody += writeS32(i * 2 + 1)
 		tagBody += writeS32(0)
 	for i in range(len(symbol_list)):
-		tagBody += writeS32(i * 3 + 2)
+		tagBody += writeS32(i * 2 + 2)
 		tagBody += writeS32(0)
 
 	#script count
+	tagBody += writeS32(1)
+	tagBody += writeS32(0)
 	tagBody += writeS32(len(symbol_list))
 	for i in range(len(symbol_list)):
-		tagBody += writeS32(i * 3)
-		tagBody += writeS32(1)
 		tagBody += writeS32(i + 1)
 		tagBody += struct.pack("2B", 4, 0)
 		tagBody += writeS32(i)
 
 	#method count
-	tagBody += writeS32(len(symbol_list) * 3)
+	tagBody += writeS32(len(symbol_list) * 2 + 1)
+
 	for i in range(len(symbol_list)):
-		#constructor
-		tagBody += writeS32(i * 3 + 1) + b"\x01\x01\x00\x00\x04\xd0\x49\x00\x47\x00\x00"
-		#class init
-		tagBody += writeS32(i * 3 + 2) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
-		#script init
-		tagBody += writeS32(i * 3) + b"\x02\x01\x00\x05"
-		instruction  = b"\xd0\x30"
-		instruction += b"\x60" + writeS32(len(symbol_list) + 1) + b"\x30"
-		instruction += b"\x60" + writeS32(len(symbol_list) + 2) + b"\x30"
-		instruction += b"\x60" + writeS32(len(symbol_list) + 3) + b"\x30"
-		instruction += b"\x60" + writeS32(len(symbol_list) + 4) + b"\x30"
+		tagBody += writeS32(i * 2 + 1) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
+		tagBody += writeS32(i * 2 + 2) + b"\x00\x01\x00\x00\x01\x47\x00\x00"
+
+	#script init
+	tagBody += b"\x00\x02\x01\x00\x05"
+	instruction  = b"\xd0\x30"
+	instruction += b"\x60" + writeS32(len(symbol_list) + 1) + b"\x30"
+	instruction += b"\x60" + writeS32(len(symbol_list) + 2) + b"\x30"
+	instruction += b"\x60" + writeS32(len(symbol_list) + 3) + b"\x30"
+	instruction += b"\x60" + writeS32(len(symbol_list) + 4) + b"\x30"
+	for i in range(len(symbol_list)):
 		instruction += b"\xd0\x65\x04\x58" + writeS32(i)
 		instruction += b"\x68" + writeS32(i + 1)
-		instruction += b"\x47"
-		tagBody += writeS32(len(instruction))
-		tagBody += instruction
-		tagBody += b"\x00\x00"
+	instruction += b"\x47"
+	tagBody += writeS32(len(instruction))
+	tagBody += instruction
+	tagBody += b"\x00\x00"
 
 	return encodeTag(82, tagBody)
+
 
 def calcClassName(filePath):
 	name = filePath
@@ -169,6 +174,7 @@ def calcClassName(filePath):
 	name = name.replace("\\", ".")
 	return name
 	return "assets.images." + name
+
 
 def main(filePath):
 	if not os.path.exists(filePath):
