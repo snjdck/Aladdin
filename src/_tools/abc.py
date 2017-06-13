@@ -3,6 +3,7 @@ import sys
 import os
 
 from swf import *
+from image import *
 
 def readS32(rawData, offset):
 	result  = count = 0
@@ -28,25 +29,11 @@ def encodeTag(tagType, tagBody):
 	return struct.pack("<HI", (tagType << 6) | 0x3F, tagBodySize) + tagBody
 
 
-def isPNG(data):
-	return data[:8] == b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"
-
-def parsePNG(data):
-	result = data[:8]
-	offset = 8
-	while offset < len(data):
-		head = data[offset+4:offset+8].decode()
-		size = struct.unpack_from(">I", data, offset)[0]
-		end = offset + size + 12
-		if not (head == "tEXt" or head == "zTXt" or head == "iTXt" or head == "tIME"):
-			result += data[offset:end]
-		offset = end
-	return result
-
 def parseImage(data):
 	if isPNG(data):
-		return parsePNG(data)
+		return optimizePNG(data)
 	return data
+
 
 def genImageTag(id, path):
 	with open(path, "rb") as f:
