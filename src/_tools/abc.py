@@ -52,7 +52,7 @@ def genSymbolClassTag(symbol_list):
 
 
 def calcStringList(export_class_list):
-	package_list = []
+	package_list = set()
 	string_list = set()
 	for line in export_class_list:
 		index = line.rfind(".")
@@ -61,18 +61,13 @@ def calcStringList(export_class_list):
 			package = ""
 			string_list.add(line)
 		else:
-			package = line[0:index]
+			package = line[:index]
 			string_list.add(line[index+1:])
 
-		package_list.append(package)
+		package_list.add(package)
 		string_list.add(package)
 
-	string_list = list(string_list)
-
-	for i in range(len(package_list)):
-		package_list[i] = string_list.index(package_list[i])
-
-	return string_list, package_list
+	return list(string_list), list(package_list)
 
 
 
@@ -93,9 +88,9 @@ def genDoABC2Tag(symbol_list):
 
 	#namespace cache
 	tagBody += writeS32(len(package_list)+1)
-	for i in package_list:
+	for line in package_list:
 		tagBody += struct.pack("B", 0x16)
-		tagBody += writeS32(i+1)
+		tagBody += writeS32(string_list.index(line) + 1)
 
 	#ns set
 	tagBody += writeS32(0)
@@ -105,10 +100,10 @@ def genDoABC2Tag(symbol_list):
 	for line in export_class_list:
 		index = line.rfind(".")
 		if index < 0:
-			pIndex = package_list.index(string_list.index(""))
+			pIndex = package_list.index("")
 			cIndex = string_list.index(line)
 		else:
-			pIndex = package_list.index(string_list.index(line[0:index]))
+			pIndex = package_list.index(line[:index])
 			cIndex = string_list.index(line[index+1:])
 		tagBody += struct.pack("B", 7)
 		tagBody += writeS32(pIndex+1)
