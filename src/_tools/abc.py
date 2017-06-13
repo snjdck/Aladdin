@@ -28,10 +28,29 @@ def encodeTag(tagType, tagBody):
 	return struct.pack("<HI", (tagType << 6) | 0x3F, tagBodySize) + tagBody
 
 
+def isPNG(data):
+	return data[:8] == b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"
+
+def parsePNG(data):
+	result = data[:8]
+	offset = 8
+	while offset < len(data):
+		head = data[offset+4:offset+8].decode()
+		size = struct.unpack_from(">I", data, offset)[0]
+		end = offset + size + 12
+		if not (head == "tEXt" or head == "zTXt" or head == "iTXt" or head == "tIME"):
+			result += data[offset:end]
+		offset = end
+	return result
+
+def parseImage(data):
+	if isPNG(data):
+		return parsePNG(data)
+	return data
 
 def genImageTag(id, path):
 	with open(path, "rb") as f:
-		data = f.read()
+		data = parseImage(f.read())
 	tagBody = struct.pack("<H", id) + data
 	return encodeTag(21, tagBody);
 
@@ -46,32 +65,33 @@ def genSymbolClassTag(symbol_list):
 
 
 def calcStringList(export_class_list):
+	package_list = []
 	string_list = set()
 	for line in export_class_list:
 		index = line.rfind(".")
+
 		if index < 0:
-			string_list.add("")
+			package = ""
 			string_list.add(line)
 		else:
-			string_list.add(line[0:index])
+			package = line[0:index]
 			string_list.add(line[index+1:])
-	return list(string_list)
 
+		package_list.append(package)
+		string_list.add(package)
 
+	string_list = list(string_list)
 
-def calcPacketList(string_list):
-	package_list = []
-	for i in range(len(string_list)):
-		line = string_list[i]
-		if len(line) == 0 or line.find(".") >= 0:
-			package_list.append(i)
-	return package_list
+	for i in range(len(package_list)):
+		package_list[i] = string_list.index(package_list[i])
+
+	return string_list, package_list
+
 
 
 def genDoABC2Tag(symbol_list):
 	export_class_list = symbol_list + ["Object", "flash.events.EventDispatcher", "flash.display.DisplayObject", "flash.display.Bitmap"]
-	string_list = calcStringList(export_class_list)
-	package_list = calcPacketList(string_list)
+	string_list, package_list = calcStringList(export_class_list)
 
 	tagBody = bytes()
 	tagBody += b"\x01\x00\x00\x00"
