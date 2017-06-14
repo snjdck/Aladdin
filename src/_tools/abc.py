@@ -39,18 +39,13 @@ def calcStringList(export_class_list):
 	string_list = set()
 	for line in export_class_list:
 		index = line.rfind(".")
-
 		if index < 0:
-			package = ""
+			package_list.add("")
 			string_list.add(line)
 		else:
-			package = line[:index]
+			package_list.add(line[:index])
 			string_list.add(line[index+1:])
-
-		package_list.add(package)
-		string_list.add(package)
-
-	return list(string_list), list(package_list)
+	return list(string_list | package_list), list(package_list)
 
 
 def genNewClassInstruction(index, name_offset, scopeIndex):
