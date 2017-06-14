@@ -18,9 +18,16 @@ def readS32(rawData, offset):
 
 
 def writeS32(value):
-	if value < 0x80:
-		return struct.pack("B", value)
-	return struct.pack("2B", 0x80 | (value & 0xFF), value >> 7)
+	result = bytes()
+	while True:
+		if value < 0x80:
+			result += struct.pack("B", value)
+			break
+		else:
+			result += struct.pack("B", 0x80 | (value & 0xFF))
+			value >>= 7
+	return result
+
 
 def isImage(path):
 	ext = os.path.splitext(path)[1]
