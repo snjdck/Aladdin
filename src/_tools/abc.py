@@ -199,11 +199,10 @@ def main(filePath):
 		result += genSymbolClassTag(symbol_list)
 	result += bytes.fromhex("40 00 00 00")
 
-	with open(os.path.dirname(filePath) + "/test.swf", "wb") as f:
-		f.write(encodeSWF(result, 13))
+	with open(filePath + ".swf", "wb") as f:
+		f.write(encodeLzmaSWF(result))
 
 	return "success."
-
 
 
 if __name__ == "__main__":

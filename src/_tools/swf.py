@@ -40,24 +40,18 @@ def visitTags(rawData, handler):
 		offset += tagHeadSize + tagBodySize
 	return start
 
-def encodeSWF(rawData, version):
+def encodeSWF(rawData, version=0):
+	if version < 9: version = 9
 	head = struct.pack("3sBI", b"FWS", version, len(rawData)+8)
 	return head + rawData
 
-def encodeZlibSWF(rawData, version):
+def encodeZlibSWF(rawData, version=0):
+	if version < 9: version = 9
 	head = struct.pack("3sBI", b"CWS", version, len(rawData)+8)
 	return head + zlib.compress(rawData, 9)
 
-def encodeLzmaSWF(rawData, version):
+def encodeLzmaSWF(rawData, version=0):
 	if version < 13: version = 13
-	body = findBestLzma(rawData)
+	body = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, 9)
 	head = struct.pack("3sB2I", b"ZWS", version, len(rawData)+8, len(body)-13)
 	return head + body[:5] + body[13:]
-
-def findBestLzma(rawData):
-	result = rawData
-	for i in range(10):
-		tempData = lzma.compress(rawData, lzma.FORMAT_ALONE, -1, i)
-		if len(tempData) < len(result):
-			result = tempData
-	return result
