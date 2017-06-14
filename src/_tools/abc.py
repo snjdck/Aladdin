@@ -3,7 +3,8 @@ import sys
 import os
 
 from swf import *
-from image import *
+from swf_tag import *
+
 
 def readS32(rawData, offset):
 	result  = count = 0
@@ -21,34 +22,16 @@ def writeS32(value):
 		return struct.pack("B", value)
 	return struct.pack("2B", 0x80 | (value & 0xFF), value >> 7)
 
+def isImage(path):
+	ext = os.path.splitext(path)[1]
+	return ext == ".png" or ext == ".jpg"
 
-def encodeTag(tagType, tagBody):
-	tagBodySize = len(tagBody)
-	if tagBodySize < 0x3F:
-		return struct.pack("<H", (tagType << 6) | tagBodySize) + tagBody
-	return struct.pack("<HI", (tagType << 6) | 0x3F, tagBodySize) + tagBody
-
-
-def parseImage(data):
-	if isPNG(data):
-		return optimizePNG(data)
-	return data
-
-
-def genImageTag(id, path):
+def genAssetTag(id, path):
 	with open(path, "rb") as f:
-		data = parseImage(f.read())
-	tagBody = struct.pack("<H", id) + data
-	return encodeTag(21, tagBody);
-
-
-
-def genSymbolClassTag(symbol_list):
-	tagBody = struct.pack("<H", len(symbol_list))
-	for i in range(len(symbol_list)):
-		tagBody += struct.pack("<H", i+1) + symbol_list[i].encode() + b"\x00"
-	return encodeTag(76, tagBody);
-
+		data = f.read()
+	if isImage(path):
+		return genImageTag(id, data)
+	return genBinaryTag(id, data)
 
 
 def calcStringList(export_class_list):
@@ -70,9 +53,33 @@ def calcStringList(export_class_list):
 	return list(string_list), list(package_list)
 
 
+def genNewClassInstruction(index, name_offset, scopeIndex):
+	instruction =  b"\xd0"
+	instruction += b"\x65" + writeS32(scopeIndex)
+	instruction += b"\x58" + writeS32(index)
+	instruction += b"\x68" + writeS32(index + name_offset)
+	return instruction
 
-def genDoABC2Tag(symbol_list):
-	export_class_list = symbol_list + ["Object", "flash.events.EventDispatcher", "flash.display.DisplayObject", "flash.display.Bitmap"]
+def genDoABC2Tag(symbol_list, path_list):
+	bitmap_count = len([path for path in path_list if isImage(path)])
+	bitmap_flag = bitmap_count > 0
+	bytearray_flag = bitmap_count < len(symbol_list)
+
+	if bitmap_flag and bytearray_flag:
+		reserved = ["Object", "flash.events.EventDispatcher", "flash.display.DisplayObject", "flash.display.Bitmap", "flash.utils.ByteArray"]
+	elif bitmap_flag:
+		reserved = ["Object", "flash.events.EventDispatcher", "flash.display.DisplayObject", "flash.display.Bitmap"]
+	elif bytearray_flag:
+		reserved = ["Object", "flash.utils.ByteArray"]
+
+	
+	name_offset = len(reserved) + 1
+	if bitmap_flag:
+		bitmap_index    = 1 + reserved.index("flash.display.Bitmap")
+	if bytearray_flag:
+		bytearray_index = 1 + reserved.index("flash.utils.ByteArray")
+	
+	export_class_list = reserved + symbol_list
 	string_list, package_list = calcStringList(export_class_list)
 
 	tagBody = bytes.fromhex("01 00 00 00 00 10 00 2e 00 00 00 00")
@@ -113,21 +120,18 @@ def genDoABC2Tag(symbol_list):
 	#class count
 	tagBody += writeS32(len(symbol_list))
 	for i in range(len(symbol_list)):
-		tagBody += writeS32(i + 1)
-		tagBody += writeS32(len(export_class_list))
+		tagBody += writeS32(i + name_offset)
+		tagBody += writeS32(bitmap_index if isImage(path_list[i]) else bytearray_index)
 		tagBody += b"\x01\x00"
-		tagBody += writeS32(i * 2 + 1)
-		tagBody += writeS32(0)
+		tagBody += writeS32(i * 2 + 1) + b"\x00"
 	for i in range(len(symbol_list)):
-		tagBody += writeS32(i * 2 + 2)
-		tagBody += writeS32(0)
+		tagBody += writeS32(i * 2 + 2) + b"\x00"
 
 	#script count
-	tagBody += writeS32(1)
-	tagBody += writeS32(0)
+	tagBody += b"\x01\x00"
 	tagBody += writeS32(len(symbol_list))
 	for i in range(len(symbol_list)):
-		tagBody += writeS32(i + 1)
+		tagBody += writeS32(i + name_offset)
 		tagBody += b"\x04\x00"
 		tagBody += writeS32(i)
 
@@ -140,14 +144,17 @@ def genDoABC2Tag(symbol_list):
 
 	#script init
 	tagBody += bytes.fromhex("00 02 01 00 05")
-	instruction  = b"\xd0\x30"
-	instruction += b"\x60" + writeS32(len(symbol_list) + 1) + b"\x30"
-	instruction += b"\x60" + writeS32(len(symbol_list) + 2) + b"\x30"
-	instruction += b"\x60" + writeS32(len(symbol_list) + 3) + b"\x30"
-	instruction += b"\x60" + writeS32(len(symbol_list) + 4) + b"\x30"
-	for i in range(len(symbol_list)):
-		instruction += b"\xd0\x65\x04\x58" + writeS32(i)
-		instruction += b"\x68" + writeS32(i + 1)
+	instruction  = bytes.fromhex("d0 30 60 01 30")
+	if bytearray_flag:
+		instruction += b"\x60" + writeS32(bytearray_index) + b"\x30"
+		for i in [i for i in range(len(symbol_list)) if not isImage(path_list[i])]:
+			instruction += genNewClassInstruction(i, name_offset, 2)
+	if bytearray_flag and bitmap_flag:
+		instruction += b"\x1d"
+	if bitmap_flag:
+		instruction += bytes.fromhex("60 02 30 60 03 30 60 04 30")
+		for i in [i for i in range(len(symbol_list)) if isImage(path_list[i])]:
+			instruction += genNewClassInstruction(i, name_offset, 4)
 	instruction += b"\x47"
 	tagBody += writeS32(len(instruction))
 	tagBody += instruction
@@ -185,13 +192,15 @@ def main(filePath):
 				path_list.append(path)
 
 	result = bytes.fromhex("08 00 00 18 01 00") + bytes.fromhex("44 11 09 00 00 00")
-	for i in range(len(symbol_list)):
-		result += genImageTag(i+1, path_list[i])
-	result += genDoABC2Tag(symbol_list)
-	result += genSymbolClassTag(symbol_list)
+	if len(symbol_list) > 0:
+		for i in range(len(symbol_list)):
+			result += genAssetTag(i+1, path_list[i])
+		result += genDoABC2Tag(symbol_list, path_list)
+		result += genSymbolClassTag(symbol_list)
 	result += bytes.fromhex("40 00 00 00")
+
 	with open(os.path.dirname(filePath) + "/test.swf", "wb") as f:
-		f.write(encodeLzmaSWF(result, 0))
+		f.write(encodeSWF(result, 13))
 
 	return "success."
 

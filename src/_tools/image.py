@@ -1,6 +1,13 @@
 import struct
 
 
+
+def optimizeImage(data):
+	if isPNG(data):
+		return optimizePNG(data)
+	return data
+
+
 def isPNG(data):
 	return data[:8] == b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"
 
