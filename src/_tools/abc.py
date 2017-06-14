@@ -24,7 +24,7 @@ def writeS32(value):
 
 def isImage(path):
 	ext = os.path.splitext(path)[1]
-	return ext == ".png" or ext == ".jpg"
+	return ext == ".png" or ext == ".jpg" or ext == ".gif"
 
 def genAssetTag(id, path):
 	with open(path, "rb") as f:
@@ -199,8 +199,9 @@ def main(filePath):
 		result += genSymbolClassTag(symbol_list)
 	result += bytes.fromhex("40 00 00 00")
 
+	result = encodeLzmaSWF(result)
 	with open(filePath + ".swf", "wb") as f:
-		f.write(encodeLzmaSWF(result))
+		f.write(result)
 
 	return "success."
 
