@@ -2,6 +2,19 @@ import struct
 from image import optimizeImage
 
 
+def decodeTag(rawData, offset):
+	flag = struct.unpack_from("<H", rawData, offset)[0]
+	tagType = flag >> 6
+	tagBodySize = flag & 0x3F
+	if tagBodySize == 0x3F:
+		tagHeadSize = 6
+		tagBodySize = struct.unpack_from("<HI", rawData, offset)[1]
+	else:
+		tagHeadSize = 2
+	return tagType, tagHeadSize, tagBodySize
+
+
+
 def encodeTag(tagType, tagBody):
 	tagBodySize = len(tagBody)
 	if tagBodySize < 0x3F:
