@@ -21,6 +21,7 @@ package
 	
 	import snjdck.editor.DragMgr;
 	import snjdck.editor.FunctionButtonView;
+	import snjdck.editor.TargetArranger;
 	import snjdck.editor.codegen.ClassDef;
 	import snjdck.editor.codegen.ClassFactory;
 	import snjdck.editor.codegen.ItemData;
@@ -38,6 +39,8 @@ package
 	[SWF(width="1000", height="600")]
 	public class EditorTest extends Sprite
 	{
+		static public var alignToStageFlag:Boolean;
+		
 		private var editArea:View = new View();
 		private var control:ImageControl = new ImageControl();
 		private var inspector:PropInspector = new PropInspector(control);
@@ -45,6 +48,8 @@ package
 		
 //		private var inspectorArea:Sprite = new Sprite();
 		private var funcBtnView:FunctionButtonView = new FunctionButtonView();
+		
+		
 		
 		private var fileTree:Tree = new Tree();
 		private var preview:ItemPreview = new ItemPreview();
@@ -56,6 +61,8 @@ package
 		
 		public function EditorTest()
 		{
+			
+			
 			$.root = this;
 //			inspectorArea.addChild(inspector);
 //			inspectorArea.x = stage.stageWidth - 200;
@@ -111,7 +118,17 @@ package
 		
 		private function __onFuncBtn(key:String):void
 		{
-			trace(key);
+			var targetList:Array = selectionLayer.getTargetList();
+			if(control.getTarget()){
+				targetList.push(control.getTarget());
+			}
+			var arranger:TargetArranger = new TargetArranger(targetList, currentViewWidth, currentViewHeight);
+			switch(key){
+				case "align left":
+					arranger.alignLeft(alignToStageFlag);
+					trace(key);
+					break;
+			}
 		}
 		
 		private function drawEditAreaBG():void

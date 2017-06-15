@@ -14,6 +14,11 @@ package snjdck.editor.selection
 			mouseEnabled = false;
 		}
 		
+		public function getTargetList():Array
+		{
+			return targetList.slice();
+		}
+		
 		public function toggleSelection(target:DisplayObject):void
 		{
 			var index:int = targetList.indexOf(target);
