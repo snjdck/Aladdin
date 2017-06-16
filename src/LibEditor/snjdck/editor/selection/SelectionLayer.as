@@ -1,16 +1,21 @@
 package snjdck.editor.selection
 {
 	import flash.display.DisplayObject;
+	import flash.display.ImageControl;
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
+	import flash.ui.Keyboard;
 	
 	import snjdck.GDI;
 	
 	public class SelectionLayer extends Sprite
 	{
+		private var control:ImageControl;
 		private var targetList:Array = [];
 		
-		public function SelectionLayer()
+		public function SelectionLayer(control:ImageControl)
 		{
+			this.control = control;
 			mouseEnabled = false;
 		}
 		
@@ -24,7 +29,7 @@ package snjdck.editor.selection
 			var index:int = targetList.indexOf(target);
 			if(index < 0){
 				var selection:SelectionTarget = new SelectionTarget(target);
-				selection.clickSignal.add(__onClick);
+				selection.addEventListener(MouseEvent.MOUSE_DOWN, __onClick);
 				addChild(selection);
 				targetList.push(target);
 			}else{
@@ -33,11 +38,18 @@ package snjdck.editor.selection
 			}
 		}
 		
-		private function __onClick(target:DisplayObject):void
+		private function __onClick(evt:MouseEvent):void
 		{
-			var index:int = targetList.indexOf(target);
-			removeChildAt(index);
-			targetList.removeAt(index);
+			var target:DisplayObject = (evt.currentTarget as SelectionTarget).target;
+			if(evt.shiftKey){
+				var index:int = targetList.indexOf(target);
+				removeChildAt(index);
+				targetList.removeAt(index);
+				
+			}else{
+				clearAll();
+				control.setTarget(target);
+			}
 		}
 		
 		public function addSelection(target:DisplayObject):void
@@ -52,7 +64,8 @@ package snjdck.editor.selection
 		
 		public function clearAll():void
 		{
-			
+			targetList.length = 0;
+			removeChildren();
 		}
 	}
 }
