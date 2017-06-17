@@ -53,7 +53,7 @@ package
 		
 		private var fileTree:Tree = new Tree();
 		private var preview:ItemPreview = new ItemPreview();
-		private var selectionLayer:SelectionLayer = new SelectionLayer();
+		private var selectionLayer:SelectionLayer = new SelectionLayer(control);
 		
 		private var currentFilePath:String;
 		private var currentViewWidth:Number;
@@ -265,6 +265,7 @@ package
 			if(evt.target == stage || evt.target == editArea){
 				control.setTarget(null);
 				inspector.clearTargetInfo();
+				selectionLayer.clearAll();
 				return;
 			}
 			if(!editArea.contains(evt.target as DisplayObject)){
@@ -276,6 +277,10 @@ package
 					control.setTarget(null);
 				}else{
 					selectionLayer.toggleSelection(target);
+					if(control.getTarget()){
+						selectionLayer.toggleSelection(control.getTarget());
+						control.setTarget(null);
+					}
 				}
 			}else{
 				control.setTarget(target);

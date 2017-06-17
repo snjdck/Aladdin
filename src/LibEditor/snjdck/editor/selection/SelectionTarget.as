@@ -9,24 +9,39 @@ package snjdck.editor.selection
 	
 	internal class SelectionTarget extends Sprite
 	{
-		private var target:DisplayObject;
+		internal var target:DisplayObject;
 		
-		public const clickSignal:Signal = new Signal(DisplayObject);
+//		public const clickSignal:Signal = new Signal(DisplayObject);
+		
+		private var targetX:Number;
+		private var targetY:Number;
 		
 		public function SelectionTarget(target:DisplayObject)
 		{
 			this.target = target;
+			redraw();
+		}
+		
+		private function redraw():void
+		{
+			graphics.clear();
 			graphics.lineStyle(0, 0xFF0000);
 			graphics.beginFill(0, 0);
 			GDI.drawRect(graphics, target.getRect(this));
 			graphics.endFill();
-			
-			addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown);
 		}
 		
-		private function __onMouseDown(evt:MouseEvent):void
+		public function saveTargetXY():void
 		{
-			clickSignal.notify(target);
+			targetX = target.x;
+			targetY = target.y;
+		}
+		
+		public function updateTargetXY(dx:Number, dy:Number):void
+		{
+			target.x = targetX + dx;
+			target.y = targetY + dy;
+			redraw();
 		}
 	}
 }
