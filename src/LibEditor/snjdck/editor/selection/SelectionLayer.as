@@ -4,11 +4,7 @@ package snjdck.editor.selection
 	import flash.display.ImageControl;
 	import flash.display.Sprite;
 	import flash.events.DragEventListener;
-	import flash.events.DragStartEventListener;
 	import flash.events.MouseEvent;
-	import flash.ui.Keyboard;
-	
-	import snjdck.GDI;
 	
 	public class SelectionLayer extends Sprite
 	{
@@ -32,11 +28,10 @@ package snjdck.editor.selection
 			if(index < 0){
 				var selection:SelectionTarget = new SelectionTarget(target);
 				addChild(selection);
-				selection.addEventListener(MouseEvent.MOUSE_DOWN, __onMouseDown);
-				selection.addEventListener(MouseEvent.CLICK, __onClick);
 				var listener:DragEventListener = new DragEventListener(selection);
 				listener.onBegin = __onBegin;
 				listener.onMove = __onMove;
+				listener.onClick = [__onClick, target];
 				targetList.push(target);
 			}else{
 				removeChildAt(index);
@@ -44,21 +39,15 @@ package snjdck.editor.selection
 			}
 		}
 		
-		private function __onClick(evt:MouseEvent):void
+		private function __onClick(evt:MouseEvent, target:DisplayObject):void
 		{
-			var target:DisplayObject = (evt.currentTarget as SelectionTarget).target;
-			if(!evt.shiftKey){
-				clearAll();
-				control.setTarget(target, false);
-			}
-		}
-		private function __onMouseDown(evt:MouseEvent):void
-		{
-			var target:DisplayObject = (evt.currentTarget as SelectionTarget).target;
 			if(evt.shiftKey){
 				var index:int = targetList.indexOf(target);
 				removeChildAt(index);
 				targetList.removeAt(index);
+			}else{
+				clearAll();
+				control.setTarget(target, false);
 			}
 		}
 		

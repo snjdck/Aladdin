@@ -2,16 +2,12 @@ package snjdck.editor.selection
 {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	import flash.events.MouseEvent;
-	import flash.signals.Signal;
 	
 	import snjdck.GDI;
 	
 	internal class SelectionTarget extends Sprite
 	{
 		internal var target:DisplayObject;
-		
-//		public const clickSignal:Signal = new Signal(DisplayObject);
 		
 		private var targetX:Number;
 		private var targetY:Number;

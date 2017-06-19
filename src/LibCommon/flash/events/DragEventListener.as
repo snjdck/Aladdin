@@ -12,6 +12,7 @@ package flash.events
 		public var onBegin:Object;
 		public var onMove:Object;
 		public var onEnd:Object;
+		public var onClick:Object;
 		
 		public function DragEventListener(target:InteractiveObject)
 		{
@@ -38,10 +39,7 @@ package flash.events
 			var dy:Number = evt.stageY - lastEvt.stageY;
 			if(moveFlag){
 				$lambda.call(onMove, dx, dy);
-			}else{
-				if(dx * dx + dy * dy <= 64){
-					return;
-				}
+			}else if(dx * dx + dy * dy > 64){
 				moveFlag = true;
 				$lambda.apply(onBegin);
 			}
@@ -52,8 +50,11 @@ package flash.events
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, __onMouseUp);
 			lastEvt = null;
-			moveFlag = false;
 			$lambda.apply(onEnd);
+			if(!moveFlag){
+				$lambda.call(onClick, evt);
+			}
+			moveFlag = false;
 		}
 	}
 }

@@ -48,7 +48,7 @@ package flash.display
 			return _target;
 		}
 		
-		public function setTarget(target:DisplayObject):void
+		public function setTarget(target:DisplayObject, mouseDownFlag:Boolean=true):void
 		{
 			if(_target == target){
 				return;
@@ -58,7 +58,9 @@ package flash.display
 			
 			if(_target != null){
 				updateSelf();
-				onMouseDown(this);
+				if(mouseDownFlag){
+					onMouseDown(this);
+				}
 				stage.focus = this;
 				visible = true;
 			}else{
@@ -70,6 +72,8 @@ package flash.display
 		private function updateSelf():void
 		{
 			onResize(_target.x, _target.y, _target.x + _target.width, _target.y + _target.height);
+//			var offset:Point = _target.localToGlobal(new Point());
+//			onResize(offset.x, offset.y, offset.x + _target.width, offset.y + _target.height);
 		}
 		
 		private function isCenterXDefined():Boolean
@@ -302,6 +306,10 @@ package flash.display
 			moveBtn.x = centerX;
 			moveBtn.y = topLeftY - 30;
 			
+//			var offset:Point = _target.parent.globalToLocal(new Point(topLeftX, topLeftY));
+//			
+//			_target.x = offset.x;
+//			_target.y = offset.y;
 			_target.x = topLeftX;
 			_target.y = topLeftY;
 			_target.width = newWidth;
