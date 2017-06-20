@@ -1,18 +1,17 @@
 package snjdck.editor
 {
 	import flash.display.DisplayObject;
-	import flash.display.DisplayObjectContainer;
 	import flash.display.Shape;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	import snjdck.editor.selection.SelectionLayer;
+	import flash.signals.Signal;
 	
 	public class AreaSelector extends Shape
 	{
 		static private const selectArea:Rectangle = new Rectangle();
 		static private const targetArea:Rectangle = new Rectangle();
+		static private const zeroPt:Point = new Point();
 		
 		private var beginX:Number;
 		private var beginY:Number;
@@ -20,20 +19,9 @@ package snjdck.editor
 		private var endX:Number;
 		private var endY:Number;
 		
-		private var selectionLayer:SelectionLayer;
+		public const updateSignal:Signal = new Signal();
 		
-		private var app:Object;
-		
-		public function AreaSelector(app:Object)
-		{
-			this.app = app;
-			this.selectionLayer = app["selectionLayer"];
-		}
-		
-		private function get editArea():DisplayObjectContainer
-		{
-			return app["editArea"];
-		}
+		public function AreaSelector(){}
 		
 		public function begin(evt:MouseEvent):void
 		{
@@ -48,23 +36,20 @@ package snjdck.editor
 			endX = evt.stageX;
 			endY = evt.stageY;
 			redraw();
-			
 			selectArea.setTo(
 				Math.min(beginX, endX),
 				Math.min(beginY, endY),
 				Math.abs(endX - beginX),
 				Math.abs(endY - beginY)
 			);
-			for(var i:int=0; i<editArea.numChildren; ++i){
-				var item:DisplayObject = editArea.getChildAt(i);
-				var pt:Point = item.localToGlobal(new Point());
-				targetArea.setTo(pt.x, pt.y, item.width, item.height);
-				if(selectArea.intersects(targetArea)){
-					selectionLayer.addSelection(item);
-				}else{
-					selectionLayer.delSelection(item);
-				}
-			}
+			updateSignal.notify();
+		}
+		
+		public function isInArea(target:DisplayObject):Boolean
+		{
+			var pt:Point = target.localToGlobal(zeroPt);
+			targetArea.setTo(pt.x, pt.y, target.width, target.height);
+			return selectArea.intersects(targetArea);
 		}
 		
 		private function __onMouseUp(evt:MouseEvent):void

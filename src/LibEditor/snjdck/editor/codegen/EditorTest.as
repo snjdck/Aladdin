@@ -60,7 +60,7 @@ package
 		private var currentViewWidth:Number;
 		private var currentViewHeight:Number;
 		
-		private var areaSelector:AreaSelector;
+		private const areaSelector:AreaSelector = new AreaSelector();
 		
 		public function EditorTest()
 		{
@@ -73,7 +73,7 @@ package
 			editArea.width = stage.stageWidth;
 			editArea.height = stage.stageHeight;
 			
-			areaSelector = new AreaSelector(this);
+			areaSelector.updateSignal.add(__onSelectArea);
 			
 			fileTree.y = 300;
 			fileTree.dataProvider = genFileTree(rootFile);
@@ -120,6 +120,18 @@ package
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, __onKeyDown);
 			stage.addEventListener(MouseEvent.MOUSE_DOWN, __onEdit);
 			EditItemMenu.Instance.attach(control);
+		}
+		
+		private function __onSelectArea():void
+		{
+			for(var i:int=0; i<editArea.numChildren; ++i){
+				var item:DisplayObject = editArea.getChildAt(i);
+				if(areaSelector.isInArea(item)){
+					selectionLayer.addSelection(item);
+				}else{
+					selectionLayer.delSelection(item);
+				}
+			}
 		}
 		
 		private function __onFuncBtn(key:String):void
@@ -252,6 +264,12 @@ package
 					break;
 				case KeyCode.E:
 					export();
+					break;
+				case KeyCode.C:
+					break;
+				case KeyCode.X:
+					break;
+				case KeyCode.V:
 					break;
 			}
 		}
