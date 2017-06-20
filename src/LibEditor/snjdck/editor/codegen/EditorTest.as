@@ -19,6 +19,7 @@ package
 	
 	import morn.core.components.View;
 	
+	import snjdck.editor.AreaSelector;
 	import snjdck.editor.DragMgr;
 	import snjdck.editor.FunctionButtonView;
 	import snjdck.editor.TargetArranger;
@@ -41,7 +42,7 @@ package
 	{
 		static public var alignToStageFlag:Boolean;
 		
-		private var editArea:View = new View();
+		public var editArea:View = new View();
 		private var control:ImageControl = new ImageControl();
 		private var inspector:PropInspector = new PropInspector(control);
 		private var controlList:ControlList = new ControlList();
@@ -53,11 +54,13 @@ package
 		
 		private var fileTree:Tree = new Tree();
 		private var preview:ItemPreview = new ItemPreview();
-		private var selectionLayer:SelectionLayer = new SelectionLayer(control);
+		public var selectionLayer:SelectionLayer = new SelectionLayer(control);
 		
 		private var currentFilePath:String;
 		private var currentViewWidth:Number;
 		private var currentViewHeight:Number;
+		
+		private var areaSelector:AreaSelector;
 		
 		public function EditorTest()
 		{
@@ -69,6 +72,8 @@ package
 			
 			editArea.width = stage.stageWidth;
 			editArea.height = stage.stageHeight;
+			
+			areaSelector = new AreaSelector(this);
 			
 			fileTree.y = 300;
 			fileTree.dataProvider = genFileTree(rootFile);
@@ -90,6 +95,7 @@ package
 			addChild(control);
 			addChild(selectionLayer);
 			addChild(funcBtnView);
+			addChild(areaSelector);
 			App.init(this);
 			
 			preview.right = 0;
@@ -266,6 +272,7 @@ package
 				control.setTarget(null);
 				inspector.clearTargetInfo();
 				selectionLayer.clearAll();
+				areaSelector.begin(evt);
 				return;
 			}
 			if(!editArea.contains(evt.target as DisplayObject)){

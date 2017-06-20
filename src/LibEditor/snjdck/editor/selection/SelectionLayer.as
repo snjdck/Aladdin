@@ -26,25 +26,16 @@ package snjdck.editor.selection
 		{
 			var index:int = targetList.indexOf(target);
 			if(index < 0){
-				var selection:SelectionTarget = new SelectionTarget(target);
-				addChild(selection);
-				var listener:DragEventListener = new DragEventListener(selection);
-				listener.onBegin = __onBegin;
-				listener.onMove = __onMove;
-				listener.onClick = [__onClick, target];
-				targetList.push(target);
+				addSelection(target);
 			}else{
-				removeChildAt(index);
-				targetList.removeAt(index);
+				delSelection(target);
 			}
 		}
 		
 		private function __onClick(evt:MouseEvent, target:DisplayObject):void
 		{
 			if(evt.shiftKey){
-				var index:int = targetList.indexOf(target);
-				removeChildAt(index);
-				targetList.removeAt(index);
+				delSelection(target);
 			}else{
 				clearAll();
 				control.setTarget(target, false);
@@ -53,12 +44,25 @@ package snjdck.editor.selection
 		
 		public function addSelection(target:DisplayObject):void
 		{
-			
+			var index:int = targetList.indexOf(target);
+			if(index < 0){
+				var selection:SelectionTarget = new SelectionTarget(target);
+				addChild(selection);
+				var listener:DragEventListener = new DragEventListener(selection);
+				listener.onBegin = __onBegin;
+				listener.onMove = __onMove;
+				listener.onClick = [__onClick, target];
+				targetList.push(target);
+			}
 		}
 		
 		public function delSelection(target:DisplayObject):void
 		{
-			
+			var index:int = targetList.indexOf(target);
+			if(index >= 0){
+				removeChildAt(index);
+				targetList.removeAt(index);
+			}
 		}
 		
 		public function clearAll():void
