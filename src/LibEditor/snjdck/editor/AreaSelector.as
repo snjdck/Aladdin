@@ -2,24 +2,23 @@ package snjdck.editor
 {
 	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
-	import flash.display.Sprite;
+	import flash.display.Shape;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import snjdck.editor.codegen.ItemData;
-	import snjdck.editor.menu.EditItemMenu;
 	import snjdck.editor.selection.SelectionLayer;
 	
-	public class AreaSelector extends Sprite
+	public class AreaSelector extends Shape
 	{
+		static private const selectArea:Rectangle = new Rectangle();
+		static private const targetArea:Rectangle = new Rectangle();
+		
 		private var beginX:Number;
 		private var beginY:Number;
 		
 		private var endX:Number;
 		private var endY:Number;
-		
-		private var selectArea:Rectangle = new Rectangle();
 		
 		private var selectionLayer:SelectionLayer;
 		
@@ -50,12 +49,17 @@ package snjdck.editor
 			endY = evt.stageY;
 			redraw();
 			
-			selectArea.setTo(beginX, beginY, endX-beginX, endY - beginY);
+			selectArea.setTo(
+				Math.min(beginX, endX),
+				Math.min(beginY, endY),
+				Math.abs(endX - beginX),
+				Math.abs(endY - beginY)
+			);
 			for(var i:int=0; i<editArea.numChildren; ++i){
 				var item:DisplayObject = editArea.getChildAt(i);
 				var pt:Point = item.localToGlobal(new Point());
-				var rect:Rectangle = new Rectangle(pt.x, pt.y, item.width, item.height);
-				if(selectArea.intersects(rect)){
+				targetArea.setTo(pt.x, pt.y, item.width, item.height);
+				if(selectArea.intersects(targetArea)){
 					selectionLayer.addSelection(item);
 				}else{
 					selectionLayer.delSelection(item);
@@ -65,10 +69,9 @@ package snjdck.editor
 		
 		private function __onMouseUp(evt:MouseEvent):void
 		{
+			graphics.clear();
 			stage.removeEventListener(MouseEvent.MOUSE_MOVE, __onMouseMove);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, __onMouseUp);
-//			trace(evt.stageX, evt.stageY, endX, endY);
-			graphics.clear();
 		}
 		
 		private function redraw():void
