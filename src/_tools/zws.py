@@ -1,6 +1,9 @@
 import struct
 import sys
 import os
+
+from swf_tag import encodeTag, genImageTag
+from instruction import optimize
 from swf import *
 
 tagList = []
@@ -14,9 +17,15 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 		tagBody = readUI32(rawData, offset+2)
 		tagBody &= 0xEF
 		tagList.append(rawData[offset:offset+2] + struct.pack("I", tagBody))
+	elif tagType == 21:
+		assetID = readUI16(rawData, offset+tagHeadSize)
+		imageData = rawData[offset+tagHeadSize+2:offset+tagHeadSize+tagBodySize]
+		tagList.append(genImageTag(assetID, imageData))
+	elif tagType == 82:
+		tagBody = rawData[offset+tagHeadSize:offset+tagHeadSize+tagBodySize]
+		tagList.append(encodeTag(tagType, optimize(tagBody)))
 	else:
-		tagSize = tagHeadSize + tagBodySize
-		tagList.append(rawData[offset:offset+tagSize])
+		tagList.append(rawData[offset:offset+tagHeadSize+tagBodySize])
 
 def main(filePath):
 	if not os.path.exists(filePath):
