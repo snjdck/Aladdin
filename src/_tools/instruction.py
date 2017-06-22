@@ -88,9 +88,9 @@ def optimize(tagBody):
 		for _ in range(readS32()): readS32()
 	for _ in range(readS32()-1):
 		flag = readUI8()
-		if flag == 7 or flag == 9 or flag == 14:
+		if flag in [7, 13, 9, 14]:
 			readS32(); readS32()
-		elif flag == 15 or flag == 27 or flag == 28:
+		elif flag in [15, 16, 27, 28]:
 			readS32()
 		elif flag == 29:
 			readS32()
