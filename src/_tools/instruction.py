@@ -13,10 +13,6 @@ def _readUI8(offset):
 	global rawData
 	return rawData[offset]
 
-def _readUI16(offset):
-	global rawData
-	return struct.unpack_from("<H", rawData, offset)[0]
-
 def _readS24(offset):
 	global rawData
 	return rawData[offset] | rawData[offset+1] << 8 | struct.unpack_from("b", rawData, offset+2)[0] << 16
@@ -36,12 +32,6 @@ def readUI8():
 	global offset
 	value = _readUI8(offset)
 	offset += 1
-	return value
-
-def readUI16():
-	global offset
-	value = _readUI16(offset)
-	offset += 2
 	return value
 
 def readS24():
@@ -93,14 +83,13 @@ def optimize(tagBody):
 	for _ in range(readS32()-1): readS32()
 	for _ in range(readS32()-1): offset += 8
 	for _ in range(readS32()-1): offset = readS32() + offset
-	for _ in range(readS32()-1): offset += 1; readS32()
+	for _ in range(readS32()-1): readUI8(); readS32()
 	for _ in range(readS32()-1):
 		for _ in range(readS32()): readS32()
 	for _ in range(readS32()-1):
 		flag = readUI8()
 		if flag == 7 or flag == 9 or flag == 14:
-			readS32()
-			readS32()
+			readS32(); readS32()
 		elif flag == 15 or flag == 27 or flag == 28:
 			readS32()
 		elif flag == 29:
@@ -135,10 +124,9 @@ def optimize(tagBody):
 	end = offset
 	result = rawData[:end]
 	for _ in range(readS32()):
-		methodID = readS32()
-		for _ in range(4): readS32()
-		codeLen = readS32()
+		for _ in range(5): readS32()
 		result += rawData[end:offset]
+		codeLen = readS32()
 		begin, end = offset, offset + codeLen
 		offset = end
 
@@ -154,114 +142,93 @@ def optimize(tagBody):
 			markCodeUsage(begin + exception, end, codeUsage)
 		markCodeUsage(begin, end, codeUsage)
 
-		begin, offset = offset, begin
-		result += parseInstruction(methodID, codeUsage, end)
-		offset = begin
+		code = parseInstruction(begin, end, codeUsage)
+		result += writeS32(len(code)) + code
 
 	result += rawData[end:]
 	assert len(rawData) == offset
 	return result
 
-def markCodeUsage(begin, end, codeUsage):
-	offset = begin
+
+def _readInstruction(opCode, offset):
+	value = None
+	if opCode in singleU32Imm:
+		value, count = _readS32(offset)
+		offset += count
+	elif opCode in doubleU32Imm:
+		_, count = _readS32(offset)
+		offset += count
+		_, count = _readS32(offset)
+		offset += count
+	elif opCode in singleS24Imm:
+		value = _readS24(offset)
+		offset += 3
+	elif opCode in singleByteImm:
+		_readUI8(offset)
+		offset += 1
+	elif opCode == OP_debug:
+		_readUI8(offset)
+		offset += 1
+		_, count = _readS32(offset)
+		offset += count
+		_readUI8(offset)
+		offset += 1
+		_, count  = _readS32(offset)
+		offset += count
+	elif opCode == OP_lookupswitch:
+		base = offset - 1
+		value = [base + _readS24(offset)]
+		offset += 3
+		caseCount, count = _readS32(offset)
+		offset += count
+		for _ in range(caseCount+1):
+			value.append(base + _readS24(offset))
+			offset += 3
+	return value, offset
+
+def markCodeUsage(offset, end, codeUsage):
 	while offset < end:
-		if offset in codeUsage:
-			return
+		if offset in codeUsage: return
 		codeUsage[offset] = True
 		opCode = _readUI8(offset)
-		offset += 1
-		if opCode in singleU32Imm:
-			value, count = _readS32(offset)
-			offset += count
-		elif opCode in doubleU32Imm:
-			_, count = _readS32(offset)
-			offset += count
-			_, count = _readS32(offset)
-			offset += count
-		elif opCode in singleS24Imm:
-			value = _readS24(offset)
-			offset += 3
-		elif opCode in singleByteImm:
-			_readUI8(offset)
-			offset += 1
-		elif opCode == OP_debug:
-			_readUI8(offset)
-			offset += 1
-			_, count = _readS32(offset)
-			offset += count
-			_readUI8(offset)
-			offset += 1
-			_, count  = _readS32(offset)
-			offset += count
-		elif opCode == OP_lookupswitch:
-			base = offset - 1
-			value = [base + _readS24(offset)]
-			offset += 3
-			caseCount, count = _readS32(offset)
-			offset += count
-			for _ in range(caseCount+1):
-				value.append(base + _readS24(offset))
-				offset += 3
+		if opCode in [OP_returnvoid, OP_returnvalue, OP_throw]: return
+		value, offset = _readInstruction(opCode, offset+1)
 
-		if opCode == OP_jump:
-			offset += value
-		elif opCode in singleS24Imm:
-			markCodeUsage(offset + value, end, codeUsage)
-		elif opCode == OP_returnvoid or opCode == OP_returnvalue or opCode == OP_throw:
-			return
+		if opCode == OP_jump: offset += value
+		elif opCode in singleS24Imm: markCodeUsage(offset + value, end, codeUsage)
 		elif opCode == OP_lookupswitch:
-			for base in value:
-				markCodeUsage(base, end, codeUsage)
+			for base in value: markCodeUsage(base, end, codeUsage)
 			return
 
 
-def parseInstruction(methodID, codeUsage, end):
-	global rawData, offset
-	begin = offset
-
+def parseInstruction(offset, end, codeUsage):
+	global rawData
 	result = bytes()
-
 	while offset < end:
-		mark = offset
-		opCode = readUI8()
+		opCode = _readUI8(offset)
+		mark, offset = offset, offset+1
 
 		if mark not in codeUsage:
-			readInstructionData(opCode)
-			for _ in range(offset - mark):
-				result += struct.pack("B", OP_nop)
-		elif opCode == OP_setlocal or opCode == OP_getlocal:
-			index = readS32()
-			if index < 4:
-				op = OP_setlocal0 if opCode == OP_setlocal else OP_getlocal0
-				result += struct.pack("2B", op + index, OP_nop)
-			else:
-				result += rawData[mark:offset]
+			_, offset = _readInstruction(opCode, offset)
+			result += struct.pack("B", OP_nop) * (offset - mark)
 		elif opCode in singleS24Imm:
-			index = readS24()
-			while rawData[offset + index] == OP_jump:
-				index += 4 + _readS24(offset + index + 1)
-			result += struct.pack("B", opCode) + writeS24(index)
+			index = _readS24(offset)
+			offset += 3
+			result += struct.pack("B", opCode)
+			result += writeS24(calcIndex(offset, index))
 		else:
-			readInstructionData(opCode)
+			_, offset = _readInstruction(opCode, offset)
 			result += rawData[mark:offset]
 
 	assert offset == end
 	return result
 
-def readInstructionData(opCode):
-	global rawData, offset
-	if opCode in singleU32Imm:    readS32()
-	elif opCode in doubleU32Imm:  readS32(); readS32()
-	elif opCode in singleS24Imm:  readS24()
-	elif opCode in singleByteImm: readUI8()
-	elif opCode == OP_debug:
-		readUI8()
-		readS32()
-		readUI8()
-		readS32()
-	elif opCode == OP_lookupswitch:
-		readS24()
-		for _ in range(readS32()+1): readS24()
+def calcIndex(offset, index):
+	while _readUI8(offset + index) == OP_jump:
+		index += 4 + _readS24(offset + index + 1)
+	return index
+
+
 
 OP_bkpt = 0x01
 OP_nop = 0x02
