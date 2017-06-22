@@ -132,20 +132,33 @@ def optimize(tagBody):
 	for _ in range(classCount): readMethodIndexAndTrait()
 	for _ in range(readS32()):  readMethodIndexAndTrait()
 
-	mark = offset
-	result = rawData[:mark]
+	end = offset
+	result = rawData[:end]
 	for _ in range(readS32()):
-		for _ in range(5): readS32()
-		result += rawData[mark:offset]
+		methodID = readS32()
+		for _ in range(4): readS32()
 		codeLen = readS32()
-		assert codeLen > 0, codeLen
-		code = parseInstruction(codeLen)
-		result += writeS32(len(code)) + code
-		mark = offset
+		result += rawData[end:offset]
+		begin, end = offset, offset + codeLen
+		offset = end
 
-		for _ in range(readS32()*5): readS32()
+		exceptionList = []
+		for _ in range(readS32()):
+			readS32(); readS32()
+			exceptionList.append(readS32())
+			readS32(); readS32()
 		readTrait()
-	result += rawData[mark:]
+		
+		codeUsage = {}
+		for exception in exceptionList:
+			markCodeUsage(begin + exception, end, codeUsage)
+		markCodeUsage(begin, end, codeUsage)
+
+		begin, offset = offset, begin
+		result += parseInstruction(methodID, codeUsage, end)
+		offset = begin
+
+	result += rawData[end:]
 	assert len(rawData) == offset
 	return result
 
@@ -181,57 +194,53 @@ def markCodeUsage(begin, end, codeUsage):
 			_, count  = _readS32(offset)
 			offset += count
 		elif opCode == OP_lookupswitch:
-			_readS24(offset)
+			base = offset - 1
+			value = [base + _readS24(offset)]
 			offset += 3
-			value, count = _readS32(offset)
-			offset += count + value * 3
+			caseCount, count = _readS32(offset)
+			offset += count
+			for _ in range(caseCount+1):
+				value.append(base + _readS24(offset))
+				offset += 3
 
 		if opCode == OP_jump:
 			offset += value
 		elif opCode in singleS24Imm:
-			assert begin <= offset + value and offset + value <= end
 			markCodeUsage(offset + value, end, codeUsage)
-		elif opCode == OP_returnvoid or opCode == OP_returnvalue:
+		elif opCode == OP_returnvoid or opCode == OP_returnvalue or opCode == OP_throw:
 			return
-	global rawData
-	if offset != end:
-		print(offset, begin, end)
-		print(rawData[begin:end])
+		elif opCode == OP_lookupswitch:
+			for base in value:
+				markCodeUsage(base, end, codeUsage)
+			return
 
 
-def parseInstruction(codeLen):
+def parseInstruction(methodID, codeUsage, end):
 	global rawData, offset
 	begin = offset
-	end = offset + codeLen
-	codeUsage = {}
-	markCodeUsage(begin, end, codeUsage)
+
 	result = bytes()
+
 	while offset < end:
 		mark = offset
 		opCode = readUI8()
 
 		if mark not in codeUsage:
-			#print("dead code")
 			readInstructionData(opCode)
 			for _ in range(offset - mark):
 				result += struct.pack("B", OP_nop)
-			continue
-
-		if opCode == OP_setlocal or opCode == OP_getlocal:
+		elif opCode == OP_setlocal or opCode == OP_getlocal:
 			index = readS32()
 			if index < 4:
 				op = OP_setlocal0 if opCode == OP_setlocal else OP_getlocal0
 				result += struct.pack("2B", op + index, OP_nop)
 			else:
 				result += rawData[mark:offset]
-		elif opCode == OP_jump:
+		elif opCode in singleS24Imm:
 			index = readS24()
-			oldIndex = index
 			while rawData[offset + index] == OP_jump:
 				index += 4 + _readS24(offset + index + 1)
 			result += struct.pack("B", opCode) + writeS24(index)
-			#if oldIndex != index:
-			#	print("jump optimized", oldIndex, index)
 		else:
 			readInstructionData(opCode)
 			result += rawData[mark:offset]
@@ -252,7 +261,7 @@ def readInstructionData(opCode):
 		readS32()
 	elif opCode == OP_lookupswitch:
 		readS24()
-		for _ in range(readS32()): readS24()
+		for _ in range(readS32()+1): readS24()
 
 OP_bkpt = 0x01
 OP_nop = 0x02
