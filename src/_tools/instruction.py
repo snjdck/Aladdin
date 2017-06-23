@@ -3,11 +3,19 @@ import struct
 rawData = None
 offset = 0
 
-def readString():
+def skipCString():
 	global rawData, offset
 	while rawData[offset] != 0:
 		offset += 1
 	offset += 1
+
+def skipString():
+	global offset
+	offset = readS32() + offset
+
+def skipNumber():
+	global offset
+	offset += 8
 
 def _readUI8(offset):
 	global rawData
@@ -60,6 +68,13 @@ def writeS32(value):
 			value >>= 7
 	return result
 
+def readMultiName():
+	flag = readUI8()
+	if flag in [7, 13, 9, 14]: readS32(); readS32()
+	elif flag in [15, 16, 27, 28]: readS32()
+	elif flag == 29: readS32(); readS32List()
+	else: assert False, flag
+
 def readTrait():
 	for _ in range(readS32()):
 		readS32()
@@ -72,59 +87,50 @@ def readTrait():
 			for _ in range(readS32()): readS32()
 
 def readMethodIndexAndTrait(): readS32(); readTrait()
+def readConstant(reader=None): readS32List(readS32()-1, reader)
+def readS32List(count=None, reader=None):
+	if count  == None: count = readS32()
+	if reader == None: reader = [readS32]
+	elif hasattr(reader, "__call__"): reader = [reader]
+	return [[func() for func in reader] for _ in range(count)]
+
 
 def optimize(tagBody):
 	global rawData, offset
 	rawData = tagBody
 	offset = 4
-	readString()
+	skipCString()
 	offset += 4
-	for _ in range(readS32()-1): readS32()
-	for _ in range(readS32()-1): readS32()
-	for _ in range(readS32()-1): offset += 8
-	for _ in range(readS32()-1): offset = readS32() + offset
-	for _ in range(readS32()-1): readUI8(); readS32()
-	for _ in range(readS32()-1):
-		for _ in range(readS32()): readS32()
-	for _ in range(readS32()-1):
-		flag = readUI8()
-		if flag in [7, 13, 9, 14]:
-			readS32(); readS32()
-		elif flag in [15, 16, 27, 28]:
-			readS32()
-		elif flag == 29:
-			readS32()
-			for _ in range(readS32()): readS32()
-		else:
-			print(flag)
-			break
+	readConstant()
+	readConstant()
+	readConstant(skipNumber)
+	readConstant(skipString)
+	readConstant([readUI8, readS32])
+	readConstant(readS32List)
+	readConstant(readMultiName)
+		
 	for _ in range(readS32()):
 		param_count = readS32()
 		readS32()
-		for _ in range(param_count): readS32()
+		readS32List(param_count)
 		readS32()
 		flag = readUI8()
-		if flag & 0x08:
-			for _ in range(readS32()): readS32(); readUI8()
-		if flag & 0x80:
-			for _ in range(param_count): readS32()
-	for _ in range(readS32()):
-		readS32()
-		for _ in range(readS32()): readS32(); readS32()
+		if flag & 0x08: readS32List(reader=[readS32, readUI8])
+		if flag & 0x80: readS32List(param_count)
+	readS32List(reader=[readS32, lambda:readS32List(reader=[readS32, readS32])])
 	classCount = readS32()
 	for _ in range(classCount):
-		readS32()
-		readS32()
+		readS32List(2)
 		if readUI8() & 0x08: readS32()
-		for _ in range(readS32()): readS32()
+		readS32List()
 		readMethodIndexAndTrait()
-	for _ in range(classCount): readMethodIndexAndTrait()
-	for _ in range(readS32()):  readMethodIndexAndTrait()
+	readS32List(classCount, readMethodIndexAndTrait)
+	readS32List(reader=readMethodIndexAndTrait)
 
 	end = offset
 	result = rawData[:end]
 	for _ in range(readS32()):
-		for _ in range(5): readS32()
+		readS32List(5)
 		result += rawData[end:offset]
 		codeLen = readS32()
 		begin, end = offset, offset + codeLen
@@ -132,9 +138,9 @@ def optimize(tagBody):
 
 		exceptionList = []
 		for _ in range(readS32()):
-			readS32(); readS32()
+			readS32List(2)
 			exceptionList.append(readS32())
-			readS32(); readS32()
+			readS32List(2)
 		readTrait()
 		
 		codeUsage = {}
