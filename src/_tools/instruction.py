@@ -105,7 +105,7 @@ def readTrait():
 	flag = readUI8()
 	readS32()
 	readS32()
-	if (flag & 0xF) == 0 or (flag & 0xF) == 6:
+	if (flag & 0xF) in (0, 6):
 		if readS32() != 0: readUI8()
 	if flag & 0x40: readS32List()
 
