@@ -75,20 +75,43 @@ def readMultiName():
 	elif flag == 29: readS32(); readS32List()
 	else: assert False, flag
 
-def readTrait():
-	for _ in range(readS32()):
-		readS32()
-		flag = readUI8()
-		readS32()
-		readS32()
-		if (flag & 0xF) == 0 or (flag & 0xF) == 6:
-			if readS32() != 0: readUI8()
-		if flag & 0x40:
-			for _ in range(readS32()): readS32()
+def readMethodInfo():
+	param_count = readS32()
+	readS32()
+	readS32List(count=param_count)
+	readS32()
+	flag = readUI8()
+	if flag & 0x08: readS32List([readS32, readUI8])
+	if flag & 0x80: readS32List(count=param_count)
 
-def readMethodIndexAndTrait(): readS32(); readTrait()
-def readConstant(reader=None): readS32List(readS32()-1, reader)
-def readS32List(count=None, reader=None):
+def readInstanceInfo():
+	readS32List(count=2)
+	if readUI8() & 0x08: readS32()
+	readS32List()
+	readMethodIndexAndTrait()
+
+def readMethodBody():
+	global offset
+	readS32List(count=5)
+	codeLen = readS32()
+	begin = offset
+	offset += codeLen
+	exceptionList = readS32List(lambda:readS32List(count=5)[2])
+	readS32List(readTrait)
+	return begin, begin+codeLen, exceptionList
+
+def readTrait():
+	readS32()
+	flag = readUI8()
+	readS32()
+	readS32()
+	if (flag & 0xF) == 0 or (flag & 0xF) == 6:
+		if readS32() != 0: readUI8()
+	if flag & 0x40: readS32List()
+
+def readMethodIndexAndTrait(): readS32(); readS32List(readTrait)
+def readConstant(reader=None): readS32List(reader, readS32()-1)
+def readS32List(reader=None, count=None):
 	if count  == None: count = readS32()
 	if reader == None: reader = readS32
 	if hasattr(reader, "__call__"):
@@ -98,7 +121,7 @@ def readS32List(count=None, reader=None):
 
 def optimize(tagBody):
 	global rawData, offset
-	rawData = tagBody
+	rawData = bytearray(tagBody)
 	offset = 4
 	skipCString()
 	offset += 4
@@ -109,49 +132,21 @@ def optimize(tagBody):
 	readConstant([readUI8, readS32])
 	readConstant(readS32List)
 	readConstant(readMultiName)
-		
-	for _ in range(readS32()):
-		param_count = readS32()
-		readS32()
-		readS32List(param_count)
-		readS32()
-		flag = readUI8()
-		if flag & 0x08: readS32List(reader=[readS32, readUI8])
-		if flag & 0x80: readS32List(param_count)
-	readS32List(reader=[readS32, lambda:readS32List(reader=[readS32, readS32])])
+	readS32List(readMethodInfo)
+	readS32List([readS32, lambda:readS32List([readS32, readS32])])
 	classCount = readS32()
-	for _ in range(classCount):
-		readS32List(2)
-		if readUI8() & 0x08: readS32()
-		readS32List()
-		readMethodIndexAndTrait()
-	readS32List(classCount, readMethodIndexAndTrait)
-	readS32List(reader=readMethodIndexAndTrait)
-
-	end = offset
-	result = rawData[:end]
-	for _ in range(readS32()):
-		readS32List(5)
-		result += rawData[end:offset]
-		codeLen = readS32()
-		begin, end = offset, offset + codeLen
-		offset = end
-
-		exceptionList = readS32List(reader=lambda:readS32List(5)[2])
-		readTrait()
-		
+	readS32List(readInstanceInfo, classCount)
+	readS32List(readMethodIndexAndTrait, classCount)
+	readS32List(readMethodIndexAndTrait)
+	methodBodyList = readS32List(readMethodBody)
+	assert len(rawData) == offset
+	for begin, end, exceptionList in methodBodyList:
 		codeUsage = {}
 		for exception in exceptionList:
 			markCodeUsage(begin + exception, end, codeUsage)
 		markCodeUsage(begin, end, codeUsage)
-
-		code = parseInstruction(begin, end, codeUsage)
-		result += writeS32(len(code)) + code
-
-	result += rawData[end:]
-	assert len(rawData) == offset
-	return result
-
+		parseInstruction(begin, end, codeUsage)
+	return rawData
 
 def _readInstruction(opCode, offset):
 	value = None
@@ -206,30 +201,23 @@ def markCodeUsage(offset, end, codeUsage):
 
 def parseInstruction(offset, end, codeUsage):
 	global rawData
-	result = bytes()
 	while offset < end:
 		mark = offset
 		opCode = _readUI8(offset)
 		_, offset = _readInstruction(opCode, offset+1)
 
 		if mark not in codeUsage:
-			result += struct.pack("B", OP_nop) * (offset - mark)
-			continue
-		result += struct.pack("B", opCode)
-
-		if opCode in singleS24Imm:
-			result += writeS24(calcIndex(offset, _readS24(mark+1)))
+			rawData[mark:offset] = struct.pack("B", OP_nop) * (offset - mark)
+		elif opCode in singleS24Imm:
+			rawData[mark+1:mark+4] = writeS24(calcIndex(mark+4, _readS24(mark+1)))
 		elif opCode == OP_lookupswitch:
-			result += writeS24(calcIndex(mark, _readS24(mark+1)))
+			rawData[mark+1:mark+4] = writeS24(calcIndex(mark  , _readS24(mark+1)))
 			caseCount, count = _readS32(mark+4)
-			result += writeS32(caseCount)
 			for i in range(caseCount+1):
-				result += writeS24(calcIndex(mark, _readS24(mark+4+count+i*3)))
-		else:
-			result += rawData[mark+1:offset]
+				begin = mark + 4 + count + i * 3
+				rawData[begin:begin+3] = writeS24(calcIndex(mark, _readS24(begin)))
 
 	assert offset == end
-	return result
 
 def calcIndex(offset, index):
 	while True:
