@@ -90,8 +90,9 @@ def readMethodIndexAndTrait(): readS32(); readTrait()
 def readConstant(reader=None): readS32List(readS32()-1, reader)
 def readS32List(count=None, reader=None):
 	if count  == None: count = readS32()
-	if reader == None: reader = [readS32]
-	elif hasattr(reader, "__call__"): reader = [reader]
+	if reader == None: reader = readS32
+	if hasattr(reader, "__call__"):
+		return [reader() for _ in range(count)]
 	return [[func() for func in reader] for _ in range(count)]
 
 
@@ -136,11 +137,7 @@ def optimize(tagBody):
 		begin, end = offset, offset + codeLen
 		offset = end
 
-		exceptionList = []
-		for _ in range(readS32()):
-			readS32List(2)
-			exceptionList.append(readS32())
-			readS32List(2)
+		exceptionList = readS32List(reader=lambda:readS32List(5)[2])
 		readTrait()
 		
 		codeUsage = {}
