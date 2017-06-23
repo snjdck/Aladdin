@@ -9,9 +9,12 @@ def skipCString():
 		offset += 1
 	offset += 1
 
-def skipString():
-	global offset
-	offset = readS32() + offset
+def readString():
+	global rawData, offset
+	size = readS32()
+	begin = offset
+	offset += size
+	return rawData[begin:offset].decode()
 
 def skipNumber():
 	global offset
@@ -110,7 +113,7 @@ def readTrait():
 	if flag & 0x40: readS32List()
 
 def readMethodIndexAndTrait(): readS32(); readS32List(readTrait)
-def readConstant(reader=None): readS32List(reader, readS32()-1)
+def readConstant(reader=None): return readS32List(reader, readS32()-1)
 def readS32List(reader=None, count=None):
 	if count  == None: count = readS32()
 	if reader == None: reader = readS32
@@ -119,27 +122,43 @@ def readS32List(reader=None, count=None):
 	return [[func() for func in reader] for _ in range(count)]
 
 
-def optimize(tagBody):
+def parseABC(tagBody):
 	global rawData, offset
-	rawData = bytearray(tagBody)
+	rawData = tagBody
 	offset = 4
 	skipCString()
 	offset += 4
 	readConstant()
 	readConstant()
 	readConstant(skipNumber)
-	readConstant(skipString)
-	readConstant([readUI8, readS32])
+	stringList    = readConstant(readString)
+	namespaceList = readConstant([readUI8, readS32])
 	readConstant(readS32List)
-	readConstant(readMultiName)
+	multiNameList = readConstant(readMultiName)
 	readS32List(readMethodInfo)
-	readS32List([readS32, lambda:readS32List([readS32, readS32])])
-	classCount = readS32()
-	readS32List(readInstanceInfo, classCount)
-	readS32List(readMethodIndexAndTrait, classCount)
-	readS32List(readMethodIndexAndTrait)
+	metadataList   = readS32List([readS32, lambda:readS32List([readS32, readS32])])
+	classCount     = readS32()
+	instanceList   = readS32List(readInstanceInfo, classCount)
+	classList      = readS32List(readMethodIndexAndTrait, classCount)
+	scriptList     = readS32List(readMethodIndexAndTrait)
 	methodBodyList = readS32List(readMethodBody)
 	assert len(rawData) == offset
+	return dict(
+		stringList=stringList,
+		namespaceList=namespaceList,
+		multiNameList=multiNameList,
+		metadataList=metadataList,
+		instanceList=instanceList,
+		classList=classList,
+		scriptList=scriptList,
+		methodBodyList=methodBodyList
+	)
+
+def optimize(tagBody):
+	info = parseABC(tagBody)
+	methodBodyList = info["methodBodyList"]
+	global rawData, offset
+	rawData = bytearray(tagBody)
 	for begin, end, exceptionList in methodBodyList:
 		codeUsage = {}
 		for exception in exceptionList:
