@@ -176,13 +176,12 @@ def _readInstruction(opCode, offset):
 		_, count  = _readS32(offset)
 		offset += count
 	elif opCode == OP_lookupswitch:
-		base = offset - 1
-		value = [base + _readS24(offset)]
+		value = [_readS24(offset)]
 		offset += 3
 		caseCount, count = _readS32(offset)
 		offset += count
 		for _ in range(caseCount+1):
-			value.append(base + _readS24(offset))
+			value.append(_readS24(offset))
 			offset += 3
 	return value, offset
 
@@ -192,12 +191,13 @@ def markCodeUsage(offset, end, codeUsage):
 		codeUsage[offset] = True
 		opCode = _readUI8(offset)
 		if opCode in [OP_returnvoid, OP_returnvalue, OP_throw]: return
+		mark = offset
 		value, offset = _readInstruction(opCode, offset+1)
 
-		if opCode == OP_jump: offset += value
-		elif opCode in singleS24Imm: markCodeUsage(offset + value, end, codeUsage)
+		if opCode == OP_jump: offset += calcIndex(offset, value)
+		elif opCode in singleS24Imm: markCodeUsage(offset + calcIndex(offset, value), end, codeUsage)
 		elif opCode == OP_lookupswitch:
-			for base in value: markCodeUsage(base, end, codeUsage)
+			for base in value: markCodeUsage(mark + calcIndex(mark, base), end, codeUsage)
 			return
 
 
@@ -205,27 +205,38 @@ def parseInstruction(offset, end, codeUsage):
 	global rawData
 	result = bytes()
 	while offset < end:
+		mark = offset
 		opCode = _readUI8(offset)
-		mark, offset = offset, offset+1
+		_, offset = _readInstruction(opCode, offset+1)
 
 		if mark not in codeUsage:
-			_, offset = _readInstruction(opCode, offset)
 			result += struct.pack("B", OP_nop) * (offset - mark)
-		elif opCode in singleS24Imm:
-			index = _readS24(offset)
-			offset += 3
-			result += struct.pack("B", opCode)
-			result += writeS24(calcIndex(offset, index))
+			continue
+		result += struct.pack("B", opCode)
+
+		if opCode in singleS24Imm:
+			result += writeS24(calcIndex(offset, _readS24(mark+1)))
+		elif opCode == OP_lookupswitch:
+			result += writeS24(calcIndex(mark, _readS24(mark+1)))
+			caseCount, count = _readS32(mark+4)
+			result += writeS32(caseCount)
+			for i in range(caseCount+1):
+				result += writeS24(calcIndex(mark, _readS24(mark+4+count+i*3)))
 		else:
-			_, offset = _readInstruction(opCode, offset)
-			result += rawData[mark:offset]
+			result += rawData[mark+1:offset]
 
 	assert offset == end
 	return result
 
 def calcIndex(offset, index):
-	while _readUI8(offset + index) == OP_jump:
-		index += 4 + _readS24(offset + index + 1)
+	while True:
+		if _readUI8(offset + index) == OP_jump:
+			index += 4 + _readS24(offset + index + 1)
+			continue
+		if _readUI8(offset + index) == OP_nop:
+			index += 1
+			continue
+		break
 	return index
 
 
