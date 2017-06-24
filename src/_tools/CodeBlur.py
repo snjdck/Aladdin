@@ -723,6 +723,7 @@ from swf import *
 
 tagList = []
 symbolSet = set()
+keywords = None
 
 def readSymbolClass(rawData, offset):
 	numSymbols = readUI16(rawData, offset)
@@ -747,8 +748,10 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 		readSymbolClass(rawData, offset)
 	if tagType == 0:
 		print(len(whiteSet), len(blackSet), len(whiteSet - blackSet))
-		print(len(whiteSet - blackSet - symbolSet))
+		print(len(whiteSet - blackSet - symbolSet - keywords))
+		print(whiteSet - blackSet - symbolSet - keywords)
 		#9602 3995 8965
+		#8677
 	tagList.append(rawData[offset-tagHeadSize:offset+tagBodySize])
 
 def main(filePath):
@@ -765,6 +768,10 @@ def main(filePath):
 	if not rawData:
 		return "invalid swf file."
 	
+	global keywords
+	with open("keywords.txt", "r") as f:
+		keywords = set(f.read().splitlines())
+
 	offset = visitTags(rawData, removeTags)
 	rawData = rawData[:offset]
 	for chunk in tagList:
