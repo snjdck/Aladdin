@@ -12,11 +12,11 @@ namespaceList = [None]
 namespaceSetList = [None]
 multinameList = [None]
 
-whiteSet = set()
-blackSet = set()
+whiteSet = set() #Trait, ParamName
+blackSet = set() #Metadata, defaultValue, pushString
 
 def skipCString():
-	global rawData, offset
+	global offset
 	while rawData[offset] != 0:
 		offset += 1
 	offset += 1
@@ -26,7 +26,7 @@ def skipNumber():
 	offset += 8
 
 def readString():
-	global rawData, offset
+	global offset
 	global stringList
 	size = readS32()
 	begin = offset
@@ -34,25 +34,20 @@ def readString():
 	stringList.append(rawData[begin:offset].decode())
 
 def readNamespace():
-	global stringList, namespaceList
 	readUI8()
 	index = readS32()
 	namespaceList.append(stringList[index])
 
 def readNamespaceSet():
-	global namespaceList, namespaceSetList
 	namespaceSetList.append(readS32List(lambda:namespaceList[readS32()]))
 
 def _readUI8(offset):
-	global rawData
 	return rawData[offset]
 
 def _readS24(offset):
-	global rawData
 	return avm.readS24(rawData, offset)
 
 def _readS32(offset):
-	global rawData
 	return avm.readS32(rawData, offset)
 
 def readUI8():
@@ -74,7 +69,6 @@ def readS32():
 	return value
 
 def readMultiName():
-	global multinameList, namespaceList, namespaceSetList, stringList
 	flag = readUI8()
 	if flag in [7, 13]:
 		multinameList.append((flag, namespaceList[readS32()], stringList[readS32()]))
@@ -93,11 +87,14 @@ def readMultiName():
 	else: assert False, flag
 
 
+def readParamName():
+	index = readS32()
+	whiteSet.add(stringList[index])
+
 def readDefaultParam(valueIndex):
-	global blackSet
-	flag = readUI8()
-	if flag == 1:
-		blackSet.add(valueIndex)
+	valueType = readUI8()
+	if valueType == 1:
+		blackSet.add(stringList[valueIndex])
 
 def readMethodInfo():
 	param_count = readS32()
@@ -106,7 +103,7 @@ def readMethodInfo():
 	readS32()
 	flag = readUI8()
 	if flag & 0x08: readS32List(lambda:readDefaultParam(readS32()))
-	if flag & 0x80: readS32List(count=param_count)
+	if flag & 0x80: readS32List(readParamName, param_count)
 
 def readInstanceInfo():
 	readS32List(count=2)
@@ -125,18 +122,14 @@ def readMethodBody():
 	return begin, begin+codeLen
 
 def readMetadataKV():
-	global blackSet
-	blackSet.add(readS32())
-	blackSet.add(readS32())
+	blackSet.add(stringList[readS32()])
+	blackSet.add(stringList[readS32()])
 
 def readMetadata():
-	global blackSet
-	blackSet.add(readS32())
+	blackSet.add(stringList[readS32()])
 	readS32List(readMetadataKV)
 
 def readTrait():
-	global traitFrom, multinameList
-	global whiteSet
 	multiname = multinameList[readS32()]
 	flag = readUI8()
 	readS32()
@@ -166,7 +159,7 @@ def readTrait():
 			assert False, multiname
 
 def readMethodIndexAndTrait(): readS32(); readS32List(readTrait)
-def readConstant(reader=None): return readS32List(reader, readS32()-1)
+def readConstant(reader=None): readS32List(reader, readS32()-1)
 def readS32List(reader=None, count=None):
 	if count  == None: count = readS32()
 	if reader == None: reader = readS32
@@ -204,16 +197,12 @@ def parseABC(tagBody):
 	return methodBodyList
 
 def optimize(tagBody):
-	global blackSet, whiteSet
-	global stringList
+
 	methodBodyList = parseABC(tagBody)
 	global rawData
 	rawData = bytearray(tagBody)
 	for begin, end in methodBodyList:
 		parseInstruction(begin, end)
-	print(len(whiteSet))
-	whiteSet = set(stringList.index(string) for string in whiteSet)
-	print([stringList[index] for index in (whiteSet - blackSet)])
 	return rawData
 
 def _readInstruction(opCode, offset):
@@ -253,14 +242,14 @@ def _readInstruction(opCode, offset):
 
 
 def parseInstruction(offset, end):
-	global blackSet
 	while offset < end:
 		mark = offset
 		opCode = _readUI8(offset)
 		_, offset = _readInstruction(opCode, offset+1)
 
 		if opCode == OP_pushstring:
-			blackSet.add(_readS32(mark+1)[0])
+			index = _readS32(mark+1)[0]
+			blackSet.add(stringList[index])
 
 	assert offset == end
 
@@ -733,13 +722,34 @@ from swf_tag import encodeTag, genImageTag
 from swf import *
 
 tagList = []
+symbolSet = set()
+
+def readSymbolClass(rawData, offset):
+	numSymbols = readUI16(rawData, offset)
+	offset += 2
+	for _ in range(numSymbols):
+		symbolId = readUI16(rawData, offset)
+		offset += 2
+		end = offset
+		while rawData[end] != 0:
+			end += 1
+		symbolName = rawData[offset:end].decode()
+		symbolSet.add(symbolName)
+		offset = end + 1
 
 def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
+	offset += tagHeadSize
 	if tagType == 82:
-		tagBody = rawData[offset+tagHeadSize:offset+tagHeadSize+tagBodySize]
+		tagBody = rawData[offset:offset+tagBodySize]
 		tagList.append(encodeTag(tagType, optimize(tagBody)))
 		return
-	tagList.append(rawData[offset:offset+tagHeadSize+tagBodySize])
+	if tagType == 76:
+		readSymbolClass(rawData, offset)
+	if tagType == 0:
+		print(len(whiteSet), len(blackSet), len(whiteSet - blackSet))
+		print(len(whiteSet - blackSet - symbolSet))
+		#9602 3995 8965
+	tagList.append(rawData[offset-tagHeadSize:offset+tagBodySize])
 
 def main(filePath):
 	if not os.path.exists(filePath):

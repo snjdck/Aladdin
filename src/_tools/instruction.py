@@ -22,15 +22,12 @@ def skipNumber():
 	offset += 8
 
 def _readUI8(offset):
-	global rawData
 	return rawData[offset]
 
 def _readS24(offset):
-	global rawData
 	return avm.readS24(rawData, offset)
 
 def _readS32(offset):
-	global rawData
 	return avm.readS32(rawData, offset)
 
 def readUI8():
@@ -191,7 +188,6 @@ def markCodeUsage(offset, end, codeUsage):
 
 
 def parseInstruction(offset, end, codeUsage):
-	global rawData
 	while offset < end:
 		mark = offset
 		opCode = _readUI8(offset)
