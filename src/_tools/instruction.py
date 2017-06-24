@@ -1,4 +1,8 @@
 import struct
+import avm
+
+writeS24 = avm.writeS24
+writeS32 = avm.writeS32
 
 rawData = None
 offset = 0
@@ -23,18 +27,11 @@ def _readUI8(offset):
 
 def _readS24(offset):
 	global rawData
-	return rawData[offset] | rawData[offset+1] << 8 | struct.unpack_from("b", rawData, offset+2)[0] << 16
+	return avm.readS24(rawData, offset)
 
 def _readS32(offset):
 	global rawData
-	result = count = 0
-	while True:
-		byte = rawData[offset + count]
-		result |= (byte & 0x7F) << (count * 7)
-		count += 1
-		if (byte & 0x80) == 0 or count > 4:
-			break
-	return result, count
+	return avm.readS32(rawData, offset)
 
 def readUI8():
 	global offset
@@ -53,20 +50,6 @@ def readS32():
 	value, count = _readS32(offset)
 	offset += count
 	return value
-
-def writeS24(value):
-	return struct.pack("2Bb", value & 0xFF, value >> 8 & 0xFF, value >> 16)
-
-def writeS32(value):
-	result = bytes()
-	while True:
-		if value < 0x80:
-			result += struct.pack("B", value)
-			break
-		else:
-			result += struct.pack("B", 0x80 | (value & 0xFF))
-			value >>= 7
-	return result
 
 def readMultiName():
 	flag = readUI8()

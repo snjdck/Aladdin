@@ -2,31 +2,9 @@ import struct
 import sys
 import os
 
+from avm import *
 from swf import *
 from swf_tag import *
-
-
-def readS32(rawData, offset):
-	result  = count = 0
-	while True:
-		byte = rawData[offset + count]
-		result |= (byte & 0x7F) << (count * 7)
-		count += 1
-		if (byte & 0x80) == 0 or count > 4:
-			break
-	return result, count
-
-
-def writeS32(value):
-	result = bytes()
-	while True:
-		if value < 0x80:
-			result += struct.pack("B", value)
-			break
-		else:
-			result += struct.pack("B", 0x80 | (value & 0xFF))
-			value >>= 7
-	return result
 
 
 def isImage(path):
