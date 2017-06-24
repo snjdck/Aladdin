@@ -9,12 +9,9 @@ def skipCString():
 		offset += 1
 	offset += 1
 
-def readString():
-	global rawData, offset
-	size = readS32()
-	begin = offset
-	offset += size
-	return rawData[begin:offset].decode()
+def skipString():
+	global offset
+	offset = readS32() + offset
 
 def skipNumber():
 	global offset
@@ -76,30 +73,30 @@ def readMultiName():
 	if flag in [7, 13, 9, 14]: readS32(); readS32()
 	elif flag in [15, 16, 27, 28]: readS32()
 	elif flag == 29: readS32(); readS32List()
-	else: assert False, flag
+	elif flag not in [17, 18]: assert False, hex(flag)
 
 def readMethodInfo():
 	param_count = readS32()
 	readS32()
-	readS32List(count=param_count)
+	readS32List(param_count)
 	readS32()
 	flag = readUI8()
 	if flag & 0x08: readS32List([readS32, readUI8])
-	if flag & 0x80: readS32List(count=param_count)
+	if flag & 0x80: readS32List(param_count)
 
 def readInstanceInfo():
-	readS32List(count=2)
+	readS32List(2)
 	if readUI8() & 0x08: readS32()
 	readS32List()
 	readMethodIndexAndTrait()
 
 def readMethodBody():
 	global offset
-	readS32List(count=5)
+	readS32List(5)
 	codeLen = readS32()
 	begin = offset
 	offset += codeLen
-	exceptionList = readS32List(lambda:readS32List(count=5)[2])
+	exceptionList = readS32List(lambda:readS32List(5)[2])
 	readS32List(readTrait)
 	return begin, begin+codeLen, exceptionList
 
@@ -108,13 +105,15 @@ def readTrait():
 	flag = readUI8()
 	readS32()
 	readS32()
-	if (flag & 0xF) in (0, 6):
-		if readS32() != 0: readUI8()
+	if flag & 0x0F in (0, 6):
+		if readS32(): readUI8()
 	if flag & 0x40: readS32List()
 
 def readMethodIndexAndTrait(): readS32(); readS32List(readTrait)
-def readConstant(reader=None): return readS32List(reader, readS32()-1)
+def readConstant(reader=None): readS32List(reader, readS32()-1)
 def readS32List(reader=None, count=None):
+	if count  == None and isinstance(reader, int):
+		reader, count = count, reader
 	if count  == None: count = readS32()
 	if reader == None: reader = readS32
 	if hasattr(reader, "__call__"):
@@ -131,33 +130,23 @@ def parseABC(tagBody):
 	readConstant()
 	readConstant()
 	readConstant(skipNumber)
-	stringList    = readConstant(readString)
-	namespaceList = readConstant([readUI8, readS32])
+	readConstant(skipString)
+	readConstant([readUI8, readS32])
 	readConstant(readS32List)
-	multiNameList = readConstant(readMultiName)
+	readConstant(readMultiName)
 	readS32List(readMethodInfo)
-	metadataList   = readS32List([readS32, lambda:readS32List([readS32, readS32])])
-	classCount     = readS32()
-	instanceList   = readS32List(readInstanceInfo, classCount)
-	classList      = readS32List(readMethodIndexAndTrait, classCount)
-	scriptList     = readS32List(readMethodIndexAndTrait)
+	readS32List([readS32, lambda:readS32List([readS32, readS32])])
+	classCount = readS32()
+	readS32List(readInstanceInfo, classCount)
+	readS32List(readMethodIndexAndTrait, classCount)
+	readS32List(readMethodIndexAndTrait)
 	methodBodyList = readS32List(readMethodBody)
 	assert len(rawData) == offset
-	return dict(
-		stringList=stringList,
-		namespaceList=namespaceList,
-		multiNameList=multiNameList,
-		metadataList=metadataList,
-		instanceList=instanceList,
-		classList=classList,
-		scriptList=scriptList,
-		methodBodyList=methodBodyList
-	)
+	return methodBodyList
 
 def optimize(tagBody):
-	info = parseABC(tagBody)
-	methodBodyList = info["methodBodyList"]
-	global rawData, offset
+	methodBodyList = parseABC(tagBody)
+	global rawData
 	rawData = bytearray(tagBody)
 	for begin, end, exceptionList in methodBodyList:
 		codeUsage = {}
