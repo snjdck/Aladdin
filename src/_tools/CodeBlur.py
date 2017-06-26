@@ -6,13 +6,13 @@ writeS32 = avm.writeS32
 
 rawData = None
 offset = 0
-traitFrom = None
-stringList = ["*"]
+
+stringList = [None]
 namespaceList = [None]
 namespaceSetList = [None]
 multinameList = [None]
 
-whiteSet = set() #Trait, ParamName
+whiteSet = set() #Trait, ParamName, MethodName, protectedNS
 blackSet = set() #Metadata, defaultValue, pushString
 
 def skipCString():
@@ -27,7 +27,6 @@ def skipNumber():
 
 def readString():
 	global offset
-	global stringList
 	size = readS32()
 	begin = offset
 	offset += size
@@ -77,37 +76,39 @@ def readMultiName():
 	elif flag in [15, 16]:
 		multinameList.append((flag, stringList[readS32()]))
 	elif flag in [27, 28]:
-		multinameList.append((flag, namespaceList[readS32()]))
+		multinameList.append((flag, namespaceSetList[readS32()]))
 	elif flag == 29:
-		readS32()
-		readS32List()
-		multinameList.append((flag, None))
+		multinameList.append((flag, stringList[readS32()], readS32List()))
 	elif flag in [17, 18]:
 		multinameList.append((flag, None))
 	else: assert False, flag
 
 
 def readParamName():
-	index = readS32()
-	whiteSet.add(stringList[index])
+	whiteSet.add(stringList[readS32()])
 
 def readDefaultParam(valueIndex):
 	valueType = readUI8()
 	if valueType == 1:
 		blackSet.add(stringList[valueIndex])
+	elif valueType == 8:
+		blackSet.add(namespaceList[valueIndex])
 
 def readMethodInfo():
 	param_count = readS32()
 	readS32()
 	readS32List(count=param_count)
-	readS32()
+	nameIndex = readS32()
+	if nameIndex: whiteSet.add(stringList[nameIndex])
 	flag = readUI8()
 	if flag & 0x08: readS32List(lambda:readDefaultParam(readS32()))
 	if flag & 0x80: readS32List(readParamName, param_count)
 
 def readInstanceInfo():
-	readS32List(count=2)
-	if readUI8() & 0x08: readS32()
+	addMultinameToWhiteSet(readS32())
+	readS32()
+	if readUI8() & 0x08:
+		whiteSet.add(namespaceList[readS32()])
 	readS32List()
 	readMethodIndexAndTrait()
 
@@ -117,9 +118,9 @@ def readMethodBody():
 	codeLen = readS32()
 	begin = offset
 	offset += codeLen
-	readS32List(lambda:readS32List(count=5)[2])
+	readS32List(lambda:addMultinameToWhiteSet(readS32List(count=5)[4]))
 	readS32List(readTrait)
-	return begin, begin+codeLen
+	return begin, begin + codeLen
 
 def readMetadataKV():
 	blackSet.add(stringList[readS32()])
@@ -130,33 +131,24 @@ def readMetadata():
 	readS32List(readMetadataKV)
 
 def readTrait():
-	multiname = multinameList[readS32()]
+	addMultinameToWhiteSet(readS32())
 	flag = readUI8()
 	readS32()
 	readS32()
 	if (flag & 0xF) in (0, 6):
 		valueIndex = readS32()
-		if valueIndex:
-			readDefaultParam(valueIndex)
+		if valueIndex: readDefaultParam(valueIndex)
 	if flag & 0x40: readS32List()
-	if traitFrom == "Instance":
-		if multiname[0] == 7:
-			whiteSet.add(multiname[1])
-			whiteSet.add(multiname[2])
-		else:
-			assert False, multiname
-	if traitFrom == "Class":
-		if multiname[0] == 7:
-			whiteSet.add(multiname[1])
-			whiteSet.add(multiname[2])
-		else:
-			assert False, multiname
-	elif traitFrom == "Script":
-		if multiname[0] == 7:
-			whiteSet.add(multiname[1])
-			whiteSet.add(multiname[2])
-		else:
-			assert False, multiname
+
+def addMultinameToWhiteSet(index):
+	if index == 0: return
+	multiname = multinameList[index]
+	if multiname[0] == 7:
+		whiteSet.add(multiname[1])
+		whiteSet.add(multiname[2])
+		#print("instance",multiname)
+	else:
+		assert False, multiname
 
 def readMethodIndexAndTrait(): readS32(); readS32List(readTrait)
 def readConstant(reader=None): readS32List(reader, readS32()-1)
@@ -170,7 +162,16 @@ def readS32List(reader=None, count=None):
 
 def parseABC(tagBody):
 	global rawData, offset
-	global traitFrom
+	global stringList
+	global namespaceList
+	global namespaceSetList
+	global multinameList
+
+	stringList = [None]
+	namespaceList = [None]
+	namespaceSetList = [None]
+	multinameList = [None]
+
 	rawData = tagBody
 	offset = 4
 	skipCString()
@@ -185,19 +186,14 @@ def parseABC(tagBody):
 	readS32List(readMethodInfo)
 	readS32List(readMetadata)
 	classCount = readS32()
-	traitFrom = "Instance"
 	readS32List(readInstanceInfo, classCount)
-	traitFrom = "Class"
 	readS32List(readMethodIndexAndTrait, classCount)
-	traitFrom = "Script"
 	readS32List(readMethodIndexAndTrait)
-	traitFrom = "MethodBody"
 	methodBodyList = readS32List(readMethodBody)
 	assert len(rawData) == offset
 	return methodBodyList
 
 def optimize(tagBody):
-
 	methodBodyList = parseABC(tagBody)
 	global rawData
 	rawData = bytearray(tagBody)
@@ -747,11 +743,14 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 	if tagType == 76:
 		readSymbolClass(rawData, offset)
 	if tagType == 0:
-		print(len(whiteSet), len(blackSet), len(whiteSet - blackSet))
-		print(len(whiteSet - blackSet - symbolSet - keywords))
-		print(whiteSet - blackSet - symbolSet - keywords)
+		#print(len(whiteSet), len(blackSet), len(whiteSet - blackSet))
+		#print(len(whiteSet - blackSet - symbolSet - keywords))
+		#print(instanceList - whiteSet)
+		#print(whiteSet - blackSet - symbolSet - keywords)
 		#9602 3995 8965
 		#8677
+		print(set(stringList) - whiteSet - blackSet - symbolSet - keywords)
+		#print(baseclassSet - whiteSet)
 	tagList.append(rawData[offset-tagHeadSize:offset+tagBodySize])
 
 def main(filePath):
