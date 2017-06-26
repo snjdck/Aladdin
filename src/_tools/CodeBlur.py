@@ -143,12 +143,22 @@ def readTrait():
 def addMultinameToWhiteSet(index):
 	if index == 0: return
 	multiname = multinameList[index]
-	if multiname[0] == 7:
+	flag = multiname[0]
+
+	if flag in [7, 13]:
 		whiteSet.add(multiname[1])
 		whiteSet.add(multiname[2])
-		#print("instance",multiname)
-	else:
-		assert False, multiname
+	elif flag in [9, 14]:
+		whiteSet.add(multiname[1])
+		for name in multiname[2]: whiteSet.add(name)
+	elif flag in [15, 16]:
+		whiteSet.add(multiname[1])
+	elif flag in [27, 28]:
+		for name in multiname[1]: whiteSet.add(name)
+	elif flag == 29:
+		whiteSet.add(multiname[1])
+		for nameIndex in multiname[2]: addMultinameToWhiteSet(nameIndex)
+	else: assert False, multiname
 
 def readMethodIndexAndTrait(): readS32(); readS32List(readTrait)
 def readConstant(reader=None): readS32List(reader, readS32()-1)
@@ -207,7 +217,7 @@ def _readInstruction(opCode, offset):
 		value, count = _readS32(offset)
 		offset += count
 	elif opCode in doubleU32Imm:
-		_, count = _readS32(offset)
+		value, count = _readS32(offset)
 		offset += count
 		_, count = _readS32(offset)
 		offset += count
@@ -239,13 +249,13 @@ def _readInstruction(opCode, offset):
 
 def parseInstruction(offset, end):
 	while offset < end:
-		mark = offset
 		opCode = _readUI8(offset)
-		_, offset = _readInstruction(opCode, offset+1)
+		value, offset = _readInstruction(opCode, offset+1)
 
 		if opCode == OP_pushstring:
-			index = _readS32(mark+1)[0]
-			blackSet.add(stringList[index])
+			blackSet.add(stringList[value])
+		elif opCode in hasNameImm:
+			addMultinameToWhiteSet(value)
 
 	assert offset == end
 
@@ -708,6 +718,11 @@ singleS24Imm = [ OP_jump, OP_iftrue, OP_iffalse, OP_ifeq, OP_ifne,
   OP_ifnlt, OP_ifstricteq, OP_ifstrictne ]
 
 singleByteImm = [ OP_pushbyte, OP_getscopeobject ]
+
+hasNameImm = [ OP_getsuper, OP_setsuper, OP_callsuper, OP_callproperty, OP_constructprop,
+  OP_callsupervoid, OP_callpropvoid, OP_getdescendants, OP_findpropstrict, OP_findproperty,
+  OP_finddef, OP_getlex, OP_setproperty, OP_getproperty, OP_initproperty, OP_deleteproperty, OP_coerce,
+  OP_astype, OP_istype ]
 
 
 import struct
