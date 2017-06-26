@@ -12,7 +12,7 @@ namespaceList = [None]
 namespaceSetList = [None]
 multinameList = [None]
 
-whiteSet = set() #Trait, ParamName, MethodName, protectedNS
+whiteSet = set() #Trait, ParamName, MethodName, protectedNS, instructionHasName
 blackSet = set() #Metadata, defaultValue, pushString
 
 def skipCString():
@@ -105,7 +105,7 @@ def readMethodInfo():
 	if flag & 0x80: readS32List(readParamName, param_count)
 
 def readInstanceInfo():
-	addMultinameToWhiteSet(readS32())
+	readS32()
 	readS32()
 	if readUI8() & 0x08:
 		whiteSet.add(namespaceList[readS32()])
@@ -118,7 +118,7 @@ def readMethodBody():
 	codeLen = readS32()
 	begin = offset
 	offset += codeLen
-	readS32List(lambda:addMultinameToWhiteSet(readS32List(count=5)[4]))
+	readS32List(lambda:readS32List(count=5))
 	readS32List(readTrait)
 	return begin, begin + codeLen
 
@@ -758,14 +758,11 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 	if tagType == 76:
 		readSymbolClass(rawData, offset)
 	if tagType == 0:
-		#print(len(whiteSet), len(blackSet), len(whiteSet - blackSet))
-		#print(len(whiteSet - blackSet - symbolSet - keywords))
-		#print(instanceList - whiteSet)
-		#print(whiteSet - blackSet - symbolSet - keywords)
-		#9602 3995 8965
-		#8677
+		print(len(whiteSet), len(blackSet), len(whiteSet - blackSet))
+		print(len(whiteSet - blackSet - symbolSet - keywords))
 		print(set(stringList) - whiteSet - blackSet - symbolSet - keywords)
-		#print(baseclassSet - whiteSet)
+		#print(whiteSet - blackSet - symbolSet - keywords)
+
 	tagList.append(rawData[offset-tagHeadSize:offset+tagBodySize])
 
 def main(filePath):
