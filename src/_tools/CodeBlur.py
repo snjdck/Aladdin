@@ -35,8 +35,7 @@ def readString():
 
 def readNamespace():
 	readUI8()
-	index = readS32()
-	namespaceList.append(stringList[index])
+	namespaceList.append(stringList[readS32()])
 
 def readNamespaceSet():
 	namespaceSetList.append(readS32List(lambda:namespaceList[readS32()]))

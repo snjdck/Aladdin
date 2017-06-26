@@ -9,7 +9,7 @@ rawData = None
 offset = 0
 
 def skipCString():
-	global rawData, offset
+	global offset
 	while rawData[offset] != 0:
 		offset += 1
 	offset += 1
