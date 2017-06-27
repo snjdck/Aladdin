@@ -6,10 +6,8 @@ import avm2
 
 def optimize(tagBody):
 	methodBodyList = parseABC(tagBody)
-	rawData = bytearray(tagBody)
 	for begin, end, _ in methodBodyList:
 		parseInstruction(begin, end)
-	return rawData
 
 
 
@@ -34,9 +32,9 @@ import os
 from swf_tag import encodeTag, genImageTag
 from swf import *
 
-tagList = []
 symbolSet = set()
 keywords = None
+infoList = []
 
 def readSymbolClass(rawData, offset):
 	numSymbols = readUI16(rawData, offset)
@@ -55,29 +53,10 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 	offset += tagHeadSize
 	if tagType == 82:
 		tagBody = rawData[offset:offset+tagBodySize]
-		tagList.append(encodeTag(tagType, optimize(tagBody)))
-		return
+		optimize(tagBody)
+		infoList.append((offset, stringLocationList.copy()))
 	if tagType == 76:
 		readSymbolClass(rawData, offset)
-	if tagType == 0:
-		print(len(whiteSet), len(blackSet), len(whiteSet - blackSet))
-		print(len(whiteSet - blackSet - symbolSet - keywords))
-		print(set(stringList) - whiteSet - blackSet - symbolSet - keywords)
-		newSet = whiteSet - blackSet - symbolSet - keywords
-		namespaceSet = set(namespaceList)
-		print(namespaceSet - whiteSet)
-		def testFuck(name):
-			if name != "FilePrivateNS" and name not in whiteSet and name not in keywords:
-				print(name)
-		for namespace in whiteSet & namespaceSet:
-			index = namespace.rfind(":")
-			if index < 0:
-				testFuck(namespace)
-			else:
-				testFuck(namespace[:index])
-				testFuck(namespace[index+1:])
-
-	tagList.append(rawData[offset-tagHeadSize:offset+tagBodySize])
 
 def main(filePath):
 	if not os.path.exists(filePath):
@@ -98,9 +77,32 @@ def main(filePath):
 		keywords = set(f.read().splitlines())
 
 	offset = visitTags(rawData, removeTags)
-	rawData = rawData[:offset]
-	for chunk in tagList:
-		rawData += chunk
+
+	rawData = bytearray(rawData)
+
+	print(set(stringList) - whiteSet - blackSet - symbolSet - keywords)
+	namespaceSet = set(namespaceList)
+	finalSet = whiteSet - blackSet - symbolSet - keywords
+	finaDict = {}
+	mixSet = finalSet.copy()
+	mixDict = {}
+	for namespace in finalSet & namespaceSet:
+		if ":" in namespace:
+			mixSet.remove(namespace)
+	
+	for item in mixSet:
+		t = list(item)
+		t.reverse()
+		mixDict[item] = "".join(t)
+
+	for name in finalSet:
+		finaDict[name] = mixDict[name] if name in mixDict else ":".join(mixDict.get(item, item) for item in name.split(":"))
+
+	for name in finaDict:
+		index = stringList.index(name)
+		begin, end = stringLocationList[index]
+		print(rawData[begin:end])
+		#assert rawData[begin:end].decode() == name
 
 	dotIndex = filePath.rfind(".")
 	outputPath = filePath[:dotIndex] + "Mixed" + filePath[dotIndex:]

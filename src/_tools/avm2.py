@@ -2,6 +2,7 @@ from opcode import *
 import avm
 
 __all__ = (
+	"stringLocationList",
 	"stringList",
 	"namespaceList",
 	"whiteSet",
@@ -20,6 +21,7 @@ __all__ = (
 writeS24 = avm.writeS24
 writeS32 = avm.writeS32
 
+stringLocationList = [None]
 stringList = [None]
 namespaceList = [None]
 namespaceSetList = [None]
@@ -50,6 +52,7 @@ def readString():
 	size = readS32()
 	begin = offset
 	offset += size
+	stringLocationList.append((begin, offset))
 	stringList.append(rawData[begin:offset].decode())
 
 def _readUI8(offset):
@@ -200,6 +203,7 @@ def parseABC(tagBody):
 	rawData = tagBody
 	offset = 4
 
+	del stringLocationList[1:]
 	del stringList[1:]
 	del namespaceList[1:]
 	del namespaceSetList[1:]
