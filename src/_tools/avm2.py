@@ -175,24 +175,28 @@ def readTrait():
 		if valueIndex: readDefaultParam(valueIndex)
 	if flag & 0x40: readS32List()
 
-def addMultinameToWhiteSet(index):
+def addMultinameToWhiteSet(index, packageOnlyFlag=False):
 	if index == 0: return
 	multiname = multinameList[index]
 	flag = multiname[0]
 
 	if flag in [7, 13]:
 		whiteSet.add(multiname[1])
-		whiteSet.add(multiname[2])
+		if not packageOnlyFlag:
+			whiteSet.add(multiname[2])
 	elif flag in [9, 14]:
-		whiteSet.add(multiname[1])
+		if not packageOnlyFlag:
+			whiteSet.add(multiname[1])
 		for name in multiname[2]: whiteSet.add(name)
 	elif flag in [15, 16]:
-		whiteSet.add(multiname[1])
+		if not packageOnlyFlag:
+			whiteSet.add(multiname[1])
 	elif flag in [27, 28]:
 		for name in multiname[1]: whiteSet.add(name)
 	elif flag == 29:
-		whiteSet.add(multiname[1])
-		for nameIndex in multiname[2]: addMultinameToWhiteSet(nameIndex)
+		if not packageOnlyFlag:
+			whiteSet.add(multiname[1])
+		for nameIndex in multiname[2]: addMultinameToWhiteSet(nameIndex, packageOnlyFlag)
 	else: assert False, multiname
 
 def addStringToBlackSet(index):

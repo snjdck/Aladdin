@@ -20,7 +20,7 @@ def parseInstruction(offset, end):
 		if opCode == OP_pushstring:
 			addStringToBlackSet(value)
 		elif opCode in hasNameImm:
-			addMultinameToWhiteSet(value)
+			addMultinameToWhiteSet(value, True)
 
 	assert offset == end
 
@@ -33,7 +33,6 @@ from swf_tag import encodeTag, genImageTag
 from swf import *
 
 symbolSet = set()
-keywords = None
 infoList = []
 
 def readSymbolClass(rawData, offset):
@@ -72,8 +71,7 @@ def reverseName(name):
 		return name
 	if "." in name:
 		return name[::-1].replace(".", "_")
-	print(name)
-	return name
+	return name[::-1]
 
 
 def main(filePath):
@@ -90,17 +88,24 @@ def main(filePath):
 	if not rawData:
 		return "invalid swf file."
 	
-	global keywords
+	keywords = None
+	excludeList = set()
+
 	with open("keywords.txt", "r") as f:
 		keywords = set(f.read().splitlines())
+
+	if os.path.exists("exclude.txt"):
+		with open("exclude.txt") as f:
+			excludeList = set(f.read().splitlines())
 
 	offset = visitTags(rawData, removeTags)
 
 	rawData = bytearray(rawData)
 
 	print(set(stringList) - whiteSet - blackSet - symbolSet - keywords)
+
 	namespaceSet = set(namespaceList)
-	finalSet = whiteSet - blackSet - symbolSet - keywords
+	finalSet = whiteSet - blackSet - symbolSet - keywords - excludeList
 	finaDict = {}
 	mixSet = finalSet.copy()
 	mixDict = {}
@@ -109,7 +114,7 @@ def main(filePath):
 		if "/" in name or ":" in name:
 			mixSet.remove(name)
 
-	print(len(mixSet), len(mixSet & namespaceSet))
+	print(len(mixSet), len(mixSet - namespaceSet))
 	
 	for item in mixSet:
 		mixDict[item] = reverseName(item)
@@ -119,6 +124,7 @@ def main(filePath):
 		finaDict[name] = mixName.encode()
 
 	print("info count", len(infoList))
+	
 	for _offset, _stringList, _stringLocationList in infoList:
 		for name in finaDict:
 			if name not in _stringList:
@@ -130,6 +136,7 @@ def main(filePath):
 
 	dotIndex = filePath.rfind(".")
 	outputPath = filePath[:dotIndex] + "Mixed" + filePath[dotIndex:]
+	outputPath = filePath[:dotIndex-4] + filePath[dotIndex:]
 	
 	with open(outputPath, "wb") as f:
 		f.write(encodeLzmaSWF(rawData, version))
