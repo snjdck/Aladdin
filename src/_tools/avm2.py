@@ -1,11 +1,20 @@
-import struct
+from opcode import *
 import avm
 
-__all__ = ("writeS24", "writeS32", "skipCString", "skipString", "skipNumber", "readString", "_readUI8", "_readS24", "_readS32", "readUI8", "readS24", "readS32", "readConstant", "readS32List",
-	"addMultinameToWhiteSet",
+__all__ = (
+	"stringList",
+	"namespaceList",
 	"whiteSet",
 	"blackSet",
-	"stringList"
+	"writeS24",
+	"writeS32",
+	"_readUI8",
+	"_readS24",
+	"_readS32",
+	"parseABC",
+	"_readInstruction",
+	"addMultinameToWhiteSet",
+	"addStringToBlackSet"
 )
 
 writeS24 = avm.writeS24
@@ -126,12 +135,12 @@ def readParamName():
 	whiteSet.add(stringList[readS32()])
 
 def readMetadata():
-	blackSet.add(stringList[readS32()])
+	addStringToBlackSet(readS32())
 	readS32List(readMetadataKV)
 
 def readMetadataKV():
-	blackSet.add(stringList[readS32()])
-	blackSet.add(stringList[readS32()])
+	addStringToBlackSet(readS32())
+	addStringToBlackSet(readS32())
 
 def readInstanceInfo():
 	readS32List(2)
@@ -158,7 +167,7 @@ def readTrait():
 	addMultinameToWhiteSet(readS32())
 	flag = readUI8()
 	readS32List(2)
-	if (flag & 0xF) in (0, 6):
+	if flag & 0x0F in (0, 6):
 		valueIndex = readS32()
 		if valueIndex: readDefaultParam(valueIndex)
 	if flag & 0x40: readS32List()
@@ -183,6 +192,8 @@ def addMultinameToWhiteSet(index):
 		for nameIndex in multiname[2]: addMultinameToWhiteSet(nameIndex)
 	else: assert False, multiname
 
+def addStringToBlackSet(index):
+	blackSet.add(stringList[index])
 
 def parseABC(tagBody):
 	global rawData, offset
@@ -212,3 +223,39 @@ def parseABC(tagBody):
 	methodBodyList = readS32List(readMethodBody)
 	assert len(rawData) == offset
 	return methodBodyList
+
+
+def _readInstruction(opCode, offset):
+	value = None
+	if opCode in singleU32Imm:
+		value, count = _readS32(offset)
+		offset += count
+	elif opCode in doubleU32Imm:
+		value, count = _readS32(offset)
+		offset += count
+		_, count = _readS32(offset)
+		offset += count
+	elif opCode in singleS24Imm:
+		value = _readS24(offset)
+		offset += 3
+	elif opCode in singleByteImm:
+		value = _readUI8(offset)
+		offset += 1
+	elif opCode == OP_debug:
+		_readUI8(offset)
+		offset += 1
+		_, count = _readS32(offset)
+		offset += count
+		_readUI8(offset)
+		offset += 1
+		_, count  = _readS32(offset)
+		offset += count
+	elif opCode == OP_lookupswitch:
+		value = [_readS24(offset)]
+		offset += 3
+		caseCount, count = _readS32(offset)
+		offset += count
+		for _ in range(caseCount+1):
+			value.append(_readS24(offset))
+			offset += 3
+	return value, offset
