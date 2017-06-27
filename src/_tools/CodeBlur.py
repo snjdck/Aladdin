@@ -54,9 +54,27 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 	if tagType == 82:
 		tagBody = rawData[offset:offset+tagBodySize]
 		optimize(tagBody)
-		infoList.append((offset, stringLocationList.copy()))
+		infoList.append((offset, stringList.copy(), stringLocationList.copy()))
 	if tagType == 76:
 		readSymbolClass(rawData, offset)
+
+def calcMixName(name, mixDict):
+	if name in mixDict:
+		return mixDict[name]
+	if "/" in name:
+		return "/".join(calcMixName(item, mixDict) for item in name.split("/"))
+	if ":" in name:
+		return ":".join(mixDict.get(item, item) for item in name.split(":"))
+	return name
+
+def reverseName(name):
+	if name.startswith("as$"):
+		return name
+	if "." in name:
+		return name[::-1].replace(".", "_")
+	print(name)
+	return name
+
 
 def main(filePath):
 	if not os.path.exists(filePath):
@@ -86,23 +104,29 @@ def main(filePath):
 	finaDict = {}
 	mixSet = finalSet.copy()
 	mixDict = {}
-	for namespace in finalSet & namespaceSet:
-		if ":" in namespace:
-			mixSet.remove(namespace)
-	
-	for item in mixSet:
-		t = list(item)
-		t.reverse()
-		mixDict[item] = "".join(t)
 
 	for name in finalSet:
-		finaDict[name] = mixDict[name] if name in mixDict else ":".join(mixDict.get(item, item) for item in name.split(":"))
+		if "/" in name or ":" in name:
+			mixSet.remove(name)
 
-	for name in finaDict:
-		index = stringList.index(name)
-		begin, end = stringLocationList[index]
-		print(rawData[begin:end])
-		#assert rawData[begin:end].decode() == name
+	print(len(mixSet), len(mixSet & namespaceSet))
+	
+	for item in mixSet:
+		mixDict[item] = reverseName(item)
+
+	for name in finalSet:
+		mixName = calcMixName(name, mixDict)
+		finaDict[name] = mixName.encode()
+
+	print("info count", len(infoList))
+	for _offset, _stringList, _stringLocationList in infoList:
+		for name in finaDict:
+			if name not in _stringList:
+				continue
+			begin, end = _stringLocationList[_stringList.index(name)]
+			assert rawData[_offset+begin:_offset+end].decode() == name
+			assert len(finaDict[name]) == end - begin
+			rawData[_offset+begin:_offset+end] = finaDict[name]
 
 	dotIndex = filePath.rfind(".")
 	outputPath = filePath[:dotIndex] + "Mixed" + filePath[dotIndex:]
