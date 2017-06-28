@@ -5,23 +5,17 @@ import avm2
 
 
 def optimize(tagBody):
-	methodBodyList = parseABC(tagBody)
-	for begin, end, _ in methodBodyList:
+	for begin, end, _ in parseABC(tagBody):
 		parseInstruction(begin, end)
-
-
-
 
 def parseInstruction(offset, end):
 	while offset < end:
 		opCode = _readUI8(offset)
 		value, offset = _readInstruction(opCode, offset+1)
-
 		if opCode == OP_pushstring:
 			addStringToBlackSet(value)
 		elif opCode in hasNameImm:
 			addMultinameToWhiteSet(value, True)
-
 	assert offset == end
 
 
@@ -74,6 +68,16 @@ def reverseName(name):
 	return name[::-1]
 
 
+def readFile(path):
+	if os.path.exists(path):
+		with open(path) as f:
+			return set(f.read().splitlines())
+	return None
+
+def writeFile(path, data):
+	with open(path, "wb") as f:
+		f.write(data)
+
 def main(filePath):
 	if not os.path.exists(filePath):
 		return "file not exist."
@@ -88,17 +92,10 @@ def main(filePath):
 	if not rawData:
 		return "invalid swf file."
 	
-	keywords = None
-	excludeList = set()
+	keywords = readFile("keywords.txt")
+	excludeList = readFile("exclude.txt")
 
-	with open("keywords.txt", "r") as f:
-		keywords = set(f.read().splitlines())
-
-	if os.path.exists("exclude.txt"):
-		with open("exclude.txt") as f:
-			excludeList = set(f.read().splitlines())
-
-	offset = visitTags(rawData, removeTags)
+	visitTags(rawData, removeTags)
 
 	rawData = bytearray(rawData)
 
@@ -138,8 +135,7 @@ def main(filePath):
 	outputPath = filePath[:dotIndex] + "Mixed" + filePath[dotIndex:]
 	outputPath = filePath[:dotIndex-4] + filePath[dotIndex:]
 	
-	with open(outputPath, "wb") as f:
-		f.write(encodeLzmaSWF(rawData, version))
+	writeFile(outputPath, encodeLzmaSWF(rawData, version))
 	
 	return "success."
 
