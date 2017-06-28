@@ -84,14 +84,11 @@ def main(filePath):
 	rawData = bytearray(rawData)
 
 	totalStringSet = keywords.copy()
-	print(len(totalStringSet))
 	for _offset, _stringList, _stringLocationList in infoList:
 		totalStringSet |= set(_stringList)
-	print(len(totalStringSet))
 
-	print(set(stringList) - whiteSet - blackSet - symbolSet - keywords)
+	print(totalStringSet - whiteSet - blackSet - symbolSet - keywords)
 
-	namespaceSet = set(namespaceList)
 	finalSet = whiteSet - blackSet - symbolSet - keywords - excludeList
 	finaDict = mix(finalSet, totalStringSet)
 	
@@ -100,8 +97,6 @@ def main(filePath):
 			if name not in _stringList:
 				continue
 			begin, end = _stringLocationList[_stringList.index(name)]
-			assert rawData[_offset+begin:_offset+end].decode() == name
-			assert len(finaDict[name]) == end - begin
 			rawData[_offset+begin:_offset+end] = finaDict[name]
 
 	dotIndex = filePath.rfind(".")
