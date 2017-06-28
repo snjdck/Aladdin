@@ -43,7 +43,6 @@ flash.utils
 flash.xml
 mx.core
 
-mx_internal
 
 hasOwnProperty
 isPrototypeOf
@@ -4040,6 +4039,8 @@ AS3
 http://adobe.com/AS3/2006/builtin
 flash_proxy
 http://www.adobe.com/2006/actionscript/flash/proxy
+mx_internal
+http://www.adobe.com/2006/flex/mx/internal
 FilePrivateNS
 anonymous
 callee
