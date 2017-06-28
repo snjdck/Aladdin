@@ -4,7 +4,6 @@ import avm
 __all__ = (
 	"stringLocationList",
 	"stringList",
-	"namespaceList",
 	"whiteSet",
 	"blackSet",
 	"writeS24",

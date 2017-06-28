@@ -87,10 +87,8 @@ def main(filePath):
 	for _offset, _stringList, _stringLocationList in infoList:
 		totalStringSet |= set(_stringList)
 
-	print(totalStringSet - whiteSet - blackSet - symbolSet - keywords)
-
 	finalSet = whiteSet - blackSet - symbolSet - keywords - excludeList
-	finaDict = mix(finalSet, totalStringSet)
+	finaDict = mix(finalSet, totalStringSet.copy())
 	
 	for _offset, _stringList, _stringLocationList in infoList:
 		for name in finaDict:
@@ -101,9 +99,14 @@ def main(filePath):
 
 	dotIndex = filePath.rfind(".")
 	outputPath = filePath[:dotIndex] + "Mixed" + filePath[dotIndex:]
-	outputPath = filePath[:dotIndex-4] + filePath[dotIndex:]
 	
 	writeFile(outputPath, encodeLzmaSWF(rawData, version))
+
+	mixedNameList = "\r\n".join(item[0]+","+item[1].decode() for item in finaDict.items())
+	notMixedNameList = "\r\n".join(name for name in totalStringSet - whiteSet - blackSet - symbolSet - keywords if name)
+
+	writeFile(filePath[:dotIndex] + "Mixed.csv", mixedNameList.encode())
+	writeFile(filePath[:dotIndex] + "NotMixed.txt", notMixedNameList.encode())
 	
 	return "success."
 
