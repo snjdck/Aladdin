@@ -2,6 +2,7 @@
 from opcode import *
 from avm2 import *
 import avm2
+from namegen import *
 
 
 def optimize(tagBody):
@@ -51,23 +52,6 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 	if tagType == 76:
 		readSymbolClass(rawData, offset)
 
-def calcMixName(name, mixDict):
-	if name in mixDict:
-		return mixDict[name]
-	if "/" in name:
-		return "/".join(calcMixName(item, mixDict) for item in name.split("/"))
-	if ":" in name:
-		return ":".join(mixDict.get(item, item) for item in name.split(":"))
-	return name
-
-def reverseName(name):
-	if name.startswith("as$"):
-		return name
-	if "." in name:
-		return name[::-1].replace(".", "_")
-	return name[::-1]
-
-
 def readFile(path):
 	if os.path.exists(path):
 		with open(path) as f:
@@ -99,28 +83,17 @@ def main(filePath):
 
 	rawData = bytearray(rawData)
 
+	totalStringSet = keywords.copy()
+	print(len(totalStringSet))
+	for _offset, _stringList, _stringLocationList in infoList:
+		totalStringSet |= set(_stringList)
+	print(len(totalStringSet))
+
 	print(set(stringList) - whiteSet - blackSet - symbolSet - keywords)
 
 	namespaceSet = set(namespaceList)
 	finalSet = whiteSet - blackSet - symbolSet - keywords - excludeList
-	finaDict = {}
-	mixSet = finalSet.copy()
-	mixDict = {}
-
-	for name in finalSet:
-		if "/" in name or ":" in name:
-			mixSet.remove(name)
-
-	print(len(mixSet), len(mixSet - namespaceSet))
-	
-	for item in mixSet:
-		mixDict[item] = reverseName(item)
-
-	for name in finalSet:
-		mixName = calcMixName(name, mixDict)
-		finaDict[name] = mixName.encode()
-
-	print("info count", len(infoList))
+	finaDict = mix(finalSet, totalStringSet)
 	
 	for _offset, _stringList, _stringLocationList in infoList:
 		for name in finaDict:
