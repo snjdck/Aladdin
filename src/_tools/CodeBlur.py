@@ -1,4 +1,3 @@
-
 from opcode import *
 from avm2 import *
 import avm2
@@ -15,8 +14,6 @@ def parseInstruction(offset, end):
 		value, offset = _readInstruction(opCode, offset+1)
 		if opCode == OP_pushstring:
 			addStringToBlackSet(value)
-		elif opCode in hasNameImm:
-			addMultinameToWhiteSet(value, True)
 	assert offset == end
 
 
@@ -62,6 +59,19 @@ def writeFile(path, data):
 	with open(path, "wb") as f:
 		f.write(data)
 
+keywords = readFile("keywords.txt")
+excludeList = readFile("exclude.txt")
+
+def isKeyword(name):
+	if name in keywords:
+		return True
+	if ":" in name:
+		for item in name.split(":"):
+			if item not in keywords:
+				return False
+		return True
+	return False
+
 def main(filePath):
 	if not os.path.exists(filePath):
 		return "file not exist."
@@ -76,9 +86,6 @@ def main(filePath):
 	if not rawData:
 		return "invalid swf file."
 	
-	keywords = readFile("keywords.txt")
-	excludeList = readFile("exclude.txt")
-
 	visitTags(rawData, removeTags)
 
 	rawData = bytearray(rawData)
@@ -88,8 +95,24 @@ def main(filePath):
 		totalStringSet |= set(_stringList)
 
 	finalSet = whiteSet - blackSet - symbolSet - keywords - excludeList
-	finaDict = mix(finalSet, totalStringSet.copy())
 	
+	for name in set(namespaceList) - whiteSet - blackSet - symbolSet - keywords:
+		if not name: continue
+		if name.startswith(FilePrivateNS):
+			if name[len(FilePrivateNS):] in finalSet:
+				finalSet.add(name)
+		else:
+			m = AS_FILE.match(name)
+			if m:
+				if m.group(1) in finalSet:
+					finalSet.add(name)
+			elif not isKeyword(name):
+				finalSet.add(name)
+	
+	print(len(set(namespaceList) - blackSet - finalSet))
+	print(set(namespaceList) - blackSet - finalSet)
+	finaDict = mix(finalSet, totalStringSet.copy())
+
 	for _offset, _stringList, _stringLocationList in infoList:
 		for name in finaDict:
 			if name not in _stringList:

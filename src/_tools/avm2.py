@@ -4,6 +4,7 @@ import avm
 __all__ = (
 	"stringLocationList",
 	"stringList",
+	"namespaceList",
 	"whiteSet",
 	"blackSet",
 	"writeS24",
@@ -13,7 +14,6 @@ __all__ = (
 	"_readS32",
 	"parseABC",
 	"_readInstruction",
-	"addMultinameToWhiteSet",
 	"addStringToBlackSet"
 )
 
@@ -26,7 +26,7 @@ namespaceList = [None]
 namespaceSetList = [None]
 multinameList = [None]
 
-whiteSet = set() #Trait, ParamName, MethodName, protectedNS, instructionHasName
+whiteSet = set() #Trait, ParamName, MethodName, protectedNS
 blackSet = set() #Metadata, defaultValue, pushString
 
 rawData = None
@@ -174,28 +174,24 @@ def readTrait():
 		if valueIndex: readDefaultParam(valueIndex)
 	if flag & 0x40: readS32List()
 
-def addMultinameToWhiteSet(index, packageOnlyFlag=False):
+def addMultinameToWhiteSet(index):
 	if index == 0: return
 	multiname = multinameList[index]
 	flag = multiname[0]
 
 	if flag in [7, 13]:
 		whiteSet.add(multiname[1])
-		if not packageOnlyFlag:
-			whiteSet.add(multiname[2])
+		whiteSet.add(multiname[2])
 	elif flag in [9, 14]:
-		if not packageOnlyFlag:
-			whiteSet.add(multiname[1])
+		whiteSet.add(multiname[1])
 		for name in multiname[2]: whiteSet.add(name)
 	elif flag in [15, 16]:
-		if not packageOnlyFlag:
-			whiteSet.add(multiname[1])
+		whiteSet.add(multiname[1])
 	elif flag in [27, 28]:
 		for name in multiname[1]: whiteSet.add(name)
 	elif flag == 29:
-		if not packageOnlyFlag:
-			whiteSet.add(multiname[1])
-		for nameIndex in multiname[2]: addMultinameToWhiteSet(nameIndex, packageOnlyFlag)
+		whiteSet.add(multiname[1])
+		for nameIndex in multiname[2]: addMultinameToWhiteSet(nameIndex)
 	else: assert False, multiname
 
 def addStringToBlackSet(index):

@@ -1,7 +1,11 @@
 import time
 import random
+import re
 
-__all__ = ["mix"]
+__all__ = ["mix", "FilePrivateNS", "AS_FILE"]
+
+FilePrivateNS = "FilePrivateNS:"
+AS_FILE = re.compile(r"(\w+)\.as\$\d+$")
 
 var0 = [
 "$","_",
@@ -29,14 +33,17 @@ def gen(name, excludeSet):
 def mix(mixSet, excludeSet):
 	mixDict = {}
 	for name in mixSet:
-		if not ("/" in name or ":" in name):
+		if not needCompose(name):
 			mixDict[name] = gen(name, excludeSet)
 	for name in mixSet:
-		if ("/" in name or ":" in name):
+		if needCompose(name):
 			mixDict[name] = compose(name, mixDict)
 	for name in mixSet:
 		mixDict[name] = mixDict[name].encode()
 	return mixDict
+
+def needCompose(name):
+	return "/" in name or ":" in name or AS_FILE.match(name)
 
 def compose(name, mixDict):
 	if name in mixDict:
@@ -45,4 +52,6 @@ def compose(name, mixDict):
 		return "/".join(compose(item, mixDict)  for item in name.split("/"))
 	if ":" in name:
 		return ":".join(mixDict.get(item, item) for item in name.split(":"))
+	m = AS_FILE.match(name)
+	if m: return compose(m.group(1), mixDict) + name[m.end(1):]
 	return name
