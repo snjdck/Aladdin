@@ -6,50 +6,31 @@ package flash.ioc
 	import flash.reflection.typeinfo.VariableInfo;
 	import flash.utils.getQualifiedClassName;
 
-	internal class InjectionPoint implements IInjectionPoint
+	internal class InjectionPoint
 	{
 		static private const TAG_INJECT:String = "Inject";
-		static private const injectionPointDict:Object = {};
+		static private const InjectionPointDict:Object = {};
 		
-		static public function Fetch(target:Object):InjectionPoint
+		static public function Fetch(target:Object):Vector.<IInjectionPoint>
 		{
-			var clsName:String = getQualifiedClassName(target);
-			if(null == injectionPointDict[clsName])
-				injectionPointDict[clsName] = new InjectionPoint(target);
-			return injectionPointDict[clsName];
+			var className:String = getQualifiedClassName(target);
+			if(InjectionPointDict[className] == null)
+				InjectionPointDict[className] = CreateInjectionPointList(target);
+			return InjectionPointDict[className];
 		}
 		
-		private const injectionPointList:Vector.<IInjectionPoint> = new Vector.<IInjectionPoint>();
-		
-		public function InjectionPoint(target:Object)
+		static private function CreateInjectionPointList(target:Object):Vector.<IInjectionPoint>
 		{
-			var clsInfo:TypeInfo = getTypeInfo(target);
-			for each(var methodNode:MethodInfo in clsInfo.methods){
-				if(!methodNode.hasMetaTag(TAG_INJECT)){
-					continue;
-				}
-				if(methodNode.parameters.length == 0){
-					injectionPointList.push(new InjectionPointMethod0(methodNode.name));
-					continue;
-				}
-				injectionPointList.unshift(
-					new InjectionPointMethod(methodNode.name, methodNode.parameters)
-				);
-			}
-			for each(var varNode:VariableInfo in clsInfo.variables){
-				if(!(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite())){
-					continue;
-				}
-				injectionPointList.unshift(
-					new InjectionPointProperty(varNode.name, varNode.getMetaTagValue(TAG_INJECT), varNode.type)
-				);
-			}
-		}
-		
-		public function injectInto(target:Object, injector:IInjector):void
-		{
-			for each(var injectionPoint:IInjectionPoint in injectionPointList)
-				injectionPoint.injectInto(target, injector);
+			var injectionPointList:Vector.<IInjectionPoint> = new Vector.<IInjectionPoint>();
+			var classInfo:TypeInfo = getTypeInfo(target);
+			var varNode:VariableInfo, methodNode:MethodInfo;
+			for each(varNode in classInfo.variables)  if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite())
+				injectionPointList.push(new InjectionPointProperty(varNode.name, varNode.type, varNode.getMetaTagValue(TAG_INJECT)));
+			for each(methodNode in classInfo.methods) if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length != 0)
+				injectionPointList.push(new InjectionPointMethod(methodNode.name, methodNode.parameters));
+			for each(methodNode in classInfo.methods) if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length == 0)
+				injectionPointList.push(new InjectionPointMethod0(methodNode.name));
+			return injectionPointList;
 		}
 	}
 }

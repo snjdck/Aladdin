@@ -67,8 +67,9 @@ package flash.ioc
 		
 		public function injectInto(target:Object):void
 		{
-			var ip:IInjectionPoint = InjectionPoint.Fetch(target);
-			ip.injectInto(target, this);
+			var injectionPointList:Vector.<IInjectionPoint> = InjectionPoint.Fetch(target);
+			for each(var injectionPoint:IInjectionPoint in injectionPointList)
+				injectionPoint.injectInto(target, this);
 		}
 	}
 }

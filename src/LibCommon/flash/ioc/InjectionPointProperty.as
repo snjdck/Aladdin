@@ -3,14 +3,14 @@ package flash.ioc
 	internal class InjectionPointProperty implements IInjectionPoint
 	{
 		private var name:String;
-		private var info:Object;
 		private var type:String;
+		private var info:Object;
 		
-		public function InjectionPointProperty(name:String, info:Object, type:String)
+		public function InjectionPointProperty(name:String, type:String, info:Object)
 		{
 			this.name = name;
-			this.info = info;
 			this.type = type;
+			this.info = info;
 		}
 		
 		public function injectInto(target:Object, injector:IInjector):void
