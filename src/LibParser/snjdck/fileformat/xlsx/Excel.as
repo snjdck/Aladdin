@@ -8,6 +8,8 @@ package snjdck.fileformat.xlsx
 
 	final public class Excel
 	{
+		static private const keywords:Array = ["sheets", "sheet", "sheetId", "sheetData", "row", "si", "t", "c", "v", "r"];
+		
 		/** 返回一个三维数组(表,行,列) */
 		static public function Parse(excelBytes:ByteArray):Array
 		{
