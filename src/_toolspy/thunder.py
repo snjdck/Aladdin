@@ -1,23 +1,23 @@
 from base64 import b64encode, b64decode
 
+THUNDER  = "thunder://"
+FLASHGET = "flashget://"
+QQDL     = "qqdl://"
+
 def encode(path):
 	path = "AA" + path + "ZZ"
-	return "thunder://" + b64encode(path.encode()).decode()
+	return THUNDER + b64encode(path.encode()).decode()
 
-def decode(path):
+def decode(path, code="utf-8"):
 	offset = path.index("://") + 3
-	url = b64decode(path[offset:]).decode()
-	if path.startswith("thunder://"):
+	url = b64decode(path[offset:]).decode(code)
+	if path.startswith(THUNDER):
 		return url[2:-2]
-	if path.startswith("flashget://"):
+	if path.startswith(FLASHGET):
 		return url[10:-10]
-	if path.startswith("qqdl://"):
+	if path.startswith(QQDL):
 		return url
 
-
 if __name__ == "__main__":
-	print(decode("thunder://QUFodHRwOi8vdG9vbC5sdS90ZXN0LnppcFpa"))
-	print(decode("flashget://W0ZMQVNIR0VUXWh0dHA6Ly90b29sLmx1L3Rlc3QuemlwW0ZMQVNIR0VUXQ=="))
-	print(decode("qqdl://aHR0cDovL3Rvb2wubHUvdGVzdC56aXA="))
-	print(encode("http://tool.lu/test.zip"))
+	print(decode("thunder://QUFodHRwOi8vZGwxMjAuODBzLmltOjkyMC8xNzA1L8n51q7Qzi/J+dau0M4ubXA0Wlo=", "gb2312"))
 	input()
