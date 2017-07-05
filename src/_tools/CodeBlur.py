@@ -45,7 +45,7 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 	if tagType == 82:
 		tagBody = rawData[offset:offset+tagBodySize]
 		optimize(tagBody)
-		infoList.append((offset, stringList.copy(), stringLocationList.copy()))
+		infoList.append((offset, stringList.copy(), stringLocationList.copy(), namespaceList.copy()))
 	if tagType == 76:
 		readSymbolClass(rawData, offset)
 
@@ -91,13 +91,16 @@ def main(filePath):
 	rawData = bytearray(rawData)
 
 	totalStringSet = set()
-	for _offset, _stringList, _stringLocationList in infoList:
+	namespaceSet = set()
+	for _offset, _stringList, _stringLocationList, _namespaceList in infoList:
 		totalStringSet |= set(_stringList)
+		namespaceSet |= set(_namespaceList)
 	totalStringSet.remove(None)
+	namespaceSet.remove(None)
 
 	finalSet = whiteSet - blackSet - symbolSet - keywords - excludeList
 	
-	for name in set(namespaceList) - whiteSet - blackSet - symbolSet - keywords:
+	for name in namespaceSet - whiteSet - blackSet - symbolSet - keywords:
 		if not name: continue
 		if name.startswith(FilePrivateNS):
 			if name[len(FilePrivateNS):] in finalSet:
@@ -116,7 +119,7 @@ def main(filePath):
 
 	finaDict = mix(finalSet, totalStringSet | keywords)
 
-	for _offset, _stringList, _stringLocationList in infoList:
+	for _offset, _stringList, _stringLocationList, _namespaceList in infoList:
 		for name in finaDict:
 			if name not in _stringList:
 				continue
