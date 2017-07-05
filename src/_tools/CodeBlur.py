@@ -5,7 +5,7 @@ from namegen import *
 
 
 def optimize(tagBody):
-	for begin, end, _ in parseABC(tagBody):
+	for begin, end, _ in parseABC(tagBody)[1]:
 		parseInstruction(begin, end)
 
 def parseInstruction(offset, end):
@@ -90,9 +90,10 @@ def main(filePath):
 
 	rawData = bytearray(rawData)
 
-	totalStringSet = keywords.copy()
+	totalStringSet = set()
 	for _offset, _stringList, _stringLocationList in infoList:
 		totalStringSet |= set(_stringList)
+	totalStringSet.remove(None)
 
 	finalSet = whiteSet - blackSet - symbolSet - keywords - excludeList
 	
@@ -109,9 +110,11 @@ def main(filePath):
 			elif not isKeyword(name):
 				finalSet.add(name)
 	
-	print(len(set(namespaceList) - blackSet - finalSet))
-	print(set(namespaceList) - blackSet - finalSet)
-	finaDict = mix(finalSet, totalStringSet.copy())
+	for name in totalStringSet - whiteSet - blackSet - finalSet - symbolSet - keywords - excludeList:
+		if "/" in name or name.endswith(":anonymous"):
+			finalSet.add(name)
+
+	finaDict = mix(finalSet, totalStringSet | keywords)
 
 	for _offset, _stringList, _stringLocationList in infoList:
 		for name in finaDict:
@@ -126,7 +129,7 @@ def main(filePath):
 	writeFile(outputPath, encodeLzmaSWF(rawData, version))
 
 	mixedNameList = "\r\n".join(item[0]+","+item[1].decode() for item in finaDict.items())
-	notMixedNameList = "\r\n".join(name for name in totalStringSet - whiteSet - blackSet - symbolSet - keywords if name)
+	notMixedNameList = "\r\n".join(name for name in totalStringSet - finalSet - blackSet - symbolSet - keywords)
 
 	writeFile(filePath[:dotIndex] + "Mixed.csv", mixedNameList.encode())
 	writeFile(filePath[:dotIndex] + "NotMixed.txt", notMixedNameList.encode())

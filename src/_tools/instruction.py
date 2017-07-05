@@ -5,8 +5,7 @@ import avm2
 
 
 def optimize(tagBody):
-	methodBodyList = parseABC(tagBody)
-	rawData = bytearray(tagBody)
+	rawData, methodBodyList = parseABC(tagBody)
 	for begin, end, exceptionList in methodBodyList:
 		codeUsage = {}
 		for exception in exceptionList:

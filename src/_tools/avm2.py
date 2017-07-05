@@ -26,7 +26,7 @@ namespaceList = [None]
 namespaceSetList = [None]
 multinameList = [None]
 
-whiteSet = set() #Trait, ParamName, MethodName, protectedNS
+whiteSet = set() #Trait, MethodName, protectedNS
 blackSet = set() #Metadata, defaultValue, pushString
 
 rawData = None
@@ -120,11 +120,24 @@ def readMethodInfo():
 	param_count = readS32()
 	readS32()
 	readS32List(param_count)
-	nameIndex = readS32()
-	if nameIndex: whiteSet.add(stringList[nameIndex])
+	nameOffset = offset
+	if readS32(): delMethodName(nameOffset)
+	flagOffset = offset
 	flag = readUI8()
 	if flag & 0x08: readS32List(lambda:readDefaultParam(readS32()))
-	if flag & 0x80: readS32List(readParamName, param_count)
+	if flag & 0x80: delMethodParamName(flagOffset, param_count)
+
+def delMethodName(nameOffset):
+	global offset
+	rawData[nameOffset:offset] = b"\x00"
+	offset = nameOffset + 1
+
+def delMethodParamName(flagOffset, param_count):
+	rawData[flagOffset] &= 0x7F
+	mark = offset
+	for _ in range(param_count):
+		mark += _readS32(mark)[1]
+	del rawData[offset:mark]
 
 def readDefaultParam(valueIndex):
 	valueType = readUI8()
@@ -132,9 +145,6 @@ def readDefaultParam(valueIndex):
 		blackSet.add(stringList[valueIndex])
 	elif valueType == 8:
 		blackSet.add(namespaceList[valueIndex])
-
-def readParamName():
-	whiteSet.add(stringList[readS32()])
 
 def readMetadata():
 	addStringToBlackSet(readS32())
@@ -199,7 +209,7 @@ def addStringToBlackSet(index):
 
 def parseABC(tagBody):
 	global rawData, offset
-	rawData = tagBody
+	rawData = bytearray(tagBody)
 	offset = 4
 
 	del stringLocationList[1:]
@@ -225,7 +235,7 @@ def parseABC(tagBody):
 	readS32List(readMethodIndexAndTrait)
 	methodBodyList = readS32List(readMethodBody)
 	assert len(rawData) == offset
-	return methodBodyList
+	return rawData, methodBodyList
 
 
 def _readInstruction(opCode, offset):
