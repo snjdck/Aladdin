@@ -22,7 +22,7 @@ def fuck(item_list, size=0):
 
 	delta_list = [[item0[j] - item_list[i][j] for j in range(size)] for i in range(1, size)]
 	total = reduce(lambda x, y: x * y[-1], delta_list, 1)
-	delta_list = [[(total / delta[-1] if delta[-1] != 0 else 1) * item for item in delta] for delta in delta_list]
+	delta_list = [[total / delta[-1] * item for item in delta] if delta[-1] != 0 else delta for delta in delta_list]
 	result = fuck(delta_list, size - 1)
 	for i in range(size - 1): result[i] *= total
 	result.append(-reduce(lambda x, y: x + y, [item0[i] * result[i] for i in range(size)]))
@@ -48,6 +48,9 @@ def calcCenter(item_list):
 	return center
 
 
+def calc(ratio, value):
+	return ratio[-1] + reduce(lambda x, y: x + y, [ratio[i] * value[i] for i in range(len(value))])
+
 test_list = [(5,2,1),(4,3,1)]
 
 a_list = [list(item)[:-1] for item in pt_list if item[2] == 1]
@@ -59,7 +62,10 @@ for i in range(len(a_list[0])-1):
 
 print(a_list, calcCenter(a_list))
 print(b_list, calcCenter(b_list))
-print(center_list, fuck(center_list))
+
+ratio = fuck(center_list)
+print([calc(ratio, item) > 0 for item in a_list])
+print([calc(ratio, item) > 0 for item in b_list])
 
 #15 -9 -13 -29
 print(fuck([(0,4,-5),(-1,-2,-2),(4,2,1)]))
