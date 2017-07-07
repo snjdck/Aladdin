@@ -32,10 +32,11 @@ def exact(content, userID):
 	return [clear(textList[i]) for i in range(len(textList)) if infoList[i] == userID]
 
 def clear(content):
+	content = re.sub("\u3000", "", content)
 	content = re.sub(r"@.+?<br>", "", content)
+	content = re.sub(r"^\s*|\s*$", "", content, 0, re.M)
 	content = re.sub(r"<br>", "\r\n", content)
 	content = re.sub(r"<[^>]+?>", "", content)
-	content = re.sub(r"^\s*|\s*$", "", content, 0, re.M)
 	return content
 
 def fetchArticle(pageID):
@@ -57,7 +58,6 @@ def fetchArticleAndSave(pageID):
 
 if __name__ == "__main__":
 	taskList = [("develop", 2165689), ("develop", 2153711), ("develop", 969483), ("develop", 2212810), ("develop", 2229231), ("house", 718326), ("house", 705917)]
-	taskList = taskList[:2]
 	parallel_do(taskList, fetchArticleAndSave)
 	input("finished")
 	
