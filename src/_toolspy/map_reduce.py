@@ -1,4 +1,10 @@
+from multiprocessing import Process
 from threading import Thread, Lock
+
+def _start_and_join(thread_list):
+	for thread in thread_list: thread.start()
+	for thread in thread_list: thread.join()
+
 
 def map_reduce(task_list, handler, thread_count=0, show_progress=False):
 	if show_progress:
@@ -16,24 +22,17 @@ def map_reduce(task_list, handler, thread_count=0, show_progress=False):
 				with lock:
 					done_count += 1
 					print(done_count, "/", task_count)
-	thread_list = [Thread(target=callback, args=(i,)) for i in range(thread_count)]
-	for thread in thread_list: thread.start()
-	for thread in thread_list: thread.join()
+	_start_and_join([Thread(target=callback, args=(i,)) for i in range(thread_count)])
 
-from urllib.request import urlopen
-import re
 
-if __name__ == "__main__":
-	task_list = ["http://baidu.com", "http://sogou.com"]
-	def handler(path):
-		with urlopen(path) as f:
-			#print(f.getcode(), f.info())
-			data = f.read().decode()
-			match = re.search(r'<meta http-equiv="refresh" content="\d+;url=(.+?)">', data)
-			if match:
-				return handler(match.group(1))
-			return data
+def parallel_do(task_list, handler, thread_count=0):
+	task_count = len(task_list)
+	if thread_count <= 0 or thread_count > task_count:
+		thread_count = task_count
+	_start_and_join([Process(target=_parallel_handler, args=(task_list, handler, thread_count, i)) for i in range(thread_count)])
 
-	map_reduce(task_list, handler, show_progress=True)
-	print(task_list)
-	input()
+
+def _parallel_handler(task_list, handler, thread_count, index):
+	while index < len(task_list):
+		handler(task_list[index])
+		index += thread_count
