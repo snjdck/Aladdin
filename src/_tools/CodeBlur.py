@@ -20,6 +20,7 @@ def parseInstruction(offset, end):
 
 import sys
 import os
+import re
 
 from swf_tag import encodeTag, genImageTag
 from swf import *
@@ -113,10 +114,14 @@ def main(filePath):
 			elif not isKeyword(name):
 				finalSet.add(name)
 	
-	for name in totalStringSet - whiteSet - blackSet - finalSet - symbolSet - keywords - excludeList:
+	remainSet = totalStringSet - whiteSet - blackSet - finalSet - symbolSet - keywords - excludeList
+	for name in remainSet:
 		if "/" in name or name.endswith(":anonymous"):
 			finalSet.add(name)
 
+	remainSet -= finalSet
+	print([item for item in remainSet if not re.match(r"[$\w]+", item)])
+	
 	finaDict = mix(finalSet, totalStringSet | keywords)
 
 	for _offset, _stringList, _stringLocationList, _namespaceList in infoList:
