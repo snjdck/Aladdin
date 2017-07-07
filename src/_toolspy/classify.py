@@ -1,4 +1,5 @@
 from functools import reduce
+from operator import add, mul
 
 pt_list = [(2,1,1),(3,1,1),(1,2,0),(1,5,0)]
 '''
@@ -14,7 +15,7 @@ a * dx + b * dy + c * dz = 0
 ax + by + cz + dw + e = 0
 '''
 def multiply(ratio, value):
-	return reduce(lambda x, y: x + y, [ratio[i] * value[i] for i in range(len(value))])
+	return reduce(add, [ratio[i] * value[i] for i in range(len(value))])
 
 def fuck(item_list, size=0):
 	item0 = item_list[0]
@@ -22,7 +23,7 @@ def fuck(item_list, size=0):
 	if size == 1: return [1, -item0[0]]
 
 	delta_list = [[item0[j] - item_list[i][j] for j in range(size)] for i in range(1, size)]
-	total = reduce(lambda x, y: x * y[-1], delta_list, 1)
+	total = reduce(mul, [delta[-1] for delta in delta_list])
 	delta_list = [[total / delta[-1] * item for item in delta] if delta[-1] != 0 else delta for delta in delta_list]
 	result = fuck(delta_list, size - 1)
 	if total == 0:
