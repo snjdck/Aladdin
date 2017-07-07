@@ -89,7 +89,7 @@ def readS32List(reader=None, count=None):
 		reader, count = count, reader
 	if count  == None: count = readS32()
 	if reader == None: reader = readS32
-	if hasattr(reader, "__call__"):
+	if callable(reader):
 		return [reader() for _ in range(count)]
 	return [[func() for func in reader] for _ in range(count)]
 
