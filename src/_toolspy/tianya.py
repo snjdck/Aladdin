@@ -58,6 +58,8 @@ def fetchArticleAndSave(pageID):
 
 if __name__ == "__main__":
 	taskList = [("develop", 2165689), ("develop", 2153711), ("develop", 969483), ("develop", 2212810), ("develop", 2229231), ("house", 718326), ("house", 705917)]
+	taskList += [("develop", 2218199), ("develop", 2191368), ("develop", 1309480), ("house", 719297), ("house", 648307)]
+
 	parallel_do(taskList, fetchArticleAndSave)
 	input("finished")
 	
