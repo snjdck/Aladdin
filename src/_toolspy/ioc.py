@@ -24,6 +24,28 @@ class InjectionTypeValue:
 		return self.value
 
 
+class InjectionTypeClass:
+	def __init__(self, clazz):
+		self.clazz = clazz
+
+	def getValue(self, injector):
+		value = self.clazz()
+		injector.injectInto(value)
+		return value
+
+
+class InjectionTypeSingleton:
+	def __init__(self, clazz):
+		self.clazz = clazz
+		self.value = None
+
+	def getValue(self, injector):
+		if not self.value:
+			self.value = self.clazz()
+			injector.injectInto(self.value)
+		return self.value
+
+
 class Injector:
 	def __init__(self):
 		self.parent = None
@@ -32,6 +54,16 @@ class Injector:
 	def mapValue(self, key, value):
 		key = key.__name__
 		self.ruleDict[key] = InjectionTypeValue(value)
+
+	def mapClass(self, key, value=None):
+		value = value or key
+		key = key.__name__
+		self.ruleDict[key] = InjectionTypeClass(value)
+
+	def mapSingleton(self, key, value=None):
+		value = value or key
+		key = key.__name__
+		self.ruleDict[key] = InjectionTypeSingleton(value)
 
 	def getInstance(self, key):
 		key = key.__name__
