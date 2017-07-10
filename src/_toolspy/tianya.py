@@ -1,6 +1,7 @@
 from map_reduce import *
 from urllib.request import urlopen
 import re
+import json
 from itertools import chain
 
 HOST_ID = re.compile(r'_hostid="(\d+)"')
@@ -9,8 +10,7 @@ def findPairDiv(content, tag_begin):
 	begin = content.index(tag_begin)
 	end = begin + len(tag_begin)
 	tag = re.search(r"^<(\w+)\s", tag_begin).group(1)
-	tag_begin = f"<{tag}"
-	tag_end = f"</{tag}>"
+	tag_begin, tag_end = f"<{tag}", f"</{tag}>"
 	while True:
 		end = content.index(tag_end, end) + len(tag_end)
 		if content.count(tag_begin, begin, end) == content.count(tag_end, begin, end):
@@ -27,15 +27,13 @@ def queryPageCount(pageID):
 
 def load(pageID, index=1):
 	path = f"http://bbs.tianya.cn/post-{pageID[0]}-{pageID[1]}-{index}.shtml"
-	tryCount = 0
-	while tryCount < 5:
+	for tryCount in range(5):
 		try:
 			with urlopen(path, None, 10) as f:
 				assert f.getcode() == 200
 				return f.read().decode()
 		except Exception as error:
 			print(error)
-			tryCount += 1
 
 def exact(content, userID):
 	itemList = re.findall(r'<div class="atl-item[^>]+>', content)
@@ -68,9 +66,8 @@ def fetchArticleAndSave(pageID):
 		f.write(pageData.encode())
 
 if __name__ == "__main__":
-	#
-	taskList = [("develop", 2165689), ("develop", 2153711), ("develop", 969483), ("develop", 2212810), ("develop", 2229231), ("house", 718326), ("house", 705917)]
-	taskList += [("develop", 2218199), ("develop", 2191368), ("house", 648307), ("develop", 1309480)]
+	source = json.load(open("tianya.txt"))
+	taskList = [(k, i)for k, v in source.items() for i in v]
 	taskList = [("develop", 2229231)]
 	parallel_do(taskList, fetchArticleAndSave)
 	input("finished")
