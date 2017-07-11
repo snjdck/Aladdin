@@ -1,8 +1,9 @@
 from map_reduce import *
 from urllib.request import urlopen
 import re
+import os
 import json
-from itertools import chain
+from itertools import chain, count
 
 HOST_ID = re.compile(r'_hostid="(\d+)"')
 
@@ -52,23 +53,42 @@ def clear(content):
 
 def fetchArticle(pageID):
 	pageCount, userID, pageTitle, cssList = queryPageCount(pageID)
-	taskList = [(pageID, i+1, userID) for i in range(pageCount)]
+	taskList = [(pageID, i, userID) for i in range(loadPageIndex(pageID), pageCount+1)]
 	map_reduce(taskList, loadPage, 4, True)
-	return list(chain(*taskList)), pageTitle, cssList
+	return list(chain(*taskList)), pageTitle, cssList, pageCount
 
 def loadPage(info):
 	return exact(load(*info[:2]), info[2])
 
 def fetchArticleAndSave(pageID):
-	articleList, pageTitle, cssList = fetchArticle(pageID)
+	articleList, pageTitle, cssList, pageCount = fetchArticle(pageID)
 	pageData = "\r\n".join(cssList + articleList)
-	with open(f"{pageTitle[:-10]}_{pageID[1]}.html", "wb") as f:
+
+	filePath = f"{pageTitle[:-10]}_{pageID[1]}.html"
+	for i in count(1):
+		if not os.path.exists(filePath): break
+		filePath = f"{pageTitle[:-10]}_{pageID[1]}_{i}.html"
+
+	with open(filePath, "wb") as f:
 		f.write(pageData.encode())
+
+	savePageIndex(pageID, pageCount)
+
+def loadPageIndex(pageID):
+	filePath = f"{pageID[0]}_{pageID[1]}.txt"
+	if os.path.exists(filePath):
+		with open(filePath) as f:
+			return int(f.read())
+	return 1
+
+def savePageIndex(pageID, pageCount):
+	filePath = f"{pageID[0]}_{pageID[1]}.txt"
+	with open(filePath, "w")  as f:
+		f.write(str(pageCount))
 
 if __name__ == "__main__":
 	source = json.load(open("tianya.txt"))
 	taskList = [(k, i)for k, v in source.items() for i in v]
-	taskList = [("develop", 2229231)]
 	parallel_do(taskList, fetchArticleAndSave)
 	input("finished")
 	
