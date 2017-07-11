@@ -5,25 +5,26 @@ import os
 from swf_tag import encodeTag, genImageTag
 from instruction import optimize
 from swf import *
+from SwfTagType import *
 
 tagList = []
 
 def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
-	#remove ProductInfo, FrameLabel, ScriptLimits, Metadata
-	if tagType in [41, 43, 65, 77]:
+	tagType = SwfTagType(tagType)
+	if tagType in (SwfTagType.ProductInfo, SwfTagType.FrameLabel, SwfTagType.ScriptLimits, SwfTagType.Metadata):
 		return
 	#hasMetadata = false
-	if tagType == 69:
+	if tagType == SwfTagType.FileAttributes:
 		tagBody = readUI32(rawData, offset+2)
 		tagBody &= 0xEF
 		tagList.append(rawData[offset:offset+2] + struct.pack("I", tagBody))
-	elif tagType == 21:
+	elif tagType == SwfTagType.DefineBitsJPEG2:
 		assetID = readUI16(rawData, offset+tagHeadSize)
 		imageData = rawData[offset+tagHeadSize+2:offset+tagHeadSize+tagBodySize]
 		tagList.append(genImageTag(assetID, imageData))
-	elif tagType == 82:
+	elif tagType == SwfTagType.DoABC2:
 		tagBody = rawData[offset+tagHeadSize:offset+tagHeadSize+tagBodySize]
-		tagList.append(encodeTag(tagType, optimize(tagBody)))
+		tagList.append(encodeTag(tagType.value, optimize(tagBody)))
 	else:
 		tagList.append(rawData[offset:offset+tagHeadSize+tagBodySize])
 

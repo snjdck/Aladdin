@@ -1,6 +1,7 @@
 import sys
 import os
 from swf import *
+from SwfTagType import *
 
 SymbolClass = {}
 
@@ -30,13 +31,14 @@ def readSymbolClass(rawData, offset):
 		offset = end + 1
 
 def parseSWF(rawData, offset, tagType, tagHeadSize, tagBodySize):
+	tagType = SwfTagType(tagType)
 	offset += tagHeadSize
-	if tagType == 76:
+	if tagType == SwfTagType.SymbolClass:
 		readSymbolClass(rawData, offset)
-	elif tagType == 87:
+	elif tagType == SwfTagType.DefineBinaryData:
 		symbolId = readUI16(rawData, offset)
 		setSymbolData(symbolId, "data", rawData[offset+6:offset+tagBodySize])
-	elif tagType == 21:
+	elif tagType == SwfTagType.DefineBitsJPEG2:
 		symbolId = readUI16(rawData, offset)
 		setSymbolData(symbolId, "data", rawData[offset+2:offset+tagBodySize])
 

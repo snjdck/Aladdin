@@ -24,6 +24,7 @@ import re
 
 from swf_tag import encodeTag, genImageTag
 from swf import *
+from SwfTagType import *
 
 symbolSet = set()
 infoList = []
@@ -42,12 +43,13 @@ def readSymbolClass(rawData, offset):
 		offset = end + 1
 
 def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
+	tagType = SwfTagType(tagType)
 	offset += tagHeadSize
-	if tagType == 82:
+	if tagType == SwfTagType.DoABC2:
 		tagBody = rawData[offset:offset+tagBodySize]
 		optimize(tagBody)
 		infoList.append((offset, stringList.copy(), stringLocationList.copy(), namespaceList.copy()))
-	if tagType == 76:
+	if tagType == SwfTagType.SymbolClass:
 		readSymbolClass(rawData, offset)
 
 def readFile(path):
