@@ -1,5 +1,6 @@
 import time
 import random
+import string
 import re
 
 __all__ = ["mix", "FilePrivateNS", "AS_FILE"]
@@ -7,13 +8,8 @@ __all__ = ["mix", "FilePrivateNS", "AS_FILE"]
 FilePrivateNS = "FilePrivateNS:"
 AS_FILE = re.compile(r"(\w+)\.as\$\d+$")
 
-var0 = [
-"$","_",
-"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z",
-"a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"
-]
-
-var = var0 + ["0","1","2","3","4","5","6","7","8","9"]
+var0 = "$_" + string.ascii_letters
+var  = var0 + string.digits
 
 def gen(name, excludeSet):
 	nChar = len(name.encode())
