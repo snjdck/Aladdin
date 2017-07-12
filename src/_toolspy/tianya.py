@@ -39,6 +39,7 @@ def load(pageID, index=1):
 def exact(content, userID):
 	itemList = re.findall(r'<div class="atl-item[^>]+>', content)
 	itemList = [findPairDiv(content, item) for item in itemList]
+	if not host_only_flag: return map(clear, itemList)
 	flagList = [HOST_ID.search(item).group(1) == userID for item in itemList]
 	userID = f'_userid="{userID}"'
 	return [clear(text) for text, flag in zip(itemList, flagList) if flag or userID in text]
@@ -85,6 +86,8 @@ def savePageIndex(pageID, pageCount):
 	filePath = f"{pageID[0]}_{pageID[1]}.txt"
 	with open(filePath, "w")  as f:
 		f.write(str(pageCount))
+
+host_only_flag = False
 
 if __name__ == "__main__":
 	source = json.load(open("tianya.txt"))
