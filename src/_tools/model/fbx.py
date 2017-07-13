@@ -91,5 +91,22 @@ tagList = [tag for tag in tagList if tag[0] not in excludeTagNames]
 for tag in tagList:
 	print(tag[:2])
 for tag in tagList[0][2]:
-	print(tag[2])
+	if not (tag[0] == "Model" and tag[1][1] == "Mesh"):
+		continue
+	#if tag[0] in ("Deformer", "Folder", "GlobalShading", "Device", "Constraint", "Material"): continue
+	#if tag[1][1] in ("Light", "Camera", "LimbNode", "Mesh"): continue
+
+	for item in tag[2]:
+		if item[0] == "Vertices":
+			vertexList = item[1]
+			continue
+		if item[0] == "PolygonVertexIndex":
+			indexList = item[1]
+			continue
+		if item[0] == "Shape":
+			#print(item)
+			continue
+		if item[0] == "LayerElementNormal":
+			continue
+	print(len(vertexList) / 3, max(indexList))
 input(len(tagList))
