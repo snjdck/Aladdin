@@ -80,6 +80,10 @@ def readTag():
 	assert offset == endOffset
 	return tagName, propList, subTags
 
+def readKey(tagList, key):
+	for tag in tagList:
+		if tag[0] == key:
+			return tag
 
 data = readFile("humanoid")
 offset = 23
@@ -95,18 +99,19 @@ for tag in tagList[0][2]:
 		continue
 	#if tag[0] in ("Deformer", "Folder", "GlobalShading", "Device", "Constraint", "Material"): continue
 	#if tag[1][1] in ("Light", "Camera", "LimbNode", "Mesh"): continue
+	vertexList = readKey(tag[2], "Vertices")[1]
+	indexList  = readKey(tag[2], "PolygonVertexIndex")[1]
+	normalList = readKey(readKey(tag[2], "LayerElementNormal")[2], "Normals")[1]
+	shapeList  = readKey(tag[2], "Shape")[2]
 
-	for item in tag[2]:
-		if item[0] == "Vertices":
-			vertexList = item[1]
-			continue
-		if item[0] == "PolygonVertexIndex":
-			indexList = item[1]
-			continue
-		if item[0] == "Shape":
-			#print(item)
-			continue
-		if item[0] == "LayerElementNormal":
-			continue
-	print(len(vertexList) / 3, max(indexList))
+	for v in shapeList:
+		print(v[0])
+		if v[0] == "Vertices":
+			pass
+		elif v[0] == "Indexes":
+			pass
+		elif v[0] == "Normals":
+			pass
+
+	print(len(vertexList), len(indexList), len(normalList))
 input(len(tagList))
