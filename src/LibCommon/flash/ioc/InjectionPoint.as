@@ -23,14 +23,31 @@ package flash.ioc
 		{
 			var injectionPointList:Vector.<IInjectionPoint> = new Vector.<IInjectionPoint>();
 			var classInfo:TypeInfo = getTypeInfo(target);
-			var varNode:VariableInfo, methodNode:MethodInfo;
-			for each(varNode in classInfo.variables)  if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite())
-				injectionPointList.push(new InjectionPointProperty(varNode.name, varNode.type, varNode.getMetaTagValue(TAG_INJECT)));
-			for each(methodNode in classInfo.methods) if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length != 0)
-				injectionPointList.push(new InjectionPointMethod(methodNode.name, methodNode.parameters));
-			for each(methodNode in classInfo.methods) if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length == 0)
-				injectionPointList.push(new InjectionPointMethod0(methodNode.name));
+			AddVarNode(classInfo, injectionPointList);
+			AddMethodNode(classInfo, injectionPointList);
+			AddMethod0Node(classInfo, injectionPointList);
 			return injectionPointList;
+		}
+		
+		static private function AddVarNode(classInfo:TypeInfo, injectionPointList:Vector.<IInjectionPoint>):void
+		{
+			for each(var varNode:VariableInfo in classInfo.variables)
+			if(varNode.hasMetaTag(TAG_INJECT) && varNode.canWrite())
+			injectionPointList.push(new InjectionPointProperty(varNode.name, varNode.type, varNode.getMetaTagValue(TAG_INJECT)));
+		}
+		
+		static private function AddMethodNode(classInfo:TypeInfo, injectionPointList:Vector.<IInjectionPoint>):void
+		{
+			for each(var methodNode:MethodInfo in classInfo.methods)
+			if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length != 0)
+			injectionPointList.push(new InjectionPointMethod(methodNode.name, methodNode.parameters));
+		}
+		
+		static private function AddMethod0Node(classInfo:TypeInfo, injectionPointList:Vector.<IInjectionPoint>):void
+		{
+			for each(var methodNode:MethodInfo in classInfo.methods)
+			if(methodNode.hasMetaTag(TAG_INJECT) && methodNode.parameters.length == 0)
+			injectionPointList.push(new InjectionPointMethod0(methodNode.name));
 		}
 	}
 }
