@@ -27,10 +27,10 @@ package snjdck.g3d.cameras
 	{
 		static public var zNear	:Number = -1000;
 		static public var zRange:Number =  4000;
-		static public var zOffset:Number = -1500;
-		static public var fov:Number = Math.tan(40 * Unit.RADIAN * 0.5);
+//		static public var zOffset:Number = -1500;
+//		static public var fov:Number = Math.tan(40 * Unit.RADIAN * 0.5);
 		
-		private const viewFrusum:ViewFrustum = new ViewFrustum();
+		private const viewFrusum:ViewFrustumOrtho = new ViewFrustumOrtho();
 		
 		private var viewMatrix:RotationMatrix;
 		
@@ -42,7 +42,7 @@ package snjdck.g3d.cameras
 		private var _width:int;
 		private var _height:int;
 		
-		private const projectionData:ProjectionData = new ProjectionData();
+		private const projectionData:ProjectionData = new ProjectionData(true);
 		
 		private const cameraPosition:Vector3D = new Vector3D();
 		
@@ -53,7 +53,7 @@ package snjdck.g3d.cameras
 			viewMatrix = new RotationMatrix(Vector3D.Z_AXIS, direction);
 			projectionData.zNear = zNear;
 			projectionData.zRange = zRange;
-			projectionData.zOffset = zOffset;
+//			projectionData.zOffset = zOffset;
 			transform = viewMatrix.transformInvert;
 		}
 		
@@ -64,9 +64,9 @@ package snjdck.g3d.cameras
 			}
 			_width = width;
 			_height = height;
-			projectionData.setViewPort(width, height, fov);
-			projectionData.calcViewFrustum(viewFrusum);
-			viewFrusum.updateTransform(viewMatrix.transformInvert);
+			projectionData.setViewPort(width, height);
+//			projectionData.calcViewFrustum(viewFrusum);
+//			viewFrusum.updateTransform(viewMatrix.transformInvert);
 			if(geometryTexture != null){
 				geometryTexture.dispose();
 				geometryTexture = null;
@@ -76,7 +76,8 @@ package snjdck.g3d.cameras
 		override public function onUpdate(timeElapsed:int):void
 		{
 			worldTransform.copyColumnTo(3, cameraPosition);
-			viewFrusum.updatePosition(cameraPosition);
+			viewFrusum.center.copyFrom(cameraPosition);
+//			viewFrusum.updatePosition(cameraPosition);
 		}
 		
 		public function draw(context3d:GpuContext):void

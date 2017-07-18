@@ -42,8 +42,8 @@ package snjdck.g3d.lights
 			projectionData.setViewPort(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 			
 			GpuConstData.SetNumber(constFc, 0, 0.5, 0.5, -Camera3D.zNear / Camera3D.zRange, SHADOW_BIAS);
-			GpuConstData.SetNumber(constFc, 1, 0, Camera3D.fov, Camera3D.zRange, 1);
-			GpuConstData.SetNumber(constFc, 2, SHADOW_MAP_SIZE, -SHADOW_MAP_SIZE, Camera3D.zRange, Camera3D.zOffset);
+			GpuConstData.SetNumber(constFc, 1, 0, 1, Camera3D.zRange, 1);
+			GpuConstData.SetNumber(constFc, 2, SHADOW_MAP_SIZE, -SHADOW_MAP_SIZE, Camera3D.zRange, 0);
 			GpuConstData.SetNumber(constFc, 3, -direction.x, -direction.y, -direction.z, 0);
 			
 			shadowMap = new GpuRenderTarget(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
