@@ -6,9 +6,9 @@ package snjdck.g3d.cameras
 	import snjdck.g3d.bounds.IBound;
 	import snjdck.g3d.bounds.Sphere;
 
-	internal class ViewFrustumOrtho implements IViewFrustum
+	public class ViewFrustumOrtho implements IViewFrustum
 	{
-		static private const SQRT6:Number = Math.sqrt(6);
+		static private const SQRT6:Number = 2.449489742783178;
 		
 		public const center:Vector3D = new Vector3D();
 		
