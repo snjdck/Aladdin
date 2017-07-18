@@ -5,46 +5,41 @@ package snjdck.g3d.cameras
 	import snjdck.g3d.bounds.AABB;
 	import snjdck.g3d.bounds.IBound;
 	import snjdck.g3d.bounds.Sphere;
-	
-	import vec3.subtract;
 
 	internal class ViewFrustumOrtho implements IViewFrustum
 	{
-		static private const SQRT3_2:Number = Math.sqrt(1.5);
-		static private const SQRT8:Number = 2 * Math.SQRT2;
-		static private const SQRT6:Number = 2 * SQRT3_2;
+		static private const SQRT6:Number = Math.sqrt(6);
 		
 		public const center:Vector3D = new Vector3D();
-		public const halfSize:Vector3D = new Vector3D();
 		
-		private const offset:Vector3D = new Vector3D();
+		private var projectSizeX:Number;
+		private var projectSizeY:Number;
 		
 		public function ViewFrustumOrtho(){}
 		
 		public function resize(width:Number, height:Number):void
 		{
-			halfSize.x = 0.5 * width;
-			halfSize.y = 0.5 * height;
+			projectSizeX = width  * Math.SQRT1_2;
+			projectSizeY = height * Math.SQRT2;
 		}
 		
 		public function classifyBox(aabb:AABB):int
 		{
-			vec3.subtract(center, aabb._center, offset);
-			var t0:Number = aabb.halfSizeX + aabb.halfSizeY;
-			var t1:Number = halfSize.x * Math.SQRT2;
-			var dx:Number = Math.abs(offset.x - offset.y) - t1;
-			if(dx >= t0) return ClassifyResult.OUTSIDE;
-			var t2:Number = aabb.halfSizeZ * SQRT6;
-			var t3:Number = halfSize.y * SQRT8;
-			var dy:Number = Math.abs(offset.x + offset.y - SQRT6 * offset.z) - t3;
-			var t4:Number = t0 + t2;
-			if(dy >= t4) return ClassifyResult.OUTSIDE;
-			if(-dx >= t0 && -dy >= t4) return ClassifyResult.CONTAINS;
-			t0 = SQRT3_2 * offset.z;
-			t1 = 0.5 * (t1 + t2 + t3);
-			if(Math.abs(offset.y - t0) >= aabb.halfSizeY + t1) return ClassifyResult.OUTSIDE;
-			if(Math.abs(offset.x - t0) >= aabb.halfSizeX + t1) return ClassifyResult.OUTSIDE;
-			return ClassifyResult.INTERSECT;
+			var otherCenter:Vector3D = aabb._center;
+			
+			var fx:Number = center.x - otherCenter.x;
+			var fy:Number = center.y - otherCenter.y;
+			
+			var tx:Number = aabb.halfSizeX + aabb.halfSizeY;
+			var dx:Number = Math.abs(fx - fy) - projectSizeX;
+			if (dx >= tx) return ClassifyResult.OUTSIDE;
+
+			var fz:Number = center.z - otherCenter.z;
+			var ty:Number = tx + aabb.halfSizeZ * SQRT6;
+			var dy:Number = Math.abs(fx + fy - fz * SQRT6) - projectSizeY;
+			if (dy >= ty) return ClassifyResult.OUTSIDE;
+
+			return (-dx >= tx && -dy >= ty) ? ClassifyResult.CONTAINS : ClassifyResult.INTERSECT;
 		}
 		
 		public function classify(bound:IBound):int
