@@ -146,14 +146,14 @@ package snjdck.g3d.bounds
 		{
 			return _halfSizeX * Math.abs(axis.x) + _halfSizeY * Math.abs(axis.y) + _halfSizeZ * Math.abs(axis.z);
 		}
-		
+		/*
 		public function hitTestAxis(other:IBoundingBox, ab:Vector3D):Boolean
 		{
 			return (Math.abs(ab.x) - other.getProjectLen(Vector3D.X_AXIS) < _halfSizeX)
 				&& (Math.abs(ab.y) - other.getProjectLen(Vector3D.Y_AXIS) < _halfSizeY)
 				&& (Math.abs(ab.z) - other.getProjectLen(Vector3D.Z_AXIS) < _halfSizeZ);
 		}
-		
+		*/
 		public function transform(matrix:Matrix3D, result:AABB):void
 		{
 			transformBound(matrix, this, result);
