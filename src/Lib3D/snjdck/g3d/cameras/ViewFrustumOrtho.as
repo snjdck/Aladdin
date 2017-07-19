@@ -47,29 +47,14 @@ package snjdck.g3d.cameras
 			return bound.onClassify(this);
 		}
 		
-		public function classifySphere(bound:Sphere):int
-		{
-			return 0;
-		}
-		
 		public function hitTest(bound:IBound):Boolean
 		{
-			// TODO Auto Generated method stub
-			return false;
+			return bound.onHitTest(this);
 		}
 		
 		public function hitTestBox(bound:AABB):Boolean
 		{
-			// TODO Auto Generated method stub
-			return false;
+			return classifyBox(bound) <= 0;
 		}
-		
-		public function hitTestSphere(bound:Sphere):Boolean
-		{
-			// TODO Auto Generated method stub
-			return false;
-		}
-		
-		
 	}
 }

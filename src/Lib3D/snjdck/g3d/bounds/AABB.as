@@ -219,11 +219,6 @@ package snjdck.g3d.bounds
 			return other.hitTestBox(this);
 		}
 		
-		public function hitTestSphere(other:Sphere):Boolean
-		{
-			return other.hitTestBox(this);
-		}
-		
 		public function hitTestBox(other:AABB):Boolean
 		{
 			return !((minX >= other.maxX) || (maxX <= other.minX)
