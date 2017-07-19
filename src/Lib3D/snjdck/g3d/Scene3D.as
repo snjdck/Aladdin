@@ -3,7 +3,6 @@ package snjdck.g3d
 	import flash.events.MouseEvent;
 	
 	import snjdck.g3d.cameras.Camera3D;
-	import snjdck.g3d.cameras.ICamera3D;
 	import snjdck.g3d.core.DisplayObjectContainer3D;
 	import snjdck.g3d.core.Object3D;
 	import snjdck.g3d.pickup.Ray;
@@ -24,7 +23,7 @@ package snjdck.g3d
 		private var _width:int;
 		private var _height:int;
 		
-		private const cameraList:Vector.<ICamera3D> = new Vector.<ICamera3D>();
+		private const camera3d:Camera3D = new Camera3D();
 		
 		public function Scene3D()
 		{
@@ -35,40 +34,21 @@ package snjdck.g3d
 		public function update(timeElapsed:int):void
 		{
 			root.onUpdate(timeElapsed);
-			cameraList.length = 0;
-			root.traverse(__collectCameras, false);
-			for each(var camera:ICamera3D in cameraList){
-				camera.setScreenSize(_width, _height);
-				camera.clear();
-				root.collectDrawUnit(camera);
-			}
-		}
-		
-		private function __collectCameras(item:Object3D):void
-		{
-			if(item is ICamera3D){
-				cameraList.push(item);
-			}
+			camera3d.clear();
+			root.collectDrawUnit(camera3d);
 		}
 		
 		public function draw(context3d:GpuContext):void
 		{
-			for each(var camera:Camera3D in cameraList){
-				camera.draw(context3d);
-			}
+			camera3d.draw(context3d);
 		}
 		
 		public function preDrawDepth(context3d:GpuContext):void{}
 		
 		public function pickup(stageX:Number, stageY:Number, result:Vector.<Object3D>):void
 		{
-			for each(var camera:Camera3D in cameraList){
-				if(!camera.mouseEnabled){
-					continue;
-				}
-				camera.getSceneRay(stageX, stageY, ray);
-				camera.pickup(ray, result);
-			}
+			camera3d.getSceneRay(stageX, stageY, ray);
+			camera3d.pickup(ray, result);
 		}
 		
 		public function notifyEvent(evtType:String):Boolean
@@ -103,6 +83,7 @@ package snjdck.g3d
 		{
 			_width = width;
 			_height = height;
+			camera3d.setScreenSize(width, height);
 		}
 		
 		public function get stageWidth():int

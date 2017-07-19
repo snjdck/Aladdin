@@ -19,16 +19,12 @@ package snjdck.g3d.cameras
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
 	
-	import stdlib.constant.Unit;
-	
 	use namespace ns_g3d;
 	
-	public class Camera3D extends Object3D implements ICamera3D
+	public class Camera3D implements ICamera3D
 	{
 		static public var zNear	:Number = -1000;
 		static public var zRange:Number =  4000;
-//		static public var zOffset:Number = -1500;
-//		static public var fov:Number = Math.tan(40 * Unit.RADIAN * 0.5);
 		
 		private const viewFrusum:ViewFrustumOrtho = new ViewFrustumOrtho();
 		
@@ -44,17 +40,19 @@ package snjdck.g3d.cameras
 		
 		private const projectionData:ProjectionData = new ProjectionData(true);
 		
-		private const cameraPosition:Vector3D = new Vector3D();
-		
 		public function Camera3D()
 		{
-			var direction:Vector3D = new Vector3D(-1, -1, -Math.SQRT2);
+//			var direction:Vector3D = new Vector3D(-1, -1, -Math.SQRT2);
+			var direction:Vector3D = new Vector3D(-1, -1, -Math.sqrt(6));
 			direction.normalize();
 			viewMatrix = new RotationMatrix(Vector3D.Z_AXIS, direction);
 			projectionData.zNear = zNear;
 			projectionData.zRange = zRange;
-//			projectionData.zOffset = zOffset;
-			transform = viewMatrix.transformInvert;
+		}
+		
+		public function get center():Vector3D
+		{
+			return viewFrusum.center;
 		}
 		
 		public function setScreenSize(width:int, height:int):void
@@ -73,17 +71,10 @@ package snjdck.g3d.cameras
 			}
 		}
 		
-		override public function onUpdate(timeElapsed:int):void
-		{
-			worldTransform.copyColumnTo(3, cameraPosition);
-			viewFrusum.center.copyFrom(cameraPosition);
-//			viewFrusum.updatePosition(cameraPosition);
-		}
-		
 		public function draw(context3d:GpuContext):void
 		{
 			projectionData.upload(context3d);
-			context3d.setVcM(2, worldTransformInvert);
+			context3d.setVcM(2, viewMatrix.transform);
 			system.render(context3d, RenderType.MATERIAL, ~(RenderTag.HERO | RenderTag.TERRAIN));
 			system.render(context3d, RenderType.HERO_PASS, RenderTag.HERO);
 			system.render(context3d, RenderType.MATERIAL, RenderTag.HERO | RenderTag.TERRAIN);
@@ -106,7 +97,7 @@ package snjdck.g3d.cameras
 			context3d.setColorMask(false, false, false, true);
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
 				light = getLightAt(lightIndex);
-				light.drawShadowMap(context3d, system, cameraPosition);
+				light.drawShadowMap(context3d, system, center);
 			}
 			context3d.setColorMask(true, true, true, true);
 			
@@ -117,7 +108,7 @@ package snjdck.g3d.cameras
 			
 			for(lightIndex=0; lightIndex<lightCount; ++lightIndex){
 				light = getLightAt(lightIndex);
-				light.drawLight(context3d, viewMatrix.transformInvert, cameraPosition);
+				light.drawLight(context3d, viewMatrix.transformInvert, center);
 			}
 		}
 		
@@ -133,7 +124,7 @@ package snjdck.g3d.cameras
 		public function getSceneRay(stageX:Number, stageY:Number, ray:Ray):void
 		{
 			projectionData.calcCameraSpaceRay(stageX, stageY, ray.pos, ray.dir);
-			ray.transform(worldTransform, ray);
+			ray.transform(viewMatrix.transformInvert, ray);
 		}
 		
 		public function getViewFrustum():IViewFrustum
