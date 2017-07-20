@@ -1,22 +1,30 @@
+def createMethod(name):
+	def func(self, other=None):
+		if self in regStack:
+			reg = self
+			if other in regStack:
+				regStack.put(other)
+		elif other in regStack:
+			reg = other
+		else:
+			reg = regStack.get()
+		if other is None:
+			addCode(name, reg, self)
+		else:
+			addCode(name, reg, self, other)
+		return reg
+	return func
 
 class Operatorable:
-	def __add__(self, other):
-		return RegisterOperation("add", self, other)
+	__add__		= createMethod("add")
+	__sub__		= createMethod("sub")
+	__mul__ 	= createMethod("mul")
+	__truediv__	= createMethod("div")
+	__pow__		= createMethod("pow")
+	__neg__		= createMethod("neg")
 
-	def __sub__(self, other):
-		return RegisterOperation("sub", self, other)
 
-	def __mul__(self, other):
-		return RegisterOperation("mul", self, other)
-
-	def __truediv__(self, other):
-		return RegisterOperation("div", self, other)
-
-	def __pow__(self, other):
-		return RegisterOperation("pow", self, other)
-
-	def __neg__(self):
-		return RegisterOperation("neg", self)
+dp4 = createMethod("dp4")
 
 
 class RegisterStack:
@@ -24,87 +32,27 @@ class RegisterStack:
 		self.stack = list(idSet)
 		self.using = set()
 
+	def reset(self):
+		while len(self.using):
+			self.stack.append(self.using.pop())
+
 	def get(self):
 		index = self.stack.pop()
 		self.using.add(index)
-		return VT(index)
-
+		return RegisterSlot(VT, index)
+	
 	def put(self, item):
 		assert item in self
 		index = item.index
 		self.using.remove(index)
 		self.stack.append(index)
-
+	
 	def __contains__(self, item):
-		return type(item) is VT and item.index in self.using
-
-
-class RegisterOperation(Operatorable):
-	def __init__(self, operator, lvalue, rvalue=None):
-		self.operator = operator
-		self.lvalue = lvalue
-		self.rvalue = rvalue
-
-	def depth(self):
-		lflag = type(self.lvalue) is RegisterOperation
-		rflag = type(self.rvalue) is RegisterOperation
-		if lflag and rflag:
-			return 1 + max(self.lvalue.depth(), self.rvalue.depth())
-		if lflag: return 1 + self.lvalue.depth()
-		if rflag: return 1 + self.rvalue.depth()
-		return 1
-
-	def assign(self, dest):
-		lvalue = self.lvalue
-		rvalue = self.rvalue
-		lflag = type(lvalue) is RegisterOperation
-		rflag = type(rvalue) is RegisterOperation
-		ldepth = lvalue.depth() if lflag else 0
-		rdepth = rvalue.depth() if rflag else 0
-
-		if dest in self.stack:
-			if lflag and rflag:
-				if rdepth > ldepth:
-					rflag = False
-					rvalue = dest
-					self.rvalue.assign(rvalue)
-				else:
-					lflag = False
-					lvalue = dest
-					self.lvalue.assign(lvalue)
-			elif lflag:
-				lflag = False
-				lvalue = dest
-				self.lvalue.assign(lvalue)
-			elif rflag:
-				rflag = False
-				rvalue = dest
-				self.rvalue.assign(rvalue)
-
-		if lflag and rflag:
-			if rdepth > ldepth:
-				rvalue = self.stack.get()
-				self.rvalue.assign(rvalue)
-				lvalue = self.stack.get()
-				self.lvalue.assign(lvalue)
-			else:
-				lvalue = self.stack.get()
-				self.lvalue.assign(lvalue)
-				rvalue = self.stack.get()
-				self.rvalue.assign(rvalue)
-		else:
-			if lflag:
-				lvalue = self.stack.get()
-				self.lvalue.assign(lvalue)
-
-			if rflag:
-				rvalue = self.stack.get()
-				self.rvalue.assign(rvalue)
-
-		codeList.append((self.operator, dest.value(), lvalue.value(), rvalue and rvalue.value()))
-		
-		if rflag: self.stack.put(rvalue)
-		if lflag: self.stack.put(lvalue)
+		if type(item) is RegisterSlot:
+			return item.name is VT and item.index in self.using
+		if type(item) is VT:
+			return item.index in self.using and item.selector == "xyzw"
+		return False
 
 
 class Register(Operatorable):
@@ -117,6 +65,8 @@ class Register(Operatorable):
 
 	def __str__(self):
 		name = type(self).__name__.lower()
+		if self.selector == "xyzw":
+			return f"{name}{self.index}"
 		return f"{name}{self.index}.{self.selector}"
 
 
@@ -130,10 +80,11 @@ class RegisterSlot(Operatorable):
 
 	def __setattr__(self, name, value):
 		register = getattr(self, name)
-		if type(value) is RegisterOperation:
-			value.assign(register)
+		if value in regStack:
+			updateLastCode(register)
 		else:
-			mov(register, value)
+			addCode("mov", register, value)
+		regStack.reset()
 
 	def value(self):
 		return getattr(self, "xyzw")
@@ -152,23 +103,20 @@ class RegisterGroup:
 
 	def __setitem__(self, key, value):
 		slot = self.group[key]
-		if slot is value: return
-		if type(value) is RegisterOperation:
-			value.assign(slot.xyzw)
+		if value in regStack:
+			updateLastCode(slot)
 		else:
 			slot.xyzw = value
+		regStack.reset()
 
 #=============================================================================
+def addCode(op, dest, source1, source2=None):
+	codeList.append([op, dest.value(), source1.value(), source2 and source2.value()])
+
+def updateLastCode(dest):
+	codeList[-1][1] = dest.value()
 
 codeList = []
-
-def mov(dest, source1):
-	codeList.append(("mov", dest.value(), source1.value()))
-
-def dp4(source1, source2):
-	return RegisterOperation("dp4", source1, source2)
-
-
 #=============================================================================
 
 class VT(Register): pass
@@ -189,6 +137,7 @@ fs = RegisterGroup(FS, 8)
 op = RegisterGroup(OP, 1)
 oc = RegisterGroup(OC, 1)
 
+regStack = None
 
 import re
 
@@ -197,7 +146,9 @@ def begin(file):
 		data = f.read()
 	idSet = re.findall(r"vt\[(\d+)\]", data)
 	idSet = set(map(int, idSet))
-	RegisterOperation.stack = RegisterStack(set(range(len(vt))) - idSet)
+	global regStack
+	regStack = RegisterStack(set(range(len(vt))) - idSet)
 
 def end():
-	print("\n".join(" ".join(map(str, item)) for item in codeList))
+	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
+	input()
