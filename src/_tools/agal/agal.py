@@ -22,6 +22,10 @@ class Operatorable:
 	__truediv__	= createMethod("div")
 	__pow__		= createMethod("pow")
 	__neg__		= createMethod("neg")
+	__eq__		= createMethod("seq")
+	__ne__		= createMethod("sne")
+	__lt__		= createMethod("slt")
+	__ge__		= createMethod("sge")
 
 
 dp4 = createMethod("dp4")
