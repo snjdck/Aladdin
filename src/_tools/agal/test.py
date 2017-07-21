@@ -1,7 +1,5 @@
 from agal import *
 
-begin(__file__)
-
 def vertex():
 	vt[1] = dp4(vt[1], vt[2]).zw
 	vt[1].x = dp4(vt[1], vt[2]).y
@@ -45,6 +43,7 @@ def vertex():
 	vt[3] = (vt[0] == vc[0]) + (vt[1] != vc[1])
 	vt[3] = (vt[0] >= vc[0]) + (vt[1] < vc[1])
 	vt[3] = (vt[0] <= vc[0]) + (vt[1] > vc[1])
+	v[0] = va[0]
 
 def fragment():
 	t = v[0]
@@ -55,4 +54,15 @@ def fragment():
 	t.xy = t1
 	t1 = v[0]
 
-input()
+	ft[0] = m33(ft[0] * vc[2], ft[0] + vc[2])
+	kil(ft[0].x)
+	ft[3] = abs(m33(ft[0] * vc[2], ft[0] + vc[2]))
+
+	for i in range(3):
+		ft[i] = aa(ft[i] * ft[2], fc[3])
+
+def aa(a, b):
+	return a + b * ft[2]
+
+
+run(vars())
