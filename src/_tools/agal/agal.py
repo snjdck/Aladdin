@@ -1,3 +1,5 @@
+__all__ = ["begin", "end"]
+
 def createMethod(name):
 	def func(self, other=None):
 		if self in regStack:
@@ -26,6 +28,7 @@ class Operatorable:
 	__ne__		= createMethod("sne")
 	__lt__		= createMethod("slt")
 	__ge__		= createMethod("sge")
+	__abs__		= createMethod("abs")
 
 
 dp4 = createMethod("dp4")
@@ -93,6 +96,9 @@ class RegisterSlot(Operatorable):
 	def value(self):
 		return getattr(self, "xyzw")
 
+	def group(self):
+		return globals()[self.name.__name__.lower()]
+
 
 class RegisterGroup:
 	def __init__(self, name, count):
@@ -131,28 +137,65 @@ class VA(Register): pass
 class FS(Register): pass
 class OP(Register): pass
 class OC(Register): pass
+class V(Register): pass
 
-vt = RegisterGroup(VT, 8)
-ft = RegisterGroup(FT, 8)
+TEMP_REG_COUNT = 8
+
+vt = RegisterGroup(VT, TEMP_REG_COUNT)
+ft = RegisterGroup(FT, TEMP_REG_COUNT)
 vc = RegisterGroup(VC, 128)
 fc = RegisterGroup(FC, 64)
 va = RegisterGroup(VA, 8)
 fs = RegisterGroup(FS, 8)
 op = RegisterGroup(OP, 1)
 oc = RegisterGroup(OC, 1)
+v  = RegisterGroup(V , 8)
 
 regStack = None
 
 import re
+import ast
 
 def begin(file):
 	with open(file) as f:
 		data = f.read()
-	idSet = re.findall(r"vt\[(\d+)\]", data)
-	idSet = set(map(int, idSet))
-	global regStack
-	regStack = RegisterStack(set(range(len(vt))) - idSet)
+	syntaxTree = ast.parse(data)
+	runCode(data, syntaxTree, "vertex")
+	end()
+	runCode(data, syntaxTree, "fragment")
+	end()
 
 def end():
 	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
-	input()
+	print()
+	#input()
+
+
+def findNode(tree, name):
+	for node in tree.body:
+		if type(node).__name__ == "FunctionDef" and node.name == name:
+			return node
+
+def callNode(tree, name):
+	node = findNode(tree, name)
+	code = ast.Module(node.body)
+	code = compile(code, "<string>", "exec")
+	exec(code, None, ExecContext())
+
+def runCode(data, tree, name):
+	global regStack
+	idSet = re.findall(name[0] + r"t\[(\d+)\]", data)
+	idSet = set(map(int, idSet))
+	regStack = RegisterStack(set(range(TEMP_REG_COUNT)) - idSet)
+	codeList.clear()
+	callNode(tree, name)
+
+class ExecContext(dict):
+	def __setitem__(self, key, value):
+		if key in self:
+			target = self[key]
+			if type(target) is RegisterSlot:
+				target.group()[target.index] = value
+				return
+		super().__setitem__(key, value)
+		

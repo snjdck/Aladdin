@@ -2,47 +2,57 @@ from agal import *
 
 begin(__file__)
 
-vt[1] = dp4(vt[1], vt[2]).zw
-vt[1].x = dp4(vt[1], vt[2]).y
-vt[0].x = vt[3] + vt[1]
-vt[0] = vt[3].z
+def vertex():
+	vt[1] = dp4(vt[1], vt[2]).zw
+	vt[1].x = dp4(vt[1], vt[2]).y
+	vt[0].x = vt[3] + vt[1]
+	vt[0] = vt[3].z
 
-vt[0] += vt[1]
-vt[0].x += vt[2]
+	vt[0] += vt[1]
+	vt[0].x += vt[2]
 
-vt[1] -= vt[1]
-vt[1].x -= vt[2]
-
-
-vt[2] *= vt[1]
-vt[2].x *= vt[2]
+	vt[1] -= vt[1]
+	vt[1].x -= vt[2]
 
 
-vt[3] /= vt[1]
-vt[3].x /= vt[2]
+	vt[2] *= vt[1]
+	vt[2].x *= vt[2]
 
 
-vt[3] **= vt[1]
-vt[3].x **= vt[2]
+	vt[3] /= vt[1]
+	vt[3].x /= vt[2]
 
 
-
-vt[0] = vt[1].x + vt[2] * vt[3]
-vt[0] = vt[1].x - vt[2]
-vt[0] = vt[1].x * vt[2]
-vt[0] = vt[1].x / vt[2]
-vt[0] = vt[1].x ** vt[2]
+	vt[3] **= vt[1]
+	vt[3].x **= vt[2]
 
 
 
-vt[0] = - vt[0].y
+	vt[0] = vt[1].x + vt[2] * vt[3]
+	vt[0] = vt[1].x - vt[2]
+	vt[0] = vt[1].x * vt[2]
+	vt[0] = vt[1].x / vt[2]
+	vt[0] = vt[1].x ** vt[2]
 
-vt[0] = (((vt[1] + vt[2]) * (vt[1] + vt[2])) * ((vt[1] + vt[2]) * (vt[1] + vt[2])).z).w
 
-vt[0] = vt[2] + dp4(vt[1] + vt[2], vt[3] + vt[4])
 
-vt[3] = (vt[0] == vc[0]) + (vt[1] != vc[1])
-vt[3] = (vt[0] >= vc[0]) + (vt[1] < vc[1])
-vt[3] = (vt[0] <= vc[0]) + (vt[1] > vc[1])
+	vt[0] = - vt[0].y
 
-end()
+	vt[0] = (((vt[1] + vt[2]) * (vt[1] + vt[2])) * ((vt[1] + vt[2]) * (vt[1] + vt[2])).z).w
+
+	vt[0] = vt[2] + dp4(vt[1] + vt[2], vt[3] + vt[4])
+
+	vt[3] = (vt[0] == vc[0]) + (vt[1] != vc[1])
+	vt[3] = (vt[0] >= vc[0]) + (vt[1] < vc[1])
+	vt[3] = (vt[0] <= vc[0]) + (vt[1] > vc[1])
+
+def fragment():
+	t = v[0]
+	t1 = v[0].xy
+	ft[0] = t + fc[0]
+	t = ft[1]
+	t.xy = ft[1]
+	t.xy = t1
+	t1 = v[0]
+
+input()
