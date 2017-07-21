@@ -1,4 +1,5 @@
-__all__ = ["run", "vt", "ft"]
+register_type = ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
+__all__ = ["run"] + register_type
 
 VERTEX = "vertex"
 FRAGMENT = "fragment"
@@ -118,11 +119,23 @@ class RegisterGroup:
 
 	def __setitem__(self, key, value):
 		slot = self.group[key]
+		if type(value) is tuple:
+			self.initConst(key, value)
+			return
 		if value in regStack:
 			updateLastCode(slot)
 		else:
 			slot.xyzw = value
 		regStack.reset()
+
+	def initConst(self, key, value):
+		slot = self.group[key]
+		if slot.name is VC:
+			vcToSet[key] = value
+		elif slot.name is FC:
+			fcToSet[key] = value
+		else: assert False
+
 
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
@@ -132,6 +145,7 @@ def updateLastCode(dest):
 	codeList[-1][1] = dest.value()
 
 codeList = []
+
 #=============================================================================
 
 class VT(Register): pass
@@ -145,17 +159,23 @@ class OC(Register): pass
 class V(Register): pass
 
 TEMP_REG_COUNT = 8
+VC_COUNT = 128
+FC_COUNT = 64
 
 vt = RegisterGroup(VT, TEMP_REG_COUNT)
 ft = RegisterGroup(FT, TEMP_REG_COUNT)
-vc = RegisterGroup(VC, 128)
-fc = RegisterGroup(FC, 64)
+vc = RegisterGroup(VC, VC_COUNT)
+fc = RegisterGroup(FC, FC_COUNT)
 va = RegisterGroup(VA, 8)
 fs = RegisterGroup(FS, 8)
 op = RegisterGroup(OP, 1)
 oc = RegisterGroup(OC, 1)
 v  = RegisterGroup(V , 8)
 
+vaUsed = 0
+fsUsed = 0
+vcToSet = [None] * VC_COUNT
+fcToSet = [None] * FC_COUNT
 regStack = None
 
 import re
@@ -164,6 +184,9 @@ import ast
 def run(context):
 	ExecContext.context = context
 	begin(context["__file__"])
+	for k, v in enumerate(vcToSet):
+		if v is None: continue
+		print(k, v)
 
 def begin(file):
 	with open(file) as f:
