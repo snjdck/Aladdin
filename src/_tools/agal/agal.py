@@ -1,3 +1,6 @@
+import re
+import ast
+
 register_type = ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
 __all__ = ["run"] + register_type
 
@@ -176,8 +179,7 @@ v  = RegisterGroup(V , 8)
 
 regStack = None
 
-import re
-import ast
+
 
 def run(context):
 	ExecContext.context = context
@@ -225,15 +227,28 @@ def runCode(data, tree, name):
 	codeList.clear()
 	callNode(tree, name)
 
+REG_PATTERN = re.compile(r"^(va|fs|vt|ft|vc|fc|op|oc|v)(\d+)$")
+
 class ExecContext(dict):
 	def __init__(self):
 		super().__init__(type(self).context)
+
+	def __getitem__(self, key):
+		if key not in self:
+			mt = REG_PATTERN.match(key)
+			if mt: return globals()[mt[1]][int(mt[2])]
+		return super().__getitem__(key)
 
 	def __setitem__(self, key, value):
 		if key in self:
 			target = self[key]
 			if type(target) is RegisterSlot:
 				target.group()[target.index] = value
+				return
+		else:
+			mt = REG_PATTERN.match(key)
+			if mt:
+				globals()[mt[1]][int(mt[2])] = value
 				return
 		super().__setitem__(key, value)
 		
