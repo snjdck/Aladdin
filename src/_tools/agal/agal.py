@@ -257,13 +257,11 @@ def end():
 	print()
 	#input()
 
-def findNode(tree, name):
-	for node in tree.body:
-		if type(node).__name__ == "FunctionDef" and node.name == name:
-			return node
-
 def callNode(tree, name):
-	node = findNode(tree, name)
+	for node in tree.body:
+		if type(node) is ast.FunctionDef and node.name == name:
+			break
+	else: assert False, f"{name}() not found!"
 	code = ast.Module(node.body)
 	code = compile(code, "<string>", "exec")
 	exec(code, None, ExecContext())
