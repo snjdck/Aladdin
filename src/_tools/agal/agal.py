@@ -71,6 +71,39 @@ class RegisterStack:
 		return False
 
 
+class IndirectRegister(Operatorable):
+	def __init__(self, index, offset, selector):
+		self.index = index
+		self.offset = offset
+		self.selector = selector
+
+	def value(self):
+		return self
+
+	def __str__(self):
+		if self.offset:
+			text = f"vc[{self.index}+{self.offset}]"
+		else:
+			text = f"vc[{self.index}]"
+		if self.selector == "xyzw":
+			return text
+		return f"{text}.{self.selector}"
+
+
+class IndirectRegisterSlot(Operatorable):
+	def __init__(self, index, offset=0):
+		assert isinstance(index, Register)
+		assert len(index.selector) == 1
+		self.index = index
+		self.offset = offset
+
+	def __getattr__(self, name):
+		return IndirectRegister(self.index, self.offset, name)
+
+	def value(self):
+		return getattr(self, "xyzw")
+
+
 class Register(Operatorable):
 	def __init__(self, index, selector=None):
 		self.index = index
@@ -81,9 +114,13 @@ class Register(Operatorable):
 
 	def __str__(self):
 		name = type(self).__name__.lower()
+		text = f"{name}{self.index}"
+		if hasattr(self, "args"):
+			args = ", ".join(self.args)
+			text += f"<{args}>"
 		if self.selector == "xyzw":
-			return f"{name}{self.index}"
-		return f"{name}{self.index}.{self.selector}"
+			return text
+		return f"{text}.{self.selector}"
 
 
 class RegisterSlot(Operatorable):
@@ -108,6 +145,13 @@ class RegisterSlot(Operatorable):
 	def group(self):
 		return globals()[self.name.__name__.lower()]
 
+	def __call__(self, *args):
+		assert self.name is FS
+		reg = self.value()
+		reg.args = args
+		return reg
+
+
 
 class RegisterGroup:
 	def __init__(self, name, count):
@@ -124,6 +168,10 @@ class RegisterGroup:
 		return self.count
 
 	def __getitem__(self, key):
+		if isinstance(key, Register):
+			return IndirectRegisterSlot(key)
+		if isinstance(key, slice):
+			return IndirectRegisterSlot(key.start, key.stop)
 		assert type(key) is int
 		if hasattr(self, "usage"):
 			self.usage |= 1 << key
@@ -136,6 +184,7 @@ class RegisterGroup:
 		if type(value) is str:
 			self.field[value] = key
 			return
+		assert type(key) is int
 		slot = self.group[key]
 		if value in regStack:
 			updateLastCode(slot)
@@ -164,6 +213,7 @@ class FS(Register): pass
 class OP(Register): pass
 class OC(Register): pass
 class V(Register): pass
+
 
 TEMP_REG_COUNT = 8
 
