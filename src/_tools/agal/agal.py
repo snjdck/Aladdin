@@ -110,31 +110,35 @@ class RegisterGroup:
 	def __init__(self, name, count):
 		self.group = [RegisterSlot(name, i) for i in range(count)]
 		self.count = count
+		if name in (VC, FC):
+			self.const = [None] * count
+		if name in (VA, FS):
+			self.usage = 0
+		if name in (VC, FC, VA, FS):
+			self.field = {}
 
 	def __len__(self):
 		return self.count
 
 	def __getitem__(self, key):
+		assert type(key) is int
+		if hasattr(self, "usage"):
+			self.usage |= 1 << key
 		return self.group[key]
 
 	def __setitem__(self, key, value):
-		slot = self.group[key]
 		if type(value) is tuple:
-			self.initConst(key, value)
+			self.const[key] = value
 			return
+		if type(value) is str:
+			self.field[value] = key
+			return
+		slot = self.group[key]
 		if value in regStack:
 			updateLastCode(slot)
 		else:
 			slot.xyzw = value
 		regStack.reset()
-
-	def initConst(self, key, value):
-		slot = self.group[key]
-		if slot.name is VC:
-			vcToSet[key] = value
-		elif slot.name is FC:
-			fcToSet[key] = value
-		else: assert False
 
 
 #=============================================================================
@@ -159,23 +163,17 @@ class OC(Register): pass
 class V(Register): pass
 
 TEMP_REG_COUNT = 8
-VC_COUNT = 128
-FC_COUNT = 64
 
 vt = RegisterGroup(VT, TEMP_REG_COUNT)
 ft = RegisterGroup(FT, TEMP_REG_COUNT)
-vc = RegisterGroup(VC, VC_COUNT)
-fc = RegisterGroup(FC, FC_COUNT)
+vc = RegisterGroup(VC, 128)
+fc = RegisterGroup(FC, 64)
 va = RegisterGroup(VA, 8)
 fs = RegisterGroup(FS, 8)
 op = RegisterGroup(OP, 1)
 oc = RegisterGroup(OC, 1)
 v  = RegisterGroup(V , 8)
 
-vaUsed = 0
-fsUsed = 0
-vcToSet = [None] * VC_COUNT
-fcToSet = [None] * FC_COUNT
 regStack = None
 
 import re
@@ -184,9 +182,14 @@ import ast
 def run(context):
 	ExecContext.context = context
 	begin(context["__file__"])
-	for k, v in enumerate(vcToSet):
+	for k, v in enumerate(vc.const):
 		if v is None: continue
 		print(k, v)
+	for k, v in vc.field.items():
+		print(k, v)
+
+	print("va usage", va.usage)
+	print("fs usage", fs.usage)
 
 def begin(file):
 	with open(file) as f:

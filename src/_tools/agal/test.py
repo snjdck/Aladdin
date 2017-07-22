@@ -1,7 +1,7 @@
 from agal import *
 
 def vertex_():
-	vt[1] = dp4(vt[1], vt[2]).zw
+	vt[1] = dp4(vt[1], va[2]).zw
 	vt[1].x = dp4(vt[1], vt[2]).y
 	vt[0].x = vt[3] + vt[1]
 	vt[0] = vt[3].z
@@ -66,12 +66,17 @@ def aa(a, b):
 
 
 vc[0] = (1,2,3,4)
+vc[1:2] = "matrix"
+vc[3] = "offset"
+
 position = va[0]
 final_position = vt[2]
 offset = vc[1]
 
 
+
 def vertex():
+
 	vt[0] = vc[1] * position + final_position
 	final_position = position
 
