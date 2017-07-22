@@ -1,5 +1,4 @@
-import re
-import ast
+import ast, re
 
 register_type = ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
 __all__ = ["run"] + register_type
@@ -51,7 +50,6 @@ for key in ("rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs"
 	globals()[key] = createMethod(key)
 
 def kil(source1): addCode("kil", None, source1)
-
 
 class RegisterStack:
 	def __init__(self, regType, idSet):
@@ -358,6 +356,8 @@ REG_PATTERN = re.compile(r"^(va|fs|vt|ft|vc|fc|op|oc|v)(\d+)$")
 class ExecContext(dict):
 	def __init__(self):
 		super().__init__(type(self).context)
+		super().__setitem__("min", createMethod("min"))
+		super().__setitem__("max", createMethod("max"))
 
 	def __getitem__(self, key):
 		if key not in self:
