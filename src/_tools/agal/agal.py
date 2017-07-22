@@ -24,6 +24,8 @@ def createMethod(name):
 		return reg
 	return func
 
+
+
 class Operatorable:
 	__add__		= createMethod("add")
 	__sub__		= createMethod("sub")
@@ -36,11 +38,20 @@ class Operatorable:
 	__lt__		= createMethod("slt")
 	__ge__		= createMethod("sge")
 	__abs__		= createMethod("abs")
+	_r = lambda f: lambda a, b: f(b, a)
+	__radd__	= _r(__add__)
+	__rsub__	= _r(__sub__)
+	__rmul__	= _r(__mul__)
+	__rtruediv__= _r(__truediv__)
+	__rpow__	= _r(__pow__)
+	__le__		= _r(__ge__)
+	__gt__		= _r(__lt__)
 
 for key in ("rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex"):
 	globals()[key] = createMethod(key)
 
 def kil(source1): addCode("kil", None, source1)
+
 
 class RegisterStack:
 	def __init__(self, regType, idSet):
@@ -178,10 +189,13 @@ class RegisterGroup:
 		return self.group[key]
 
 	def __setitem__(self, key, value):
-		if type(value) is tuple:
+		if type(value) in (tuple, list):
+			assert type(key) is int
+			assert len(value) == 4
 			self.const[key] = value
 			return
 		if type(value) is str:
+			assert type(key) in (int, slice)
 			self.field[value] = key
 			return
 		assert type(key) is int
@@ -192,9 +206,68 @@ class RegisterGroup:
 			slot.xyzw = value
 		regStack.reset()
 
+	def printUseInfo(self):
+		print([k for k, v in enumerate(self.useInfo) if v])
+
+	def calcUsedInfo(self):
+		useInfo = [False] * len(self)
+		for k, v in enumerate(self.const):
+			if v is None: continue
+			useInfo[k] = True
+		for v in self.field.values():
+			if type(v) is slice:
+				for i in range(v.start, v.stop):
+					useInfo[i] = True
+				continue
+			if type(v) is int:
+				useInfo[v] = True
+				continue
+			assert False
+		self.useInfo = useInfo
+		
+
+	def nextNumRegIndex(self):
+		for index in reversed(range(len(self))):
+			if self.useInfo[index]: break
+		else: return 0
+		index += 1
+		assert index < len(self)
+		return index
+
+	def numToReg(self, value):
+		for index, v in enumerate(self.const):
+			if v is None: continue
+			try:
+				offset = v.index(value)
+			except ValueError:
+				continue
+			break
+		else:
+			if not hasattr(self, "numIndex"):
+				self.numIndex = self.nextNumRegIndex()
+				self.numDigit = []
+
+			index = self.numIndex
+			offset = len(self.numDigit)
+
+			self.numDigit.append(value)
+
+			if not self.useInfo[index]:
+				self.useInfo[index] = True
+				self.const[index] = self.numDigit
+
+			if len(self.numDigit) == 4:
+				del self.numIndex
+		return getattr(nowConstReg[index], "xyzw"[offset])
+
+
 
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
+	if type(source1) in (int, tuple):
+		source1 = nowConstReg.numToReg(source1)
+	if type(source2) in (int, tuple):
+		source2 = nowConstReg.numToReg(source2)
 	codeList.append([op, dest and dest.value(), source1.value(), source2 and source2.value()])
 
 def updateLastCode(dest):
@@ -227,21 +300,20 @@ op = RegisterGroup(OP, 1)
 oc = RegisterGroup(OC, 1)
 v  = RegisterGroup(V , 8)
 
-regStack = None
-
-
 
 def run(context):
 	ExecContext.context = context
 	begin(context["__file__"])
+
+
 	for k, v in enumerate(vc.const):
 		if v is None: continue
 		print(k, v)
-	for k, v in vc.field.items():
+	for k, v in enumerate(fc.const):
+		if v is None: continue
 		print(k, v)
-
-	print("va usage", va.usage)
-	print("fs usage", fs.usage)
+	#print("va usage", va.usage)
+	#print("fs usage", fs.usage)
 
 def begin(file):
 	with open(file) as f:
@@ -267,8 +339,14 @@ def callNode(tree, name):
 	exec(code, None, ExecContext())
 
 def runCode(data, tree, name):
-	regType = VT if name == VERTEX else FT
-	global regStack
+	global regStack, nowConstReg
+	if name == VERTEX:
+		regType = VT
+		nowConstReg = vc
+	else:
+		regType = FT
+		nowConstReg = fc
+	nowConstReg.calcUsedInfo()
 	idSet = re.findall(name[0] + r"t\[(\d+)\]", data)
 	idSet = set(map(int, idSet))
 	regStack = RegisterStack(regType, set(range(TEMP_REG_COUNT)) - idSet)
