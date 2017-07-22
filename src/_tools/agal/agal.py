@@ -46,10 +46,16 @@ class Operatorable:
 	__le__		= _r(__ge__)
 	__gt__		= _r(__lt__)
 
-for key in ("rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex"):
+for key in ("rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy"):
 	globals()[key] = createMethod(key)
 
 def kil(source1): addCode("kil", None, source1)
+def ife(source1): addCode("ife", None, source1)
+def ine(source1): addCode("ine", None, source1)
+def ifg(source1): addCode("ifg", None, source1)
+def ifl(source1): addCode("ifl", None, source1)
+def els()		: codeList.append(["els"])
+def eif()		: codeList.append(["eif"])
 
 class RegisterStack:
 	def __init__(self, regType, idSet):
@@ -262,9 +268,26 @@ class RegisterGroup:
 
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
-	if type(source1) in (int, tuple):
+	if type(source1) in (int, float):
+		if op == "sub" and source1 == 0:
+			codeList.append(["neg", dest.value(), source2.value()])
+			return
+		if op == "div" and source1 == 1:
+			codeList.append(["rcp", dest.value(), source2.value()])
+			return
+		if op == "pow" and source1 == 2:
+			codeList.append(["exp", dest.value(), source2.value()])
+			return
+		if op == "mul" and source1 == 2:
+			codeList.append(["add", dest.value(), source2.value(), source2.value()])
+			return
+	if type(source2) in (int, float):
+		if op == "mul" and source2 == 2:
+			codeList.append(["add", dest.value(), source1.value(), source1.value()])
+			return
+	if type(source1) in (int, float, tuple):
 		source1 = nowConstReg.numToReg(source1)
-	if type(source2) in (int, tuple):
+	if type(source2) in (int, float, tuple):
 		source2 = nowConstReg.numToReg(source2)
 	codeList.append([op, dest and dest.value(), source1.value(), source2 and source2.value()])
 
