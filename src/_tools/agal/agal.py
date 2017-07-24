@@ -1,7 +1,7 @@
-import ast, re
+import re
 
 register_type = ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
-__all__ = ["run"] + register_type
+__all__ = ["run"] + register_type + ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
 
 VERTEX = "vertex"
 FRAGMENT = "fragment"
@@ -46,7 +46,7 @@ class Operatorable:
 	__le__		= _r(__ge__)
 	__gt__		= _r(__lt__)
 
-for key in ("rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy"):
+for key in ("min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy"):
 	globals()[key] = createMethod(key)
 
 def kil(source1): addCode("kil", None, source1)
@@ -156,9 +156,6 @@ class RegisterSlot(Operatorable):
 
 	def value(self):
 		return getattr(self, "xyzw")
-
-	def group(self):
-		return globals()[self.name.__name__.lower()]
 
 	def __call__(self, *args):
 		assert self.name is FS
@@ -327,44 +324,8 @@ oc = RegisterGroup(OC, 1)
 v  = RegisterGroup(V , 8)
 
 
-def run(context):
-	ExecContext.context = context
-	begin(context["__file__"])
-
-
-	for k, v in enumerate(vc.const):
-		if v is None: continue
-		print(k, v)
-	for k, v in enumerate(fc.const):
-		if v is None: continue
-		print(k, v)
-	#print("va usage", va.usage)
-	#print("fs usage", fs.usage)
-
-def begin(file):
-	with open(file) as f:
-		data = f.read()
-	syntaxTree = ast.parse(data)
-	runCode(data, syntaxTree, VERTEX)
-	end()
-	runCode(data, syntaxTree, FRAGMENT)
-	end()
-
-def end():
-	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
-	print()
-	#input()
-
-def callNode(tree, name):
-	for node in tree.body:
-		if type(node) is ast.FunctionDef and node.name == name:
-			break
-	else: assert False, f"{name}() not found!"
-	code = ast.Module(node.body)
-	code = compile(code, "<string>", "exec")
-	exec(code, None, ExecContext())
-
-def runCode(data, tree, name):
+def run(data, handler):
+	name = handler.__name__
 	global regStack, nowConstReg
 	if name == VERTEX:
 		regType = VT
@@ -377,37 +338,7 @@ def runCode(data, tree, name):
 	idSet = set(map(int, idSet))
 	regStack = RegisterStack(regType, set(range(TEMP_REG_COUNT)) - idSet)
 	codeList.clear()
-	callNode(tree, name)
+	handler()
+	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
+	print()
 
-REG_PATTERN = re.compile(r"^(va|fs|vt|ft|vc|fc|op|oc|v)(\d+)$")
-
-class ExecContext(dict):
-	def __init__(self):
-		super().__init__(type(self).context)
-		super().__setitem__("min", createMethod("min"))
-		super().__setitem__("max", createMethod("max"))
-
-	def __getitem__(self, key):
-		if key in ("op", "oc"):
-			return globals()[key][0]
-		if key not in self:
-			mt = REG_PATTERN.match(key)
-			if mt: return globals()[mt[1]][int(mt[2])]
-		return super().__getitem__(key)
-
-	def __setitem__(self, key, value):
-		if key in ("op", "oc"):
-			globals()[key][0] = value
-			return
-		if key in self:
-			target = self[key]
-			if type(target) is RegisterSlot:
-				target.group()[target.index] = value
-				return
-		else:
-			mt = REG_PATTERN.match(key)
-			if mt:
-				globals()[mt[1]][int(mt[2])] = value
-				return
-		super().__setitem__(key, value)
-		
