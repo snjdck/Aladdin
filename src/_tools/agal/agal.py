@@ -239,6 +239,11 @@ class RegisterGroup:
 		return index
 
 	def numToReg(self, value):
+		if type(value) is tuple:
+			index = self.nextNumRegIndex()
+			self.useInfo[index] = True
+			self.const[index] = value
+			return nowConstReg[index]
 		for index, v in enumerate(self.const):
 			if v is None: continue
 			try:
@@ -383,12 +388,17 @@ class ExecContext(dict):
 		super().__setitem__("max", createMethod("max"))
 
 	def __getitem__(self, key):
+		if key in ("op", "oc"):
+			return globals()[key][0]
 		if key not in self:
 			mt = REG_PATTERN.match(key)
 			if mt: return globals()[mt[1]][int(mt[2])]
 		return super().__getitem__(key)
 
 	def __setitem__(self, key, value):
+		if key in ("op", "oc"):
+			globals()[key][0] = value
+			return
 		if key in self:
 			target = self[key]
 			if type(target) is RegisterSlot:
