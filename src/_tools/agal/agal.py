@@ -287,6 +287,9 @@ def addCode(op, dest, source1, source2=None):
 		if op == "mul" and source2 == 2:
 			codeList.append(["add", dest.value(), source1.value(), source1.value()])
 			return
+		if op == "pow" and source2 == 2:
+			codeList.append(["mul", dest.value(), source1.value(), source1.value()])
+			return
 	if type(source1) in (int, float, tuple):
 		source1 = nowConstReg.numToReg(source1)
 	if type(source2) in (int, float, tuple):
