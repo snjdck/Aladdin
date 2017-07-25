@@ -9,16 +9,11 @@ def createMethod(name):
 	def func(self, other=None):
 		if self in regStack:
 			reg = self
-			if other in regStack:
-				regStack.put(other)
 		elif other in regStack:
 			reg = other
 		else:
 			reg = regStack.get()
-		if other is None:
-			addCode(name, reg, self)
-		else:
-			addCode(name, reg, self, other)
+		addCode(name, reg, self, other)
 		return reg
 	return func
 
@@ -57,19 +52,12 @@ def els()		: codeList.append(["els"])
 def eif()		: codeList.append(["eif"])
 
 class RegisterStack:
-	def __init__(self, usage):
-		self.stack = []
+	def __init__(self, count):
+		self.stack = list(range(count))
 		self.using = set()
-		for i in range(TEMP_REG_COUNT):
-			if usage & (1 << i) == 0:
-				self.stack.append(i)
-
-	def reset(self):
-		while len(self.using):
-			self.stack.append(self.using.pop())
 
 	def get(self):
-		index = self.stack.pop()
+		index = self.stack.pop(0)
 		self.using.add(index)
 		return RegisterSlot(XT, index)
 	
@@ -78,6 +66,7 @@ class RegisterStack:
 		index = item.index
 		self.using.remove(index)
 		self.stack.append(index)
+		self.stack.sort()
 	
 	def __contains__(self, item):
 		if type(item) is RegisterSlot:
@@ -94,7 +83,7 @@ class IndirectRegister(Operatorable):
 		self.selector = selector
 
 	def value(self):
-		return self
+		return str(self)
 
 	def __str__(self):
 		if self.offset:
@@ -117,16 +106,25 @@ class IndirectRegisterSlot(Operatorable):
 		return IndirectRegister(self.index, self.offset, name)
 
 	def value(self):
-		return getattr(self, "xyzw")
+		return str(getattr(self, "xyzw"))
 
 
 class Register(Operatorable):
-	def __init__(self, index, selector=None):
-		self.index = index
+	def __init__(self, slot, selector=None):
+		self.slot = slot
+		self.index = slot.index
 		self.selector = selector or "xyzw"
 
-	def value(self):
+	def __imatmul__(self, value):
+		setattr(self.slot, self.selector, value)
 		return self
+
+	def value(self):
+		return str(self)
+
+	def __next__(self):
+		assert len(self.selector) == 1
+		return self.__class__(self.slot, "xyzw"["wxyz".index(self.selector)])
 
 	def __str__(self):
 		name = type(self).__name__.lower()
@@ -145,8 +143,7 @@ class RegisterSlot(Operatorable):
 		object.__setattr__(self, "index", index)
 
 	def __getattr__(self, name):
-		assert self.readable()
-		return self.name(self.index, name)
+		return self.name(self, name)
 
 	def __setattr__(self, name, value):
 		assert self.writable()
@@ -155,29 +152,28 @@ class RegisterSlot(Operatorable):
 			updateLastCode(register)
 		else:
 			addCode("mov", register, value)
-		regStack.reset()
 
 	def value(self):
-		return getattr(self, "xyzw")
+		return str(getattr(self, "xyzw"))
 
 	def writable(self):
 		return self.name in (XT, OP, OC, V)
-
-	def readable(self):
-		return self.name not in (OP, OC)
 
 	def __imatmul__(self, value):
 		if value in regStack:
 			assert self.writable()
 			updateLastCode(self)
-			regStack.reset()
 		else:
 			self.xyzw = value
 		return self
 
+	def __del__(self):
+		if self.name is XT:
+			regStack.put(self)
+
 	def __call__(self, *args):
 		assert self.name is FS
-		reg = self.value()
+		reg = getattr(self, "xyzw")
 		reg.args = args
 		return reg
 
@@ -325,9 +321,7 @@ class OC(Register): pass
 class V(Register): pass
 
 
-TEMP_REG_COUNT = 8
-
-vt = ft = xt = RegisterGroup(XT, TEMP_REG_COUNT)
+vt = ft = xt = lambda: regStack.get()
 vc = RegisterGroup(XC, 128)
 fc = RegisterGroup(XC, 64)
 va = RegisterGroup(VA, 8)
@@ -336,22 +330,20 @@ op = RegisterGroup(OP, 1)
 oc = RegisterGroup(OC, 1)
 v  = RegisterGroup(V , 8)
 
+regStack = RegisterStack(8)
 
 def run(data, handler):
 	name = handler.__name__
-	global regStack, nowConstReg
+	global nowConstReg
 	if name == VERTEX:
 		nowConstReg = vc
 	else:
 		nowConstReg = fc
 	nowConstReg.calcUsedInfo()
 
-	xt.usage = 0
-	for _ in range(2):
-		regStack = RegisterStack(xt.usage)
-		codeList.clear()
-		handler()
+	handler()
 	
 	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
 	print()
+	codeList.clear()
 
