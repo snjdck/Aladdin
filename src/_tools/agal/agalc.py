@@ -4,7 +4,7 @@ from agal import *
 class Mod: pass
 class ModLoader():
 	def find_module(self, name, path=None):
-		self.path = os.path.dirname(__file__) + "/" + name + ".py"
+		self.path = os.path.join(os.path.dirname(__file__), name + ".py")
 		if os.path.exists(self.path):
 			return self
 
@@ -14,7 +14,7 @@ class ModLoader():
 			data = re.sub(r"(?<!\w)(op|oc)(?!\w|\[)", r"\1[0]", data)
 			data = re.sub(r"(?<!\w)(va|fs|vt|ft|vc|fc|v|op|oc)(\d+)", r"\1[\2]", data)
 		mod = Mod()
-		exec(data, mod.__dict__)
+		exec(compile(data, self.path, "exec"), mod.__dict__)
 		sys.modules[name] = mod
 		return mod
 
@@ -37,8 +37,9 @@ def main(file_path):
 	for k, v in enumerate(fc.const):
 		if v is None: continue
 		print(k, v)
-	#print("va usage", va.usage)
-	#print("fs usage", fs.usage)
+
+	print("va usage", va.usage)
+	print("fs usage", fs.usage)
 
 if __name__ == "__main__":
 	input(main(sys.argv[1]))

@@ -148,6 +148,7 @@ class RegisterSlot(Operatorable):
 		return self.name(self.index, name)
 
 	def __setattr__(self, name, value):
+		assert self.writable()
 		register = getattr(self, name)
 		if value in regStack:
 			updateLastCode(register)
@@ -158,8 +159,12 @@ class RegisterSlot(Operatorable):
 	def value(self):
 		return getattr(self, "xyzw")
 
+	def writable(self):
+		return self.name in (XT, OP, OC, V)
+
 	def __imatmul__(self, value):
 		if value in regStack:
+			assert self.writable()
 			updateLastCode(self)
 			regStack.reset()
 		else:
