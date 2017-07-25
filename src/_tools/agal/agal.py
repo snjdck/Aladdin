@@ -145,6 +145,7 @@ class RegisterSlot(Operatorable):
 		object.__setattr__(self, "index", index)
 
 	def __getattr__(self, name):
+		assert self.readable()
 		return self.name(self.index, name)
 
 	def __setattr__(self, name, value):
@@ -161,6 +162,9 @@ class RegisterSlot(Operatorable):
 
 	def writable(self):
 		return self.name in (XT, OP, OC, V)
+
+	def readable(self):
+		return self.name not in (OP, OC)
 
 	def __imatmul__(self, value):
 		if value in regStack:
