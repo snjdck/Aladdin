@@ -201,7 +201,9 @@ class RegisterGroup:
 		assert type(key) is int
 		if hasattr(self, "usage"):
 			self.usage |= 1 << key
-		return self.group[key]
+		slot = self.group[key]
+		self.check(slot)
+		return slot
 
 	def __setitem__(self, key, value):
 		if type(value) in (tuple, list):
@@ -215,6 +217,12 @@ class RegisterGroup:
 			return
 		assert type(key) is int
 		self.group[key] @= value
+
+	def check(self, slot):
+		if slot.name is XC:
+			assert self.useInfo[slot.index]
+		if slot.name in (VA, FS):
+			assert slot.index in self.field.values()
 
 	def printUseInfo(self):
 		print([k for k, v in enumerate(self.useInfo) if v])
@@ -346,4 +354,3 @@ def run(data, handler):
 	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
 	print()
 	codeList.clear()
-
