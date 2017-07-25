@@ -1,4 +1,3 @@
-import re
 
 register_type = ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
 __all__ = ["run"] + register_type + ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
@@ -58,10 +57,12 @@ def els()		: codeList.append(["els"])
 def eif()		: codeList.append(["eif"])
 
 class RegisterStack:
-	def __init__(self, regType, idSet):
-		self.regType = regType
-		self.stack = list(idSet)
+	def __init__(self, usage):
+		self.stack = []
 		self.using = set()
+		for i in range(TEMP_REG_COUNT):
+			if usage & (1 << i) == 0:
+				self.stack.append(i)
 
 	def reset(self):
 		while len(self.using):
@@ -70,7 +71,7 @@ class RegisterStack:
 	def get(self):
 		index = self.stack.pop()
 		self.using.add(index)
-		return RegisterSlot(self.regType, index)
+		return RegisterSlot(XT, index)
 	
 	def put(self, item):
 		assert item in self
@@ -80,8 +81,8 @@ class RegisterStack:
 	
 	def __contains__(self, item):
 		if type(item) is RegisterSlot:
-			return item.name is self.regType and item.index in self.using
-		if type(item) is self.regType:
+			return item.name is XT and item.index in self.using
+		if type(item) is XT:
 			return item.index in self.using and item.selector == "xyzw"
 		return False
 
@@ -177,11 +178,11 @@ class RegisterGroup:
 	def __init__(self, name, count):
 		self.group = [RegisterSlot(name, i) for i in range(count)]
 		self.count = count
-		if name in (VC, FC):
+		if name is XC:
 			self.const = [None] * count
-		if name in (VA, FS):
+		if name in (XT, VA, FS):
 			self.usage = 0
-		if name in (VC, FC, VA, FS):
+		if name in (XC, VA, FS):
 			self.field = {}
 
 	def __len__(self):
@@ -306,10 +307,8 @@ codeList = []
 
 #=============================================================================
 
-class VT(Register): pass
-class FT(Register): pass
-class VC(Register): pass
-class FC(Register): pass
+class XT(Register): pass
+class XC(Register): pass
 class VA(Register): pass
 class FS(Register): pass
 class OP(Register): pass
@@ -319,10 +318,9 @@ class V(Register): pass
 
 TEMP_REG_COUNT = 8
 
-vt = RegisterGroup(VT, TEMP_REG_COUNT)
-ft = RegisterGroup(FT, TEMP_REG_COUNT)
-vc = RegisterGroup(VC, 128)
-fc = RegisterGroup(FC, 64)
+vt = ft = xt = RegisterGroup(XT, TEMP_REG_COUNT)
+vc = RegisterGroup(XC, 128)
+fc = RegisterGroup(XC, 64)
 va = RegisterGroup(VA, 8)
 fs = RegisterGroup(FS, 8)
 op = RegisterGroup(OP, 1)
@@ -334,17 +332,17 @@ def run(data, handler):
 	name = handler.__name__
 	global regStack, nowConstReg
 	if name == VERTEX:
-		regType = VT
 		nowConstReg = vc
 	else:
-		regType = FT
 		nowConstReg = fc
 	nowConstReg.calcUsedInfo()
-	idSet = re.findall(name[0] + r"t\[(\d+)\]", data)
-	idSet = set(map(int, idSet))
-	regStack = RegisterStack(regType, set(range(TEMP_REG_COUNT)) - idSet)
-	codeList.clear()
-	handler()
+
+	xt.usage = 0
+	for _ in range(2):
+		regStack = RegisterStack(xt.usage)
+		codeList.clear()
+		handler()
+	
 	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
 	print()
 
