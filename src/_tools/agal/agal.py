@@ -157,6 +157,14 @@ class RegisterSlot(Operatorable):
 	def value(self):
 		return getattr(self, "xyzw")
 
+	def __imatmul__(self, value):
+		if value in regStack:
+			updateLastCode(self)
+			regStack.reset()
+		else:
+			self.xyzw = value
+		return self
+
 	def __call__(self, *args):
 		assert self.name is FS
 		reg = self.value()
@@ -200,12 +208,7 @@ class RegisterGroup:
 			self.field[value] = key
 			return
 		assert type(key) is int
-		slot = self.group[key]
-		if value in regStack:
-			updateLastCode(slot)
-		else:
-			slot.xyzw = value
-		regStack.reset()
+		self.group[key] @= value
 
 	def printUseInfo(self):
 		print([k for k, v in enumerate(self.useInfo) if v])

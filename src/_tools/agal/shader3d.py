@@ -20,8 +20,27 @@ def quaternion(vector):
 	vt1.xyz *= 2
 	vt1.xyz += vt2.xyz
 
-def vertex():
+def bone(index):
+	vt1 = vc[index]
 	quaternion(va0)
+	vt1.xyz = vt1 + vc[index:1]
+
+def bone_ani_pos():
+	bone(va2.x)
+	vt0.xyz = vt1 * va2.y
+	bone(va2.z)
+	vt1.xyz *= va2.w
+	vt0.xyz += vt1
+	bone(va3.x)
+	vt1.xyz *= va3.y
+	vt0.xyz += vt1
+	bone(va3.z)
+	vt1.xyz *= va3.w
+	vt0.xyz += vt1
+	vt0.w = va0
+
+def vertex():
+	bone_ani_pos()
 
 def fragment():
 	pass

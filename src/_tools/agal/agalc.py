@@ -9,8 +9,6 @@ class ModLoader():
 			return self
 
 	def load_module(self, name):
-		if name in sys.modules:
-			return sys.modules[name]
 		with open(self.path) as f:
 			data = f.read()
 			data = re.sub(r"(?<!\w)(op|oc)(?!\w|\[)", r"\1[0]", data)
