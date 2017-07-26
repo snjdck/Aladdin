@@ -1,18 +1,12 @@
 __all__ = ["inject", "Injector"]
-
-injectionDict = {}
-
-def getInjectionInfo(clazz):
-	if clazz not in injectionDict:
-		injectionDict[clazz] = {}
-	return injectionDict[clazz]
-
+INJECT_KEY = "__inject__"
 
 def inject(name, **kwargs):
-	def wrapper(func):
-		clazz = func.__qualname__
-		getInjectionInfo(clazz)[name] = kwargs
-		return func
+	def wrapper(clazz):
+		if not hasattr(clazz, INJECT_KEY):
+			setattr(clazz, INJECT_KEY, {})
+		getattr(clazz, INJECT_KEY)[name] = kwargs
+		return clazz
 	return wrapper
 
 
@@ -71,7 +65,12 @@ class Injector:
 		return rule.getValue(self) if rule else None
 
 	def injectInto(self, target):
-		clazz = target.__class__.__qualname__
-		for key, value in getInjectionInfo(clazz).items():
-			value = self.getInstance(value["type"])
-			setattr(target, key, value)
+		queue = [target.__class__]
+		while len(queue):
+			clazz = queue.pop(0)
+			queue += clazz.__bases__
+			if not hasattr(clazz, INJECT_KEY): continue
+			for key, value in getattr(clazz, INJECT_KEY).items():
+				value = self.getInstance(value["type"])
+				setattr(target, key, value)
+			
