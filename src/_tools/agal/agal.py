@@ -186,6 +186,8 @@ class RegisterSlot(Operatorable):
 
 
 class RegisterGroup:
+	field = {}
+
 	def __init__(self, name, count):
 		self.group = [RegisterSlot(name, i) for i in range(count)]
 		self.count = count
@@ -208,28 +210,28 @@ class RegisterGroup:
 		if hasattr(self, "usage"):
 			self.usage |= 1 << key
 		slot = self.group[key]
-		self.check(slot)
+		assert slot.name not in (XC, VA, FS)
 		return slot
 
 	def __setitem__(self, key, value):
-		if type(value) in (tuple, list):
-			assert type(key) is int
-			assert len(value) == 4
-			self.const[key] = value
-			return
 		if type(value) is str:
 			assert type(key) in (int, slice)
 			self.field[value] = key
+			index = key if type(key) is int else key.start
+			type(self).field[value] = self.group[index]
 			return
 		assert type(key) is int
 		self.group[key] @= value
 
+	def __call__(self, *args):
+		assert False
+	'''
 	def check(self, slot):
 		if slot.name is XC:
 			assert self.useInfo[slot.index]
 		if slot.name in (VA, FS):
 			assert slot.index in self.field.values()
-
+	'''
 	def printUseInfo(self):
 		print([k for k, v in enumerate(self.useInfo) if v])
 
@@ -281,10 +283,6 @@ class RegisterGroup:
 		self.const[index] = list(value)
 		return self.group[index]
 		
-		
-
-
-
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
 	if type(source1) in (int, float):
@@ -341,6 +339,7 @@ v  = RegisterGroup(V , 8)
 regStack = RegisterStack(8)
 
 def run(data, handler):
+	handler.__globals__.update(RegisterGroup.field)
 	name = handler.__name__
 	global nowConstReg
 	if name == VERTEX:

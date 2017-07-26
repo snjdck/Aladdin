@@ -11,7 +11,6 @@ class ModLoader():
 	def load_module(self, name):
 		with open(self.path) as f:
 			data = f.read()
-			data = re.sub(r"(?<!\w)_(?!\w)", r"None", data)
 			data = re.sub(r"(?<!\w)(op|oc)(?!\w|\[)", r"\1[0]", data)
 			data = re.sub(r"(?<!\w)(va|fs|vc|fc|v|op|oc)(\d+)", r"\1[\2]", data)
 		mod = Mod()
