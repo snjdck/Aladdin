@@ -4,6 +4,7 @@ __all__ = ["run"] + register_type + ["min", "max", "rcp", "frc", "sqt", "rsq", "
 
 VERTEX = "vertex"
 FRAGMENT = "fragment"
+XYZW = "xyzw"
 
 def createMethod(name):
 	def func(self, other=None):
@@ -51,6 +52,11 @@ def ifl(source1): addCode("ifl", None, source1)
 def els()		: codeList.append(["els"])
 def eif()		: codeList.append(["eif"])
 
+def calcSelectorInSlot(slot, value):
+	selector = [0 if v is None else slot.index(v) for v in value]
+	selector = "".join(map(XYZW.__getitem__, selector))
+	return selector
+
 class RegisterStack:
 	def __init__(self, count):
 		self.stack = list(range(count))
@@ -72,7 +78,7 @@ class RegisterStack:
 		if type(item) is RegisterSlot:
 			return item.name is XT and item.index in self.using
 		if type(item) is XT:
-			return item.index in self.using and item.selector == "xyzw"
+			return item.index in self.using and item.selector == XYZW
 		return False
 
 
@@ -90,7 +96,7 @@ class IndirectRegister(Operatorable):
 			text = f"vc[{self.index}+{self.offset}]"
 		else:
 			text = f"vc[{self.index}]"
-		if self.selector == "xyzw":
+		if self.selector == XYZW:
 			return text
 		return f"{text}.{self.selector}"
 
@@ -106,14 +112,14 @@ class IndirectRegisterSlot(Operatorable):
 		return IndirectRegister(self.index, self.offset, name)
 
 	def value(self):
-		return str(getattr(self, "xyzw"))
+		return str(getattr(self, XYZW))
 
 
 class Register(Operatorable):
 	def __init__(self, slot, selector=None):
 		self.slot = slot
 		self.index = slot.index
-		self.selector = selector or "xyzw"
+		self.selector = selector or XYZW
 
 	def __imatmul__(self, value):
 		setattr(self.slot, self.selector, value)
@@ -124,7 +130,7 @@ class Register(Operatorable):
 
 	def __next__(self):
 		assert len(self.selector) == 1
-		return self.__class__(self.slot, "xyzw"["wxyz".index(self.selector)])
+		return self.__class__(self.slot, XYZW["wxyz".index(self.selector)])
 
 	def __str__(self):
 		name = type(self).__name__.lower()
@@ -132,7 +138,7 @@ class Register(Operatorable):
 		if hasattr(self, "args"):
 			args = ", ".join(self.args)
 			text += f"<{args}>"
-		if self.selector == "xyzw":
+		if self.selector == XYZW:
 			return text
 		return f"{text}.{self.selector}"
 
@@ -154,7 +160,7 @@ class RegisterSlot(Operatorable):
 			addCode("mov", register, value)
 
 	def value(self):
-		return str(getattr(self, "xyzw"))
+		return str(getattr(self, XYZW))
 
 	def writable(self):
 		return self.name in (XT, OP, OC, V)
@@ -173,7 +179,7 @@ class RegisterSlot(Operatorable):
 
 	def __call__(self, *args):
 		assert self.name is FS
-		reg = getattr(self, "xyzw")
+		reg = getattr(self, XYZW)
 		reg.args = args
 		return reg
 
@@ -252,36 +258,30 @@ class RegisterGroup:
 		assert index < len(self)
 		return index
 
-	def numToReg(self, value):
-		if type(value) is tuple:
-			index = self.nextNumRegIndex()
-			self.useInfo[index] = True
-			self.const[index] = value
-			return nowConstReg[index]
-		for index, v in enumerate(self.const):
-			if v is None: continue
-			try:
-				offset = v.index(value)
-			except ValueError:
-				continue
-			break
-		else:
-			if not hasattr(self, "numIndex"):
-				self.numIndex = self.nextNumRegIndex()
-				self.numDigit = []
+	def findRegister(self, index, value):
+		slot = self.const[index]
+		selector = calcSelectorInSlot(slot, value)
+		return getattr(self.group[index], selector)
 
-			index = self.numIndex
-			offset = len(self.numDigit)
-
-			self.numDigit.append(value)
-
-			if not self.useInfo[index]:
-				self.useInfo[index] = True
-				self.const[index] = self.numDigit
-
-			if len(self.numDigit) == 4:
-				del self.numIndex
-		return getattr(nowConstReg[index], "xyzw"[offset])
+	def valueToRegister(self, value):
+		if type(value) in (int, float):
+			value = (value,)
+		assert type(value) is tuple
+		for index, slot in enumerate(self.const):
+			if slot is None: continue
+			if all(v in slot for v in value if v is not None):
+				return self.findRegister(index, value)
+		index = self.nextNumRegIndex()
+		if index > 0:
+			slot = self.const[index-1]
+			if slot is not None and len(slot) + len(value) <= 4:
+				slot += value
+				return self.findRegister(index-1, value)
+		self.useInfo[index] = True
+		self.const[index] = list(value)
+		return self.group[index]
+		
+		
 
 
 
@@ -308,9 +308,9 @@ def addCode(op, dest, source1, source2=None):
 			codeList.append(["mul", dest.value(), source1.value(), source1.value()])
 			return
 	if type(source1) in (int, float, tuple):
-		source1 = nowConstReg.numToReg(source1)
+		source1 = nowConstReg.valueToRegister(source1)
 	if type(source2) in (int, float, tuple):
-		source2 = nowConstReg.numToReg(source2)
+		source2 = nowConstReg.valueToRegister(source2)
 	codeList.append([op, dest and dest.value(), source1.value(), source2 and source2.value()])
 
 def updateLastCode(dest):
