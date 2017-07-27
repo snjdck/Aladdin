@@ -213,11 +213,7 @@ class RegisterGroup:
 			return IndirectRegisterSlot(key.start, key.stop)
 		assert type(key) is int
 		slot = self.group[key]
-		if slot.name in (XC, VA, FS):
-			for k, v in self.field.items():
-				if (type(v) is int and v == key) or (type(v) is slice and v.start <= key < v.stop):
-					assert False, f"please use '{k}' instead!"
-			else: assert False, f"{slot.value()} has not declared!"
+		assert slot.name not in (XC, VA, FS), f"{slot.value()} has not declared!"
 		return slot
 
 	def __setitem__(self, key, value):
@@ -230,16 +226,20 @@ class RegisterGroup:
 		count = len(kwargs)
 		if hasattr(self, "usage"):
 			self.usage = (1 << count) - 1
+		ClassField = type(self).field
 		index = 0
 		for k, v in kwargs.items():
 			slot = self.group[index]
 			self.field[k] = index
-			index += v.count if type(v) is Matrix else 1
+			if slot.name is XC:
+				for i in range(v.count):
+					ClassField[f"{k}{i}"] = self.group[index+i]
 			if slot.name is FS:
 				slot = getattr(slot, XYZW)
 				slot.args = v
-			type(self).field[k] = slot
-	
+			ClassField[k] = slot
+			index += v.count if type(v) is Matrix else 1
+
 	def nextValueRegisterIndex(self):
 		count = sum(v.count if type(v) is Matrix else 1 for v in self.extra.values()) if hasattr(self, "extra") else 0
 		index = builtins.max(-1 if v is None else i for i, v in enumerate(self.const)) + 1
