@@ -191,14 +191,6 @@ class RegisterSlot(Operatorable):
 		if self.name is XT:
 			regStack.put(self)
 
-	def __call__(self, *args):
-		assert self.name is FS
-		reg = getattr(self, XYZW)
-		reg.args = args
-		return reg
-
-
-
 class RegisterGroup:
 	field = {}
 
@@ -211,9 +203,6 @@ class RegisterGroup:
 			self.usage = 0
 		if name in (XC, VA, FS):
 			self.field = {}
-
-	def __len__(self):
-		return self.count
 
 	def __getitem__(self, key):
 		if isinstance(key, Register):
@@ -241,15 +230,19 @@ class RegisterGroup:
 			self.usage = (1 << count) - 1
 		index = 0
 		for k, v in kwargs.items():
+			slot = self.group[index]
 			self.field[k] = index
-			type(self).field[k] = self.group[index]
 			index += v.count if type(v) is Matrix else 1
+			if slot.name is FS:
+				slot = getattr(slot, XYZW)
+				slot.args = v
+			type(self).field[k] = slot
 	
 	def nextValueRegisterIndex(self):
 		count = sum(v.count if type(v) is Matrix else 1 for v in self.extra.values()) if hasattr(self, "extra") else 0
 		index = builtins.max(-1 if v is None else i for i, v in enumerate(self.const)) + 1
 		index = builtins.max(index, count)
-		assert index < len(self)
+		assert index < self.count
 		return index
 
 	def findRegister(self, index, value):
@@ -289,7 +282,7 @@ def addCode(op, dest, source1, source2=None):
 		if op == "mul" and source1 == 2:
 			codeList.append(["add", dest.value(), source2.value(), source2.value()])
 			return
-	if type(source2) in (int, float):
+	elif type(source2) in (int, float):
 		if op == "mul" and source2 == 2:
 			codeList.append(["add", dest.value(), source1.value(), source1.value()])
 			return
@@ -298,7 +291,7 @@ def addCode(op, dest, source1, source2=None):
 			return
 	if type(source1) in (int, float, tuple):
 		source1 = nowConstReg.valueToRegister(source1)
-	if type(source2) in (int, float, tuple):
+	elif type(source2) in (int, float, tuple):
 		source2 = nowConstReg.valueToRegister(source2)
 	codeList.append([op, dest and dest.value(), source1.value(), source2 and source2.value()])
 
