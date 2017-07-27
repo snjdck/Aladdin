@@ -19,7 +19,6 @@ class Matrix:
 	def __init__(self, count):
 		self.count = count
 
-
 def createMethod(name):
 	def func(self, other=None):
 		if self in regStack:
@@ -31,8 +30,6 @@ def createMethod(name):
 		addCode(name, reg, self, other)
 		return reg
 	return func
-
-
 
 class Operatorable:
 	__add__		= createMethod("add")
@@ -315,7 +312,6 @@ class OP(Register): pass
 class OC(Register): pass
 class V(Register): pass
 
-
 vt = ft = xt = lambda: regStack.get(False)
 vc = RegisterGroup(XC, 128)
 fc = RegisterGroup(XC, 64)
@@ -328,16 +324,11 @@ v  = RegisterGroup(V , 8)
 regStack = RegisterStack(8)
 
 def run(handler):
-	handler.__globals__.update(RegisterGroup.field)
-	name = handler.__name__
 	global nowConstReg
-	if name == VERTEX:
-		nowConstReg = vc
-	else:
-		nowConstReg = fc
+	nowConstReg = vc if handler.__name__ == VERTEX else fc
 
+	handler.__globals__.update(RegisterGroup.field)
 	handler()
 	
-	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
-	print()
+	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList), "\n")
 	codeList.clear()
