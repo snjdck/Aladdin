@@ -1,10 +1,24 @@
+import builtins
 
-register_type = ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
-__all__ = ["run"] + register_type + ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
+__all__  = ["run"]
+__all__ += ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
+__all__ += ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
+__all__ += ["BYTES_4", "FLOAT_1", "FLOAT_2", "FLOAT_3", "FLOAT_4", "Matrix"]
 
 VERTEX = "vertex"
 FRAGMENT = "fragment"
 XYZW = "xyzw"
+
+BYTES_4 = "bytes4"
+FLOAT_1 = "float1"
+FLOAT_2 = "float2"
+FLOAT_3 = "float3"
+FLOAT_4 = "float4"
+
+class Matrix:
+	def __init__(self, count):
+		self.count = count
+
 
 def createMethod(name):
 	def func(self, other=None):
@@ -193,7 +207,7 @@ class RegisterGroup:
 		self.count = count
 		if name is XC:
 			self.const = [None] * count
-		if name in (XT, VA, FS):
+		if name in (VA, FS):
 			self.usage = 0
 		if name in (XC, VA, FS):
 			self.field = {}
@@ -207,56 +221,35 @@ class RegisterGroup:
 		if isinstance(key, slice):
 			return IndirectRegisterSlot(key.start, key.stop)
 		assert type(key) is int
-		if hasattr(self, "usage"):
-			self.usage |= 1 << key
 		slot = self.group[key]
-		assert slot.name not in (XC, VA, FS)
+		if hasattr(self, "field"):
+			for k, v in self.field.items():
+				if (type(v) is int and v == key) or (type(v) is slice and v.start <= key < v.stop):
+					assert False, f"please use '{k}' instead!"
+			else: assert False, f"{slot.value()} has not declared!"
 		return slot
 
 	def __setitem__(self, key, value):
-		if type(value) is str:
-			assert type(key) in (int, slice)
-			self.field[value] = key
-			index = key if type(key) is int else key.start
-			type(self).field[value] = self.group[index]
-			return
 		assert type(key) is int
 		self.group[key] @= value
 
-	def __call__(self, *args):
-		assert False
-	'''
-	def check(self, slot):
-		if slot.name is XC:
-			assert self.useInfo[slot.index]
-		if slot.name in (VA, FS):
-			assert slot.index in self.field.values()
-	'''
-	def printUseInfo(self):
-		print([k for k, v in enumerate(self.useInfo) if v])
-
-	def calcUsedInfo(self):
-		useInfo = [False] * len(self)
-		for k, v in enumerate(self.const):
-			if v is None: continue
-			useInfo[k] = True
-		for v in self.field.values():
-			if type(v) is slice:
-				for i in range(v.start, v.stop):
-					useInfo[i] = True
-				continue
-			if type(v) is int:
-				useInfo[v] = True
-				continue
-			assert False
-		self.useInfo = useInfo
-		
-
-	def nextNumRegIndex(self):
-		for index in reversed(range(len(self))):
-			if self.useInfo[index]: break
-		else: return 0
-		index += 1
+	def __call__(self, **kwargs):
+		assert not hasattr(self, "extra")
+		self.extra = kwargs
+		count = len(kwargs)
+		if hasattr(self, "usage"):
+			self.usage = (1 << count) - 1
+		index = 0
+		for k, v in kwargs.items():
+			self.field[k] = index
+			type(self).field[k] = self.group[index]
+			index += v.count if type(v) is Matrix else 1
+		print(self.field, self.extra)
+	
+	def nextValueRegisterIndex(self):
+		count = sum(v.count if type(v) is Matrix else 1 for v in self.extra.values()) if hasattr(self, "extra") else 0
+		index = builtins.max(-1 if v is None else i for i, v in enumerate(self.const)) + 1
+		index = builtins.max(index, count)
 		assert index < len(self)
 		return index
 
@@ -273,13 +266,12 @@ class RegisterGroup:
 			if slot is None: continue
 			if all(v in slot for v in value if v is not None):
 				return self.findRegister(index, value)
-		index = self.nextNumRegIndex()
+		index = self.nextValueRegisterIndex()
 		if index > 0:
 			slot = self.const[index-1]
 			if slot is not None and len(slot) + len(value) <= 4:
 				slot += value
 				return self.findRegister(index-1, value)
-		self.useInfo[index] = True
 		self.const[index] = list(value)
 		return self.group[index]
 		
@@ -346,7 +338,6 @@ def run(data, handler):
 		nowConstReg = vc
 	else:
 		nowConstReg = fc
-	nowConstReg.calcUsedInfo()
 
 	handler()
 	
