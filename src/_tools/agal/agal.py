@@ -329,7 +329,7 @@ v  = RegisterGroup(V , 8)
 
 regStack = RegisterStack(8)
 
-def run(data, handler):
+def run(handler):
 	handler.__globals__.update(RegisterGroup.field)
 	name = handler.__name__
 	global nowConstReg

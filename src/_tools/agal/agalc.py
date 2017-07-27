@@ -18,18 +18,12 @@ class ModLoader():
 		sys.modules[name] = mod
 		return mod
 
-
-sys.meta_path.insert(0, ModLoader())
-
-
 def main(file_path):
-	with open(file_path) as f:
-		data = f.read()
 	file_name = os.path.basename(file_path)
-	file_code = __import__(file_name[:file_name.index(".")])
+	module = __import__(file_name[:file_name.index(".")])
 
-	run(data, file_code.vertex)
-	run(data, file_code.fragment)
+	run(module.vertex)
+	run(module.fragment)
 
 	for k, v in enumerate(vc.const):
 		if v is None: continue
@@ -42,4 +36,5 @@ def main(file_path):
 	print("fs usage", fs.usage)
 
 if __name__ == "__main__":
+	sys.meta_path.insert(0, ModLoader())
 	input(main(sys.argv[1]))
