@@ -54,6 +54,12 @@ class Operatorable:
 	__rpow__	= _r(__pow__)
 	__le__		= _r(__ge__)
 	__gt__		= _r(__lt__)
+	_i = lambda f: lambda a, b: a.__imatmul__(f(a, b))
+	__iadd__	= _i(__add__)
+	__isub__	= _i(__sub__)
+	__imul__	= _i(__mul__)
+	__itruediv__= _i(__truediv__)
+	__ipow__	= _i(__pow__)
 
 for key in ("min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy"):
 	globals()[key] = createMethod(key)
@@ -76,17 +82,16 @@ class RegisterStack:
 		self.stack = list(range(count))
 		self.using = set()
 
-	def get(self):
+	def get(self, useFlag=True):
 		index = self.stack.pop(0)
-		self.using.add(index)
+		if useFlag: self.using.add(index)
 		return RegisterSlot(XT, index)
 	
-	def put(self, item):
-		assert item in self
-		index = item.index
-		self.using.remove(index)
+	def put(self, index):
 		self.stack.append(index)
 		self.stack.sort()
+		if index in self.using:
+			self.using.remove(index)
 	
 	def __contains__(self, item):
 		if type(item) is RegisterSlot:
@@ -170,7 +175,7 @@ class RegisterSlot(Operatorable):
 		register = getattr(self, name)
 		if value in regStack:
 			updateLastCode(register)
-		else:
+		elif register.slot is not value.slot or register.selector != value.selector:
 			addCode("mov", register, value)
 
 	def value(self):
@@ -189,7 +194,7 @@ class RegisterSlot(Operatorable):
 
 	def __del__(self):
 		if self.name is XT:
-			regStack.put(self)
+			regStack.put(self.index)
 
 class RegisterGroup:
 	field = {}
@@ -311,7 +316,7 @@ class OC(Register): pass
 class V(Register): pass
 
 
-vt = ft = xt = lambda: regStack.get()
+vt = ft = xt = lambda: regStack.get(False)
 vc = RegisterGroup(XC, 128)
 fc = RegisterGroup(XC, 64)
 va = RegisterGroup(VA, 8)
