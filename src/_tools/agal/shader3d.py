@@ -1,5 +1,7 @@
 from agal import *
 
+va(position=FLOAT_3, bone1=FLOAT_4, bone2=FLOAT_4)
+
 def rotate(vector, quaternion):
 	t1 = quaternion
 	t2, t3, t4 = vt(), vt(), vt()
@@ -25,15 +27,15 @@ def rotate(vector, quaternion):
 def bone(index):
 	t1 = vt()
 	t1 @= vc[index]
-	rotate(va0, t1)
+	rotate(position, t1)
 	t1.xyz += vc[index:1]
 	return t1
 
 def bone_ani_pos(t0):
-	t1 = bone(va2.x)
-	t0.xyz = t1 * va2.y
+	t1 = bone(bone1.x)
+	t0.xyz = t1 * bone1.y
 	del t1
-	for index in (va2.z, va3.x, va3.z):
+	for index in (bone1.z, bone2.x, bone2.z):
 		t1 = bone(index)
 		t1.xyz *= next(index)
 		t0.xyz += t1
@@ -42,7 +44,7 @@ def bone_ani_pos(t0):
 def vertex():
 	t0 = vt()
 	bone_ani_pos(t0)
-	t0.w = va0
+	t0.w = position
 
 def fragment():
 	pass

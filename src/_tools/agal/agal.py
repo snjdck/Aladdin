@@ -222,7 +222,7 @@ class RegisterGroup:
 			return IndirectRegisterSlot(key.start, key.stop)
 		assert type(key) is int
 		slot = self.group[key]
-		if hasattr(self, "field"):
+		if slot.name in (XC, VA, FS):
 			for k, v in self.field.items():
 				if (type(v) is int and v == key) or (type(v) is slice and v.start <= key < v.stop):
 					assert False, f"please use '{k}' instead!"
@@ -244,7 +244,6 @@ class RegisterGroup:
 			self.field[k] = index
 			type(self).field[k] = self.group[index]
 			index += v.count if type(v) is Matrix else 1
-		print(self.field, self.extra)
 	
 	def nextValueRegisterIndex(self):
 		count = sum(v.count if type(v) is Matrix else 1 for v in self.extra.values()) if hasattr(self, "extra") else 0
