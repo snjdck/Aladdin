@@ -172,7 +172,7 @@ class RegisterSlot(Operatorable):
 		register = getattr(self, name)
 		if value in regStack:
 			updateLastCode(register)
-		elif register.slot is not value.slot or register.selector != value.selector:
+		elif str(register) != str(value):
 			addCode("mov", register, value)
 
 	def value(self):
