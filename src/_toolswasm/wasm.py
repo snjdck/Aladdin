@@ -1,27 +1,70 @@
 import struct
 import dis
 
+code_global = []
+
 def add(a: int, b: int) -> int:
 	return a + b
 
 def square(a: int) -> int:
 	return a * a
 
+def fac(a: int) -> int:
+	if a < 1: return 1
+	return a * fac(a - 1)
+
+def findCode(codeList, offset):
+	for i, code in enumerate(codeList):
+		if code.offset == offset:
+			assert code.is_jump_target
+			return i
+	assert False
+
 def genSection(sid, data):
 	return struct.pack("2B", sid, len(data)) + data
 
-def genFuncBody(func):
-	data = b"\x00"
-	for code in dis.Bytecode(func):
+def genCodeList(codeList, begin=0, end=None):
+	if end is None: end = len(codeList)
+	data = bytes()
+	index = begin
+	while index < end:
+		code = codeList[index]
 		if code.opname == "LOAD_FAST":
 			data += struct.pack("2B", 0x20, code.arg)
 		elif code.opname == "BINARY_ADD":
 			data += struct.pack("B", 0x6A)
+		elif code.opname == "BINARY_SUBTRACT":
+			data += struct.pack("B", 0x6B)
 		elif code.opname == "BINARY_MULTIPLY":
 			data += struct.pack("B", 0x6C)
 		elif code.opname == "RETURN_VALUE":
 			data += struct.pack("B", 0x0F)
-	return data + b"\x0B"
+		elif code.opname == "LOAD_CONST":
+			data += struct.pack("2B", 0x41, code.arg)
+		elif code.opname == "LOAD_GLOBAL":
+			code_global.append(code.argval)
+		elif code.opname == "COMPARE_OP":
+			if code.argval == "<":
+				data += struct.pack("B", 0x4C)
+			else: assert False, code
+		elif code.opname == "POP_JUMP_IF_FALSE":
+			offset = findCode(codeList, code.argval)
+			data += struct.pack("2B", 0x04, 0x7F)
+			data += genCodeList(codeList, index+1, offset)
+			data += struct.pack("B", 0x0B)
+			index = offset
+			continue
+		elif code.opname == "CALL_FUNCTION":
+			data += struct.pack("2B", 0x10, __all__.index(code_global.pop()))
+		else: assert False, code
+		index += 1
+	return data
+
+def genFuncBody(func):
+	codeList = list(dis.Bytecode(func))
+	for code in codeList:
+		print(code)
+	return b"\x00" + genCodeList(codeList) + b"\x0B"
 
 __all__ = ("add", "square")
 output = struct.pack("<2I", 0x6d736100, 1)
@@ -59,6 +102,15 @@ for func in funcInfoList:
 
 output += genSection(10, info)
 
-print(" ".join([hex(item)[2:].zfill(2) for item in output]))
-
-input()
+input(
+"WebAssembly.compile(new Uint8Array(["
++ ", ".join(["0x" + hex(item)[2:].zfill(2) for item in output]) +
+"""
+])).then(module=>{
+  const instance = new WebAssembly.Instance(module)
+  const {add, square} = instance.exports
+  console.log('2 + 4 =', add(2, 4))
+  console.log('3^2 =', square(3))
+  console.log('(2 + 5)^2 =', square(add(2+5)))
+})
+""")
