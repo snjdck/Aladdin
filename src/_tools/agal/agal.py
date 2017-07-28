@@ -3,7 +3,7 @@ import builtins, traceback, sys
 __all__  = ["run"]
 __all__ += ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
 __all__ += ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
-__all__ += ["BYTES_4", "FLOAT_1", "FLOAT_2", "FLOAT_3", "FLOAT_4", "Matrix"]
+__all__ += ["BYTES_4", "FLOAT_1", "FLOAT_2", "FLOAT_3", "FLOAT_4"]
 
 VERTEX = "vertex"
 FRAGMENT = "fragment"
@@ -14,10 +14,6 @@ FLOAT_1 = "float1"
 FLOAT_2 = "float2"
 FLOAT_3 = "float3"
 FLOAT_4 = "float4"
-
-class Matrix:
-	def __init__(self, count):
-		self.count = count
 
 def createMethod(name):
 	def func(self, other=None):
@@ -189,7 +185,12 @@ class RegisterSlot(Operatorable):
 			regStack.put(self.index)
 
 class RegisterGroup:
-	field = {}
+	class Dict(dict):
+		def __setitem__(self, key, value):
+			assert key not in self, key
+			super().__setitem__(key, value)
+	vertex = Dict()
+	fragment = Dict()
 
 	def __init__(self, name, count):
 		self.group = [RegisterSlot(name, i) for i in range(count)]
@@ -221,22 +222,22 @@ class RegisterGroup:
 		count = len(kwargs)
 		if hasattr(self, "usage"):
 			self.usage = (1 << count) - 1
-		ClassField = type(self).field
+		ClassField = self.vertex if self in (va, vc) else self.fragment
 		index = 0
 		for k, v in kwargs.items():
 			slot = self.group[index]
 			self.field[k] = index
 			if slot.name is XC:
-				for i in range(v.count):
+				for i in range(v):
 					ClassField[f"{k}{i}"] = self.group[index+i]
+			index += v if slot.name is XC else 1
 			if slot.name is FS:
 				slot = getattr(slot, XYZW)
 				slot.args = v
 			ClassField[k] = slot
-			index += v.count if type(v) is Matrix else 1
 
 	def nextValueRegisterIndex(self):
-		count = sum(v.count if type(v) is Matrix else 1 for v in self.extra.values()) if hasattr(self, "extra") else 0
+		count = sum(self.extra.values()) if hasattr(self, "extra") else 0
 		index = builtins.max(-1 if v is None else i for i, v in enumerate(self.const)) + 1
 		index = builtins.max(index, count)
 		assert index < self.count
@@ -319,10 +320,15 @@ v  = RegisterGroup(V , 8)
 regStack = RegisterStack(8)
 
 def run(handler):
+	name = handler.__name__
 	global nowConstReg
-	nowConstReg = vc if handler.__name__ == VERTEX else fc
+	nowConstReg = vc if name == VERTEX else fc
+	
+	_globals = handler.__globals__
+	field = getattr(RegisterGroup, name)
+	assert all(k not in _globals for k in field)
+	_globals.update(field)
 
-	handler.__globals__.update(RegisterGroup.field)
 	try:
 		handler()
 	except:
@@ -331,5 +337,6 @@ def run(handler):
 	else:
 		print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
 	finally:
+		[_globals.__delitem__(k) for k in field]
 		codeList.clear()
 		print()

@@ -1,8 +1,8 @@
 import re, os, sys
 from agal import *
 
-class Mod: pass
-class ModLoader():
+class Module: pass
+class ModuleLoader():
 	def find_module(self, name, path=None):
 		self.path = os.path.join(os.path.dirname(__file__), name + ".py")
 		if os.path.exists(self.path):
@@ -13,10 +13,10 @@ class ModLoader():
 			data = f.read()
 			data = re.sub(r"(?<!\w)(op|oc)(?!\w|\[)", r"\1[0]",  data)
 			data = re.sub(r"(?<!\w)(op|oc|v)(\d+)",   r"\1[\2]", data)
-		mod = Mod()
-		exec(compile(data, self.path, "exec"), mod.__dict__)
-		sys.modules[name] = mod
-		return mod
+		module = Module()
+		exec(compile(data, self.path, "exec"), module.__dict__)
+		sys.modules[name] = module
+		return module
 
 def main(file_path):
 	file_name = os.path.basename(file_path)
@@ -36,5 +36,5 @@ def main(file_path):
 	print("fs usage", fs.usage)
 
 if __name__ == "__main__":
-	sys.meta_path.insert(0, ModLoader())
+	sys.meta_path.insert(0, ModuleLoader())
 	input(main(sys.argv[1]))
