@@ -21,14 +21,9 @@ class Matrix:
 
 def createMethod(name):
 	def func(self, other=None):
-		if self in regStack:
-			reg = self
-		elif other in regStack:
-			reg = other
-		else:
-			reg = regStack.get()
-		addCode(name, reg, self, other)
-		return reg
+		slot = self if self in regStack else other if other in regStack else regStack.get()
+		addCode(name, slot, self, other)
+		return slot
 	return func
 
 class Operatorable:
@@ -213,7 +208,7 @@ class RegisterGroup:
 			return IndirectRegisterSlot(key.start, key.stop)
 		assert type(key) is int
 		slot = self.group[key]
-		assert slot.name not in (XC, VA, FS), f"{slot.value()} has not declared!"
+		assert slot.name not in (XC, VA, FS), "use bind name instead!"
 		return slot
 
 	def __setitem__(self, key, value):
