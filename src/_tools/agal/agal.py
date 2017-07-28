@@ -253,20 +253,20 @@ class RegisterGroup:
 		return getattr(self.group[index], selector)
 
 	def valueToRegister(self, value):
-		if type(value) in (int, float):
-			value = (value,)
+		if type(value) in (int, float): value = (value,)
 		assert type(value) is tuple and len(value) <= 4
+		valueSet = set(v for v in value if v is not None)
 		for index, slot in enumerate(self.const):
 			if slot is None: continue
-			if all(v in slot for v in value if v is not None):
+			if all(v in slot for v in valueSet):
 				return self.findRegister(index, value)
 		index = self.nextValueRegisterIndex()
 		if index > 0:
 			slot = self.const[index-1]
-			if slot is not None and len(slot) + len(set(value)) <= 4:
-				slot += set(value)
+			if slot is not None and len(slot) + len(valueSet) <= 4:
+				slot += valueSet
 				return self.findRegister(index-1, value)
-		self.const[index] = list(set(value))
+		self.const[index] = list(valueSet)
 		return self.findRegister(index, value)
 		
 #=============================================================================
