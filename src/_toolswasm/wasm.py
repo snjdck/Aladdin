@@ -49,7 +49,7 @@ def genCodeList(codeList, begin=0, end=None):
 			else: assert False, code
 		elif code.opname == "POP_JUMP_IF_FALSE":
 			offset = findCode(codeList, code.argval)
-			data += struct.pack("2B", 0x04, 0x7F)
+			data += struct.pack("2B", 0x04, 0x40)
 			data += genCodeList(codeList, index+1, offset)
 			data += struct.pack("B", 0x0B)
 			index = offset
@@ -67,6 +67,7 @@ def genFuncBody(func):
 	return b"\x00" + genCodeList(codeList) + b"\x0B"
 
 __all__ = ("add", "square")
+__all__ = ("fac",)
 output = struct.pack("<2I", 0x6d736100, 1)
 funcInfoList = [globals()[node] for node in __all__]
 
