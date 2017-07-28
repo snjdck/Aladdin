@@ -1,4 +1,4 @@
-import builtins
+import builtins, traceback, sys
 
 __all__  = ["run"]
 __all__ += ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
@@ -328,7 +328,13 @@ def run(handler):
 	nowConstReg = vc if handler.__name__ == VERTEX else fc
 
 	handler.__globals__.update(RegisterGroup.field)
-	handler()
-	
-	print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList), "\n")
-	codeList.clear()
+	try:
+		handler()
+	except:
+		error = sys.exc_info()
+		print("".join(traceback.format_list(traceback.extract_tb(error[2])[1:])) + error[0].__name__ + ": " + str(error[1]))
+	else:
+		print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
+	finally:
+		codeList.clear()
+		print()
