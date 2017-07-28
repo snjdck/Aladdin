@@ -152,8 +152,8 @@ class Register(Operatorable):
 
 class RegisterSlot(Operatorable):
 	def __init__(self, name, index):
-		object.__setattr__(self, "name", name)
-		object.__setattr__(self, "index", index)
+		super().__setattr__("name", name)
+		super().__setattr__("index", index)
 
 	def __getattr__(self, name):
 		return self.name(self, name)
@@ -324,8 +324,8 @@ def run(handler):
 	global nowConstReg
 	nowConstReg = vc if name == VERTEX else fc
 	
-	_globals = handler.__globals__
 	field = getattr(RegisterGroup, name)
+	_globals = handler.__globals__
 	assert all(k not in _globals for k in field)
 	_globals.update(field)
 
