@@ -255,7 +255,7 @@ class RegisterGroup:
 	def valueToRegister(self, value):
 		if type(value) in (int, float):
 			value = (value,)
-		assert type(value) is tuple
+		assert type(value) is tuple and len(value) <= 4
 		for index, slot in enumerate(self.const):
 			if slot is None: continue
 			if all(v in slot for v in value if v is not None):
@@ -263,11 +263,11 @@ class RegisterGroup:
 		index = self.nextValueRegisterIndex()
 		if index > 0:
 			slot = self.const[index-1]
-			if slot is not None and len(slot) + len(value) <= 4:
-				slot += value
+			if slot is not None and len(slot) + len(set(value)) <= 4:
+				slot += set(value)
 				return self.findRegister(index-1, value)
-		self.const[index] = list(value)
-		return self.group[index]
+		self.const[index] = list(set(value))
+		return self.findRegister(index, value)
 		
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
