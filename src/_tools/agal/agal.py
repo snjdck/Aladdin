@@ -225,44 +225,45 @@ class ConstStack:
 		self.const[index] = list(valueSet)
 		return self.findRegister(index, value)
 
-def input(**kwargs):
-	def wrapper(handler):
-		assert handler.__name__ in (VERTEX, FRAGMENT)
-		assert not hasattr(handler, "input")
-		handler.input = {}
-		if not hasattr(handler, "field"):
-			handler.field = Dict()
-		assert len(kwargs) <= 8
-		RegisterType = VA if handler.__name__ == VERTEX else FS
-		for index, key in enumerate(kwargs):
-			slot = RegisterSlot(RegisterType, index)
-			handler.input[key] = (index, kwargs[key])
-			if RegisterType is FS:
-				slot = getattr(slot, XYZW)
-				slot.args = kwargs[key]
-			else: assert kwargs[key] in ("bytes4", "float1", "float2", "float3", "float4")
-			handler.field[key] = slot
-		return handler
-	return wrapper
 
-def const(**kwargs):
-	def wrapper(handler):
-		assert handler.__name__ in (VERTEX, FRAGMENT)
-		assert not hasattr(handler, "const")
-		handler.const = {}
-		if not hasattr(handler, "field"):
-			handler.field = Dict()
-		index = 0
-		for k, v in kwargs.items():
-			slot = RegisterSlot(XC, index)
-			handler.const[k] = (index, index + v)
-			for i in range(v):
-				handler.field[f"{k}{i}"] = RegisterSlot(XC, index+i)
-			handler.field[k] = slot
-			index += v
-		handler.offset = index
-		return handler
-	return wrapper
+def input_callback(handler, kwargs):
+	assert len(kwargs) <= 8
+	RegisterType = VA if handler.__name__ == VERTEX else FS
+	for index, key in enumerate(kwargs):
+		slot = RegisterSlot(RegisterType, index)
+		handler.input[key] = (index, kwargs[key])
+		if RegisterType is FS:
+			slot = getattr(slot, XYZW)
+			slot.args = kwargs[key]
+		else: assert kwargs[key] in ("bytes4", "float1", "float2", "float3", "float4")
+		handler.field[key] = slot
+
+def const_callback(handler, kwargs):
+	index = 0
+	for k, v in kwargs.items():
+		slot = RegisterSlot(XC, index)
+		handler.const[k] = (index, index + v)
+		for i in range(v):
+			handler.field[f"{k}{i}"] = RegisterSlot(XC, index+i)
+		handler.field[k] = slot
+		index += v
+	handler.offset = index
+
+def createAttribute(name, callback):
+	def attribute(**kwargs):
+		def wrapper(handler):
+			assert handler.__name__ in (VERTEX, FRAGMENT)
+			assert not hasattr(handler, name)
+			setattr(handler, name, {})
+			if not hasattr(handler, "field"):
+				handler.field = Dict()
+			callback(handler, kwargs)
+			return handler
+		return wrapper
+	return attribute
+
+input = createAttribute("input", input_callback)
+const = createAttribute("const", const_callback)
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
 	if type(source1) in (int, float):
