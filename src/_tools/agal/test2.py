@@ -15,7 +15,23 @@ def vertex(output):
 	return t0, off
 
 def fragment(output, v0, v1):
-	output @= (1,2,3,4) + v0 + v1
+	#output @= (1,2,3,4) + v0 + v1
+	t0 = xt()
+	t0 @= -v0
+	t0 @= 0 - v0
+	t0 @= 0.0 - v0
+	t0 @= 1 / v0
+	t0 @= 1.0 / v0
+	t0 @= 2 ** v0
+	t0 @= 2.0 ** v0
+	t0 @= 2 * v0
+	t0 @= 2.0 * v0
+
+	t0 @= v1 * 2
+	t0 @= v1 * 2.0
+
+	t0 @= v1 ** 2
+	t0 @= v1 ** 2.0
 
 
 #input()

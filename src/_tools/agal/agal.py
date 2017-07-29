@@ -267,25 +267,18 @@ const = createAttribute("const", const_callback)
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
 	if type(source1) in (int, float):
-		if op == "sub" and source1 == 0:
-			codeList.append(["neg", dest.value(), source2.value()])
-			return
-		if op == "div" and source1 == 1:
-			codeList.append(["rcp", dest.value(), source2.value()])
-			return
-		if op == "pow" and source1 == 2:
-			codeList.append(["exp", dest.value(), source2.value()])
-			return
+		for a, b, c in [("sub", 0, "neg"), ("div", 1, "rcp"), ("pow", 2, "exp")]:
+			if op == a and source1 == b:
+				codeList.append([c, dest.value(), source2.value()])
+				return
 		if op == "mul" and source1 == 2:
-			codeList.append(["add", dest.value(), source2.value(), source2.value()])
+			addCode(op, dest, source2, 2)
 			return
-	elif type(source2) in (int, float):
-		if op == "mul" and source2 == 2:
-			codeList.append(["add", dest.value(), source1.value(), source1.value()])
-			return
-		if op == "pow" and source2 == 2:
-			codeList.append(["mul", dest.value(), source1.value(), source1.value()])
-			return
+	elif type(source2) in (int, float) and source2 == 2:
+		for a, b in [("mul", "add"), ("pow", "mul")]:
+			if op == a:
+				codeList.append([b, dest.value(), source1.value(), source1.value()])
+				return
 	if type(source1) in (int, float, tuple):
 		source1 = constStack.valueToRegister(source1)
 	elif type(source2) in (int, float, tuple):
