@@ -52,11 +52,6 @@ def ifl(source1): addCode("ifl", None, source1)
 def els()		: codeList.append(["els"])
 def eif()		: codeList.append(["eif"])
 
-def calcSelectorInSlot(slot, value):
-	selector = [0 if v is None else slot.index(v) for v in value]
-	selector = "".join(map(XYZW.__getitem__, selector))
-	return selector
-
 class TempStack:
 	def __init__(self, count):
 		self.stack = list(range(count))
@@ -80,7 +75,6 @@ class TempStack:
 			return item.index in self.using and item.selector == XYZW
 		return False
 
-
 class IndirectRegister(Operatorable):
 	def __init__(self, index, offset, selector):
 		self.index = index
@@ -99,7 +93,6 @@ class IndirectRegister(Operatorable):
 			return text
 		return f"{text}.{self.selector}"
 
-
 class IndirectRegisterSlot(Operatorable):
 	def __init__(self, index, offset=0):
 		assert isinstance(index, Register)
@@ -112,7 +105,6 @@ class IndirectRegisterSlot(Operatorable):
 
 	def value(self):
 		return str(getattr(self, XYZW))
-
 
 class Register(Operatorable):
 	def __init__(self, slot, selector=None):
@@ -140,7 +132,6 @@ class Register(Operatorable):
 		if self.selector == XYZW:
 			return text
 		return f"{text}.{self.selector}"
-
 
 class RegisterSlot(Operatorable):
 	def __init__(self, name, index=0):
@@ -197,6 +188,10 @@ class ConstStack:
 		self.offset = handler.offset
 		handler.data = self.const
 
+	@staticmethod
+	def calcSelectorInSlot(slot, value):
+		return "".join(map(XYZW.__getitem__, [0 if v is None else slot.index(v) for v in value]))
+
 	def nextValueRegisterIndex(self):
 		index = builtins.max(-1 if v is None else i for i, v in enumerate(self.const)) + 1
 		index = builtins.max(index, self.offset)
@@ -204,9 +199,7 @@ class ConstStack:
 		return index
 
 	def findRegister(self, index, value):
-		slot = self.const[index]
-		selector = calcSelectorInSlot(slot, value)
-		return getattr(self.group[index], selector)
+		return getattr(self.group[index], self.calcSelectorInSlot(self.const[index], value))
 
 	def valueToRegister(self, value):
 		if type(value) in (int, float): value = (value,)
@@ -224,7 +217,6 @@ class ConstStack:
 				return self.findRegister(index-1, value)
 		self.const[index] = list(valueSet)
 		return self.findRegister(index, value)
-
 
 def input_callback(handler, kwargs):
 	assert len(kwargs) <= 8
@@ -289,15 +281,9 @@ def updateLastCode(dest):
 	codeList[-1][1] = dest.value()
 
 codeList = []
-
 #=============================================================================
-
-class XT(Register): pass
-class XC(Register): pass
-class XO(Register): pass
-class VA(Register): pass
-class FS(Register): pass
-class V(Register): pass
+for key in ("XT", "XC", "XO", "VA", "FS", "V"):
+	globals()[key] = type(key, (Register,), dict())
 
 tempStack = TempStack(8)
 xt = lambda: tempStack.get(False)
