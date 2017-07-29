@@ -1,23 +1,15 @@
-import builtins, traceback, sys
+import builtins, traceback, sys, operator, functools
 
-__all__  = ["run"]
-__all__ += ["vt", "ft", "va", "fs", "vc", "fc"]
+__all__  = ["run", "input", "const", "xt"]
 __all__ += ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
-__all__ += ["BYTES_4", "FLOAT_1", "FLOAT_2", "FLOAT_3", "FLOAT_4"]
 
 VERTEX = "vertex"
 FRAGMENT = "fragment"
 XYZW = "xyzw"
 
-BYTES_4 = "bytes4"
-FLOAT_1 = "float1"
-FLOAT_2 = "float2"
-FLOAT_3 = "float3"
-FLOAT_4 = "float4"
-
 def createMethod(name):
 	def func(self, other=None):
-		slot = self if self in regStack else other if other in regStack else regStack.get()
+		slot = self if self in tempStack else other if other in tempStack else tempStack.get()
 		addCode(name, slot, self, other)
 		return slot
 	return func
@@ -65,7 +57,7 @@ def calcSelectorInSlot(slot, value):
 	selector = "".join(map(XYZW.__getitem__, selector))
 	return selector
 
-class RegisterStack:
+class TempStack:
 	def __init__(self, count):
 		self.stack = list(range(count))
 		self.using = set()
@@ -161,7 +153,7 @@ class RegisterSlot(Operatorable):
 	def __setattr__(self, name, value):
 		assert self.writable()
 		register = getattr(self, name)
-		if value in regStack:
+		if value in tempStack:
 			updateLastCode(register)
 		elif str(register) != str(value):
 			addCode("mov", register, value)
@@ -170,10 +162,10 @@ class RegisterSlot(Operatorable):
 		return str(getattr(self, XYZW))
 
 	def writable(self):
-		return self.name in (XT, OP, OC, V)
+		return self.name in (XT, XO, V)
 
 	def __imatmul__(self, value):
-		if value in regStack:
+		if value in tempStack:
 			assert self.writable()
 			updateLastCode(self)
 		else:
@@ -182,65 +174,32 @@ class RegisterSlot(Operatorable):
 
 	def __del__(self):
 		if self.name is XT:
-			regStack.put(self.index)
+			tempStack.put(self.index)
 
-class RegisterGroup:
-	class Dict(dict):
-		def __setitem__(self, key, value):
-			assert key not in self, key
-			super().__setitem__(key, value)
-	vertex = Dict()
-	fragment = Dict()
+class Dict(dict):
+	def __setitem__(self, key, value):
+		assert key not in self, key
+		super().__setitem__(key, value)
 
-	def __init__(self, name, count):
-		self.group = [RegisterSlot(name, i) for i in range(count)]
-		self.count = count
-		if name is XC:
-			self.const = [None] * count
-		if name in (VA, FS):
-			self.usage = 0
-		if name in (XC, VA, FS):
-			self.field = {}
-
+class ConstRegister:
 	def __getitem__(self, key):
 		if isinstance(key, Register):
 			return IndirectRegisterSlot(key)
 		if isinstance(key, slice):
 			return IndirectRegisterSlot(key.start, key.stop)
 		assert False
-		#assert type(key) is int
-		#slot = self.group[key]
-		#assert slot.name not in (XC, VA, FS), "use bind name instead!"
-		#return slot
-	"""
-	def __setitem__(self, key, value):
-		assert type(key) is int
-		self.group[key] @= value
-	"""
-	def __call__(self, **kwargs):
-		assert not hasattr(self, "extra")
-		self.extra = kwargs
-		count = len(kwargs)
-		if hasattr(self, "usage"):
-			self.usage = (1 << count) - 1
-		ClassField = self.vertex if self in (va, vc) else self.fragment
-		index = 0
-		for k, v in kwargs.items():
-			slot = self.group[index]
-			self.field[k] = index
-			if slot.name is XC:
-				for i in range(v):
-					ClassField[f"{k}{i}"] = self.group[index+i]
-			index += v if slot.name is XC else 1
-			if slot.name is FS:
-				slot = getattr(slot, XYZW)
-				slot.args = v
-			ClassField[k] = slot
+
+class ConstStack:
+	def __init__(self, handler, count):
+		self.group = [RegisterSlot(XC, i) for i in range(count)]
+		self.count = count
+		self.const = [None] * count
+		self.offset = handler.offset
+		handler.data = self.const
 
 	def nextValueRegisterIndex(self):
-		count = sum(self.extra.values()) if hasattr(self, "extra") else 0
 		index = builtins.max(-1 if v is None else i for i, v in enumerate(self.const)) + 1
-		index = builtins.max(index, count)
+		index = builtins.max(index, self.offset)
 		assert index < self.count
 		return index
 
@@ -265,7 +224,45 @@ class RegisterGroup:
 				return self.findRegister(index-1, value)
 		self.const[index] = list(valueSet)
 		return self.findRegister(index, value)
-		
+
+def input(**kwargs):
+	def wrapper(handler):
+		assert handler.__name__ in (VERTEX, FRAGMENT)
+		assert not hasattr(handler, "input")
+		handler.input = {}
+		if not hasattr(handler, "field"):
+			handler.field = Dict()
+		assert len(kwargs) <= 8
+		RegisterType = VA if handler.__name__ == VERTEX else FS
+		for index, key in enumerate(kwargs):
+			slot = RegisterSlot(RegisterType, index)
+			handler.input[key] = (index, kwargs[key])
+			if RegisterType is FS:
+				slot = getattr(slot, XYZW)
+				slot.args = kwargs[key]
+			else: assert kwargs[key] in ("bytes4", "float1", "float2", "float3", "float4")
+			handler.field[key] = slot
+		return handler
+	return wrapper
+
+def const(**kwargs):
+	def wrapper(handler):
+		assert handler.__name__ in (VERTEX, FRAGMENT)
+		assert not hasattr(handler, "const")
+		handler.const = {}
+		if not hasattr(handler, "field"):
+			handler.field = Dict()
+		index = 0
+		for k, v in kwargs.items():
+			slot = RegisterSlot(XC, index)
+			handler.const[k] = (index, index + v)
+			for i in range(v):
+				handler.field[f"{k}{i}"] = RegisterSlot(XC, index+i)
+			handler.field[k] = slot
+			index += v
+		handler.offset = index
+		return handler
+	return wrapper
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
 	if type(source1) in (int, float):
@@ -289,9 +286,9 @@ def addCode(op, dest, source1, source2=None):
 			codeList.append(["mul", dest.value(), source1.value(), source1.value()])
 			return
 	if type(source1) in (int, float, tuple):
-		source1 = nowConstReg.valueToRegister(source1)
+		source1 = constStack.valueToRegister(source1)
 	elif type(source2) in (int, float, tuple):
-		source2 = nowConstReg.valueToRegister(source2)
+		source2 = constStack.valueToRegister(source2)
 	codeList.append([op, dest and dest.value(), source1.value(), source2 and source2.value()])
 
 def updateLastCode(dest):
@@ -303,34 +300,32 @@ codeList = []
 
 class XT(Register): pass
 class XC(Register): pass
+class XO(Register): pass
 class VA(Register): pass
 class FS(Register): pass
-class OP(Register): pass
-class OC(Register): pass
 class V(Register): pass
 
-vt = ft = xt = lambda: regStack.get(False)
-vc = RegisterGroup(XC, 128)
-fc = RegisterGroup(XC, 64)
-va = RegisterGroup(VA, 8)
-fs = RegisterGroup(FS, 8)
-
-regStack = RegisterStack(8)
+tempStack = TempStack(8)
+xt = lambda: tempStack.get(False)
 
 def run(handler):
-	global varying
-	name = handler.__name__
-	vertexMode = name == VERTEX
-	global nowConstReg
+	global constStack, varying
+	vertexMode = handler.__name__ == VERTEX
+
+	for k, v in (("field", {}), ("input", {}), ("const", {}), ("offset", 0)):
+		if not hasattr(handler, k):
+			setattr(handler, k, v)
+
+	field = handler.field
 
 	if vertexMode:
-		nowConstReg = vc
-		args = [RegisterSlot(OP)]
+		field["vc"] = ConstRegister()
+		args = [RegisterSlot(XO)]
+		constStack = ConstStack(handler, 128)
 	else:
-		nowConstReg = fc
-		args = [RegisterSlot(OC)] + varying
+		args = [RegisterSlot(XO)] + varying
+		constStack = ConstStack(handler, 64)
 	
-	field = getattr(RegisterGroup, name)
 	_globals = handler.__globals__
 	assert all(k not in _globals for k in field)
 	_globals.update(field)
@@ -351,3 +346,9 @@ def run(handler):
 		[_globals.__delitem__(k) for k in field]
 		codeList.clear()
 		print()
+
+	a, b = constStack.offset, constStack.nextValueRegisterIndex()
+	handler.data = functools.reduce(operator.add, handler.data[a:b], [])
+
+	del handler.field
+	return handler.__dict__

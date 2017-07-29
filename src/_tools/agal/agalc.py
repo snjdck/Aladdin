@@ -1,5 +1,5 @@
 import re, os, sys
-from agal import *
+from agal import run
 
 class Module: pass
 class ModuleLoader():
@@ -22,19 +22,16 @@ def main(file_path):
 	file_name = os.path.basename(file_path)
 	module = __import__(file_name[:file_name.index(".")])
 
-	run(module.vertex)
-	run(module.fragment)
+	va = run(module.vertex)
+	fs = run(module.fragment)
 
-	for k, v in enumerate(vc.const):
-		if v is None: continue
+	for k, v in va.items():
 		print(k, v)
-	for k, v in enumerate(fc.const):
-		if v is None: continue
+	print()
+	for k, v in fs.items():
 		print(k, v)
-
-	print("va usage", va.usage)
-	print("fs usage", fs.usage)
+	return ""
 
 if __name__ == "__main__":
-	sys.meta_path.insert(0, ModuleLoader())
+	#sys.meta_path.insert(0, ModuleLoader())
 	input(main(sys.argv[1]))
