@@ -1,7 +1,7 @@
 import builtins, traceback, sys
 
 __all__  = ["run"]
-__all__ += ["vt", "ft", "va", "fs", "vc", "fc", "op", "oc", "v"]
+__all__ += ["vt", "ft", "va", "fs", "vc", "fc"]
 __all__ += ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
 __all__ += ["BYTES_4", "FLOAT_1", "FLOAT_2", "FLOAT_3", "FLOAT_4"]
 
@@ -151,7 +151,7 @@ class Register(Operatorable):
 
 
 class RegisterSlot(Operatorable):
-	def __init__(self, name, index):
+	def __init__(self, name, index=0):
 		super().__setattr__("name", name)
 		super().__setattr__("index", index)
 
@@ -207,15 +207,16 @@ class RegisterGroup:
 			return IndirectRegisterSlot(key)
 		if isinstance(key, slice):
 			return IndirectRegisterSlot(key.start, key.stop)
-		assert type(key) is int
-		slot = self.group[key]
-		assert slot.name not in (XC, VA, FS), "use bind name instead!"
-		return slot
-
+		assert False
+		#assert type(key) is int
+		#slot = self.group[key]
+		#assert slot.name not in (XC, VA, FS), "use bind name instead!"
+		#return slot
+	"""
 	def __setitem__(self, key, value):
 		assert type(key) is int
 		self.group[key] @= value
-
+	"""
 	def __call__(self, **kwargs):
 		assert not hasattr(self, "extra")
 		self.extra = kwargs
@@ -313,16 +314,21 @@ vc = RegisterGroup(XC, 128)
 fc = RegisterGroup(XC, 64)
 va = RegisterGroup(VA, 8)
 fs = RegisterGroup(FS, 8)
-op = RegisterGroup(OP, 1)
-oc = RegisterGroup(OC, 1)
-v  = RegisterGroup(V , 8)
 
 regStack = RegisterStack(8)
 
 def run(handler):
+	global varying
 	name = handler.__name__
+	vertexMode = name == VERTEX
 	global nowConstReg
-	nowConstReg = vc if name == VERTEX else fc
+
+	if vertexMode:
+		nowConstReg = vc
+		args = [RegisterSlot(OP)]
+	else:
+		nowConstReg = fc
+		args = [RegisterSlot(OC)] + varying
 	
 	field = getattr(RegisterGroup, name)
 	_globals = handler.__globals__
@@ -330,11 +336,16 @@ def run(handler):
 	_globals.update(field)
 
 	try:
-		handler()
+		varying = handler(*args)
 	except:
 		error = sys.exc_info()
 		print("".join(traceback.format_list(traceback.extract_tb(error[2])[1:])) + error[0].__name__ + ": " + str(error[1]))
 	else:
+		if vertexMode:
+			if varying is None: varying = []
+			elif type(varying) is not tuple: varying = [varying]
+			assert len(varying) <= 8
+			varying = [RegisterSlot(V, i).__imatmul__(slot) for i, slot in enumerate(varying)]
 		print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
 	finally:
 		[_globals.__delitem__(k) for k in field]
