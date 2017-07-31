@@ -218,29 +218,8 @@ class ConstStack:
 		self.const[index] = list(valueSet)
 		return self.findRegister(index, value)
 
-def input_callback(handler, kwargs):
-	RegisterType = VA if handler.__name__ == VERTEX else FS
-	for index, key in enumerate(kwargs):
-		slot = RegisterSlot(RegisterType, index)
-		handler.input[key] = (index, kwargs[key])
-		if RegisterType is FS:
-			slot = getattr(slot, XYZW)
-			slot.args = kwargs[key]
-		else: assert kwargs[key] in ("bytes4", "float1", "float2", "float3", "float4")
-		handler.field[key] = slot
-
-def const_callback(handler, kwargs):
-	index = 0
-	for k, v in kwargs.items():
-		slot = RegisterSlot(XC, index)
-		handler.const[k] = (index, index + v)
-		for i in range(v):
-			handler.field[f"{k}{i}"] = RegisterSlot(XC, index+i)
-		handler.field[k] = slot
-		index += v
-	handler.offset = index
-
-def createAttribute(name, callback):
+def createAttribute(callback):
+	name = callback.__name__
 	def attribute(**kwargs):
 		def wrapper(handler):
 			assert handler.__name__ in (VERTEX, FRAGMENT)
@@ -253,8 +232,29 @@ def createAttribute(name, callback):
 		return wrapper
 	return attribute
 
-input = createAttribute("input", input_callback)
-const = createAttribute("const", const_callback)
+@createAttribute
+def input(handler, kwargs):
+	RegisterType = VA if handler.__name__ == VERTEX else FS
+	for index, key in enumerate(kwargs):
+		slot = RegisterSlot(RegisterType, index)
+		handler.input[key] = (index, kwargs[key])
+		if RegisterType is FS:
+			slot = getattr(slot, XYZW)
+			slot.args = kwargs[key]
+		else: assert kwargs[key] in ("bytes4", "float1", "float2", "float3", "float4")
+		handler.field[key] = slot
+
+@createAttribute
+def const(handler, kwargs):
+	index = 0
+	for k, v in kwargs.items():
+		slot = RegisterSlot(XC, index)
+		handler.const[k] = (index, index + v)
+		for i in range(v):
+			handler.field[f"{k}{i}"] = RegisterSlot(XC, index+i)
+		handler.field[k] = slot
+		index += v
+	handler.offset = index
 #=============================================================================
 def addCode(op, dest, source1, source2=None):
 	if type(source1) in (int, float):
