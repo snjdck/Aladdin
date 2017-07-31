@@ -1,6 +1,6 @@
 import builtins, traceback, sys, operator, functools
 
-__all__  = ["run", "input", "const", "xt"]
+__all__  = ["input", "const", "xt"]
 __all__ += ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
 
 VERTEX = "vertex"
@@ -219,7 +219,6 @@ class ConstStack:
 		return self.findRegister(index, value)
 
 def input_callback(handler, kwargs):
-	assert len(kwargs) <= 8
 	RegisterType = VA if handler.__name__ == VERTEX else FS
 	for index, key in enumerate(kwargs):
 		slot = RegisterSlot(RegisterType, index)
