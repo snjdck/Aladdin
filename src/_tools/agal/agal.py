@@ -290,7 +290,7 @@ xt = lambda: tempStack.get(False)
 
 def run(handler):
 	global constStack, varying
-	vertexMode = handler.__name__ == VERTEX
+	assert handler.__name__ in (VERTEX, FRAGMENT)
 
 	for k, v in (("field", {}), ("input", {}), ("const", {}), ("offset", 0)):
 		if not hasattr(handler, k):
@@ -298,12 +298,17 @@ def run(handler):
 
 	field = handler.field
 
-	if vertexMode:
+	if handler.__name__ == VERTEX:
+		argcount = handler.__code__.co_argcount
+		argnames = handler.__code__.co_varnames[1:argcount]
+		varying = [RegisterSlot(V, i) for i in range(len(argnames))]
 		field["vc"] = ConstRegister()
-		args = [RegisterSlot(XO)]
-		constStack = ConstStack(handler, 128)
-	else:
 		args = [RegisterSlot(XO)] + varying
+		constStack = ConstStack(handler, 128)
+		varying = zip(argnames, varying)
+	else:
+		field.update(dict(varying))
+		args = [RegisterSlot(XO)]
 		constStack = ConstStack(handler, 64)
 	
 	_globals = handler.__globals__
@@ -311,16 +316,11 @@ def run(handler):
 	_globals.update(field)
 
 	try:
-		varying = handler(*args)
+		handler(*args)
 	except:
 		error = sys.exc_info()
 		print("".join(traceback.format_list(traceback.extract_tb(error[2])[1:])) + error[0].__name__ + ": " + str(error[1]))
 	else:
-		if vertexMode:
-			if varying is None: varying = []
-			elif type(varying) is not tuple: varying = [varying]
-			assert len(varying) <= 8
-			varying = [RegisterSlot(V, i).__imatmul__(slot) for i, slot in enumerate(varying)]
 		print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
 	finally:
 		[_globals.__delitem__(k) for k in field]

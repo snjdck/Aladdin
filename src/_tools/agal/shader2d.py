@@ -34,14 +34,14 @@ def image(output):
 
 @input(position="float2", normal="float2")
 @const(ScreenMatrix=1, WorldMatrix=2, FrameMatrix=1, UVMatrix=1, WMatrix=1, MMatrix=1)
-def vertex(output):
+def vertex(output, uv):
 	vt1 = image(output)
-	return vt1.zw
+	uv @= vt1.zw
 	
 @input(texture=["2d", "linear", "rgba", "clamp"])
 @const(Color=2)
-def fragment(output, v0):
+def fragment(output):
 	t0 = xt()
-	t0 @= tex(v0, texture)
+	t0 @= tex(uv, texture)
 	t0 *= Color0
 	output @= t0 + Color1

@@ -3,7 +3,7 @@ from agal import *
 
 @input(position="float3")
 @const(matrix=4, offset=1)
-def vertex(output):
+def vertex(output, uv):
 	vt0, vt1, vt2, vt3, vt4 = xt(), xt(), xt(), xt(), xt()
 
 	vt1 @= dp4(vt1, position).zw
@@ -48,20 +48,20 @@ def vertex(output):
 	vt3 @= (vt0 == matrix) + (vt1 != matrix)
 	vt3 @= (vt0 >= matrix) + (vt1 < matrix)
 	vt3 @= (vt0 <= matrix) + (vt1 > matrix)
-	return position
-	#va[0] = vt0
+
+	uv @= position
 
 @const(matrix=4, offset=1)
-def fragment(output, v0):
+def fragment(output):
 	ft0, ft1, ft2, ft3 = xt(), xt(), xt(), xt()
 	ft = [ft0, ft1, ft2, ft3]
-	t = v0
-	t1 = v0.xy
+	t = uv
+	t1 = uv.xy
 	ft0 @= t + matrix
 	t @= ft1
 	t.xy = ft1
 	t.xy = t1
-	t1 @= v0
+	t1 @= uv
 
 	ft0 @= m33(ft0 * matrix, ft0 + matrix)
 	kil(ft0.x)
