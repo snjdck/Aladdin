@@ -45,10 +45,10 @@ for key in ("min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin"
 	globals()[key] = createMethod(key)
 
 def kil(source1): addCode("kil", None, source1)
-def ife(source1): addCode("ife", None, source1)
-def ine(source1): addCode("ine", None, source1)
-def ifg(source1): addCode("ifg", None, source1)
-def ifl(source1): addCode("ifl", None, source1)
+def ife(source1, source2): addCode("ife", None, source1, source2)
+def ine(source1, source2): addCode("ine", None, source1, source2)
+def ifg(source1, source2): addCode("ifg", None, source1, source2)
+def ifl(source1, source2): addCode("ifl", None, source1, source2)
 def els()		: codeList.append(["els"])
 def eif()		: codeList.append(["eif"])
 
@@ -127,7 +127,7 @@ class Register(Operatorable):
 		name = type(self).__name__.lower()
 		text = f"{name}{self.index}"
 		if hasattr(self, "args"):
-			args = ", ".join(self.args)
+			args = ",".join(self.args)
 			text += f"<{args}>"
 		if self.selector == XYZW:
 			return text
@@ -320,7 +320,7 @@ def run(handler):
 		error = sys.exc_info()
 		print("".join(traceback.format_list(traceback.extract_tb(error[2])[1:])) + error[0].__name__ + ": " + str(error[1]))
 	else:
-		print("\n".join(" ".join(str(key) for key in item if key is not None) for item in codeList))
+		handler.output_code = codeList.copy()
 	finally:
 		[_globals.__delitem__(k) for k in field]
 		codeList.clear()
@@ -330,4 +330,4 @@ def run(handler):
 	handler.data = functools.reduce(operator.add, handler.data[a:b], [])
 
 	del handler.field
-	return handler.__dict__
+	return handler

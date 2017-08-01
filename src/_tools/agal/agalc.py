@@ -1,5 +1,6 @@
 import re, os, sys
 from agal import run
+from agalw import CodeWriter, FileWriter
 
 class Module: pass
 class ModuleLoader():
@@ -20,17 +21,18 @@ class ModuleLoader():
 
 def main(file_path):
 	file_name = os.path.basename(file_path)
-	module = __import__(file_name[:file_name.index(".")])
+	file_name = file_name[:file_name.index(".")]
+	module = __import__(file_name)
 
 	va = run(module.vertex)
 	fs = run(module.fragment)
 
-	for k, v in va.items():
-		print(k, v)
-	print()
-	for k, v in fs.items():
-		print(k, v)
-	return ""
+	CodeWriter().compile(va, 0, 1)
+	CodeWriter().compile(fs, 1, 1)
+
+	save_path = os.path.join(os.path.dirname(file_path), "__agal__")
+	if not os.path.exists(save_path): os.mkdir(save_path)
+	FileWriter().write(va, fs).save(os.path.join(save_path, file_name))
 
 if __name__ == "__main__":
 	#sys.meta_path.insert(0, ModuleLoader())

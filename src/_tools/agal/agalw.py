@@ -1,6 +1,6 @@
 import struct, re
 
-OP_SPECIAL_TEX		= 0x8
+OP_SPECIAL_TEX		= 0x08
 OP_SPECIAL_MATRIX	= 0x10
 OP_FRAG_ONLY		= 0x20
 OP_VERT_ONLY		= 0x40
@@ -109,7 +109,7 @@ class ByteWriter:
 		self.rawData += struct.pack("<HBB", registerIndex, writeMask, registerType)
 
 	def writeDestinationDummy(self):
-		self.rawData += struct.pack("<I", 0)
+		self.rawData += bytes(4)
 
 	def writeSourceDirect(self, registerType, registerIndex, swizzle):
 		self.rawData += struct.pack("<H2BI", registerIndex, 0, swizzle, registerType)
@@ -118,7 +118,7 @@ class ByteWriter:
 		self.rawData += struct.pack("<H4BH", registerIndex, indirectOffset, swizzle, registerType, indexRegisterType, indexRegisterComponentSelect | (1 << 15))
 
 	def writeSourceDummy(self):
-		self.rawData += struct.pack("<2I", 0, 0)
+		self.rawData += bytes(8)
 
 	def writeSampler(self, registerIndex, dimension, filter, mipmap, wrapping, format, special):
 		self.rawData += struct.pack("<2HB", registerIndex, 0, 5)
@@ -134,11 +134,13 @@ class CodeWriter:
 	def __init__(self):
 		self.writer = ByteWriter()
 
-	def compile(self, codeList, shaderType, version):
+	def compile(self, target, shaderType, version):
 		self.writer.writeHeader(shaderType, version)
-		for code in codeList: self.writeCode(code)
+		for code in target.output_code: self.writeCode(code)
+		target.output_byte = self.writer.rawData
 
 	def writeCode(self, code):
+		code = code + [None] * (4 - len(code))
 		op = Operation.NameDict[code[0]]
 		assert bool(op.flags & OP_NO_DEST) == (code[1] is None)
 		assert op.numRegister == 3 - code.count(None)
@@ -214,3 +216,81 @@ class CodeWriter:
 			elif flag == "ignoresampler": special |= 4
 
 		self.writer.writeSampler(registerIndex, dimension, filter, mipmap, wrapping, textureFormat, special)
+
+
+class FileWriter:
+	def __init__(self):
+		self.rawData = bytes()
+		self.rawText = ""
+
+	def write(self, vertex, fragment):
+		self.writeProgram(vertex)
+		self.writeProgram(fragment)
+		return self
+
+	def castCodeToStr(self, target):
+		self.rawText += f"input = {target.input}\n"
+		self.rawText += f"const = {target.const}\n"
+		self.rawText += f"data = {target.data}\n"
+		self.rawText += f"offset = {target.offset}\n"
+		codeList = target.output_code
+		for code in codeList:
+			self.rawText += " ".join(item for item in code if item is not None)
+			self.rawText += "\n"
+		self.rawText += "\n"
+
+	def save(self, path):
+		print(path)
+		with open(f"{path}.agal", "wb") as f:
+			f.write(self.rawData)
+		with open(f"{path}.txt", "w") as f:
+			f.write(self.rawText)
+
+	def writeProgram(self, target):
+		self.writeInput(target)
+		self.writeConst(target)
+		self.writeData(target)
+		self.writeByte(target.offset)
+		self.writeCode(target)
+		self.castCodeToStr(target)
+
+	def writeInput(self, target):
+		items = [None] * len(target.input)
+		for k, v in target.input.items():
+			items[v[0]] = (k, v[1])
+		self.writeByte(len(items))
+		for name, format in items:
+			self.writeString(name)
+			if type(format) is not str:
+				format = ""
+			self.writeString(format)
+
+	def writeConst(self, target):
+		self.writeByte(len(target.const))
+		for name, offset in target.const.items():
+			self.writeString(name)
+			self.writeByte(offset[0])
+			self.writeByte(offset[1])
+
+	def writeData(self, target):
+		data = target.data.copy()
+		while len(data) % 4:
+			data.append(0)
+		self.writeByte(len(data) >> 2)
+		for value in data:
+			self.rawData += struct.pack("<f", value)
+
+	def writeCode(self, target):
+		code = target.output_byte
+		self.writeShort(len(code))
+		self.rawData += code
+
+	def writeShort(self, value):
+		self.rawData += struct.pack(">H", value)
+
+	def writeByte(self, value):
+		self.rawData += struct.pack("B", value)
+
+	def writeString(self, text):
+		self.writeByte(len(text))
+		self.rawData += text.encode()
