@@ -138,6 +138,11 @@ class RegisterSlot(Operatorable):
 		super().__setattr__("name", name)
 		super().__setattr__("index", index)
 
+	def __getitem__(self, key):
+		assert self.name is XC
+		assert type(key) is int
+		return RegisterSlot(XC, self.index + key)
+
 	def __getattr__(self, name):
 		return self.name(self, name)
 
@@ -248,11 +253,8 @@ def input(handler, kwargs):
 def const(handler, kwargs):
 	index = 0
 	for k, v in kwargs.items():
-		slot = RegisterSlot(XC, index)
 		handler.const[k] = (index, index + v)
-		for i in range(v):
-			handler.field[f"{k}{i}"] = RegisterSlot(XC, index+i)
-		handler.field[k] = slot
+		handler.field[k] = RegisterSlot(XC, index)
 		index += v
 	handler.offset = index
 #=============================================================================

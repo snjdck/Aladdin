@@ -3,8 +3,8 @@ from agal import *
 __all__ = ["mvp2d", "image"]
 
 def mvp2d(output, vt0, vt1):
-	vt1.x = dp4(vt0, WorldMatrix0)
-	vt1.y = dp4(vt0, WorldMatrix1)
+	vt1.x = dp4(vt0, WorldMatrix[0])
+	vt1.y = dp4(vt0, WorldMatrix[1])
 
 	vt0.xy = vt1.xy * ScreenMatrix
 	vt0.xy += ScreenMatrix.zw
