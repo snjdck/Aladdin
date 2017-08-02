@@ -240,7 +240,6 @@ class FileWriter:
 		self.rawText += "\n"
 
 	def save(self, path):
-		print(path)
 		with open(f"{path}.agal", "wb") as f:
 			f.write(self.rawData)
 		with open(f"{path}.txt", "w") as f:
@@ -273,8 +272,7 @@ class FileWriter:
 
 	def writeData(self, target):
 		data = target.data.copy()
-		while len(data) % 4:
-			data.append(0)
+		while len(data) % 4: data.append(0)
 		self.writeByte(len(data) >> 2)
 		for value in data:
 			self.rawData += struct.pack("<f", value)
