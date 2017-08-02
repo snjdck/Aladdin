@@ -105,20 +105,20 @@ class ByteWriter:
 	def writeOP(self, op):
 		self.rawData += struct.pack("<I", op)
 
-	def writeDestination(self, registerType, registerIndex, writeMask):
-		self.rawData += struct.pack("<HBB", registerIndex, writeMask, registerType)
-
 	def writeDestinationDummy(self):
 		self.rawData += bytes(4)
+
+	def writeSourceDummy(self):
+		self.rawData += bytes(8)
+
+	def writeDestination(self, registerType, registerIndex, writeMask):
+		self.rawData += struct.pack("<H2B", registerIndex, writeMask, registerType)
 
 	def writeSourceDirect(self, registerType, registerIndex, swizzle):
 		self.rawData += struct.pack("<H2BI", registerIndex, 0, swizzle, registerType)
 
 	def writeSourceIndirect(self, registerType, registerIndex, swizzle, indexRegisterType, indirectOffset, indexRegisterComponentSelect):
-		self.rawData += struct.pack("<H4BH", registerIndex, indirectOffset, swizzle, registerType, indexRegisterType, indexRegisterComponentSelect | (1 << 15))
-
-	def writeSourceDummy(self):
-		self.rawData += bytes(8)
+		self.rawData += struct.pack("<H6B", registerIndex, indirectOffset, swizzle, registerType, indexRegisterType, indexRegisterComponentSelect, 0x80)
 
 	def writeSampler(self, registerIndex, dimension, filter, mipmap, wrapping, format, special):
 		self.rawData += struct.pack("<2HB", registerIndex, 0, 5)
