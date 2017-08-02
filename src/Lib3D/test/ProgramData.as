@@ -1,4 +1,4 @@
-package
+package test
 {
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
@@ -12,7 +12,7 @@ package
 		public var _input:Array;
 		public var _const:Object;
 		
-		private var _firstRegister:int;
+		private var firstRegister:int;
 		public var numRegisters:int;
 		public const data:ByteArray = new ByteArray();
 		public const code:ByteArray = new ByteArray();
@@ -25,10 +25,12 @@ package
 			code.endian = Endian.LITTLE_ENDIAN;
 		}
 		
-		public function set firstRegister(value:int):void
+		internal function calcFirstRegister():void
 		{
-			_firstRegister = value;
-			constVector = new Vector.<Number>(value << 2, true);
+			for each(var data:Array in _const){
+				firstRegister = Math.max(firstRegister, data[1]);
+			}
+			constVector = new Vector.<Number>(firstRegister << 2, true);
 		}
 
 		public function upload(context3d:Context3D, context:IProgramContext):void
@@ -37,7 +39,7 @@ package
 			if(programType == Context3DProgramType.VERTEX){
 				for(i=0; i<n; ++i){
 					var vertexBuffer:VertexBuffer3DInfo = context.loadVertexBuffer(_input[i][0]);
-					context3d.setVertexBufferAt(i, vertexBuffer.buffer, vertexBuffer.offset, _input[i][1]);
+					context3d.setVertexBufferAt(i, vertexBuffer.buffer.getRawGpuAsset(context3d), vertexBuffer.offset, _input[i][1]);
 				}
 			}else{
 				for(i=0; i<n; ++i){
@@ -48,11 +50,11 @@ package
 				var info:Array = _const[key];
 				context.loadConst(constVector, key, info[0], info[1]);
 			}
-			if(_firstRegister > 0){
-				context3d.setProgramConstantsFromVector(programType, 0, constVector, _firstRegister);
+			if(firstRegister > 0){
+				context3d.setProgramConstantsFromVector(programType, 0, constVector, firstRegister);
 			}
 			if(numRegisters > 0){
-				context3d.setProgramConstantsFromByteArray(programType, _firstRegister, numRegisters, data, 0);
+				context3d.setProgramConstantsFromByteArray(programType, firstRegister, numRegisters, data, 0);
 			}
 		}
 	}

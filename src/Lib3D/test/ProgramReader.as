@@ -1,18 +1,20 @@
-package
+package test
 {
 	import flash.display3D.Context3D;
 	import flash.display3D.Context3DProgramType;
 	import flash.display3D.Program3D;
 	import flash.utils.ByteArray;
+	
+	import snjdck.gpu.asset.GpuProgram;
 
 	public class ProgramReader
 	{
 		private var data:ByteArray;
 		
-		private const vertexData:ProgramData = new ProgramData(Context3DProgramType.VERTEX);
-		private const fragmentData:ProgramData = new ProgramData(Context3DProgramType.FRAGMENT);
+		public const vertexData:ProgramData = new ProgramData(Context3DProgramType.VERTEX);
+		public const fragmentData:ProgramData = new ProgramData(Context3DProgramType.FRAGMENT);
 		
-		private var program3d:Program3D;
+		private var program3d:GpuProgram = new GpuProgram();
 		
 		public function ProgramReader(data:ByteArray)
 		{
@@ -20,17 +22,18 @@ package
 			
 			readProgram(vertexData);
 			readProgram(fragmentData);
+			program3d.uploadAGAL(this);
 		}
-		
+		/*
 		public function createGpuProgram(context3d:Context3D):void
 		{
 			program3d = context3d.createProgram();
 			program3d.upload(vertexData.code, fragmentData.code);
 		}
-		
+		*/
 		public function upload(context3d:Context3D, context:IProgramContext):void
 		{
-			context3d.setProgram(program3d);
+			context3d.setProgram(program3d.getRawGpuAsset(context3d));
 			vertexData.upload(context3d, context);
 			fragmentData.upload(context3d, context);
 		}
@@ -41,6 +44,7 @@ package
 			info._const = readConst();
 			readData(info);
 			readCode(info);
+			info.calcFirstRegister();
 		}
 		
 		private function readInput():Array
@@ -69,7 +73,6 @@ package
 			if(info.numRegisters > 0){
 				data.readBytes(info.data, 0, info.numRegisters << 4);
 			}
-			info.firstRegister = readByte();
 		}
 		
 		private function readCode(info:ProgramData):void

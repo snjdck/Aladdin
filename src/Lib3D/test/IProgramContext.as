@@ -1,4 +1,4 @@
-package
+package test
 {
 	import flash.display3D.textures.TextureBase;
 

@@ -1,13 +1,13 @@
-package
+package test
 {
-	import flash.display3D.VertexBuffer3D;
+	import snjdck.gpu.asset.GpuVertexBuffer;
 
 	public class VertexBuffer3DInfo
 	{
-		public var buffer:VertexBuffer3D;
+		public var buffer:GpuVertexBuffer;
 		public var offset:int;
 		
-		public function VertexBuffer3DInfo(buffer:VertexBuffer3D, offset:int=0)
+		public function VertexBuffer3DInfo(buffer:GpuVertexBuffer, offset:int=0)
 		{
 			this.buffer = buffer;
 			this.offset = offset;

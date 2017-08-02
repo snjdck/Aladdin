@@ -7,6 +7,8 @@ package snjdck.gpu.asset
 	import snjdck.agalc.AgalCompiler;
 	import snjdck.g3d.ns_g3d;
 	
+	import test.ProgramReader;
+	
 	use namespace ns_g3d;
 	
 	final public class GpuProgram extends GpuAsset
@@ -61,6 +63,13 @@ package snjdck.gpu.asset
 		public function uploadBin(vertexProgram:ByteArray, fragmentProgram:ByteArray):void
 		{
 			uploadImp("upload", [vertexProgram, fragmentProgram]);
+		}
+		
+		public function uploadAGAL(agal:ProgramReader):void
+		{
+			uploadBin(agal.vertexData.code, agal.fragmentData.code);
+			vaUseInfo = (1 << agal.vertexData._input.length) - 1;
+			fsUseInfo = (1 << agal.fragmentData._input.length) - 1;
 		}
 		
 		public function isVaSlotInUse(slotIndex:int):Boolean
