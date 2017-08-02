@@ -54,6 +54,7 @@ def bone_ani_normal(t0):
 
 def camera3d(t0):
 	t0.xyz = m34(t0, CameraMatrix)
+	t1 = xt()
 	#t0.z = t0 - 
 
 @input(position="float3", normal="float3", bone1="float4", bone2="float4")

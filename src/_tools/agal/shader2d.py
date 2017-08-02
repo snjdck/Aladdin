@@ -1,7 +1,6 @@
 from agal import *
 
-
-
+__all__ = ["mvp2d", "image"]
 
 def mvp2d(output, vt0, vt1):
 	vt1.x = dp4(vt0, WorldMatrix0)

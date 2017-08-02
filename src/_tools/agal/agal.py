@@ -1,4 +1,4 @@
-import builtins, traceback, sys, operator, functools
+import builtins, traceback, sys, operator, functools, dis
 
 __all__  = ["input", "const", "xt"]
 __all__ += ["min", "max", "rcp", "frc", "sqt", "rsq", "log", "exp", "nrm", "sin", "cos", "crs", "dp3", "dp4", "sat", "m33", "m44", "m34", "tex", "ddx", "ddy", "kil", "ife", "ine", "ifg", "ifl", "els", "eif"]
@@ -287,9 +287,24 @@ for key in ("XT", "XC", "XO", "VA", "FS", "V"):
 tempStack = TempStack(8)
 xt = lambda: tempStack.get(False)
 
+def collectFunction(handler, output):
+	_globals = handler.__globals__
+	if _globals not in output:
+		output.append(_globals)
+	for instr in dis.Bytecode(handler):
+		if instr.opname == "LOAD_GLOBAL":
+			name = instr.argval
+			if name not in _globals: continue
+			func = _globals[name]
+			if name not in __all__ and callable(func):
+				collectFunction(func, output)
+	return output
+
 def run(handler):
 	global constStack, varying
 	assert handler.__name__ in (VERTEX, FRAGMENT)
+
+	funcList = collectFunction(handler, [])
 
 	for k, v in (("field", {}), ("input", {}), ("const", {}), ("offset", 0)):
 		if not hasattr(handler, k):
@@ -306,13 +321,14 @@ def run(handler):
 		constStack = ConstStack(handler, 128)
 		varying = zip(argnames, varying)
 	else:
+		field["any"] = RegisterSlot(XC)
 		field.update(dict(varying))
 		args = [RegisterSlot(XO)]
 		constStack = ConstStack(handler, 64)
 	
-	_globals = handler.__globals__
-	assert all(k not in _globals for k in field)
-	_globals.update(field)
+	for _globals in funcList:
+		assert all(k not in _globals for k in field)
+		_globals.update(field)
 
 	try:
 		handler(*args)
@@ -322,9 +338,9 @@ def run(handler):
 	else:
 		handler.output_code = codeList.copy()
 	finally:
-		[_globals.__delitem__(k) for k in field]
+		for _globals in funcList:
+			[_globals.__delitem__(k) for k in field]
 		codeList.clear()
-		print()
 
 	a, b = constStack.offset, constStack.nextValueRegisterIndex()
 	handler.data = functools.reduce(operator.add, handler.data[a:b], [])
