@@ -1,6 +1,5 @@
 import struct
 import sys
-from fbx import *
 
 class Bound:
 	def __init__(self):
@@ -48,8 +47,7 @@ def parse(fileData, fbxMgr):
 	animationList = []
 	bound = Bound()
 	for i in range(subMeshCount):
-		subMesh = fbxMgr.createMesh(str(i))
-		offset = readSubMesh(fileData, offset, subMesh, bound)
+		offset = readSubMesh(fileData, offset, None, bound)
 	for _ in range(animationCount):
 		keyFrameCount, offset = readAnimation(fileData, offset)
 		animationList.append(keyFrameCount)
@@ -77,13 +75,10 @@ def readSubMesh(fileData, offset, pMesh, bound):
 	vetrexCount, normalCount, uvCount, triangleCount, subMeshIndex = struct.unpack_from("5H", fileData, offset)
 	offset += 10
 
-	pMesh.InitControlPoints(vetrexCount)
-
 	for i in range(vetrexCount):
 		vertex = struct.unpack_from("2H3f", fileData, offset)
 		print(vertex)
 		bound.addPt(vertex[2:])
-		pMesh.SetControlPointAt(FbxVector4(*vertex[2:]), i)
 		offset += 16
 
 	for i in range(normalCount):
@@ -99,11 +94,6 @@ def readSubMesh(fileData, offset, pMesh, bound):
 		normalIndex = struct.unpack_from("3H", fileData, offset+10)
 		uvIndex = struct.unpack_from("3H", fileData, offset+18)
 		offset += 64
-
-		pMesh.BeginPolygon()
-		for index in vertexIndex:
-			pMesh.AddPolygon(index)
-		pMesh.EndPolygon()
 
 	textureName = readFixStr(fileData, offset)
 	print(textureName)
