@@ -6,11 +6,13 @@ package test
 	{
 		public var buffer:GpuVertexBuffer;
 		public var offset:int;
+		public var format:String;
 		
-		public function VertexBuffer3DInfo(buffer:GpuVertexBuffer, offset:int=0)
+		public function VertexBuffer3DInfo(buffer:GpuVertexBuffer, format:String, offset:int)
 		{
 			this.buffer = buffer;
 			this.offset = offset;
+			this.format = format;
 		}
 	}
 }

@@ -1,11 +1,11 @@
 package test
 {
-	import flash.display3D.textures.TextureBase;
+	import snjdck.gpu.asset.IGpuTexture;
 
 	public interface IProgramContext
 	{
-		function loadVertexBuffer(name:String):VertexBuffer3DInfo;
-		function loadTexture(name:String):TextureBase;
+		function loadVertexBuffer(name:String, format:String):VertexBuffer3DInfo;
+		function loadTexture(name:String):IGpuTexture;
 		function loadConst(data:Vector.<Number>, name:String, fromRegister:int, toRegister:int):void;
 	}
 }

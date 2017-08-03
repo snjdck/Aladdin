@@ -1,5 +1,7 @@
 package snjdck.gpu.asset
 {
+	import flash.utils.ByteArray;
+
 	final public class GpuVertexBuffer extends GpuAsset
 	{
 		private const uploadParams:Array = [];
@@ -24,6 +26,15 @@ package snjdck.gpu.asset
 			uploadParams[0] = data;
 			uploadParams[2] = (numVertices >= 0 ? numVertices : initParams[0]);
 			uploadImp("uploadFromVector", uploadParams);
+		}
+		
+		public function uploadBin(data:ByteArray):void
+		{
+			uploadParams[0] = data;
+			uploadParams[1] = 0;
+			uploadParams[2] = 0;
+			uploadParams[3] = initParams[0];
+			uploadImp("uploadFromByteArray", uploadParams);
 		}
 	}
 }

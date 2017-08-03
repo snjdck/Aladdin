@@ -7,6 +7,7 @@ package test
 	
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
+	import snjdck.gpu.asset.IGpuTexture;
 	import snjdck.gpu.support.GpuConstData;
 
 	public class TestObj implements IProgramContext
@@ -21,7 +22,7 @@ package test
 			buffer.upload(new <Number>[-1, -1, 0, 1, -1, 0, 0, 1, 0]);
 //			var buffer:VertexBuffer3D = context3d.createVertexBuffer(3, 3);
 //			buffer.uploadFromVector(new <Number>[-1, -1, 0, 1, -1, 0, 0, 1, 0], 0, 3);
-			this.buffer = new VertexBuffer3DInfo(buffer);
+			this.buffer = new VertexBuffer3DInfo(buffer, "float3", 0);
 			
 			indexBuffer = new GpuIndexBuffer(3);
 			indexBuffer.upload(new <uint>[0, 1, 2]);
@@ -33,13 +34,13 @@ package test
 //			GpuConstData.SetNumber(
 		}
 		
-		public function loadTexture(name:String):TextureBase
+		public function loadTexture(name:String):IGpuTexture
 		{
 			// TODO Auto Generated method stub
 			return null;
 		}
 		
-		public function loadVertexBuffer(name:String):VertexBuffer3DInfo
+		public function loadVertexBuffer(name:String, format:String):VertexBuffer3DInfo
 		{
 			switch(name){
 				case "position": return buffer;

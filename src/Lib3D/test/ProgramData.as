@@ -38,12 +38,12 @@ package test
 			var i:int, n:int = _input.length;
 			if(programType == Context3DProgramType.VERTEX){
 				for(i=0; i<n; ++i){
-					var vertexBuffer:VertexBuffer3DInfo = context.loadVertexBuffer(_input[i][0]);
-					context3d.setVertexBufferAt(i, vertexBuffer.buffer.getRawGpuAsset(context3d), vertexBuffer.offset, _input[i][1]);
+					var vertexBuffer:VertexBuffer3DInfo = context.loadVertexBuffer.apply(null, _input[i]);
+					context3d.setVertexBufferAt(i, vertexBuffer.buffer.getRawGpuAsset(context3d), vertexBuffer.offset, vertexBuffer.format);
 				}
 			}else{
 				for(i=0; i<n; ++i){
-					context3d.setTextureAt(i, context.loadTexture(_input[i][0]));
+					context3d.setTextureAt(i, context.loadTexture(_input[i][0]).getRawGpuAsset(context3d));
 				}
 			}
 			for(var key:String in _const){
