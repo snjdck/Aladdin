@@ -9,6 +9,9 @@ package test
 
 	public class ProgramReader
 	{
+		static private var prevVaCount:int;
+		static private var prevFsCount:int;
+		
 		private var data:ByteArray;
 		
 		public const vertexData:ProgramData = new ProgramData(Context3DProgramType.VERTEX);
@@ -24,18 +27,49 @@ package test
 			readProgram(fragmentData);
 			program3d.uploadAGAL(this);
 		}
-		/*
-		public function createGpuProgram(context3d:Context3D):void
-		{
-			program3d = context3d.createProgram();
-			program3d.upload(vertexData.code, fragmentData.code);
-		}
-		*/
-		public function upload(context3d:Context3D, context:IProgramContext):void
+		
+		public function upload(context3d:Context3D, inputContext:IProgramInputContext, constContext:IProgramConstContext):void
 		{
 			context3d.setProgram(program3d.getRawGpuAsset(context3d));
-			vertexData.upload(context3d, context);
-			fragmentData.upload(context3d, context);
+			uploadVA(context3d, inputContext);
+			uploadFS(context3d, inputContext);
+			uploadXC(vertexData, constContext);
+			uploadXC(fragmentData, constContext);
+			vertexData.uploadConst(context3d);
+			fragmentData.uploadConst(context3d);
+		}
+		
+		private function uploadXC(target:ProgramData, context:IProgramConstContext):void
+		{
+			for(var key:String in target._const){
+				var info:Array = target._const[key];
+				context.loadConst(target.constVector, key, info[0], info[1]);
+			}
+		}
+		
+		private function uploadVA(context3d:Context3D, context:IProgramInputContext):void
+		{
+			var i:int, n:int;
+			for(i=0, n=vertexData._input.length; i<n; ++i){
+				var vertexBuffer:VertexBuffer3DInfo = context.loadVertexBuffer.apply(null, vertexData._input[i]);
+				vertexBuffer.setVertexBufferAt(context3d, i);
+			}
+			for(;i < prevVaCount; ++i){
+				context3d.setVertexBufferAt(i, null);
+			}
+			prevVaCount = n;
+		}
+		
+		private function uploadFS(context3d:Context3D, context:IProgramInputContext):void
+		{
+			var i:int, n:int;
+			for(i=0, n=fragmentData._input.length; i<n; ++i){
+				context3d.setTextureAt(i, context.loadTexture(fragmentData._input[i][0]).getRawGpuAsset(context3d));
+			}
+			for(;i < prevFsCount; ++i){
+				context3d.setTextureAt(i, null);
+			}
+			prevFsCount = n;
 		}
 		
 		private function readProgram(info:ProgramData):void

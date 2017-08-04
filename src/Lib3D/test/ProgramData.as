@@ -17,7 +17,7 @@ package test
 		public const data:ByteArray = new ByteArray();
 		public const code:ByteArray = new ByteArray();
 		
-		private var constVector:Vector.<Number>;
+		public var constVector:Vector.<Number>;
 		
 		public function ProgramData(programType:String)
 		{
@@ -30,11 +30,12 @@ package test
 			for each(var data:Array in _const){
 				firstRegister = Math.max(firstRegister, data[1]);
 			}
-			constVector = new Vector.<Number>(firstRegister << 2, true);
+			constVector = new Vector.<Number>((firstRegister + 1) << 2, true);
 		}
 
-		public function upload(context3d:Context3D, context:IProgramContext):void
+		public function uploadConst(context3d:Context3D):void
 		{
+			/*
 			var i:int, n:int = _input.length;
 			if(programType == Context3DProgramType.VERTEX){
 				for(i=0; i<n; ++i){
@@ -46,10 +47,12 @@ package test
 					context3d.setTextureAt(i, context.loadTexture(_input[i][0]).getRawGpuAsset(context3d));
 				}
 			}
+			
 			for(var key:String in _const){
 				var info:Array = _const[key];
 				context.loadConst(constVector, key, info[0], info[1]);
 			}
+			*/
 			if(firstRegister > 0){
 				context3d.setProgramConstantsFromVector(programType, 0, constVector, firstRegister);
 			}
