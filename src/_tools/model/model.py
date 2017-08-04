@@ -1,32 +1,17 @@
 import struct
+from ByteArray import *
 
-rawData = bytes()
+ba = ByteArray()
 
-def writeU8(value):
-	global rawData
-	rawData += struct.pack("B", value)
-
-def writeU16(value):
-	global rawData
-	rawData += struct.pack("<H", value)
-
-def writeU32(value):
-	global rawData
-	rawData += struct.pack("<I", value)
-
-def writeFloat(value):
-	global rawData
-	rawData += struct.pack("<f", value)
-
-def writeS16(value):
-	global rawData
-	rawData += struct.pack("<h", value)
-
+def writeU8(value): ba.writeU8(value)
+def writeU16(value): ba.writeU16(value)
+def writeU32(value): ba.writeU32(value)
+def writeFloat(value): ba.writeF32(value)
+def writeS16(value): ba.writeS16(value)
 def writeStr(value):
-	global rawData
 	value = value.encode()
-	writeU8(len(value))
-	rawData += value
+	ba.writeU8(len(value))
+	ba.rawData += value
 
 class SubMesh:
 	__slots__ = ("vertexCount", "data32PerVertex", "texture", "vertexData", "indexData")
@@ -74,7 +59,7 @@ def create(vertexFormatList, subMeshList, boneList=None, animationList=None):
 			addAnimation(animation)
 
 	with open("test.mesh", "wb") as f:
-		f.write(rawData)
+		f.write(ba.rawData)
 
 def addSubMesh(subMesh):
 	assert len(subMesh.vertexData) == subMesh.vertexCount * subMesh.data32PerVertex
