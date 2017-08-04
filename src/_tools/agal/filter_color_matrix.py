@@ -5,8 +5,7 @@ from shader2d import *
 @input(position="float2", normal="float2")
 @const(ScreenMatrix=1, WorldMatrix=2, FrameMatrix=1, UVMatrix=1, WMatrix=1, MMatrix=1)
 def vertex(output, uv):
-	vt1 = image(output)
-	uv @= vt1.zw
+	uv @= image(output).zw
 
 @input(texture=["2d", "linear", "clamp"])
 @const(matrix=4, offset=1)
