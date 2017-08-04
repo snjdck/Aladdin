@@ -8,12 +8,15 @@ package test
 	import snjdck.gpu.asset.GpuIndexBuffer;
 	import snjdck.gpu.asset.GpuVertexBuffer;
 	import snjdck.gpu.support.GpuConstData;
+	
+	import test.materials.ColorMaterial;
 
 	public class ModelLoader extends Object3D implements IProgramConstContext
 	{
 		private var subMeshList:Array = [];
 		private var vertexFormatDict:Object = {}
-		public var program:ProgramReader;
+//		public var program:ProgramReader;
+		public var material:ColorMaterial;
 		
 		public function ModelLoader()
 		{
@@ -52,69 +55,24 @@ package test
 			return new SubMesh(vertexFormatDict, vertexBuffer, indexBuffer);
 		}
 		
-		public function draw(context3d:Context3D):void
+		public function draw(context3d:Context3D, contextStack:ProgramInfoStack):void
 		{
+			contextStack.pushConst(this);
 			for each(var subMesh:SubMesh in subMeshList){
-				program.upload(context3d, subMesh, this);
-				subMesh.draw(context3d);
+				contextStack.pushConst(subMesh);
+				material.draw(context3d, subMesh, contextStack);
+				contextStack.popConst();
 			}
+			contextStack.popConst();
 		}
 		
-		public function loadConst(data:Vector.<Number>, name:String, fromRegister:int, toRegister:int):void
+		public function loadConst(data:Vector.<Number>, name:String, fromRegister:int, toRegister:int):Boolean
 		{
-			switch(name){
-				case "WorldMatrix":
-					GpuConstData.SetMatrix(data, fromRegister, worldTransform);
+			if(name == "WorldMatrix"){
+				GpuConstData.SetMatrix(data, fromRegister, worldTransform);
+				return true;
 			}
-			scene.loadConst(data, name, fromRegister, toRegister);
+			return scene.loadConst(data, name, fromRegister, toRegister);
 		}
-	}
-}
-import flash.display3D.Context3D;
-import flash.display3D.textures.TextureBase;
-
-import snjdck.gpu.asset.AssetMgr;
-import snjdck.gpu.asset.GpuAssetFactory;
-import snjdck.gpu.asset.GpuIndexBuffer;
-import snjdck.gpu.asset.GpuVertexBuffer;
-import snjdck.gpu.asset.IGpuTexture;
-
-import test.IProgramInputContext;
-import test.ProgramReader;
-import test.VertexBuffer3DInfo;
-
-class SubMesh implements IProgramInputContext
-{
-	private var vertexBuffer:GpuVertexBuffer;
-	private var indexBuffer:GpuIndexBuffer;
-	
-	private const vertexFormatDict:Object = {};
-	
-	public function SubMesh(vertexFormatDict:Object, vertexBuffer:GpuVertexBuffer, indexBuffer:GpuIndexBuffer)
-	{
-		this.vertexBuffer = vertexBuffer;
-		this.indexBuffer = indexBuffer;
-		
-		for(var key:String in vertexFormatDict){
-			var info:Array = vertexFormatDict[key];
-			this.vertexFormatDict[key] = new VertexBuffer3DInfo(vertexBuffer, info[0], info[1]);
-		}
-	}
-	
-	public function loadTexture(name:String):IGpuTexture
-	{
-		return AssetMgr.Instance.getTexture(name);
-	}
-	
-	public function loadVertexBuffer(name:String, format:String):VertexBuffer3DInfo
-	{
-		var info:VertexBuffer3DInfo = vertexFormatDict[name];
-		info.assertFormatEqual(format);
-		return info;
-	}
-	
-	public function draw(context3d:Context3D):void
-	{
-		context3d.drawTriangles(indexBuffer.getRawGpuAsset(context3d));
 	}
 }

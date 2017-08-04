@@ -28,11 +28,9 @@ package test
 			program3d.uploadAGAL(this);
 		}
 		
-		public function upload(context3d:Context3D, inputContext:IProgramInputContext, constContext:IProgramConstContext):void
+		public function uploadConst(context3d:Context3D, constContext:IProgramConstContext):void
 		{
 			context3d.setProgram(program3d.getRawGpuAsset(context3d));
-			uploadVA(context3d, inputContext);
-			uploadFS(context3d, inputContext);
 			uploadXC(vertexData, constContext);
 			uploadXC(fragmentData, constContext);
 			vertexData.uploadConst(context3d);
@@ -47,7 +45,7 @@ package test
 			}
 		}
 		
-		private function uploadVA(context3d:Context3D, context:IProgramInputContext):void
+		public function uploadVA(context3d:Context3D, context:IProgramVertexBufferContext):void
 		{
 			var i:int, n:int;
 			for(i=0, n=vertexData._input.length; i<n; ++i){
@@ -60,7 +58,7 @@ package test
 			prevVaCount = n;
 		}
 		
-		private function uploadFS(context3d:Context3D, context:IProgramInputContext):void
+		public function uploadFS(context3d:Context3D, context:IProgramTextureContext):void
 		{
 			var i:int, n:int;
 			for(i=0, n=fragmentData._input.length; i<n; ++i){
