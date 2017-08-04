@@ -9,9 +9,11 @@ package snjdck.g3d
 	import snjdck.gpu.IScene;
 	import snjdck.gpu.asset.GpuContext;
 	
+	import test.IProgramConstContext;
+	
 	use namespace ns_g3d;
 
-	final public class Scene3D implements IScene
+	final public class Scene3D implements IScene, IProgramConstContext
 	{
 		public const root:DisplayObjectContainer3D = new DisplayObjectContainer3D();
 		
@@ -94,6 +96,11 @@ package snjdck.g3d
 		public function get stageHeight():int
 		{
 			return _height;
+		}
+		
+		public function loadConst(data:Vector.<Number>, name:String, fromRegister:int, toRegister:int):void
+		{
+			camera3d.loadConst(data, name, fromRegister, toRegister);
 		}
 	}
 }

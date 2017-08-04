@@ -18,10 +18,13 @@ package snjdck.g3d.cameras
 	import snjdck.gpu.BlendMode;
 	import snjdck.gpu.asset.GpuContext;
 	import snjdck.gpu.asset.GpuRenderTarget;
+	import snjdck.gpu.support.GpuConstData;
+	
+	import test.IProgramConstContext;
 	
 	use namespace ns_g3d;
 	
-	public class Camera3D implements ICamera3D
+	public class Camera3D implements ICamera3D, IProgramConstContext
 	{
 		static public var zNear	:Number = -1000;
 		static public var zRange:Number =  4000;
@@ -188,6 +191,15 @@ package snjdck.g3d.cameras
 		public function get depth():int
 		{
 			return 0;
+		}
+		
+		public function loadConst(data:Vector.<Number>, name:String, fromRegister:int, toRegister:int):void
+		{
+			if(name == "Camera"){
+				GpuConstData.SetMatrix(data, fromRegister, viewMatrix.transform);
+				return;
+			}
+			assert(false);
 		}
 	}
 }
