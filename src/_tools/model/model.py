@@ -1,23 +1,11 @@
-import struct
 from ByteArray import *
 
-ba = ByteArrayW()
+__all__ = ("create", "VertexFormat", "SubMesh", "Bone", "Animation", "KeyFrame")
 
-def writeU8(value): ba.writeU8(value)
-def writeU16(value): ba.writeU16(value)
-def writeU32(value): ba.writeU32(value)
-def writeFloat(value): ba.writeF32(value)
-def writeS16(value): ba.writeS16(value)
-def writeStr(value):
-	value = value.encode()
-	ba.writeU8(len(value))
-	ba.rawData += value
-
-class SubMesh:
-	__slots__ = ("vertexCount", "data32PerVertex", "texture", "vertexData", "indexData")
-
-	def __init__(self):
-		self.texture = ""
+def encodeList(targetList, output):
+	output.writeU16(len(targetList))
+	for target in targetList:
+		target.encode(output)
 
 class VertexFormat:
 	__slots__ = ("name", "format", "offset")
@@ -26,35 +14,84 @@ class VertexFormat:
 		self.format = format
 		self.offset = offset
 
+	def encode(self, output):
+		output.writeString1(self.name)
+		output.writeString1(self.format)
+		output.writeU8(self.offset)
+
+class SubMesh:
+	__slots__ = ("vertexCount", "data32PerVertex", "texture", "vertexData", "indexData")
+	def __init__(self):
+		self.texture = ""
+
+	def encode(self, output):
+		assert len(self.vertexData) == self.vertexCount * self.data32PerVertex
+		assert self.vertexCount <= 0xFFFF
+		assert self.data32PerVertex <= 64
+		assert len(self.indexData) < 0xF0000
+		assert len(self.indexData) % 3 == 0
+
+		output.writeString1(self.texture)
+		output.writeU16(self.vertexCount)
+		output.writeU8(self.data32PerVertex)
+		for value in self.vertexData:
+			output.writeF32(value)
+		output.writeU32(len(self.indexData))
+		for value in self.indexData:
+			output.writeU16(value)
 
 class Bone:
-	__slots__ = ("id", "name", "pid")
+	__slots__ = ("name", "id", "pid")
+	def __init__(self, name, id, pid):
+		self.name = name
+		self.id = id
+		self.pid = pid
+
+	def encode(self, output):
+		output.writeString1(self.name)
+		output.writeS16(self.id)
+		output.writeS16(self.pid)
 
 class Animation:
-	__slots__ = ("name", "duration", "keyFrameList")
+	__slots__ = ("name", "duration", "trackList")
+	def __init__(self, name, duration):
+		self.name = name
+		self.duration = duration
+		self.trackDict = {}
+
+	def addTrack(self, boneID, keyFrameList):
+		self.trackDict[boneID] = keyFrameList
+
+	def encode(self, output):
+		output.writeString1(self.name)
+		output.writeF32(self.duration)
+		output.writeU16(len(self.trackDict))
+		for boneID, keyFrameList in self.trackDict.items():
+			output.writeU16(boneID)
+			output.writeU16(len(keyFrameList))
+			encodeList(keyFrameList, output)
+
+class KeyFrame:
+	__slots__ = ("time", "translation", "rotation")
+	def __init__(self, time, translation, rotation):
+		self.time = time
+		self.translation = translation
+		self.rotation = rotation
+
+	def encode(self, output):
+		output.writeF32(self.time)
+		for i in range(3): output.writeF32(self.translation[i])
+		for i in range(3): output.writeF32(self.rotation[i])
 
 def create(vertexFormatList, subMeshList, boneList=[], animationList=[]):
-	writeU8(len(vertexFormatList))
-	for vertexFormat in vertexFormatList:
-		writeStr(vertexFormat.name)
-		writeStr(vertexFormat.format)
-		writeU8(vertexFormat.offset)
-
-	writeU16(len(subMeshList))
-	for subMesh in subMeshList:
-		addSubMesh(subMesh)
-
-	writeU16(len(boneList))
-	for bone in boneList:
-		addBone(bone)
-
-	writeU16(len(animationList))
-	for animation in animationList:
-		addAnimation(animation)
-
+	ba = ByteArrayW()
+	encodeList(vertexFormatList, ba)
+	encodeList(subMeshList, ba)
+	encodeList(boneList, ba)
+	encodeList(animationList, ba)
 	with open("test.mesh", "wb") as f:
 		f.write(ba.rawData)
-
+"""
 def addSubMesh(subMesh):
 	assert len(subMesh.vertexData) == subMesh.vertexCount * subMesh.data32PerVertex
 	assert subMesh.vertexCount <= 0xFFFF
@@ -92,7 +129,7 @@ def addTrack(track):
 			writeFloat(keyFrame.translation[i])
 		for i in range(3):
 			writeFloat(keyFrame.rotation[i])
-
+"""
 if __name__ == "__main__":
 	subMesh = SubMesh()
 	subMesh.vertexCount = 3

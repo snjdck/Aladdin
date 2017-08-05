@@ -55,6 +55,17 @@ class ByteArrayW:
 	writeF64BE = _B(writeF64)
 	writeF64LE = _L(writeF64)
 
+	def writeString(self, writer, value, endian):
+		value = value.encode()
+		writer(self, len(value), endian)
+		self.rawData += value
+
+	_S = lambda w: lambda self, value, endian=None: self.writeString(w, value, endian)
+
+	writeString1 = _S(writeU8 )
+	writeString2 = _S(writeU16)
+	writeString4 = _S(writeU32)
+
 class ByteArrayR:
 	__slots__ = ("rawData", "endian", "position")
 
@@ -112,6 +123,21 @@ class ByteArrayR:
 
 	readF64BE = _B(readF64)
 	readF64LE = _L(readF64)
+
+	def readFixString(self, length, charSet="gb2312"):
+		offset = self.position
+		while self.rawData[offset]:
+			offset += 1
+		value = self.rawData[self.position:offset]
+		self.position += length
+		return value.decode(charSet)
+
+	def readVector(self, length, endian=None):
+		return tuple(self.readF32(endian) for _ in range(length))
+
+	readVector4 = lambda self, endian=None: self.readVector(4, endian)
+	readVector3 = lambda self, endian=None: self.readVector(3, endian)
+	readVector2 = lambda self, endian=None: self.readVector(2, endian)
 
 if __name__ == "__main__":
 	ba = ByteArrayW()

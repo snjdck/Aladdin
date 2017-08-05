@@ -30,7 +30,7 @@ package test
 		{
 			
 			data.endian = Endian.LITTLE_ENDIAN;
-			var vertexFormatCount:int = data.readUnsignedByte();
+			var vertexFormatCount:int = data.readUnsignedShort();
 			for(var i:int=0; i<vertexFormatCount; ++i){
 				vertexFormatDict[readStr(data)] = [readStr(data), data.readUnsignedByte()];
 			}
@@ -46,24 +46,24 @@ package test
 			var animationCount:int = data.readUnsignedShort();
 			for(var i:int=0; i<animationCount; ++i){
 				var animation:Animation = new Animation(readStr(data), data.readFloat());
-				var keyFrameCount:int = data.readUnsignedShort();
-				for(var j:int=0; j<keyFrameCount; ++j){
-//					animation.ns_g3d::addTrack();
-					readKeyFrame(data);
+				var trackCount:int = data.readUnsignedShort();
+				for(var j:int=0; j<trackCount; ++j){
+					animation.ns_g3d::addTrack(data.readUnsignedShort(), readTrack(data));
 				}
 			}
 			assert(data.bytesAvailable == 0);
 		}
 		
-		private function readKeyFrame(data:ByteArray):KeyFrame
+		private function readTrack(data:ByteArray):Vector.<KeyFrame>
 		{
-			var keyframe:KeyFrame = new KeyFrame(data.readFloat());
-			var stateCount:int = data.readUnsignedShort();
-			for(var i:int=0; i<stateCount; ++i){
-				data.readUnsignedShort();
+			var result:Vector.<KeyFrame> = new Vector.<KeyFrame>();
+			var keyFrameCount:int = data.readUnsignedShort();
+			for(var i:int=0; i<keyFrameCount; ++i){
+				var keyframe:KeyFrame = new KeyFrame(data.readFloat());
 				data.position += 24;
+				result.push(keyframe);
 			}
-			return keyframe;
+			return result;
 		}		
 		
 		
