@@ -1,7 +1,7 @@
 import struct
 from ByteArray import *
 
-ba = ByteArray()
+ba = ByteArrayW()
 
 def writeU8(value): ba.writeU8(value)
 def writeU16(value): ba.writeU16(value)
@@ -33,7 +33,7 @@ class Bone:
 class Animation:
 	__slots__ = ("name", "duration", "keyFrameList")
 
-def create(vertexFormatList, subMeshList, boneList=None, animationList=None):
+def create(vertexFormatList, subMeshList, boneList=[], animationList=[]):
 	writeU8(len(vertexFormatList))
 	for vertexFormat in vertexFormatList:
 		writeStr(vertexFormat.name)
@@ -44,19 +44,13 @@ def create(vertexFormatList, subMeshList, boneList=None, animationList=None):
 	for subMesh in subMeshList:
 		addSubMesh(subMesh)
 
-	if boneList is None:
-		writeU16(0)
-	else:
-		writeU16(len(boneList))
-		for bone in boneList:
-			addBone(bone)
+	writeU16(len(boneList))
+	for bone in boneList:
+		addBone(bone)
 
-	if animationList is None:
-		writeU16(0)
-	else:
-		writeU16(len(animationList))
-		for animation in animationList:
-			addAnimation(animation)
+	writeU16(len(animationList))
+	for animation in animationList:
+		addAnimation(animation)
 
 	with open("test.mesh", "wb") as f:
 		f.write(ba.rawData)
@@ -85,19 +79,19 @@ def addBone(bone):
 def addAnimation(animation):
 	writeStr(animation.name)
 	writeFloat(animation.duration)
-	writeU16(len(animation.keyFrameList))
-	for keyFrame in animation.keyFrameList:
-		addKeyFrame(keyFrame)
+	writeU16(len(animation.trackList))
+	for track in animation.trackList:
+		addTrack(track)
 
-def addKeyFrame(keyFrame):
-	writeFloat(keyFrame.time)
-	writeU16(len(keyFrame.states))
-	for state in keyFrame.states:
-		writeU16(state.boneID)
+def addTrack(track):
+	writeU16(state.boneID)
+	writeU16(len(track.keyFrameList))
+	for keyFrame in track.keyFrameList:
+		writeFloat(keyFrame.time)
 		for i in range(3):
-			writeFloat(state.translation[i])
+			writeFloat(keyFrame.translation[i])
 		for i in range(3):
-			writeFloat(state.rotation[i])
+			writeFloat(keyFrame.rotation[i])
 
 if __name__ == "__main__":
 	subMesh = SubMesh()
