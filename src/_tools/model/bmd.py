@@ -43,28 +43,19 @@ def parse(fileData):
 	print(bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY, bound.maxZ)
 
 def readSubMesh():
-	vetrexCount, normalCount, uvCount, triangleCount, subMeshIndex = [ba.readU16() for i in range(5)]
+	vetrexCount, normalCount, uvCount, triangleCount, subMeshIndex = [ba.readU16() for _ in range(5)]
 
-	for i in range(vetrexCount):
-		boneIndex = ba.readU16()
-		ba.readU16()
-		vertex = ba.readVector3()
-
-	for i in range(normalCount):
-		ba.position += 4
-		normal = ba.readVector3()
-		ba.position += 4
-
-	for i in range(uvCount):
-		uv = ba.readVector2()
+	vertexList = [(ba.readU16(), ba.readU16(), ba.readVector3()) for _ in range(vetrexCount)]
+	normalList = [[ba.readU32(), ba.readVector3(), ba.readU32()][1] for _ in range(normalCount)]
+	uvList = [ba.readVector2() for _ in range(uvCount)]
 	
-	for i in range(triangleCount):
+	for _ in range(triangleCount):
 		ba.readU16()
-		vertexIndex = [ba.readU16() for i in range(3)]
+		vertexIndex = [ba.readU16() for _ in range(3)]
 		ba.readU16()
-		normalIndex = [ba.readU16() for i in range(3)]
+		normalIndex = [ba.readU16() for _ in range(3)]
 		ba.readU16()
-		uvIndex = [ba.readU16() for i in range(3)]
+		uvIndex = [ba.readU16() for _ in range(3)]
 		ba.position += 40
 
 	textureName = ba.readFixString(32)
