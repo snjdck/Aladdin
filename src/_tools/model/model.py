@@ -20,8 +20,9 @@ class VertexFormat:
 		output.writeU8(self.offset)
 
 class SubMesh:
-	__slots__ = ("vertexCount", "data32PerVertex", "texture", "vertexData", "indexData")
+	__slots__ = ("vertexCount", "data32PerVertex", "texture", "vertexData", "indexData", "boneData")
 	def __init__(self):
+		self.boneData = []
 		self.texture = ""
 
 	def encode(self, output):
@@ -39,6 +40,9 @@ class SubMesh:
 		output.writeU32(len(self.indexData))
 		for value in self.indexData:
 			output.writeU16(value)
+		output.writeU8(len(self.boneData))
+		for value in self.boneData:
+			output.writeU8(value)
 
 class Bone:
 	__slots__ = ("name", "id", "pid")
