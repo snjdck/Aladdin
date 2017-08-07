@@ -1,4 +1,3 @@
-import struct
 import sys
 import os
 
@@ -13,20 +12,20 @@ def removeTags(rawData, offset, tagType, tagHeadSize, tagBodySize):
 	tagType = SwfTagType(tagType)
 	if tagType in (SwfTagType.ProductInfo, SwfTagType.FrameLabel, SwfTagType.ScriptLimits, SwfTagType.Metadata):
 		return
-	#hasMetadata = false
+	offset += tagHeadSize
 	if tagType == SwfTagType.FileAttributes:
-		tagBody = readUI32(rawData, offset+2)
-		tagBody &= 0xEF
-		tagList.append(rawData[offset:offset+2] + struct.pack("I", tagBody))
+		tagBody = int.from_bytes(rawData[offset:offset+4], "little")
+		tagBody &= ~0x10#hasMetadata = false
+		tagList.append(encodeTag(tagType.value, tagBody.to_bytes(4, "little")))
 	elif tagType == SwfTagType.DefineBitsJPEG2:
-		assetID = readUI16(rawData, offset+tagHeadSize)
-		imageData = rawData[offset+tagHeadSize+2:offset+tagHeadSize+tagBodySize]
+		assetID = int.from_bytes(rawData[offset:offset+2], "little")
+		imageData = rawData[offset+2:offset+tagBodySize]
 		tagList.append(genImageTag(assetID, imageData))
 	elif tagType == SwfTagType.DoABC2:
-		tagBody = rawData[offset+tagHeadSize:offset+tagHeadSize+tagBodySize]
+		tagBody = rawData[offset:offset+tagBodySize]
 		tagList.append(encodeTag(tagType.value, optimize(tagBody)))
 	else:
-		tagList.append(rawData[offset:offset+tagHeadSize+tagBodySize])
+		tagList.append(rawData[offset-tagHeadSize:offset+tagBodySize])
 
 def main(filePath):
 	if not os.path.exists(filePath):
