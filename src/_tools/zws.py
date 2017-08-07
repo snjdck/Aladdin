@@ -1,5 +1,7 @@
 import sys
 import os
+from operator import add
+from functools import reduce
 
 from swf_tag import encodeTag, genImageTag
 from instruction import optimize
@@ -42,9 +44,7 @@ def main(filePath):
 		return "invalid swf file."
 	
 	offset = visitTags(rawData, removeTags)
-	rawData = rawData[:offset]
-	for chunk in tagList:
-		rawData += chunk
+	rawData = reduce(add, tagList, rawData[:offset])
 
 	dotIndex = filePath.rfind(".")
 	outputPath = filePath[:dotIndex] + "Compressed" + filePath[dotIndex:]
