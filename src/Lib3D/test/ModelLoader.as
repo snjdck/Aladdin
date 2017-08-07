@@ -39,11 +39,13 @@ package test
 				subMeshList.push(readSubMesh(data));
 			}
 			var boneCount:int = data.readUnsignedShort();
+			trace(boneCount);
 			for(var i:int=0; i<boneCount; ++i){
 				var bone:Bone = new Bone(readStr(data), data.readShort());
 				bone.parentId = data.readShort();
 			}
 			var animationCount:int = data.readUnsignedShort();
+			trace(animationCount);
 			for(var i:int=0; i<animationCount; ++i){
 				var animation:Animation = new Animation(readStr(data), data.readFloat());
 				var trackCount:int = data.readUnsignedShort();
@@ -82,6 +84,11 @@ package test
 			var indexCount:int = data.readUnsignedInt();
 			var indexData:ByteArray = new ByteArray();
 			data.readBytes(indexData, 0, indexCount << 1);
+			
+			var boneData:Array = new Array(data.readUnsignedByte());
+			for(var i:int=0; i<boneData.length; ++i){
+				boneData[i] = data.readUnsignedByte();
+			}
 			
 			var vertexBuffer:GpuVertexBuffer = new GpuVertexBuffer(vertexCount, data32PerVertex);
 			vertexBuffer.uploadBin(vertexData);
