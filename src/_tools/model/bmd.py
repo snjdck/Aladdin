@@ -40,14 +40,23 @@ def parse(fileData):
 	assert ba.position == len(fileData)
 	print(subMeshCount, boneCount, animationCount)
 	print(animationList)
-	print(bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY, bound.maxZ)
+	vertexFormatList = [
+		VertexFormat("position", "float3", 0),
+		VertexFormat("normal", "float3", 3),
+		VertexFormat("uv_bone", "float4", 6)
+	]
+	create(vertexFormatList, subMeshList, boneList, animationList)
+	#print(bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY, bound.maxZ)
 
 def readSubMesh():
 	vetrexCount, normalCount, uvCount, triangleCount, subMeshIndex = [ba.readU16() for _ in range(5)]
 
-	vertexList = [(ba.readU16(), ba.readU16(), ba.readVector3()) for _ in range(vetrexCount)]
+	vertexList = [[[ba.readU16(), ba.readU16()][0], ba.readVector3()] for _ in range(vetrexCount)]
 	normalList = [[ba.readU32(), ba.readVector3(), ba.readU32()][1] for _ in range(normalCount)]
 	uvList = [ba.readVector2() for _ in range(uvCount)]
+
+	vertexData = []
+	indexData = list(range(triangleCount * 3))
 	
 	for _ in range(triangleCount):
 		ba.readU16()
@@ -58,8 +67,18 @@ def readSubMesh():
 		uvIndex = [ba.readU16() for _ in range(3)]
 		ba.position += 40
 
+		for i in range(3):
+			vertexInfo = vertexList[vertexIndex[i]]
+			vertexData += vertexInfo[1] + normalList[normalIndex[i]] + uvList[uvIndex[i]] + [vertexInfo[0], 1]
+
 	textureName = ba.readFixString(32)
-	print(textureName)
+	subMesh = SubMesh()
+	subMesh.vertexCount = triangleCount * 3
+	subMesh.data32PerVertex = 10
+	subMesh.vertexData = vertexData
+	subMesh.indexData = indexData
+	subMesh.texture = textureName
+	return subMesh
 
 def readAnimation():
 	keyFrameCount = ba.readU16()
@@ -70,8 +89,13 @@ def readAnimation():
 def readBone(animationList, boneId):
 	if ba.readU8(): return
 	bone = Bone(ba.readFixString(32), boneId, ba.readS16())
-	animationList = [zip(range(len(keyFrameCount)), readVector3List(keyFrameCount), readVector3List(keyFrameCount)) for keyFrameCount in animationList]
-	return bone, [KeyFrame(*info) for info in animationList]
+	animationList = [zip(range(keyFrameCount), readVector3List(keyFrameCount), readVector3List(keyFrameCount)) for keyFrameCount in animationList]
+	return bone, [[KeyFrame(*info) for info in animation] for animation in animationList]
 
 def readVector3List(count):
 	return [ba.readVector3() for _ in range(count)]
+
+if __name__ == "__main__":
+	with open("Spear10.bmd", "rb") as f:
+		parse(f.read())
+	input()

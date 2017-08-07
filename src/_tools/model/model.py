@@ -53,7 +53,7 @@ class Bone:
 		output.writeS16(self.pid)
 
 class Animation:
-	__slots__ = ("name", "duration", "trackList")
+	__slots__ = ("name", "duration", "trackDict")
 	def __init__(self, name, duration):
 		self.name = name
 		self.duration = duration
@@ -68,7 +68,6 @@ class Animation:
 		output.writeU16(len(self.trackDict))
 		for boneID, keyFrameList in self.trackDict.items():
 			output.writeU16(boneID)
-			output.writeU16(len(keyFrameList))
 			encodeList(keyFrameList, output)
 
 class KeyFrame:

@@ -133,7 +133,7 @@ class ByteArrayR:
 		return value.decode(charSet)
 
 	def readVector(self, length, endian=None):
-		return tuple(self.readF32(endian) for _ in range(length))
+		return [self.readF32(endian) for _ in range(length)]
 
 	readVector4 = lambda self, endian=None: self.readVector(4, endian)
 	readVector3 = lambda self, endian=None: self.readVector(3, endian)
