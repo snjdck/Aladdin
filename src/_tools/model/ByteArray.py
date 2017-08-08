@@ -1,5 +1,12 @@
 import struct
 
+def partialmethod(func, *args, **kwargs):
+	def wrapper(self, *fargs, **fkwargs):
+		nkwargs = kwargs.copy()
+		nkwargs.update(fkwargs)
+		return func(self, *args, *fargs, **nkwargs)
+	return wrapper
+
 class ByteArrayW:
 	__slots__ = ("rawData", "endian")
 
@@ -11,60 +18,26 @@ class ByteArrayW:
 		if endian is None: endian = self.endian
 		self.rawData += struct.pack(endian + fmt, value)
 
-	_W = lambda fmt: lambda self, value, endian=None: self.pack(fmt, value, endian)
+	writeU8  = partialmethod(pack, "B")
+	writeS8  = partialmethod(pack, "b")
+	writeU16 = partialmethod(pack, "H")
+	writeS16 = partialmethod(pack, "h")
+	writeU32 = partialmethod(pack, "I")
+	writeS32 = partialmethod(pack, "i")
+	writeU64 = partialmethod(pack, "Q")
+	writeS64 = partialmethod(pack, "q")
+	writeF16 = partialmethod(pack, "e")
+	writeF32 = partialmethod(pack, "f")
+	writeF64 = partialmethod(pack, "d")
 
-	writeU8  = _W("B")
-	writeS8  = _W("b")
-	writeU16 = _W("H")
-	writeS16 = _W("h")
-	writeU32 = _W("I")
-	writeS32 = _W("i")
-	writeU64 = _W("Q")
-	writeS64 = _W("q")
-	writeF16 = _W("e")
-	writeF32 = _W("f")
-	writeF64 = _W("d")
-	
-	_B = lambda f: lambda self, value: f(self, value, ">")
-	_L = lambda f: lambda self, value: f(self, value, "<")
-
-	writeU16BE = _B(writeU16)
-	writeU16LE = _L(writeU16)
-
-	writeS16BE = _B(writeS16)
-	writeS16LE = _L(writeS16)
-
-	writeU32BE = _B(writeU32)
-	writeU32LE = _L(writeU32)
-
-	writeS32BE = _B(writeS32)
-	writeS32LE = _L(writeS32)
-
-	writeU64BE = _B(writeU64)
-	writeU64LE = _L(writeU64)
-
-	writeS64BE = _B(writeS64)
-	writeS64LE = _L(writeS64)
-
-	writeF16BE = _B(writeF16)
-	writeF16LE = _L(writeF16)
-
-	writeF32BE = _B(writeF32)
-	writeF32LE = _L(writeF32)
-
-	writeF64BE = _B(writeF64)
-	writeF64LE = _L(writeF64)
-
-	def writeString(self, writer, value, endian):
+	def writeString(self, writer, value):
 		value = value.encode()
-		writer(self, len(value), endian)
+		writer(self, len(value))
 		self.rawData += value
 
-	_S = lambda w: lambda self, value, endian=None: self.writeString(w, value, endian)
-
-	writeString1 = _S(writeU8 )
-	writeString2 = _S(writeU16)
-	writeString4 = _S(writeU32)
+	writeString1 = partialmethod(writeString, writeU8 )
+	writeString2 = partialmethod(writeString, writeU16)
+	writeString4 = partialmethod(writeString, writeU32)
 
 class ByteArrayR:
 	__slots__ = ("rawData", "endian", "position")
@@ -74,76 +47,36 @@ class ByteArrayR:
 		self.endian = endian
 		self.position = 0
 
-	def unpack(self, fmt, endian=None):
-		offset = self.position
-		self.position += struct.calcsize(fmt)
+	def unpack(self, fmt, offset=None, endian=None):
+		if offset is None:
+			offset = self.position
+			self.position += struct.calcsize(fmt)
 		if endian is None: endian = self.endian
 		return struct.unpack_from(endian + fmt, self.rawData, offset)[0]
 
-	_R = lambda fmt: lambda self, endian=None: self.unpack(fmt, endian)
+	readU8  = partialmethod(unpack, "B")
+	readS8  = partialmethod(unpack, "b")
+	readU16 = partialmethod(unpack, "H")
+	readS16 = partialmethod(unpack, "h")
+	readU32 = partialmethod(unpack, "I")
+	readS32 = partialmethod(unpack, "i")
+	readU64 = partialmethod(unpack, "Q")
+	readS64 = partialmethod(unpack, "q")
+	readF16 = partialmethod(unpack, "e")
+	readF32 = partialmethod(unpack, "f")
+	readF64 = partialmethod(unpack, "d")
 
-	readU8  = _R("B")
-	readS8  = _R("b")
-	readU16 = _R("H")
-	readS16 = _R("h")
-	readU32 = _R("I")
-	readS32 = _R("i")
-	readU64 = _R("Q")
-	readS64 = _R("q")
-	readF16 = _R("e")
-	readF32 = _R("f")
-	readF64 = _R("d")
+	def readVector(self, length, offset=None, endian=None):
+		if offset is None:
+			return [self.readF32(None, endian) for _ in range(length)]
+		return [self.readF32(offset + i * 4, endian) for i in range(length)]
 
-	_B = lambda f: lambda self: f(self, ">")
-	_L = lambda f: lambda self: f(self, "<")
+	readVector4 = partialmethod(readVector, 4)
+	readVector3 = partialmethod(readVector, 3)
+	readVector2 = partialmethod(readVector, 2)
 
-	readU16BE = _B(readU16)
-	readU16LE = _L(readU16)
-
-	readS16BE = _B(readS16)
-	readS16LE = _L(readS16)
-
-	readU32BE = _B(readU32)
-	readU32LE = _L(readU32)
-
-	readS32BE = _B(readS32)
-	readS32LE = _L(readS32)
-
-	readU64BE = _B(readU64)
-	readU64LE = _L(readU64)
-
-	readS64BE = _B(readS64)
-	readS64LE = _L(readS64)
-
-	readF16BE = _B(readF16)
-	readF16LE = _L(readF16)
-
-	readF32BE = _B(readF32)
-	readF32LE = _L(readF32)
-
-	readF64BE = _B(readF64)
-	readF64LE = _L(readF64)
-
-	def readFixString(self, length, charSet="gb2312"):
-		offset = self.position
-		while self.rawData[offset]:
-			offset += 1
-		value = self.rawData[self.position:offset]
-		self.position += length
-		return value.decode(charSet)
-
-	def readVector(self, length, endian=None):
-		return [self.readF32(endian) for _ in range(length)]
-
-	readVector4 = lambda self, endian=None: self.readVector(4, endian)
-	readVector3 = lambda self, endian=None: self.readVector(3, endian)
-	readVector2 = lambda self, endian=None: self.readVector(2, endian)
-
-if __name__ == "__main__":
-	ba = ByteArrayW()
-	ba.writeU8(2)
-	ba.writeF32(9.3)
-	print(ba.rawData)
-	ba = ByteArrayR(ba.rawData)
-	print(ba.readU8(), ba.readF32())
-	input()
+	def readFixString(self, length, charSet="gb2312", offset=None):
+		start = self.position if offset is None else offset
+		end = self.rawData.index(0, start, start + length)
+		if offset is None: self.position += length
+		return self.rawData[start:end].decode(charSet)
