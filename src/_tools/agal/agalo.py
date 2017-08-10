@@ -1,3 +1,5 @@
+from functools import reduce
+from operator import add
 from agalw import flags2writeMask, char2val
 
 __all__ = ["test"]
@@ -63,21 +65,13 @@ def fuck(usedList):
 	return usedList
 
 def parseItem(usageList, line, item, destFlag):
-	if item is None: return
-	if not item.startswith("xt"): return
+	if item is None or not item.startswith("xt"): return
 	i = item.find(".")
-	if i >= 0:
-		selector = flags2writeMask(item[i+1:])
-		index = int(item[2:i])
-	else:
-		selector = flags2writeMask(None)
-		index = int(item[2:])
-	usageList[index][line] |= selector << (4 if destFlag else 0)
+	selector = flags2writeMask(item[i+1:] if i >= 0 else None)
+	item = item[2:i] if i >= 0 else item[2:]
+	usageList[int(item)][line] |= selector << (4 if destFlag else 0)
 
 def test(output_code):
-	print("=====================================")
-	for i, code in enumerate(output_code): print(i, code)
-	
 	usageList = [[0] * len(output_code) for _ in range(8)]
 	for line, code in enumerate(output_code):
 		for i in range(1, 4):
@@ -94,13 +88,12 @@ def test(output_code):
 	
 	index = len(usageList) - 1
 	usedList = findUsedRange(usageList[index])
-	freeListGroup = [findFreeRange(usageList[i]) for i in range(index)]
-	testRangeList = fuck([used for i in range(4) for used in usedList[i]])
+	testRangeList = fuck(reduce(add, usedList))
 	
 	needNextCall = False
 	for testRange in testRangeList:
 		for i in reversed(range(index)):
-			if isUsedInFreeList(freeListGroup[i], usedList, testRange):
+			if isUsedInFreeList(findFreeRange(usageList[i]), usedList, testRange):
 				replaceOutputCode(output_code, testRange, index, i)
 				needNextCall = True
 				break
@@ -146,8 +139,14 @@ def isUsedInFreeList(freeList, usedList, testRange):
 
 def replaceOutputCode(output_code, used, old, new):
 	print("replace", used, old, new)
-	for code in output_code[used.begin:used.end+1]:
+	for line in range(used.begin, used.end+1):
+		code = output_code[line]
+		oldCode = code.copy()
 		for i in range(1, len(code)):
 			if code[i] is None: continue
 			code[i] = code[i].replace(f"xt{old}", f"xt{new}")
+		if code == oldCode: continue
+		print(f"{line}\t", oldCode)
+		print("\t", code)
+		print("----")
 
