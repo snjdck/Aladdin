@@ -40,8 +40,27 @@ class Range:
 	def __contains__(self, other):
 		return self.begin <= other.begin and other.end <= self.end
 
+	def __and__(self, other):
+		nbegin = max(self.begin, other.begin)
+		nend = min(self.end, other.end)
+		return Range(nbegin, nend) if nbegin < nend else None
+
+	def __or__(self, other):
+		nbegin = min(self.begin, other.begin)
+		nend = max(self.end, other.end)
+		return Range(nbegin, nend)
+
 	def __repr__(self):
 		return f"[{self.begin}, {self.end})"
+
+def fuck(usedList):
+	for i in range(len(usedList)):
+		for j in range(i+1, len(usedList)):
+			if usedList[i] & usedList[j]:
+				usedList[i] |= usedList[j]
+				del usedList[j]
+				return fuck(usedList)
+	return usedList
 
 def parseItem(usageList, line, item, destFlag):
 	if item is None: return
@@ -55,17 +74,14 @@ def parseItem(usageList, line, item, destFlag):
 		index = int(item[2:])
 	usageList[index][line] |= selector << (4 if destFlag else 0)
 
-def parseCode(usageList, line, code):
-	parseItem(usageList, line, code[1], True)
-	parseItem(usageList, line, code[2], False)
-	parseItem(usageList, line, code[3], False)
-
 def test(output_code):
 	print("=====================================")
 	for i, code in enumerate(output_code): print(i, code)
 	
 	usageList = [[0] * len(output_code) for _ in range(8)]
-	for line, code in enumerate(output_code): parseCode(usageList, line, code)
+	for line, code in enumerate(output_code):
+		for i in range(1, 4):
+			parseItem(usageList, line, code[i], i == 1)
 	usageList = [[Info(i, v) for i, v in enumerate(usage) if v > 0] for usage in usageList if sum(usage) > 0]
 
 	for usage in usageList:
@@ -79,15 +95,16 @@ def test(output_code):
 	index = len(usageList) - 1
 	usedList = findUsedRange(usageList[index])
 	freeListGroup = [findFreeRange(usageList[i]) for i in range(index)]
-	print(usedList)
-	return
-	if not isUsedListInFreeListGroup(freeListGroup, usedList):
-		return
-	for i in reversed(range(index)):
-		for used in usedList:
-			if isUsedInFreeList(freeListGroup[i], used):
-				replaceOutputCode(output_code, used, index, i)
-	test(output_code)
+	testRangeList = fuck([used for i in range(4) for used in usedList[i]])
+	
+	needNextCall = False
+	for testRange in testRangeList:
+		for i in reversed(range(index)):
+			if isUsedInFreeList(freeListGroup[i], usedList, testRange):
+				replaceOutputCode(output_code, testRange, index, i)
+				needNextCall = True
+				break
+	if needNextCall: test(output_code)
 
 def findFreeRange(usage):
 	result = []
@@ -118,15 +135,18 @@ def findUsedRange(usage):
 		result.append([Range(usedList[j].index, usedList[j+1].index) for j in range(0, len(usedList), 2)])
 	return result
 
-def isUsedInFreeList(freeList, used):
-	print("freeList", freeList[0], used)
-	return all(any(used in free for free in freeList[i]) for i in range(4))
-
-def isUsedListInFreeListGroup(freeListGroup, usedList):
-	return all(all(any(used in free for freeList in freeListGroup for free in freeList[i]) for used in usedList[i]) for i in range(4))
+def isUsedInFreeList(freeList, usedList, testRange):
+	for i in range(4):
+		for used in usedList[i]:
+			if used not in testRange:
+				continue
+			if not any(used in free for free in freeList[i]):
+				return False
+	return True
 
 def replaceOutputCode(output_code, used, old, new):
-	for code in output_code[used.begin:used.end]:
+	print("replace", used, old, new)
+	for code in output_code[used.begin:used.end+1]:
 		for i in range(1, len(code)):
 			if code[i] is None: continue
 			code[i] = code[i].replace(f"xt{old}", f"xt{new}")
