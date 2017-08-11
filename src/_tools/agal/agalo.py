@@ -1,14 +1,15 @@
 from functools import reduce
-from operator import add
+from operator import add, setitem, delitem
+from itertools import chain, combinations
 from agalw import flags2writeMask, char2val
 
 __all__ = ["test"]
 
-isRead  = lambda item: bool(item.value & 0x0F)
-isWrite = lambda item: bool(item.value & 0xF0)
-isReadOnly  = lambda item: isRead(item) and not isWrite(item)
-isWriteOnly = lambda item: not isRead(item) and isWrite(item)
-isReadWrite = lambda item: isRead(item) and isWrite(item)
+eachpair	= lambda item: [(i, item[i], item[i+1]) for i in reversed(range(len(item)-1))]
+exec4times  = lambda func: lambda usage: [func(usage, i) for i in range(4)]
+isReadOnly  = lambda item: 0 < item.value <= 0xF
+isWriteOnly = lambda item: 0 < item.value and item.value & 0xF == 0
+isReadWrite = lambda item: item.value & 0x0F and item.value & 0xF0
 
 class Info:
 	__slots__ = ("index", "value")
@@ -16,22 +17,10 @@ class Info:
 		self.index = index
 		self.value = value
 
-	def split(self):
-		info = Info(self.index, self.value & 0xF0)
-		self.value &= 0x0F
-		return info
-
-	def active(self, index):
-		return self.value & 0x11 << index
-
-	def readable(self, index):
-		return self.value & 0x01 << index
-
-	def writable(self, index):
-		return self.value & 0x10 << index
-
-	def __repr__(self):
-		return f"{self.index}@{self.value}"
+	__repr__ = lambda self: f"{self.index}@{self.value}"
+	readable = lambda self, index: self.value & 0x01 << index
+	active	 = lambda self, index: self.value & 0x11 << index
+	split = lambda self: [Info(self.index, self.value & i) for i in [0x0F, 0xF0]] if isReadWrite(self) else [self]
 
 class Range:
 	__slots__ = ("begin", "end")
@@ -43,110 +32,67 @@ class Range:
 		return self.begin <= other.begin and other.end <= self.end
 
 	def __and__(self, other):
-		nbegin = max(self.begin, other.begin)
-		nend = min(self.end, other.end)
-		return Range(nbegin, nend) if nbegin < nend else None
+		v = Range(max(self.begin, other.begin), min(self.end, other.end))
+		return v if v.begin <= v.end else None
 
 	def __or__(self, other):
-		nbegin = min(self.begin, other.begin)
-		nend = max(self.end, other.end)
-		return Range(nbegin, nend)
+		return Range(min(self.begin, other.begin), max(self.end, other.end))
+
+	def __hash__(self):
+		return self.begin | self.end << 16
+
+	def __eq__(self, other):
+		return self.begin == other.begin and self.end == other.end
 
 	def __repr__(self):
-		return f"[{self.begin}, {self.end})"
+		return f"[{self.begin}, {self.end}]"
 
-def fuck(usedList):
-	for i in range(len(usedList)):
-		for j in range(i+1, len(usedList)):
-			if usedList[i] & usedList[j]:
-				usedList[i] |= usedList[j]
-				del usedList[j]
-				return fuck(usedList)
+def unionUsedRange(usedList):
+	for a, b in combinations(usedList, 2):
+		if a & b: return unionUsedRange(usedList ^ {a, b, a | b})
 	return usedList
 
-def parseItem(usageList, line, item, destFlag):
+def parseItem(usageList, line, item, index):
 	if item is None or not item.startswith("xt"): return
 	i = item.find(".")
 	selector = flags2writeMask(item[i+1:] if i >= 0 else None)
 	item = item[2:i] if i >= 0 else item[2:]
-	usageList[int(item)][line] |= selector << (4 if destFlag else 0)
+	usageList[int(item)][line] |= selector << (4 if index == 1 else 0)
 
 def test(output_code):
 	usageList = [[0] * len(output_code) for _ in range(8)]
-	for line, code in enumerate(output_code):
-		for i in range(1, 4):
-			parseItem(usageList, line, code[i], i == 1)
+	[parseItem(usageList, line, code[i], i) for line, code in enumerate(output_code) for i in range(1, 4)]
 	usageList = [[Info(i, v) for i, v in enumerate(usage) if v > 0] for usage in usageList if sum(usage) > 0]
-
-	for usage in usageList:
-		for i in reversed(range(len(usage))):
-			item = usage[i]
-			if isReadWrite(item):
-				usage.insert(i+1, item.split())
-
+	usageList = [list(chain.from_iterable(item.split() for item in usage)) for usage in usageList]
 	assert all(isWriteOnly(v[0]) and isReadOnly(v[-1]) for v in usageList)
-	
 	index = len(usageList) - 1
 	usedList = findUsedRange(usageList[index])
-	testRangeList = fuck(reduce(add, usedList))
-	
-	needNextCall = False
-	for testRange in testRangeList:
+	for testRange in unionUsedRange(set(reduce(add, usedList))):
 		for i in reversed(range(index)):
 			if isUsedInFreeList(findFreeRange(usageList[i]), usedList, testRange):
-				replaceOutputCode(output_code, testRange, index, i)
-				needNextCall = True
-				break
-	if needNextCall: test(output_code)
+				return test(replaceOutputCode(output_code, testRange, index, i))
+@exec4times
+def findFreeRange(usage, offset):
+	usedList = _findUsedRange(usage, offset)
+	if len(usedList) <= 0: return [Range()]
+	freeList  = [item for item in [Range(0, usedList[0].begin)] if item.end > 0]
+	freeList += [Range(usedList[j].end, usedList[j+1].begin) for j in range(len(usedList)-1)]
+	return freeList + [Range(usedList[-1].end)]
 
-def findFreeRange(usage):
-	result = []
-	for usedList in findUsedRange(usage):
-		if len(usedList) <= 0:
-			result.append(Range())
-			continue
-		freeList = []
-		if usedList[0].begin > 0:
-			freeList.append(Range(0, usedList[0].begin))
-		for j in range(len(usedList)-1):
-			freeList.append(Range(usedList[j].end, usedList[j+1].begin))
-		freeList.append(Range(usedList[-1].end))
-		result.append(freeList)
-	return result
-
-def findUsedRange(usage):
-	result = []
-	for i in range(4):
-		usedList = [item for item in usage if item.active(i)]
-		for j in reversed(range(1, len(usedList))):
-			if usedList[j].readable(i) == usedList[j-1].readable(i):
-				del usedList[j-1]
-		for j in reversed(range(len(usedList)-1)):
-			if usedList[j].index == usedList[j+1].index:
-				del usedList[j:j+2]
-		assert len(usedList) % 2 == 0
-		result.append([Range(usedList[j].index, usedList[j+1].index) for j in range(0, len(usedList), 2)])
-	return result
+def _findUsedRange(usage, offset):
+	usedList = [item for item in usage if item.active(offset)]
+	[delitem(usedList, i) for i, a, b in eachpair(usedList) if a.readable(offset) == b.readable(offset)]
+	[delitem(usedList, slice(i, i+2)) for i, a, b in eachpair(usedList) if a.index == b.index]
+	assert len(usedList) % 2 == 0
+	return list(reversed([Range(a.index, b.index) for i, a, b in eachpair(usedList) if i % 2 == 0]))
+findUsedRange = exec4times(_findUsedRange)
 
 def isUsedInFreeList(freeList, usedList, testRange):
-	for i in range(4):
-		for used in usedList[i]:
-			if used not in testRange:
-				continue
-			if not any(used in free for free in freeList[i]):
-				return False
-	return True
+	return all(any(used in free for free in freeList[i]) for i in range(4) for used in usedList[i] if used in testRange)
 
 def replaceOutputCode(output_code, used, old, new):
 	print("replace", used, old, new)
-	for line in range(used.begin, used.end+1):
-		code = output_code[line]
-		oldCode = code.copy()
-		for i in range(1, len(code)):
-			if code[i] is None: continue
-			code[i] = code[i].replace(f"xt{old}", f"xt{new}")
-		if code == oldCode: continue
-		print(f"{line}\t", oldCode)
-		print("\t", code)
-		print("----")
-
+	old_code = output_code.copy()
+	[setitem(output_code[i], k, v.replace(f"xt{old}", f"xt{new}")) for i in range(used.begin, used.end+1) for k, v in enumerate(output_code[i]) if v]
+	[print(f"{line}\t", old_code[line], "->", code) for line, code in enumerate(output_code) if code != old_code[line]]
+	return output_code
