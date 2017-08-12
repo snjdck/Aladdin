@@ -1,7 +1,7 @@
 from functools import reduce
 from operator import add, setitem, delitem
 from itertools import chain, combinations
-from agalw import flags2writeMask, char2val
+from agalw import flags2writeMask
 
 __all__ = ["optimize"]
 
@@ -31,7 +31,6 @@ class Range:
 		self.end = end
 
 	def __contains__(self, other):
-		if type(other) is int: return self.begin <= other <= self.end
 		return self.begin <= other.begin and other.end <= self.end
 
 	def __and__(self, other):
@@ -75,17 +74,14 @@ def calcUsageList(func):
 
 @calcUsageList
 def optimizeMOV(output_code, usageList):
-	for i, usage in enumerate(usageList):
-		for item in unionUsedRange(set(reduce(add, findUsedRange(usage)))):
-			if [isWrite(v) for v in usage if v.index in item].count(True) > 1: continue
-			if output_code[item.end][0] != "mov": continue
-			dest, source = output_code[item.end][1:3]
-			destFlags = dest[dest.index(".")+1:] if "." in dest else "xyzw"
-			sourceFlags = source[source.index(".")+1:] if "." in source else "xyzw"
-			if not all(sourceFlags[char2val(v)] == v for v in destFlags): continue
-			replaceOutputCode(output_code, item, f"xt{i}", dest[:dest.index(".")] if "." in dest else dest)
-			del output_code[item.end]
-			return optimizeMOV(output_code)
+	for usage in usageList:
+		for _, a, b in eachpair(usage):
+			code = output_code[b.index]
+			if a.value == 0xF0 and b.value == 0x0F and code[0] == "mov" and ("." not in code[1]):
+				output_code[a.index][1] = code[1]
+				print("replace", a.index, output_code[a.index])
+				del output_code[b.index]
+				return optimizeMOV(output_code)
 
 @calcUsageList
 def optimizeXT(output_code, usageList):
@@ -98,16 +94,17 @@ def optimizeXT(output_code, usageList):
 				return optimizeXT(output_code)
 
 def optimize(output_code):
-	optimizeXT(output_code)
+	print("========================")
 	optimizeMOV(output_code)
+	optimizeXT(output_code)
 
 @exec4times
 def findFreeRange(usage, offset):
 	usedList = _findUsedRange(usage, offset)
 	if len(usedList) <= 0: return [Range()]
-	freeList  = [item for item in [Range(0, usedList[0].begin)] if item.end > 0]
+	freeList  = [Range(0, usedList[0].begin)]
 	freeList += [Range(usedList[j].end, usedList[j+1].begin) for j in range(len(usedList)-1)]
-	return freeList + [Range(usedList[-1].end)]
+	return [item for item in freeList if item.begin < item.end] + [Range(usedList[-1].end)]
 
 def _findUsedRange(usage, offset):
 	usedList = [item for item in usage if item.active(offset)]
