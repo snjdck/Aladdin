@@ -66,6 +66,7 @@ def test(output_code):
 	usageList = [list(chain.from_iterable(item.split() for item in usage)) for usage in usageList]
 	assert all(isWriteOnly(v[0]) and isReadOnly(v[-1]) for v in usageList)
 	index = len(usageList) - 1
+	if index < 0: return
 	usedList = findUsedRange(usageList[index])
 	for testRange in unionUsedRange(set(reduce(add, usedList))):
 		for i in reversed(range(index)):
@@ -92,7 +93,7 @@ def isUsedInFreeList(freeList, usedList, testRange):
 
 def replaceOutputCode(output_code, used, old, new):
 	print("replace", used, old, new)
-	old_code = output_code.copy()
+	old_code = [str(code) for code in output_code]
 	[setitem(output_code[i], k, v.replace(f"xt{old}", f"xt{new}")) for i in range(used.begin, used.end+1) for k, v in enumerate(output_code[i]) if v]
-	[print(f"{line}\t", old_code[line], "->", code) for line, code in enumerate(output_code) if code != old_code[line]]
+	[print(f"{line}\t", old_code[line], "->", code) for line, code in enumerate(output_code) if str(code) != old_code[line]]
 	return output_code
