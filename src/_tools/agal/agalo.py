@@ -63,10 +63,10 @@ def test(output_code):
 	usageList = [[0] * len(output_code) for _ in range(8)]
 	[parseItem(usageList, line, code[i], i) for line, code in enumerate(output_code) for i in range(1, 4)]
 	usageList = [[Info(i, v) for i, v in enumerate(usage) if v > 0] for usage in usageList if sum(usage) > 0]
+	if len(usageList) < 2: return
 	usageList = [list(chain.from_iterable(item.split() for item in usage)) for usage in usageList]
 	assert all(isWriteOnly(v[0]) and isReadOnly(v[-1]) for v in usageList)
 	index = len(usageList) - 1
-	if index < 0: return
 	usedList = findUsedRange(usageList[index])
 	for testRange in unionUsedRange(set(reduce(add, usedList))):
 		for i in reversed(range(index)):
