@@ -1,11 +1,11 @@
 from functools import reduce
-from operator import add, setitem, delitem
+from operator import add, setitem
 from itertools import chain, combinations
 from agalw import flags2writeMask
 
-__all__ = ["optimize"]
+optimize = lambda x: [f(x) for f in (optimizeXT, optimizeMOV)]
 
-eachpair	= lambda item: [(i, item[i], item[i+1]) for i in reversed(range(len(item)-1))]
+eachpair	= lambda item: [(i, item[i], item[i+1]) for i in range(len(item)-1)]
 exec4times  = lambda func: lambda usage: [func(usage, i) for i in range(4)]
 isRead		= lambda item: item.value & 0x0F > 0
 isWrite		= lambda item: item.value & 0xF0 > 0
@@ -35,7 +35,7 @@ class Range:
 
 	def __and__(self, other):
 		v = Range(max(self.begin, other.begin), min(self.end, other.end))
-		return v if v.begin <= v.end else None
+		return v if v.begin < v.end else None
 
 	def __or__(self, other):
 		return Range(min(self.begin, other.begin), max(self.end, other.end))
@@ -61,57 +61,57 @@ def parseItem(usageList, line, item, index):
 	item = item[2:i] if i >= 0 else item[2:]
 	usageList[int(item)][line] |= selector << (4 if index == 1 else 0)
 
-def calcUsageList(func):
+def calcUsageList(handler):
 	def wrapper(output_code):
 		usageList = [[0] * len(output_code) for _ in range(8)]
-		[parseItem(usageList, line, code[i], i) for line, code in enumerate(output_code) for i in range(1, 4)]
+		[parseItem(usageList, line, code[i], i) for line, code in enumerate(output_code) for i in range(1, len(code))]
 		usageList = [[Info(i, v) for i, v in enumerate(usage) if v > 0] for usage in usageList if sum(usage) > 0]
 		if len(usageList) < 2: return
 		usageList = [list(chain.from_iterable(item.split() for item in usage)) for usage in usageList]
 		assert all(isWriteOnly(v[0]) and isReadOnly(v[-1]) for v in usageList)
-		return func(output_code, usageList)
+		handler(output_code, usageList)
 	return wrapper
 
 @calcUsageList
 def optimizeMOV(output_code, usageList):
 	for usage in usageList:
 		for _, a, b in eachpair(usage):
-			code = output_code[b.index]
-			if a.value == 0xF0 and b.value == 0x0F and code[0] == "mov" and ("." not in code[1]):
-				output_code[a.index][1] = code[1]
-				print("replace", a.index, output_code[a.index])
+			codeA = output_code[a.index]
+			codeB = output_code[b.index]
+			if not (a.value == 0xF0 and b.value == 0x0F): continue
+			if codeB[0] == "mov" and all("." not in x for x in codeB[1:3]):
+				codeA[1] = codeB[1]
+				print("replace", a.index, codeA)
 				del output_code[b.index]
-				return optimizeMOV(output_code)
-
+				return optimize(output_code)
+			if codeA[0] == "mov" and all("." not in x for x in codeA[1:3]):
+				if codeA[2].startswith("xc") and all(codeA[2] in x for x in codeB[1:3]):
+					continue
+				[setitem(codeB, k, v.replace(codeA[1], codeA[2])) for k, v in enumerate(codeB) if v and k in (2, 3)]
+				print("replace", b.index, codeB)
+				del output_code[a.index]
+				return optimize(output_code)
 @calcUsageList
 def optimizeXT(output_code, usageList):
 	index = len(usageList) - 1
 	usedList = findUsedRange(usageList[index])
 	for testRange in unionUsedRange(set(reduce(add, usedList))):
-		for i in reversed(range(index)):
+		for i in range(index):
 			if isUsedInFreeList(findFreeRange(usageList[i]), usedList, testRange):
 				replaceOutputCode(output_code, testRange, f"xt{index}", f"xt{i}")
-				return optimizeXT(output_code)
-
-def optimize(output_code):
-	print("========================")
-	optimizeMOV(output_code)
-	optimizeXT(output_code)
-
+				return optimize(output_code)
 @exec4times
 def findFreeRange(usage, offset):
 	usedList = _findUsedRange(usage, offset)
 	if len(usedList) <= 0: return [Range()]
-	freeList  = [Range(0, usedList[0].begin)]
-	freeList += [Range(usedList[j].end, usedList[j+1].begin) for j in range(len(usedList)-1)]
-	return [item for item in freeList if item.begin < item.end] + [Range(usedList[-1].end)]
+	freeList = [Range(0, usedList[0].begin)] + [Range(a.end, b.begin) for _, a, b in eachpair(usedList)]
+	return [x for x in freeList if x.begin < x.end] + [Range(usedList[-1].end)]
 
 def _findUsedRange(usage, offset):
-	usedList = [item for item in usage if item.active(offset)]
-	[delitem(usedList, i) for i, a, b in eachpair(usedList) if a.readable(offset) == b.readable(offset)]
-	[delitem(usedList, slice(i, i+2)) for i, a, b in eachpair(usedList) if a.index == b.index]
+	usedList = [x for x in usage if x.active(offset)]
+	[usedList.remove(a) for _, a, b in eachpair(usedList) if a.readable(offset) == b.readable(offset)]
 	assert len(usedList) % 2 == 0
-	return list(reversed([Range(a.index, b.index) for i, a, b in eachpair(usedList) if i % 2 == 0]))
+	return [Range(a.index, b.index) for i, a, b in eachpair(usedList) if i % 2 == 0]
 findUsedRange = exec4times(_findUsedRange)
 
 def isUsedInFreeList(freeList, usedList, testRange):
@@ -120,5 +120,7 @@ def isUsedInFreeList(freeList, usedList, testRange):
 def replaceOutputCode(output_code, used, old, new):
 	print("replace", used, old, new)
 	old_code = [str(code) for code in output_code]
-	[setitem(output_code[i], k, v.replace(old, new)) for i in range(used.begin, used.end+1) for k, v in enumerate(output_code[i]) if v]
+	[setitem(output_code[used.begin], k, v.replace(old, new)) for k, v in enumerate(output_code[used.begin]) if v and k == 1]
+	[setitem(output_code[used.end],   k, v.replace(old, new)) for k, v in enumerate(output_code[used.end])   if v and k in (2, 3)]
+	[setitem(output_code[i], k, v.replace(old, new)) for i in range(used.begin+1, used.end) for k, v in enumerate(output_code[i]) if v]
 	[print(f"{line}\t", old_code[line], "->", code) for line, code in enumerate(output_code) if str(code) != old_code[line]]
