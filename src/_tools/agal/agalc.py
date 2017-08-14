@@ -1,7 +1,7 @@
 import re, os, sys
 from agal import run
 from agalw import CodeWriter, FileWriter
-from agalo import *
+from agalo import optimize
 
 class Module: pass
 class ModuleLoader():
@@ -28,7 +28,9 @@ def main(file_path):
 	va = run(module.vertex)
 	fs = run(module.fragment)
 
-	test(va.output_code)
+	optimize(va.output_code)
+	print("===============")
+	optimize(fs.output_code)
 
 	CodeWriter().compile(va, 0, 1)
 	CodeWriter().compile(fs, 1, 1)

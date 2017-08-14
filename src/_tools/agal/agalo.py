@@ -3,8 +3,6 @@ from operator import add, setitem
 from itertools import chain, combinations
 from agalw import flags2writeMask
 
-optimize = lambda x: [f(x) for f in (optimizeMOV, optimizeXT)]
-
 eachpair	= lambda item: [(i, item[i], item[i+1]) for i in range(len(item)-1)]
 exec4times  = lambda func: lambda usage: [func(usage, i) for i in range(4)]
 isRead		= lambda item: item.value & 0x0F > 0
@@ -73,20 +71,7 @@ def calcUsageList(handler):
 	return wrapper
 
 @calcUsageList
-def optimizeMOV(output_code, usageList):
-	return
-	for usage in usageList:
-		for _, a, b in eachpair(usage):
-			codeA = output_code[a.index]
-			codeB = output_code[b.index]
-			if not (a.value == 0xF0 and b.value == 0x0F): continue
-			if codeB[0] == "mov" and ("." not in codeB[2]):
-				codeA[1] = codeB[1]
-				print("replace", a.index, codeA)
-				del output_code[b.index]
-				return optimize(output_code)
-@calcUsageList
-def optimizeXT(output_code, usageList):
+def optimize(output_code, usageList):
 	index = len(usageList) - 1
 	usedList = findUsedRange(usageList[index])
 	for testRange in unionUsedRange(set(reduce(add, usedList))):
