@@ -3,7 +3,7 @@ from operator import add, setitem
 from itertools import chain, combinations
 from agalw import flags2writeMask
 
-optimize = lambda x: [f(x) for f in (optimizeXT, optimizeMOV)]
+optimize = lambda x: [f(x) for f in (optimizeMOV, optimizeXT)]
 
 eachpair	= lambda item: [(i, item[i], item[i+1]) for i in range(len(item)-1)]
 exec4times  = lambda func: lambda usage: [func(usage, i) for i in range(4)]
@@ -51,7 +51,7 @@ class Range:
 
 def unionUsedRange(usedList):
 	for a, b in combinations(usedList, 2):
-		if a & b: return unionUsedRange(usedList ^ {a, b, a | b})
+		if a & b: return unionUsedRange(usedList - {a, b} | {a | b})
 	return usedList
 
 def parseItem(usageList, line, item, index):
@@ -74,22 +74,16 @@ def calcUsageList(handler):
 
 @calcUsageList
 def optimizeMOV(output_code, usageList):
+	return
 	for usage in usageList:
 		for _, a, b in eachpair(usage):
 			codeA = output_code[a.index]
 			codeB = output_code[b.index]
 			if not (a.value == 0xF0 and b.value == 0x0F): continue
-			if codeB[0] == "mov" and all("." not in x for x in codeB[1:3]):
+			if codeB[0] == "mov" and ("." not in codeB[2]):
 				codeA[1] = codeB[1]
 				print("replace", a.index, codeA)
 				del output_code[b.index]
-				return optimize(output_code)
-			if codeA[0] == "mov" and all("." not in x for x in codeA[1:3]):
-				if codeA[2].startswith("xc") and all(codeA[2] in x for x in codeB[1:3]):
-					continue
-				[setitem(codeB, k, v.replace(codeA[1], codeA[2])) for k, v in enumerate(codeB) if v and k in (2, 3)]
-				print("replace", b.index, codeB)
-				del output_code[a.index]
 				return optimize(output_code)
 @calcUsageList
 def optimizeXT(output_code, usageList):
