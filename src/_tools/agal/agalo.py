@@ -92,8 +92,8 @@ def isUsedInFreeList(freeList, usedList, testRange):
 
 def replaceOutputCode(output_code, used, old, new):
 	print("replace", used, old, new)
-	old_code = [str(code) for code in output_code]
-	[setitem(output_code[used.begin], k, v.replace(old, new)) for k, v in enumerate(output_code[used.begin]) if v and k == 1]
-	[setitem(output_code[used.end],   k, v.replace(old, new)) for k, v in enumerate(output_code[used.end])   if v and k in (2, 3)]
-	[setitem(output_code[i], k, v.replace(old, new)) for i in range(used.begin+1, used.end) for k, v in enumerate(output_code[i]) if v]
+	old_code = list(map(str, output_code))
+	o, a, b = output_code, used.begin, used.end
+	value = [(o[a], [1]), (o[b], [2,3])] + [(v, [1,2,3]) for v in o[a+1:b]]
+	[setitem(t, i, t[i].replace(old, new)) for t, v in value for i in v if t[i]]
 	[print(f"{line}\t", old_code[line], "->", code) for line, code in enumerate(output_code) if str(code) != old_code[line]]
