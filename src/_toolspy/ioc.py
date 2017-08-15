@@ -1,14 +1,10 @@
-__all__ = ["inject", "Injector"]
-INJECT_KEY = "__inject__"
+__all__ = ("Inject", "Injector")
 
-def inject(name, **kwargs):
-	def wrapper(clazz):
-		if not hasattr(clazz, INJECT_KEY):
-			setattr(clazz, INJECT_KEY, {})
-		getattr(clazz, INJECT_KEY)[name] = kwargs
-		return clazz
-	return wrapper
-
+class Inject:
+	__slots__ = ("type", "id")
+	def __init__(self, type, id=None):
+		self.type = type
+		self.id = id
 
 class InjectionTypeValue:
 	def __init__(self, value):
@@ -16,7 +12,6 @@ class InjectionTypeValue:
 
 	def getValue(self, injector):
 		return self.value
-
 
 class InjectionTypeClass:
 	def __init__(self, clazz):
@@ -27,18 +22,16 @@ class InjectionTypeClass:
 		injector.injectInto(value)
 		return value
 
-
 class InjectionTypeSingleton:
 	def __init__(self, clazz):
 		self.clazz = clazz
 		self.value = None
 
 	def getValue(self, injector):
-		if not self.value:
+		if self.value is None:
 			self.value = self.clazz()
 			injector.injectInto(self.value)
 		return self.value
-
 
 class Injector:
 	def __init__(self):
@@ -69,8 +62,8 @@ class Injector:
 		while len(queue):
 			clazz = queue.pop(0)
 			queue += clazz.__bases__
-			if not hasattr(clazz, INJECT_KEY): continue
-			for key, value in getattr(clazz, INJECT_KEY).items():
-				value = self.getInstance(value["type"])
-				setattr(target, key, value)
-			
+			if not hasattr(clazz, "__annotations__"):
+				continue
+			for k, v in clazz.__annotations__.items():
+				value = self.getInstance(v.type) if isinstance(v, Inject) else None
+				setattr(target, k, value)
