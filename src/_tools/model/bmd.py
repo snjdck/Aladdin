@@ -28,7 +28,6 @@ def parse(fileData):
 	subMeshList = [readSubMesh() for _ in range(subMeshCount)]
 	animationList = [readAnimation() for _ in range(animationCount)]
 	boneInfolist = [readBone(animationList, i) for i in range(boneCount)]
-	animationCount = len(animationList)
 	boneInfolist = [info for info in boneInfolist if info is not None]
 	boneList = [bone for bone, animation in boneInfolist]
 	for i in range(len(animationList)):
