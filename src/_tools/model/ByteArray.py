@@ -15,8 +15,9 @@ class ByteArrayW:
 		self.endian = endian
 
 	def pack(self, fmt, value, endian=None):
-		if endian is None: endian = self.endian
-		self.rawData += struct.pack(endian + fmt, value)
+		fmt = (endian or self.endian) + fmt
+		self.rawData += struct.pack(fmt, value)
+		return self
 
 	writeU8  = partialmethod(pack, "B")
 	writeS8  = partialmethod(pack, "b")
@@ -34,6 +35,7 @@ class ByteArrayW:
 		value = value.encode()
 		writer(self, len(value))
 		self.rawData += value
+		return self
 
 	writeString1 = partialmethod(writeString, writeU8 )
 	writeString2 = partialmethod(writeString, writeU16)
@@ -51,8 +53,8 @@ class ByteArrayR:
 		if offset is None:
 			offset = self.position
 			self.position += struct.calcsize(fmt)
-		if endian is None: endian = self.endian
-		return struct.unpack_from(endian + fmt, self.rawData, offset)[0]
+		fmt = (endian or self.endian) + fmt
+		return struct.unpack_from(fmt, self.rawData, offset)[0]
 
 	readU8  = partialmethod(unpack, "B")
 	readS8  = partialmethod(unpack, "b")
