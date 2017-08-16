@@ -6,6 +6,9 @@ class Inject:
 		self.type = type
 		self.id = id
 
+	def getInstance(self, injector):
+		return injector.getInstance(self.type, self.id)
+
 class InjectionTypeValue:
 	def __init__(self, realInjector, value):
 		self.realInjector = realInjector
@@ -23,7 +26,7 @@ class InjectionTypeClass:
 		self.realInjector = realInjector
 		self.klass = klass
 
-	def getValue(self, injector):
+	def getValue(self, injector, id):
 		value = self.klass()
 		self.realInjector.injectInto(value)
 		return value
@@ -34,7 +37,7 @@ class InjectionTypeSingleton:
 		self.klass = klass
 		self.value = None
 
-	def getValue(self, injector):
+	def getValue(self, injector, id):
 		if self.value is None:
 			self.value = self.klass()
 			self.realInjector.injectInto(self.value)
@@ -91,5 +94,5 @@ class Injector:
 			if not hasattr(klass, "__annotations__"):
 				continue
 			for k, v in klass.__annotations__.items():
-				value = self.getInstance(v.type) if isinstance(v, Inject) else None
+				value = v.getInstance(self) if isinstance(v, Inject) else None
 				setattr(target, k, value)
