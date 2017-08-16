@@ -1,3 +1,4 @@
+from enum import Enum, auto
 import struct, re
 
 OP_SPECIAL_TEX		= 0x08
@@ -6,68 +7,61 @@ OP_FRAG_ONLY		= 0x20
 OP_VERT_ONLY		= 0x40
 OP_NO_DEST			= 0x80
 
-class Operation:
-	CodeDict = [None] * 0xFF
-	NameDict = {}
-	def __init__(self, name, code, numRegister, flags=0):
-		self.name = name
+class Operation(Enum):
+	def __init__(self, code, numRegister, flags=0):
 		self.code = code
 		self.numRegister = numRegister
 		self.flags = flags
-		self.NameDict[name] = self
-		self.CodeDict[code] = self
 
-Operation("mov", 0x00, 2)	#		=
-Operation("add", 0x01, 3)	#		+
-Operation("sub", 0x02, 3)	#		-
-Operation("mul", 0x03, 3)	#		*
-Operation("div", 0x04, 3)	#		/
-Operation("rcp", 0x05, 2)	#		1 / n
-Operation("min", 0x06, 3)
-Operation("max", 0x07, 3)
-Operation("frc", 0x08, 2)	#		source1 - floor(source1)
-Operation("sqt", 0x09, 2)	#		sqrt(source1)
-Operation("rsq", 0x0a, 2)	#		1 / sqrt(source1)
-Operation("pow", 0x0b, 3)	#		^
-Operation("log", 0x0c, 2)	#		log2(source1)
-Operation("exp", 0x0d, 2)	#		2 ^ n
-Operation("nrm", 0x0e, 2)
-Operation("sin", 0x0f, 2)
-Operation("cos", 0x10, 2)
-Operation("crs", 0x11, 3)
-Operation("dp3", 0x12, 3)
-Operation("dp4", 0x13, 3)
-Operation("abs", 0x14, 2)
-Operation("neg", 0x15, 2)	#		-n
-Operation("sat", 0x16, 2)	#		max(min(source1,1),0)
-Operation("m33", 0x17, 3, OP_SPECIAL_MATRIX)
-Operation("m44", 0x18, 3, OP_SPECIAL_MATRIX)
-Operation("m34", 0x19, 3, OP_SPECIAL_MATRIX)
+	mov = (0x00, 2)									#		=
+	add = (0x01, 3)									#		+
+	sub = (0x02, 3)									#		-
+	mul = (0x03, 3)									#		*
+	div = (0x04, 3)									#		/
+	rcp = (0x05, 2)									#		1 / n
+	min = (0x06, 3)
+	max = (0x07, 3)
+	frc = (0x08, 2)									#		source1 - floor(source1)
+	sqt = (0x09, 2)									#		sqrt(source1)
+	rsq = (0x0a, 2)									#		1 / sqrt(source1)
+	pow = (0x0b, 3)									#		^
+	log = (0x0c, 2)									#		log2(source1)
+	exp = (0x0d, 2)									#		2 ^ n
+	nrm = (0x0e, 2)
+	sin = (0x0f, 2)
+	cos = (0x10, 2)
+	crs = (0x11, 3)
+	dp3 = (0x12, 3)
+	dp4 = (0x13, 3)
+	abs = (0x14, 2)
+	neg = (0x15, 2)									#		-n
+	sat = (0x16, 2)									#		max(min(source1,1),0)
+	m33 = (0x17, 3, OP_SPECIAL_MATRIX)
+	m44 = (0x18, 3, OP_SPECIAL_MATRIX)
+	m34 = (0x19, 3, OP_SPECIAL_MATRIX)
 
-#version 2
-Operation("ddx", 0x1a, 2, OP_FRAG_ONLY)
-Operation("ddy", 0x1b, 2, OP_FRAG_ONLY)
-Operation("ife", 0x1c, 2, OP_NO_DEST)	#		Jump if source1 is equal to source2
-Operation("ine", 0x1d, 2, OP_NO_DEST)	#		Jump if source1 is not equal to source2
-Operation("ifg", 0x1e, 2, OP_NO_DEST)	#		Jump if source1 is greater or equal than source2
-Operation("ifl", 0x1f, 2, OP_NO_DEST)	#		Jump if source1 is less than source2
-Operation("els", 0x20, 0, OP_NO_DEST)	#		else
-Operation("eif", 0x21, 0, OP_NO_DEST)	#		End an if or else block
+	#version 2
+	ddx = (0x1a, 2, OP_FRAG_ONLY)
+	ddy = (0x1b, 2, OP_FRAG_ONLY)
+	ife = (0x1c, 2, OP_NO_DEST)						#		Jump if source1 is equal to source2
+	ine = (0x1d, 2, OP_NO_DEST)						#		Jump if source1 is not equal to source2
+	ifg = (0x1e, 2, OP_NO_DEST)						#		Jump if source1 is greater or equal than source2
+	ifl = (0x1f, 2, OP_NO_DEST)						#		Jump if source1 is less than source2
+	els = (0x20, 0, OP_NO_DEST)						#		else
+	eif = (0x21, 0, OP_NO_DEST)						#		End an if or else block
 
+	rep = (0x24, 1)									#		repeat vt0.x
+	erp = (0x25, 0)									#		end repeat
 
-Operation("rep", 0x24, 1)	#		repeat vt0.x
-Operation("erp", 0x25, 0)	#		end repeat
-
-Operation("ted", 0x26, 3, OP_FRAG_ONLY | OP_SPECIAL_TEX)
-Operation("kil", 0x27, 1, OP_FRAG_ONLY | OP_NO_DEST)
-Operation("tex", 0x28, 3, OP_FRAG_ONLY | OP_SPECIAL_TEX)
-Operation("sge", 0x29, 3)	#		>=
-Operation("slt", 0x2a, 3)	#		<
-Operation("sgn", 0x2b, 2)	#		(sign) destination = (source1 < 0) ? (-1) : (source1 > 0 ? 1 : 0) - 不支持
-Operation("seq", 0x2c, 3)	#		==
-Operation("sne", 0x2d, 3)	#		!=
-Operation("tld", 0x2e, 3, OP_VERT_ONLY | OP_SPECIAL_TEX)	#src.xy -> uv, src.z -> cubemap side, src.w -> mipmap(0-high)
-
+	ted = (0x26, 3, OP_FRAG_ONLY | OP_SPECIAL_TEX)
+	kil = (0x27, 1, OP_FRAG_ONLY | OP_NO_DEST)
+	tex = (0x28, 3, OP_FRAG_ONLY | OP_SPECIAL_TEX)
+	sge = (0x29, 3)									#		>=
+	slt = (0x2a, 3)									#		<
+	sgn = (0x2b, 2)									#		(sign) destination = (source1 < 0) ? (-1) : (source1 > 0 ? 1 : 0) - 不支持
+	seq = (0x2c, 3)									#		==
+	sne = (0x2d, 3)									#		!=
+	tld = (0x2e, 3, OP_VERT_ONLY | OP_SPECIAL_TEX)	#src.xy -> uv, src.z -> cubemap side, src.w -> mipmap(0-high)
 
 def char2val(flags, offset=0):
 	char = flags[offset]
@@ -141,7 +135,7 @@ class CodeWriter:
 
 	def writeCode(self, code):
 		code = code + [None] * (4 - len(code))
-		op = Operation.NameDict[code[0]]
+		op = Operation[code[0]]
 		assert bool(op.flags & OP_NO_DEST) == (code[1] is None)
 		assert op.numRegister == 3 - code.count(None)
 		self.writer.writeOP(op.code)
