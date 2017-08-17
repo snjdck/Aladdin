@@ -15,7 +15,7 @@ class InjectionTypeValue:
 		self.value = value
 
 	def getValue(self, injector, id):
-		if self.realInjector is not None:
+		if self.realInjector:
 			injector = self.realInjector
 			self.realInjector = None
 			injector.injectInto(self.value)
@@ -56,8 +56,9 @@ class Injector:
 		key = type if isinstance(type, str) else type.__name__
 		return f"{key}@" if isMeta else f"{key}@{id}" if id else key
 
-	def mapValue(self, type, value, id=None, needInject=True, realInjector=None):
-		self.mapRule(type, InjectionTypeValue(realInjector or self if needInject else None, value), id)
+	def mapValue(self, type, value, id=None, realInjector=True):
+		if realInjector is True: realInjector = self
+		self.mapRule(type, InjectionTypeValue(realInjector, value), id)
 
 	def mapClass(self, type, value=None, id=None, realInjector=None):
 		self.mapRule(type, InjectionTypeClass(realInjector or self, value or type), id)
