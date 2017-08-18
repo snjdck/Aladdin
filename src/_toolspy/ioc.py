@@ -45,39 +45,35 @@ class InjectionTypeSingleton:
 			self.klass = None
 		return self.value
 
-def calcKey(type, id=None, isMeta=False):
-	key = type if isinstance(type, str) else type.__qualname__
-	return f"{key}@" if isMeta else f"{key}@{id}" if id else key
-
-def castKey(key):
-	if isinstance(key, slice):
-		return calcKey(key.start, key.stop)
-	return calcKey(key, isMeta=True)
-
 class Injector:
 	__slots__ = ("ruleDict", "parent")
 	def __init__(self):
 		self.ruleDict = {}
 		self.parent = None
 
+	@staticmethod
+	def calcKey(type, id=None, isMeta=False):
+		key = type if isinstance(type, str) else type.__qualname__
+		return f"{key}@" if isMeta else f"{key}@{id}" if id else key
+
 	def mapValue(self, type, value, id=None, realInjector=True):
 		if realInjector is True: realInjector = self
-		self[type:id] = InjectionTypeValue(realInjector, value)
+		self.mapRule(type, InjectionTypeValue(realInjector, value), id)
 
 	def mapClass(self, type, value=None, id=None, realInjector=None):
-		self[type:id] = InjectionTypeClass(realInjector or self, value or type)
+		self.mapRule(type, InjectionTypeClass(realInjector or self, value or type), id)
 
 	def mapSingleton(self, type, value=None, id=None, realInjector=None):
-		self[type:id] = InjectionTypeSingleton(realInjector or self, value or type)
+		self.mapRule(type, InjectionTypeSingleton(realInjector or self, value or type), id)
 
 	def mapRule(self, type, rule, id=None):
-		self[type:id] = rule
+		self.ruleDict[self.calcKey(type, id)] = rule
 
 	def mapMetaRule(self, type, rule):
-		self[type] = rule
+		self.ruleDict[self.calcKey(type, isMeta=True)] = rule
 
 	def unmap(self, type, id=None):
-		del self[type:id]
+		del self.ruleDict[self.calcKey(type, id)]
 
 	def getRule(self, key, inherit=True):
 		injector = self
@@ -88,7 +84,7 @@ class Injector:
 		return rule
 
 	def getInstance(self, type, id=None):
-		rule = self.getRule(calcKey(type, id)) or self.getRule(calcKey(type, isMeta=True))
+		rule = self.getRule(self.calcKey(type, id)) or self.getRule(self.calcKey(type, isMeta=True))
 		return rule and rule.getValue(self, id)
 
 	def injectInto(self, target):
@@ -118,12 +114,6 @@ class Injector:
 		if isinstance(key, type):
 			return self.getInstance(key)
 		return [self[k] for k in key]
-
-	def __setitem__(self, key, value):
-		self.ruleDict[castKey(key)] = value
-
-	def __delitem__(self, key):
-		del self.ruleDict[castKey(key)]
 
 	def __rshift__(self, target):
 		self.injectInto(target)
