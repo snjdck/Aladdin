@@ -10,6 +10,7 @@ class Inject:
 		return injector.getInstance(self.type, self.id)
 
 class InjectionTypeValue:
+	__slots__ = ("realInjector", "value")
 	def __init__(self, realInjector, value):
 		self.realInjector = realInjector
 		self.value = value
@@ -22,6 +23,7 @@ class InjectionTypeValue:
 		return self.value
 
 class InjectionTypeClass:
+	__slots__ = ("realInjector", "klass")
 	def __init__(self, realInjector, klass):
 		self.realInjector = realInjector
 		self.klass = klass
@@ -32,6 +34,7 @@ class InjectionTypeClass:
 		return value
 
 class InjectionTypeSingleton:
+	__slots__ = ("realInjector", "klass", "value")
 	def __init__(self, realInjector, klass):
 		self.realInjector = realInjector
 		self.klass = klass
