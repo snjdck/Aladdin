@@ -47,9 +47,9 @@ class InjectionTypeSingleton:
 
 class Injector:
 	__slots__ = ("ruleDict", "parent")
-	def __init__(self):
+	def __init__(self, parent=None):
 		self.ruleDict = {}
-		self.parent = None
+		self.parent = parent
 
 	@staticmethod
 	def calcKey(type, id=None, isMeta=False):
