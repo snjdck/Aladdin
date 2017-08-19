@@ -99,7 +99,7 @@ class Injector:
 			if not hasattr(klass, "__annotations__"):
 				continue
 			for k, v in klass.__annotations__.items():
-				value = self.getInstance(v.type, v.id) if isinstance(v, Inject) else None
+				value = self[v] if isinstance(v, Inject) else None
 				setattr(target, k, value)
 		self.invoke(target, "__inject__")
 
@@ -113,10 +113,12 @@ class Injector:
 		func(*[self[attr[k]] for k in args])
 
 	def __getitem__(self, key):
-		if isinstance(key, slice):
-			return self.getInstance(key.start, key.stop)
+		if isinstance(key, Inject):
+			return self.getInstance(key.type, key.id)
 		if isinstance(key, type):
 			return self.getInstance(key)
+		if isinstance(key, slice):
+			return self.getInstance(key.start, key.stop)
 		return [self[k] for k in key]
 
 	def __rshift__(self, target):
