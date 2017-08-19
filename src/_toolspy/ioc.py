@@ -6,9 +6,6 @@ class Inject:
 		self.type = type
 		self.id = id
 
-	def getInstance(self, injector):
-		return injector.getInstance(self.type, self.id)
-
 class InjectionTypeValue:
 	__slots__ = ("realInjector", "value")
 	def __init__(self, realInjector, value):
@@ -59,6 +56,10 @@ class Injector:
 		key = type if isinstance(type, str) else type.__qualname__
 		return f"{key}@" if isMeta else f"{key}@{id}" if id else key
 
+	@classmethod
+	def calcMetaKey(klass, type):
+		return klass.calcKey(type, isMeta=True)
+
 	def mapValue(self, type, value, id=None, realInjector=True):
 		if realInjector is True: realInjector = self
 		self.mapRule(type, InjectionTypeValue(realInjector, value), id)
@@ -73,7 +74,7 @@ class Injector:
 		self.ruleDict[self.calcKey(type, id)] = rule
 
 	def mapMetaRule(self, type, rule):
-		self.ruleDict[self.calcKey(type, isMeta=True)] = rule
+		self.ruleDict[self.calcMetaKey(type)] = rule
 
 	def unmap(self, type, id=None):
 		del self.ruleDict[self.calcKey(type, id)]
@@ -87,7 +88,7 @@ class Injector:
 		return rule
 
 	def getInstance(self, type, id=None):
-		rule = self.getRule(self.calcKey(type, id)) or self.getRule(self.calcKey(type, isMeta=True))
+		rule = self.getRule(self.calcKey(type, id)) or self.getRule(self.calcMetaKey(type))
 		return rule and rule.getValue(self, id)
 
 	def injectInto(self, target):
@@ -98,7 +99,7 @@ class Injector:
 			if not hasattr(klass, "__annotations__"):
 				continue
 			for k, v in klass.__annotations__.items():
-				value = v.getInstance(self) if isinstance(v, Inject) else None
+				value = self.getInstance(v.type, v.id) if isinstance(v, Inject) else None
 				setattr(target, k, value)
 		self.invoke(target, "__inject__")
 
