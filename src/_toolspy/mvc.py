@@ -1,6 +1,6 @@
 from ioc import *
 
-__all__ = ("Application", "Module", "Msg", "Model", "Service", "Controller")
+__all__ = ("Application", "Module", "Model", "Service", "Controller", "MsgName")
 
 class Application:
 	def __init__(self):
@@ -62,6 +62,25 @@ class Module:
 	def initAllControllers(self): pass
 	def onStartup(self): pass
 
+class Notifier:
+	module: Inject(Module)
+	def notify(self, msgName, msgData=None):
+		return self.module.notify(msgName, msgData)
+
+class Model(Notifier): pass
+class Service(Notifier): pass
+class Controller(Notifier):
+	def __init__(self):
+		self.handlerDict = {}
+
+	def regHandler(self, msgName, handler):
+		self.handlerDict[msgName] = handler
+
+	def handleMsg(self, msg):
+		handler = self.handlerDict.get(msg.name)
+		if handler is None: return
+		handler(msg)
+
 class Msg:
 	__slots__ = ("name", "data", "defaultPreventedFlag", "processCanceledFlag")
 	def __init__(self, name, data):
@@ -82,22 +101,23 @@ class Msg:
 	def isDefaultPrevented():
 		return self.defaultPreventedFlag
 
-class Notifier:
-	module: Inject(Module)
-	def notify(self, msgName, msgData=None):
-		return self.module.notify(msgName, msgData)
+class EnumDict(dict):
+	def __setitem__(self, key, value):
+		assert key not in self, f"'{key}' has been set with {self[key]}"
+		super().__setitem__(key, value)
 
-class Model(Notifier): pass
-class Service(Notifier): pass
+class MsgNameMetaClass(type):
+	def __prepare__(name, bases):
+		return EnumDict()
+	
+	def __new__(cls, name, bases, attributes):
+		attributes = dict(attributes)
+		for key in attributes:
+			if not key.startswith("__"):
+				msgNameSet[key] = name
+				attributes[key] = key
+		return type.__new__(cls, name, bases, attributes)
 
-class Controller(Notifier):
-	def __init__(self):
-		self.handlerDict = {}
-
-	def regHandler(self, msgName, handler):
-		self.handlerDict[msgName] = handler
-
-	def handleMsg(self, msg):
-		handler = self.handlerDict.get(msg.name)
-		if handler is None: return
-		handler(msg)
+msgNameSet = EnumDict()
+class MsgName(metaclass=MsgNameMetaClass):
+	pass
