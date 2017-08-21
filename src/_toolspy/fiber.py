@@ -21,30 +21,13 @@ def execFiberList(fiberList):
 			fiber = nextValue(fiberList, fiber) if value is None else value
 
 class Fiber:
-	fiberList = []
+	def __init__(self):
+		self.fiberList = []
 
-	@classmethod
-	def run(klass):
-		execFiberList(klass.fiberList)
+	def __call__(self, *args):
+		result = [f() for f in args]
+		self.fiberList += result
+		return result
 
-	def __new__(klass, func):
-		value = func()
-		klass.fiberList.append(value)
-		return value
-
-if __name__ == "__main__":
-	def test1():
-		print(12)
-		yield
-		print(34)
-
-	def test2():
-		print(56)
-		yield
-		print(78)
-
-	gr1 = Fiber(test1)
-	gr2 = Fiber(test2)
-
-	Fiber.run()
-	input()
+	def run(self):
+		execFiberList(self.fiberList)
