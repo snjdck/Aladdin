@@ -36,7 +36,7 @@ class Module:
 			handler.handleMsg(msg)
 		return not msg.isDefaultPrevented()
 
-	def regService(self, serviceInterface, serviceClass, asLocal):
+	def regService(self, serviceInterface, serviceClass, asLocal=False):
 		injector = self.injector if asLocal else self.injector.parent
 		injector.mapSingleton(serviceInterface, serviceClass, realInjector=self.injector)
 
