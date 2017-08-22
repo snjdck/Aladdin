@@ -1,6 +1,6 @@
 from ioc import *
 
-__all__ = ("Application", "Module", "Model", "Service", "Controller", "MsgName")
+__all__ = ("Application", "Module", "Model", "Service", "Controller", "MsgName", "MsgHandler") + ("Inject", "Injector")
 
 class Application:
 	def __init__(self):
@@ -69,17 +69,29 @@ class Notifier:
 
 class Model(Notifier): pass
 class Service(Notifier): pass
-class Controller(Notifier):
-	def __init__(self):
-		self.handlerDict = {}
 
-	def regHandler(self, msgName, handler):
-		self.handlerDict[msgName] = handler
+class MsgHandler:
+	__slots__ = ("name", "handler")
+	def __init__(self, name):
+		self.name = name
 
+	def __call__(self, handler):
+		self.handler = handler
+		return self
+
+class ControllerMetaClass(type):
+	def __new__(cls, name, bases, attributes):
+		handlerDict = {v.name: v.handler for v in attributes.values() if isinstance(v, MsgHandler)}
+		attributes = {k: v for k, v in attributes.items() if not isinstance(v, MsgHandler)}
+		result = type.__new__(cls, name, bases, attributes)
+		result.__handler__ = handlerDict
+		return result
+
+class Controller(Notifier, metaclass=ControllerMetaClass):
 	def handleMsg(self, msg):
-		handler = self.handlerDict.get(msg.name)
+		handler = self.__handler__.get(msg.name)
 		if handler is None: return
-		handler(msg)
+		handler(self, msg)
 
 class Msg:
 	__slots__ = ("name", "data", "defaultPreventedFlag", "processCanceledFlag")
@@ -92,32 +104,21 @@ class Msg:
 	def cancelProcess(self):
 		self.processCanceledFlag = True
 
-	def isProcessCanceled():
+	def isProcessCanceled(self):
 		return self.processCanceledFlag
 
 	def preventDefault(self):
 		self.defaultPreventedFlag = True
 
-	def isDefaultPrevented():
+	def isDefaultPrevented(self):
 		return self.defaultPreventedFlag
 
-class EnumDict(dict):
-	def __setitem__(self, key, value):
-		assert key not in self, f"'{key}' has been set with {self[key]}"
-		super().__setitem__(key, value)
-
 class MsgNameMetaClass(type):
-	def __prepare__(name, bases):
-		return EnumDict()
-	
 	def __new__(cls, name, bases, attributes):
-		attributes = dict(attributes)
 		for key in attributes:
 			if not key.startswith("__"):
-				msgNameSet[key] = name
-				attributes[key] = key
+				attributes[key] = f"{name}.{key}"
 		return type.__new__(cls, name, bases, attributes)
 
-msgNameSet = EnumDict()
 class MsgName(metaclass=MsgNameMetaClass):
 	pass
