@@ -1,6 +1,7 @@
+from signal import *
 from ioc import *
 
-__all__ = ("Application", "Module", "Model", "Service", "Controller", "MsgName", "MsgHandler") + ("Inject", "Injector")
+__all__ = ("Application", "Module", "Model", "Service", "Controller", "MsgName", "MsgHandler") + ("Inject", "Signal")
 
 class Application:
 	def __init__(self):
