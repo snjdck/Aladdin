@@ -26,11 +26,11 @@ class Module:
 		self.injector = Injector()
 		self.injector.mapValue(Module, self, realInjector=None)
 		self.injector.mapValue(Injector, self.injector, realInjector=None)
-		self.handlerList = set()
+		self.controllerDict = {}
 
 	def notify(self, msgName, msgData=None):
 		msg = Msg(msgName, msgData)
-		for handler in self.handlerList:
+		for handler in self.controllerDict.values():
 			if msg.isProcessCanceled(): break
 			handler.handleMsg(msg)
 		return not msg.isDefaultPrevented()
@@ -45,17 +45,13 @@ class Module:
 	def delModel(self, modelType):
 		self.injector.unmap(modelType)
 
-	def regController(self, controller):
-		self.regHandler(controller)
+	def regController(self, controllerType):
+		assert controllerType not in self.controllerDict
+		controller = self.injector(controllerType())
+		self.controllerDict[controllerType] = controller
 
-	def delController(self, controller):
-		self.handlerList.remove(controller)
-
-	def regHandler(self, handler):
-		if handler in self.handlerList:
-			return
-		self.handlerList.add(handler)
-		self.injector.injectInto(handler)
+	def delController(self, controllerType):
+		del self.controllerDict[controllerType]
 
 	def initAllModels(self): pass
 	def initAllServices(self): pass

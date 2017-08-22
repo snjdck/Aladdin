@@ -20,7 +20,7 @@ class A(Module):
 		self.regModel(Model1())
 
 	def initAllControllers(self):
-		self.regController(TestController())
+		self.regController(TestController)
 
 	def onStartup(self):
 		print("a startup")
