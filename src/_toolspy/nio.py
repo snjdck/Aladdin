@@ -76,5 +76,10 @@ class PacketSocket(Socket):
 		for packet in packetList:
 			self.onPacket(packet)
 
-	def sendPacket(self, packet):
-		self.send(bytes(packet))
+	def onPacket(self, packet):
+		raise NotImplementedError
+
+	def send(self, data):
+		if isinstance(data, self.Packet):
+			data = bytes(data)
+		super().send(data)

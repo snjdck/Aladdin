@@ -29,9 +29,9 @@ class Packet:
 		self.msgData = msgData
 
 	def __bytes__(self):
-		buffer = pack_ushort(msgId)
-		if msgData:
-			buffer += json.dumps(msgData, separators=(',', ':')).encode()
+		buffer = pack_ushort(self.msgId)
+		if self.msgData:
+			buffer += json.dumps(self.msgData, separators=(',', ':')).encode()
 		return pack_ushort(len(buffer)) + buffer
 
 
