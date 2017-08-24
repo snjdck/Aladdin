@@ -1,6 +1,7 @@
 from select import select
 from time import monotonic as time
 from heapq import heappush, heappop
+import types
 
 __all__ = ("Fiber", "Sleep", "AsyncSocket")
 
@@ -70,6 +71,45 @@ class Send(SocketHandler):
 				continue
 			return
 
+class Future:
+	def __init__(self, coroutine):
+		self.coroutine = coroutine
+		self._done = False
+		self._cancelled = False
+		self._result = None
+		self._exception = None
+
+	def cancel(self):
+		self._cancelled = True
+
+	def cancelled(self):
+		return self._cancelled
+
+	def done(self):
+		return self._done
+
+	def result(self):
+		return self._result
+
+	def exception(self):
+		return self._exception
+
+	def set_result(self, value):
+		self._done = True
+		self._result = value
+
+	def set_exception(self, value):
+		self._done = True
+		self._exception = value
+
+	def next(self):
+		try:
+			self.coroutine.send(None)
+		except StopIteration as error:
+			self.set_result(error.value)
+		except Exception as error:
+			self.set_exception(error)
+
 class Handle:
 	__slots__ = ("callback", "args", "cancelFlag", "when")
 	def __init__(self, callback, args, when=0):
@@ -89,6 +129,7 @@ class Handle:
 
 class Fiber:
 	def __init__(self):
+		self.futureList = []
 		self.queue = []
 		self.timer = []
 
@@ -108,13 +149,23 @@ class Fiber:
 		heappush(self.timer, handle)
 		return handle
 
-	def run_until_complete(self, future):
+	def add(self, coroutine):
+		if isinstance(coroutine, types.CoroutineType):
+			future = Future(coroutine)
+		self.futureList.append(future)
+		return future
+
+	def run(self):
 		while True:
-			try:
-				future.send(None)
-				while len(self.queue):
-					self.queue.pop(0)()
-				while len(self.timer) and self.timer[0].when >= time():
-					heappop(self.timer)()
-			except StopIteration as error:
-				return error.value
+			while len(self.queue):
+				self.queue.pop(0)()
+			while len(self.timer) and self.timer[0].when >= time():
+				heappop(self.timer)()
+			if len(self.futureList):
+				future = self.futureList.pop(0)
+				future.next()
+				if not future.done():
+					self.futureList.append(future)
+			else: break
+			
+
