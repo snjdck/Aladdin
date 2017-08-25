@@ -32,6 +32,6 @@ class Packet:
 		buffer = pack_ushort(self.msgId)
 		if self.msgData:
 			buffer += json.dumps(self.msgData, separators=(',', ':')).encode()
-		return pack_ushort(len(buffer)) + buffer
+		return pack_ushort(len(buffer)+2) + buffer
 
 

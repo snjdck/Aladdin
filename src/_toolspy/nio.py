@@ -1,21 +1,34 @@
 from selectors import DefaultSelector, EVENT_READ, EVENT_WRITE
 
-__all__ = ("register", "select", "Socket", "PacketSocket")
+__all__ = ("select", "ServerSocket", "PacketSocket")
 
 selector = DefaultSelector()
-
-def register(sock, data):
-	sock.setblocking(False)
-	selector.register(sock, EVENT_READ, data)
 
 def select(timeout=None):
 	events = selector.select(timeout)
 	for key, mask in events:
-		key.data(mask)
+		key.fileobj(mask)
 
 class Socket:
 	def __init__(self, sock):
 		self.sock = sock
+		sock.setblocking(False)
+		selector.register(self, EVENT_READ)
+
+	def fileno(self):
+		return self.sock.fileno()
+
+class ServerSocket(Socket):
+	def __call__(self, mask):
+		sock, addr = self.sock.accept()
+		self.onAccept(sock, addr)
+
+	def onAccept(self, sock, addr):
+		raise NotImplementedError
+
+class ClientSocket(Socket):
+	def __init__(self, sock):
+		super().__init__(sock)
 		self.bufferRecv = bytes()
 		self.bufferSend = bytes()
 
@@ -24,10 +37,10 @@ class Socket:
 		if mask & EVENT_WRITE: self.onSend()
 
 	def modify(self, events):
-		selector.modify(self.sock, events, self)
+		selector.modify(self, events)
 
 	def onError(self):
-		selector.unregister(self.sock)
+		selector.unregister(self)
 		self.sock.close()
 
 	def onRecv(self):
@@ -57,7 +70,7 @@ class Socket:
 			self.modify(EVENT_READ | EVENT_WRITE)
 		self.bufferSend += data
 
-class PacketSocket(Socket):
+class PacketSocket(ClientSocket):
 	def __init__(self, sock, Packet):
 		super().__init__(sock)
 		self.Packet = Packet
