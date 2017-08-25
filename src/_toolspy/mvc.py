@@ -41,7 +41,7 @@ class Module:
 		injector.mapSingleton(serviceInterface, serviceClass, realInjector=self.injector)
 
 	def regModel(self, model, modelType=None):
-		self.injector.mapValue(modelType or type(model), model)
+		self.injector.mapValue(modelType or type(model), self.injector(model), realInjector=None)
 
 	def delModel(self, modelType):
 		self.injector.unmap(modelType)
