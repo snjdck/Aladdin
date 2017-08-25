@@ -1,16 +1,16 @@
-from select import select
+#from select import select
 from time import monotonic as time
 from heapq import heappush, heappop
 import types
 
-__all__ = ("Fiber", "Sleep", "AsyncSocket")
-
+__all__ = ("Fiber", "Sleep")
+"""
 def readable(sock):
 	return len(select([sock], (), (), 0)[0]) > 0
 
 def writable(sock):
 	return len(select((), [sock], (), 0)[1]) > 0
-
+"""
 class Sleep:
 	__slots__ = ("timeout",)
 	def __init__(self, seconds):
@@ -19,7 +19,7 @@ class Sleep:
 	def __await__(self):
 		while time() < self.timeout:
 			yield
-
+"""
 class SocketHandler:
 	def __init__(self, sock):
 		self.sock = sock
@@ -70,7 +70,7 @@ class Send(SocketHandler):
 				yield
 				continue
 			return
-
+"""
 class Future:
 	def __init__(self, coroutine):
 		self.coroutine = coroutine
@@ -108,6 +108,7 @@ class Future:
 		except StopIteration as error:
 			self.set_result(error.value)
 		except Exception as error:
+			print(error)
 			self.set_exception(error)
 
 class Handle:
@@ -116,6 +117,7 @@ class Handle:
 		self.callback = callback
 		self.args = args
 		self.cancelFlag = False
+		self.when = when
 
 	def cancel(self):
 		if self.cancelFlag: return
@@ -155,17 +157,16 @@ class Fiber:
 		self.futureList.append(future)
 		return future
 
-	def run(self):
-		while True:
-			while len(self.queue):
-				self.queue.pop(0)()
-			while len(self.timer) and self.timer[0].when >= time():
-				heappop(self.timer)()
-			if len(self.futureList):
-				future = self.futureList.pop(0)
-				future.next()
-				if not future.done():
-					self.futureList.append(future)
-			else: break
+	def update(self):
+		while len(self.queue):
+			self.queue.pop(0)()
+		while len(self.timer) and self.timer[0].when <= time():
+			heappop(self.timer)()
+		if len(self.futureList):
+			future = self.futureList.pop(0)
+			future.next()
+			if not future.done():
+				self.futureList.append(future)
+
 			
 
