@@ -129,6 +129,9 @@ class Handle:
 		if self.cancelFlag: return
 		self.callback(*self.args)
 
+	def __bool__(self):
+		return self.when <= time()
+
 class Fiber:
 	def __init__(self):
 		self.futureList = []
@@ -158,15 +161,12 @@ class Fiber:
 		return future
 
 	def update(self):
-		while len(self.queue):
-			self.queue.pop(0)()
-		while len(self.timer) and self.timer[0].when <= time():
-			heappop(self.timer)()
-		if len(self.futureList):
+		if self.futureList:
 			future = self.futureList.pop(0)
 			future.next()
 			if not future.done():
 				self.futureList.append(future)
-
-			
-
+		while self.queue:
+			self.queue.pop(0)()
+		while self.timer and self.timer[0]:
+			heappop(self.timer)()
