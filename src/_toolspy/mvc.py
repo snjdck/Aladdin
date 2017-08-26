@@ -19,6 +19,7 @@ class Application:
 		moduleList = self.moduleDict.values()
 		for module in moduleList: module.initAllModels()
 		for module in moduleList: module.initAllServices()
+		for module in moduleList: module.activateServices()
 		for module in moduleList: module.initAllControllers()
 		for module in moduleList: module.onStartup()
 
@@ -28,6 +29,7 @@ class Module:
 		self.injector.mapValue(Module, self, realInjector=None)
 		self.injector.mapValue(Injector, self.injector, realInjector=None)
 		self.controllerDict = {}
+		self.serviceSet = set()
 
 	def notify(self, msgName, msgData=None):
 		msg = Msg(msgName, msgData)
@@ -39,6 +41,7 @@ class Module:
 	def regService(self, serviceInterface, serviceClass, asLocal=False):
 		injector = self.injector if asLocal else self.injector.parent
 		injector.mapSingleton(serviceInterface, serviceClass, realInjector=self.injector)
+		self.serviceSet.add(serviceInterface)
 
 	def regModel(self, model, modelType=None):
 		self.injector.mapValue(modelType or type(model), self.injector(model), realInjector=None)
@@ -53,6 +56,10 @@ class Module:
 
 	def delController(self, controllerType):
 		del self.controllerDict[controllerType]
+
+	def activateServices(self):
+		self.injector[self.serviceSet]
+		del self.serviceSet
 
 	def initAllModels(self): pass
 	def initAllServices(self): pass
