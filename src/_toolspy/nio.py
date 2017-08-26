@@ -80,10 +80,10 @@ class PacketSocket(ClientSocket):
 		packetList = []
 		offset = 0
 		while True:
-			packet, size = self.Packet.decode(self.bufferRecv, offset)
+			packet = self.Packet.cut(self.bufferRecv, offset)
 			if packet is None: break
 			packetList.append(packet)
-			offset += size
+			offset += len(packet)
 		if offset:
 			self.bufferRecv = self.bufferRecv[offset:]
 		for packet in packetList:

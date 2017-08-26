@@ -2,7 +2,7 @@ from enum import Enum, unique
 import socket
 import nio
 import aio
-import packet
+from packet import *
 from mvc import *
 from net import *
 
@@ -31,13 +31,14 @@ sock.listen(100)
 
 class Client(nio.PacketSocket):
 	def onPacket(self, packet):
+		packet = Packet.decode(packet)
 		print(packet.msgId, packet.msgData)
 		NetMsgHandler(packet.msgId)(self, packet)
 
 class Server(nio.ServerSocket):
 	def onAccept(self, sock, addr):
 		print('accepted', sock, 'from', addr)
-		client = Client(sock, packet.Packet)
+		client = Client(sock, Packet)
 
 app = Application()
 app.regModule(NetModule())

@@ -1,6 +1,8 @@
 import struct
 import json
 
+__all__ = ["Packet"]
+
 def read_ushort(buffer, offset=0):
 	return struct.unpack_from(">H", buffer, offset)[0]
 
@@ -14,15 +16,19 @@ def pack_uint(val):
 	return struct.pack(">I", val)
 
 class Packet:
-	@classmethod
-	def decode(klass, buffer, offset=0):
+	@staticmethod
+	def cut(buffer, offset=0):
 		count = len(buffer) - offset
-		if count < 2: return None, 0
+		if count < 2: return None
 		packetLen = read_ushort(buffer, offset)
-		if count < packetLen: return None, 0
-		msgId = read_ushort(buffer, offset+2)
-		msgData = json.loads(buffer[offset+4:].decode()) if packetLen > 4 else None
-		return klass(msgId, msgData), packetLen
+		if count < packetLen: return None
+		return buffer[offset:offset+packetLen]
+
+	@classmethod
+	def decode(klass, buffer):
+		msgId = read_ushort(buffer, 2)
+		msgData = json.loads(buffer[4:].decode()) if len(buffer) > 4 else None
+		return klass(msgId, msgData)
 
 	def __init__(self, msgId, msgData):
 		self.msgId = msgId
