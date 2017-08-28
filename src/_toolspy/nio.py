@@ -40,18 +40,21 @@ class ClientSocket(Socket):
 	def modify(self, events):
 		selector.modify(self, events)
 
-	def onError(self):
+	def close(self):
 		selector.unregister(self)
 		self.sock.close()
+		self.onClosed()
+
+	def onClosed(self): pass
 
 	def onRecv(self):
 		try:
 			data = self.sock.recv(0x10000)
 		except ConnectionResetError:
-			self.onError()
+			self.close()
 			return
 		if data is None:
-			self.onError()
+			self.close()
 			return
 		self.bufferRecv += data
 

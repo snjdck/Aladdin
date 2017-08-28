@@ -9,7 +9,8 @@ clientDict = {}
 class Linker(PacketSocket):
 	def onPacket(self, packet):
 		packet = Packet.decode(packet)
-		client = clientDict[packet.usrId]
+		client = clientDict.get(packet.usrId)
+		if client is None: return
 		client.send(packet)
 
 class Client(PacketSocket):
@@ -17,6 +18,9 @@ class Client(PacketSocket):
 		packet = Packet.decode(packet)
 		packet.usrId = self.usrId
 		linker.send(packet)
+
+	def onClosed(self):
+		del clientDict[self.usrId]
 
 class Server(ServerSocket):
 	def onAccept(self, sock, addr):

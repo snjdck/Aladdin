@@ -11,11 +11,14 @@ class Client(PacketSocket):
 			if client is not self:
 				client.send(packet)
 
+	def onClosed(self):
+		clientList.remove(self)
+
 class Server(ServerSocket):
 	def onAccept(self, sock, addr):
 		client = Client(sock, Packet)
 		clientList.append(client)
 
-server = Server(tcp.serversocket(5678))
+Server(tcp.serversocket(5678))
 while True:
 	select()
