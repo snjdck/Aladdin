@@ -1,4 +1,5 @@
 from selectors import DefaultSelector, EVENT_READ, EVENT_WRITE
+from time import monotonic
 
 __all__ = ("select", "ServerSocket", "PacketSocket")
 
@@ -74,6 +75,7 @@ class PacketSocket(ClientSocket):
 	def __init__(self, sock, Packet):
 		super().__init__(sock)
 		self.Packet = Packet
+		self.timestamp = monotonic()
 
 	def onRecv(self):
 		super().onRecv()
@@ -84,8 +86,9 @@ class PacketSocket(ClientSocket):
 			if packet is None: break
 			packetList.append(packet)
 			offset += len(packet)
-		if offset:
-			self.bufferRecv = self.bufferRecv[offset:]
+		if offset == 0: return
+		self.timestamp = monotonic()
+		self.bufferRecv = self.bufferRecv[offset:]
 		for packet in packetList:
 			self.onPacket(packet)
 

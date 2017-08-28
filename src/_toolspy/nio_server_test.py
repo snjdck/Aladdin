@@ -5,6 +5,7 @@ import aio
 from packet import *
 from mvc import *
 from net import *
+import tcp
 
 class NetModule(Module):
 	def initAllServices(self):
@@ -25,10 +26,6 @@ class NetController(Controller):
 	def test(self, msg):
 		print(msg)
 
-sock = socket.socket()
-sock.bind(('localhost', 1234))
-sock.listen(100)
-
 class Client(nio.PacketSocket):
 	def onPacket(self, packet):
 		packet = Packet.decode(packet)
@@ -45,7 +42,7 @@ app.regModule(NetModule())
 app.startup()
 
 fiber = aio.Fiber()
-Server(sock)
+Server(tcp.serversocket(1234))
 while True:
 	nio.select(1)
 	fiber.update()

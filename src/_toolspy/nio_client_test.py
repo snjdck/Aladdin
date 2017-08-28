@@ -1,10 +1,9 @@
 import socket
 import nio
 from packet import *
+import tcp
 import time
 
-sock = socket.socket()
-sock.connect(('localhost', 1234))
 
 class ClientSocket(nio.PacketSocket):
 	def onPacket(self, packet):
@@ -12,7 +11,7 @@ class ClientSocket(nio.PacketSocket):
 		print(packet.msgId, packet.msgData)
 		self.send(packet)
 
-packetSocket = ClientSocket(sock, Packet)
+packetSocket = ClientSocket(tcp.clientsocket(1234), Packet)
 packetSocket.send(Packet(100, {"key":"alex"}))
 
 while True:
