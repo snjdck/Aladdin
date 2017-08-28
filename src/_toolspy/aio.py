@@ -132,6 +132,9 @@ class Handle:
 	def __bool__(self):
 		return self.when <= time()
 
+	def __lt__(self, other):
+		return self.when < other.when
+
 class Fiber:
 	def __init__(self):
 		self.futureList = []
