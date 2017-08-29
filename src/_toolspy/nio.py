@@ -19,6 +19,13 @@ class Socket:
 	def fileno(self):
 		return self.sock.fileno()
 
+	def close(self):
+		selector.unregister(self)
+		self.sock.close()
+		self.onClosed()
+
+	def onClosed(self): pass
+
 class ServerSocket(Socket):
 	def __call__(self, mask):
 		sock, addr = self.sock.accept()
@@ -39,13 +46,6 @@ class ClientSocket(Socket):
 
 	def modify(self, events):
 		selector.modify(self, events)
-
-	def close(self):
-		selector.unregister(self)
-		self.sock.close()
-		self.onClosed()
-
-	def onClosed(self): pass
 
 	def onRecv(self):
 		try:
