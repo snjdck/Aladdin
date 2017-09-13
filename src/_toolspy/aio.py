@@ -4,6 +4,33 @@ from heapq import heappush, heappop
 import types
 
 __all__ = ("Fiber", "Sleep")
+
+"""
+response = await socket.request(packet)
+
+def request(self, packet):
+	self.send(packet)
+	future = RequestFuture()
+	self.requestDict[packet.id] = future
+	return future
+"""
+class RequestFuture:
+	__slots__ = ("isDone", "result")
+
+	def __init__(self):
+		self.isDone = False
+
+	def __await__(self):
+		while not self.isDone:
+			yield
+		return self.result
+
+	def finish(self, result):
+		self.isDone = True
+		self.result = result
+
+
+
 """
 def readable(sock):
 	return len(select([sock], (), (), 0)[0]) > 0
