@@ -16,7 +16,7 @@ def pack_uint(val):
 	return struct.pack(">I", val)
 
 class Packet:
-	__slots__ = ("usrId", "msgId", "msgData")
+	__slots__ = ("reqId", "usrId", "msgId", "msgData")
 	@staticmethod
 	def cut(buffer, offset=0):
 		count = len(buffer) - offset
@@ -27,18 +27,24 @@ class Packet:
 
 	@classmethod
 	def decode(klass, buffer):
-		usrId = read_ushort(buffer, 2)
-		msgId = read_ushort(buffer, 4)
-		msgData = json.loads(buffer[6:].decode()) if len(buffer) > 6 else None
-		return klass(msgId, msgData, usrId)
+		reqId = read_ushort(buffer, 2)
+		usrId = read_ushort(buffer, 4)
+		msgId = read_ushort(buffer, 6)
+		msgData = json.loads(buffer[8:].decode()) if len(buffer) > 8 else None
+		packet = klass(msgId, msgData, usrId)
+		packet.reqId = reqId
+		return packet
 
 	def __init__(self, msgId, msgData, usrId=0):
 		self.usrId = usrId
 		self.msgId = msgId
 		self.msgData = msgData
+		self.reqId = 0
 
 	def __bytes__(self):
-		buffer = pack_ushort(self.usrId) + pack_ushort(self.msgId)
+		buffer  = pack_ushort(self.reqId)
+		buffer += pack_ushort(self.usrId)
+		buffer += pack_ushort(self.msgId)
 		if self.msgData:
 			buffer += json.dumps(self.msgData, separators=(',', ':')).encode()
 		return pack_ushort(len(buffer)+2) + buffer
