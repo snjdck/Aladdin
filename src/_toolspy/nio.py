@@ -124,7 +124,7 @@ class AsyncPacketSocket(PacketSocket):
 			return
 		future = self.__request__.get(packet.reqId)
 		if future:
-			future.finish(packet)
+			future.resolve(packet.msgData)
 			del self.__request__[packet.reqId]
 		else:
 			print(packet.reqId, "is not exist!")	
@@ -151,6 +151,6 @@ class RequestFuture:
 			yield
 		return self.result
 
-	def finish(self, result):
+	def resolve(self, result):
 		self.isDone = True
 		self.result = result
