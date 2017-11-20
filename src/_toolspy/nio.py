@@ -1,7 +1,7 @@
 from selectors import DefaultSelector, EVENT_READ, EVENT_WRITE
-from time import monotonic
+from time import monotonic as now
 
-__all__ = ("select", "ServerSocket", "PacketSocket", "AsyncPacketSocket")
+__all__ = ("select", "ServerSocket", "PacketSocket")
 
 selector = DefaultSelector()
 
@@ -78,7 +78,7 @@ class PacketSocket(ClientSocket):
 	def __init__(self, sock, Packet):
 		super().__init__(sock)
 		self.Packet = Packet
-		self.timestamp = monotonic()
+		self.timestamp = now()
 
 	def onRecv(self):
 		super().onRecv()
@@ -90,7 +90,7 @@ class PacketSocket(ClientSocket):
 			packetList.append(packet)
 			offset += len(packet)
 		if offset == 0: return
-		self.timestamp = monotonic()
+		self.timestamp = now()
 		self.bufferRecv = self.bufferRecv[offset:]
 		for packet in packetList:
 			self.onPacket(packet)
@@ -102,55 +102,3 @@ class PacketSocket(ClientSocket):
 		if isinstance(data, self.Packet):
 			data = bytes(data)
 		super().send(data)
-
-class AsyncPacketSocket(PacketSocket):
-	def __init__(self, sock, Packet):
-		super().__init__(sock, Packet)
-		self.__reqId__ = self.reqIdGen()
-		self.__request__ = {}
-
-	@staticmethod
-	def reqIdGen():
-		initValue = 1
-		reqId = initValue
-		while True:
-			yield reqId
-			reqId = reqId + 1 if reqId < 0xFFFF else initValue
-
-	def onPacket(self, packet):
-		packet = self.Packet.decode(packet)
-		if packet.reqId == 0:
-			self.onNotify(packet)
-			return
-		future = self.__request__.get(packet.reqId)
-		if future:
-			future.resolve(packet.msgData)
-			del self.__request__[packet.reqId]
-		else:
-			print(packet.reqId, "is not exist!")	
-
-	def onNotify(self, packet):
-		raise NotImplementedError
-
-	def request(self, packet):
-		reqId = next(self.__reqId__)
-		packet.reqId = reqId
-		self.send(packet)
-		future = RequestFuture()
-		self.__request__[reqId] = future
-		return future
-
-class RequestFuture:
-	__slots__ = ("isDone", "result")
-
-	def __init__(self):
-		self.isDone = False
-
-	def __await__(self):
-		while not self.isDone:
-			yield
-		return self.result
-
-	def resolve(self, result):
-		self.isDone = True
-		self.result = result

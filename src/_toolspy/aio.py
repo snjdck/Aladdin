@@ -1,142 +1,87 @@
-#from select import select
-from time import monotonic as time
+from time import monotonic as now
 from heapq import heappush, heappop
 import types
+from nio import PacketSocket
 
-__all__ = ("Fiber", "Sleep")
+__all__ = ("Fiber", "Sleep", "AsyncPacketSocket")
 
-"""
-response = await socket.request(packet)
-
-def request(self, packet):
-	self.send(packet)
-	future = RequestFuture()
-	self.requestDict[packet.id] = future
-	return future
-"""
-class RequestFuture:
-	__slots__ = ("isDone", "result")
-
-	def __init__(self):
-		self.isDone = False
+class Sleep:
+	def __init__(self, seconds):
+		self.timeout = now() + seconds
 
 	def __await__(self):
-		while not self.isDone:
+		while now() < self.timeout:
 			yield
-		return self.result
 
-	def finish(self, result):
+class AsyncPacketSocket(PacketSocket):
+	def __init__(self, sock, Packet):
+		super().__init__(sock, Packet)
+		self.__reqId__ = self.reqIdGen()
+		self.__request__ = {}
+
+	@staticmethod
+	def reqIdGen():
+		initValue = 1
+		reqId = initValue
+		while True:
+			yield reqId
+			reqId = reqId + 1 if reqId < 0xFFFF else initValue
+
+	def onPacket(self, packet):
+		packet = self.Packet.decode(packet)
+		if packet.reqId == 0:
+			self.onNotify(packet)
+			return
+		future = self.__request__.get(packet.reqId)
+		if future:
+			future.resolve(packet.msgData)
+			del self.__request__[packet.reqId]
+		else:
+			print(packet.reqId, "is not exist!")
+
+	def onNotify(self, packet):
+		raise NotImplementedError
+
+	def request(self, packet):
+		reqId = next(self.__reqId__)
+		packet.reqId = reqId
+		self.send(packet)
+		future = RequestFuture(2)
+		self.__request__[reqId] = future
+		return future
+
+class RequestFuture:
+	def __init__(self, timeout):
+		self.isDone = False
+		self.expireAt = now() + timeout
+
+	def __await__(self):
+		while True:
+			if self.isDone:
+				return self.result
+			if self.expireAt <= now():
+				raise TimeoutError
+			yield
+
+	def resolve(self, result):
 		self.isDone = True
 		self.result = result
 
 
-
-"""
-def readable(sock):
-	return len(select([sock], (), (), 0)[0]) > 0
-
-def writable(sock):
-	return len(select((), [sock], (), 0)[1]) > 0
-"""
-class Sleep:
-	__slots__ = ("timeout",)
-	def __init__(self, seconds):
-		self.timeout = time() + seconds
-
-	def __await__(self):
-		while time() < self.timeout:
-			yield
-"""
-class SocketHandler:
-	def __init__(self, sock):
-		self.sock = sock
-
-class AsyncSocket:
-	def __init__(self, sock):
-		self.sock = sock
-		sock.setblocking(False)
-		self._accept = Accept(sock)
-		self._recv = Recv(sock)
-		self._send = Send(sock)
-
-	async def accept(self):
-		return await self._accept
-
-	async def recv(self, count=0x10000):
-		self._recv.count = count
-		return await self._recv
-
-	async def send(self, data):
-		self._send.data = data
-		await self._send
-
-class Accept(SocketHandler):
-	__slots__ = ("sock",)
-	def __await__(self):
-		while not readable(self.sock):
-			yield
-		sock, addr = self.sock.accept()
-		return AsyncSocket(sock), addr
-
-class Recv(SocketHandler):
-	__slots__ = ("sock", "count")
-	def __await__(self):
-		while not readable(self.sock):
-			yield
-		return self.sock.recv(self.count)
-
-class Send(SocketHandler):
-	__slots__ = ("sock", "data")
-	def __await__(self):
-		while True:
-			while not writable(self.sock):
-				yield
-			count = self.sock.send(self.data)
-			if count < len(self.data):
-				self.data = self.data[count:]
-				yield
-				continue
-			return
-"""
 class Future:
 	def __init__(self, coroutine):
 		self.coroutine = coroutine
-		self._done = False
-		self._cancelled = False
-		self._result = None
-		self._exception = None
-
-	def cancel(self):
-		self._cancelled = True
-
-	def cancelled(self):
-		return self._cancelled
-
-	def done(self):
-		return self._done
-
-	def result(self):
-		return self._result
-
-	def exception(self):
-		return self._exception
-
-	def set_result(self, value):
-		self._done = True
-		self._result = value
-
-	def set_exception(self, value):
-		self._done = True
-		self._exception = value
+		self.isDone = False
 
 	def next(self):
 		try:
 			self.coroutine.send(None)
 		except StopIteration as error:
-			self.set_result(error.value)
+			self.isDone = True
+			self.result = error.value
 		except Exception as error:
-			print(error)
-			self.set_exception(error)
+			self.isDone = True
+			raise
 
 class Handle:
 	__slots__ = ("callback", "args", "cancelFlag", "when")
@@ -157,7 +102,7 @@ class Handle:
 		self.callback(*self.args)
 
 	def __bool__(self):
-		return self.when <= time()
+		return self.when <= now()
 
 	def __lt__(self, other):
 		return self.when < other.when
@@ -165,16 +110,10 @@ class Handle:
 class Fiber:
 	def __init__(self):
 		self.futureList = []
-		self.queue = []
 		self.timer = []
 
 	def time(self):
-		return time()
-
-	def call_soon(callback, *args):
-		handle = Handle(callback, args)
-		self.queue.append(handle)
-		return handle
+		return now()
 
 	def call_later(self, delay, callback, *args):
 		return self.call_at(self.time() + delay, callback, *args)
@@ -194,9 +133,7 @@ class Fiber:
 		if self.futureList:
 			future = self.futureList.pop(0)
 			future.next()
-			if not future.done():
+			if not future.isDone:
 				self.futureList.append(future)
-		while self.queue:
-			self.queue.pop(0)()
 		while self.timer and self.timer[0]:
 			heappop(self.timer)()
