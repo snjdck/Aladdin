@@ -42,11 +42,11 @@ class AsyncPacketSocket(PacketSocket):
 	def onNotify(self, packet):
 		raise NotImplementedError
 
-	def request(self, packet):
+	def request(self, packet, timeout=10):
 		reqId = next(self.__reqId__)
 		packet.reqId = reqId
 		self.send(packet)
-		future = RequestFuture(2)
+		future = RequestFuture(timeout)
 		self.__request__[reqId] = future
 		return future
 
