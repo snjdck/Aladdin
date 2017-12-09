@@ -38,14 +38,13 @@ def parse(fileData):
 
 	assert ba.position == len(fileData)
 	print(subMeshCount, boneCount, animationCount)
-	print(animationList)
 	vertexFormatList = [
 		VertexFormat("position", "f3", 0),
 		VertexFormat("normal", "f3", 12),
 		VertexFormat("uv", "f2", 24),
 		VertexFormat("boneIndex", "us1", 32)
 	]
-	create(vertexFormatList, subMeshList, boneList, animationList)
+	return create(vertexFormatList, subMeshList, boneList, animationList)
 	#print(bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY, bound.maxZ)
 
 def readSubMesh():
@@ -81,7 +80,7 @@ def readSubMesh():
 	subMesh.boneData = boneData
 	subMesh.indexData = indexData
 	subMesh.texture = textureName
-	print(boneData)
+	print(textureName, boneData)
 	return subMesh
 
 def readAnimation():
@@ -99,7 +98,17 @@ def readBone(animationList, boneId):
 def readVector3List(count):
 	return [ba.readVector3() for _ in range(count)]
 
+import os
+import os.path
 if __name__ == "__main__":
-	with open("Spear10.bmd", "rb") as f:
-		parse(f.read())
+	for file in os.listdir():
+		if os.path.isdir(file):
+			continue
+		if not file.endswith(".bmd"):
+			continue
+		with open(file, "rb") as f:
+			print("===")
+			data = parse(f.read())
+			with open(f"{file}.mesh", "wb") as f:
+				f.write(data)
 	input()

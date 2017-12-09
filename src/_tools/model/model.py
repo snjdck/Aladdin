@@ -132,8 +132,8 @@ def create(vertexFormatList, subMeshList, boneList=[], animationList=[]):
 	encodeList(subMeshList, ba, vertexFormatList)
 	encodeList(boneList, ba)
 	encodeList(animationList, ba)
-	with open("test.mesh", "wb") as f:
-		f.write(ba.rawData)
+	return ba.rawData
+
 """
 def addSubMesh(subMesh):
 	assert len(subMesh.vertexData) == subMesh.vertexCount * subMesh.data32PerVertex

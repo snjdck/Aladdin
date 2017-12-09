@@ -8,15 +8,27 @@ def partialmethod(func, *args, **kwargs):
 	return wrapper
 
 class ByteArrayW:
-	__slots__ = ("rawData", "endian")
-
 	def __init__(self, endian="<"):
-		self.rawData = bytes()
 		self.endian = endian
+		self.dirty = False
+		self.pieces = []
+		self.buffer = bytes()
+
+	@property
+	def rawData(self):
+		if self.dirty:
+			self.buffer += b"".join(self.pieces)
+			self.pieces.clear()
+			self.dirty = False
+		return self.buffer
+
+	def _add(self, value):
+		self.pieces.append(value)
+		self.dirty = True
 
 	def pack(self, fmt, value, endian=None):
 		fmt = (endian or self.endian) + fmt
-		self.rawData += struct.pack(fmt, value)
+		self._add(struct.pack(fmt, value))
 		return self
 
 	writeU8  = partialmethod(pack, "B")
@@ -34,7 +46,7 @@ class ByteArrayW:
 	def writeString(self, writer, value):
 		value = value.encode()
 		writer(self, len(value))
-		self.rawData += value
+		self._add(value)
 		return self
 
 	writeString1 = partialmethod(writeString, writeU8 )
