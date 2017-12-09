@@ -40,9 +40,10 @@ def parse(fileData):
 	print(subMeshCount, boneCount, animationCount)
 	print(animationList)
 	vertexFormatList = [
-		VertexFormat("position", "float3", 0),
-		VertexFormat("normal", "float3", 3),
-		VertexFormat("uv_bone", "float3", 6)
+		VertexFormat("position", "f3", 0),
+		VertexFormat("normal", "f3", 12),
+		VertexFormat("uv", "f2", 24),
+		VertexFormat("boneIndex", "us1", 32)
 	]
 	create(vertexFormatList, subMeshList, boneList, animationList)
 	#print(bound.minX, bound.minY, bound.minZ, bound.maxX, bound.maxY, bound.maxZ)
@@ -76,8 +77,6 @@ def readSubMesh():
 
 	textureName = ba.readFixString(32)
 	subMesh = SubMesh()
-	subMesh.vertexCount = triangleCount * 3
-	subMesh.data32PerVertex = 9
 	subMesh.vertexData = vertexData
 	subMesh.boneData = boneData
 	subMesh.indexData = indexData

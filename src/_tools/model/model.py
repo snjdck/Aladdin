@@ -1,11 +1,16 @@
+import re
+import math
 from ByteArray import *
+
+VertexFormatPattern = re.compile("(u?[bsi]|[fh])([1234])")
+MethodDict = {"f":"writeF32", "h":"writeF16", "b":"writeS8", "s":"writeS16", "i":"writeS32", "ub":"writeU8", "us":"writeU16", "ui":"writeU32"}
 
 __all__ = ("create", "VertexFormat", "SubMesh", "Bone", "Animation", "KeyFrame")
 
-def encodeList(targetList, output):
+def encodeList(targetList, output, *userData):
 	output.writeU16(len(targetList))
 	for target in targetList:
-		target.encode(output)
+		target.encode(output, *userData)
 
 class VertexFormat:
 	__slots__ = ("name", "format", "offset")
@@ -19,24 +24,59 @@ class VertexFormat:
 		output.writeString1(self.format)
 		output.writeU8(self.offset)
 
+	def writeVertex(self, vertexData, offset, output):
+		match = VertexFormatPattern.fullmatch(self.format)
+		count = int(match[2])
+		method = getattr(output, MethodDict[match[1]])
+		for i in range(count):
+			method(vertexData[offset+i]);
+
+	def valueCount(self):
+		match = VertexFormatPattern.fullmatch(self.format)
+		return int(match[2])
+
+	def typeSize(self):
+		match = VertexFormatPattern.fullmatch(self.format)
+		if re.search("[if]$", match[1]): return 4
+		if re.search("[sh]$", match[1]): return 2
+		if re.search("b$",    match[1]): return 1
+
+	def byteSize(self):
+		match = VertexFormatPattern.fullmatch(self.format)
+		count = int(match[2])
+		if re.search("[if]$", match[1]): return count << 2
+		if re.search("[sh]$", match[1]): return count << 1
+		if re.search("b$",    match[1]): return count
+
 class SubMesh:
-	__slots__ = ("vertexCount", "data32PerVertex", "texture", "vertexData", "indexData", "boneData")
+	__slots__ = ("texture", "vertexData", "indexData", "boneData")
 	def __init__(self):
 		self.boneData = []
 		self.texture = ""
 
-	def encode(self, output):
-		assert len(self.vertexData) == self.vertexCount * self.data32PerVertex
-		assert self.vertexCount <= 0xFFFF
-		assert self.data32PerVertex <= 64
+	def encode(self, output, vertexFormatList):
 		assert len(self.indexData) < 0xF0000
 		assert len(self.indexData) % 3 == 0
 
+		byteSizePerVertex = sum(vertexFormat.byteSize() for vertexFormat in vertexFormatList)
+		maxTypeSize = max(vertexFormat.typeSize() for vertexFormat in vertexFormatList)
+		byteSizePerVertex = math.ceil(byteSizePerVertex / maxTypeSize) * maxTypeSize
+		valueCountPerVertex = sum(vertexFormat.valueCount() for vertexFormat in vertexFormatList)
+		vertexCount = len(self.vertexData) // valueCountPerVertex
+
 		output.writeString1(self.texture)
-		output.writeU16(self.vertexCount)
-		output.writeU8(self.data32PerVertex)
-		for value in self.vertexData:
-			output.writeF32(value)
+		output.writeU16(vertexCount)
+		output.writeU8(byteSizePerVertex)
+		for i in range(vertexCount):
+			offset = i * valueCountPerVertex
+			byteSize = 0
+			for vertexFormat in vertexFormatList:
+				vertexFormat.writeVertex(self.vertexData, offset, output);
+				offset += vertexFormat.valueCount()
+				byteSize += vertexFormat.byteSize()
+			while byteSize < byteSizePerVertex:
+				output.writeU8(0)
+				byteSize += 1
 		output.writeU32(len(self.indexData))
 		for value in self.indexData:
 			output.writeU16(value)
@@ -89,7 +129,7 @@ class KeyFrame:
 def create(vertexFormatList, subMeshList, boneList=[], animationList=[]):
 	ba = ByteArrayW()
 	encodeList(vertexFormatList, ba)
-	encodeList(subMeshList, ba)
+	encodeList(subMeshList, ba, vertexFormatList)
 	encodeList(boneList, ba)
 	encodeList(animationList, ba)
 	with open("test.mesh", "wb") as f:
@@ -133,12 +173,3 @@ def addTrack(track):
 		for i in range(3):
 			writeFloat(keyFrame.rotation[i])
 """
-if __name__ == "__main__":
-	subMesh = SubMesh()
-	subMesh.vertexCount = 3
-	subMesh.data32PerVertex = 3
-	subMesh.vertexData = (-1, -1, 0, 0, 1, 0, 1, -1, 0)
-	subMesh.indexData = (0, 1, 2)
-	create([VertexFormat("position", "float3", 0)], [subMesh])
-
-	input()
