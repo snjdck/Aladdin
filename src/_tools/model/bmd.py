@@ -56,7 +56,7 @@ def readSubMesh():
 
 	vertexData = []
 	boneData = []
-	indexData = list(range(triangleCount * 3))
+	#indexData = list(range(triangleCount * 3))
 	
 	for _ in range(triangleCount):
 		ba.readU16()
@@ -78,7 +78,6 @@ def readSubMesh():
 	subMesh = SubMesh()
 	subMesh.vertexData = vertexData
 	subMesh.boneData = boneData
-	subMesh.indexData = indexData
 	subMesh.texture = textureName
 	print(textureName, boneData)
 	return subMesh
@@ -98,16 +97,18 @@ def readBone(animationList, boneId):
 def readVector3List(count):
 	return [ba.readVector3() for _ in range(count)]
 
+import sys
 import os
 import os.path
 if __name__ == "__main__":
-	for file in os.listdir():
+	dest = "mesh"
+	for file in os.listdir(dest):
+		file = f"{dest}/{file}"
 		if os.path.isdir(file):
 			continue
 		if not file.endswith(".bmd"):
 			continue
 		with open(file, "rb") as f:
-			print("===")
 			data = parse(f.read())
 			with open(f"{file}.mesh", "wb") as f:
 				f.write(data)

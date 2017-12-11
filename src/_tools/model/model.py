@@ -51,6 +51,7 @@ class VertexFormat:
 class SubMesh:
 	__slots__ = ("texture", "vertexData", "indexData", "boneData")
 	def __init__(self):
+		self.indexData = []
 		self.boneData = []
 		self.texture = ""
 
