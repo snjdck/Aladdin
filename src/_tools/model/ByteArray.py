@@ -91,6 +91,11 @@ class ByteArrayR:
 
 	def readFixString(self, length, charSet="gb2312", offset=None):
 		start = self.position if offset is None else offset
-		end = self.rawData.index(0, start, start + length)
+		end = self.rawData.find(0, start, start + length)
+		if end < 0:
+			end = start + length
 		if offset is None: self.position += length
-		return self.rawData[start:end].decode(charSet)
+		try:
+			return self.rawData[start:end].decode(charSet)
+		except:
+			return self.rawData[start:end]
