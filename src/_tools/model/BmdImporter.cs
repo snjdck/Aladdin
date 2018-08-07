@@ -10,12 +10,41 @@ public class BmdImporter {
 
 	[MenuItem("Model/Import")]
 	static void Load () {
-		var path = EditorUtility.OpenFilePanel("Load bmd file", Application.dataPath, "*");
-		var bytes = File.ReadAllBytes(path);
-		var go = new Parser(path).Parse(bytes);
+		_Load(EditorUtility.OpenFilePanel("Load bmd file", Application.dataPath, "*"));
+	}
 
-		go.SavePrefab();
-		GameObject.DestroyImmediate(go);
+	[MenuItem("Model/Import All")]
+	static void LoadAll () {
+		_LoadAll(EditorUtility.OpenFolderPanel("Load all models", "", ""));
+	}
+
+	static void _Load(string path){
+		_Load(path, Path.GetDirectoryName(path));
+	}
+
+	static void _Load(string path, string basePath){
+		var bytes = File.ReadAllBytes(path);
+		var parser = new Parser(path, basePath);
+		parser.Parse(bytes);
+
+		parser.SavePrefab();
+		GameObject.DestroyImmediate(parser.go);
+	}
+
+	static void _LoadAll (string path) {
+		_LoadAll(path, path);
+	}
+
+	static void _LoadAll (string path, string basePath) {
+		foreach (string file in Directory.EnumerateFiles(path)){
+			if(file.EndsWith(".bmd")){
+				_Load(file, basePath);
+			}
+		}
+
+		foreach (string file in Directory.EnumerateDirectories(path)){
+			_LoadAll(file, basePath);
+		}
 	}
 }
 
@@ -32,30 +61,31 @@ static class GameObjectExt
 		AssetDatabase.CreateFolder(dir, Path.GetFileName(path));
 	}
 
-	static public void SavePrefab(this GameObject go)
+	static public void SavePrefab(this Parser go)
 	{
-		string path = string.Format("Assets/Prefabs/{0}/{0}.prefab", go.name);
+		string path = string.Format("Assets/MU_Prefabs{1}/{0}.prefab", go.name, go.prefix);
 		CheckFolder(path);
-		PrefabUtility.CreatePrefab(path, go);
+		PrefabUtility.CreatePrefab(path, go.go);
 	}
 
-	static public void SaveMesh(this GameObject go, Mesh mesh)
+	static public void SaveMesh(this Parser go, Mesh mesh)
 	{
-		string path = string.Format("Assets/Prefabs/{0}/Mesh.asset", go.name);
+		if(mesh == null) return;
+		string path = string.Format("Assets/MU_Prefabs{1}/{0}/Mesh.asset", go.name, go.prefix);
 		CheckFolder(path);
 		AssetDatabase.CreateAsset(mesh, path);
 	}
 
-	static public void SaveMaterial(this GameObject go, Material material)
+	static public void SaveMaterial(this Parser go, Material material)
 	{
-		string path = string.Format("Assets/Prefabs/{0}/Material/{1}.mat", go.name, material.name);
+		string path = string.Format("Assets/MU_Prefabs{2}/{0}/Material/{1}.mat", go.name, material.name, go.prefix);
 		CheckFolder(path);
 		AssetDatabase.CreateAsset(material, path);
 	}
 
-	static public void SaveAnimationClip(this GameObject go, AnimationClip clip)
+	static public void SaveAnimationClip(this Parser go, AnimationClip clip)
 	{
-		string path = string.Format("Assets/Prefabs/{0}/AnimationClip/{1}.anim", go.name, clip.name);
+		string path = string.Format("Assets/MU_Prefabs{2}/{0}/AnimationClip/{1}.anim", go.name, clip.name, go.prefix);
 		CheckFolder(path);
 		AssetDatabase.CreateAsset(clip, path);
 	}
@@ -66,7 +96,13 @@ static class ByteExt
 {
 	static public string GetString(this byte[] buffer, ref int offset)
 	{
-		var value = System.Text.Encoding.UTF8.GetString(buffer, offset, 32);
+		var count = 0;
+		while(buffer[offset+count] != 0)
+		{
+			++count;
+			if(count >= 32) break;
+		}
+		var value = System.Text.Encoding.ASCII.GetString(buffer, offset, count);
 		offset += 32;
 		return value;
 	}
@@ -138,22 +174,25 @@ static class ByteExt
 
 public class Parser
 {
-	private GameObject go;
-	private string path;
+	public GameObject go;
+	public string name;
+	public string prefix;
+
 	private bool isStaticMesh;
 	private float timeScale = 0.5f;
 
-	public Parser(string path)
+	public Parser(string path, string basePath)
 	{
-		this.path = path;
-		string name = Path.GetFileNameWithoutExtension(path);
+		var fullname = path.Substring(basePath.Length);
+		name = Path.GetFileNameWithoutExtension(fullname);
+		prefix = Path.GetDirectoryName(fullname).Replace('\\', '/');
 		go = new GameObject(name);
 	}
 
-	public GameObject Parse(byte[] buffer)
+	public void Parse(byte[] buffer)
 	{
 		int offset = buffer.Decode();
-		Debug.Log(buffer.GetString(ref offset));
+		buffer.GetString(ref offset);
 		var subMeshCount = buffer.ToUInt16(ref offset);
 		var boneCount = buffer.ToUInt16(ref offset);
 		var animationCount = buffer.ToUInt16(ref offset);
@@ -172,6 +211,7 @@ public class Parser
 		Assert.AreEqual(buffer.Length, offset);
 
 		if(isStaticMesh){
+			if(mesh == null) return;
 			go.AddComponent<MeshRenderer>();
 			go.AddComponent<MeshFilter>();
 
@@ -186,7 +226,7 @@ public class Parser
 			mesh.CombineMeshes(combine, false, true, false);
 			go.GetComponent<MeshFilter>().sharedMesh = mesh;
 			go.GetComponent<MeshRenderer>().materials = materials;
-			go.SaveMesh(mesh);
+			this.SaveMesh(mesh);
 			foreach(var bone in bones){
 				if(bone == null)continue;
 				GameObject.DestroyImmediate(bone.gameObject);
@@ -202,17 +242,16 @@ public class Parser
 			renderer.bones = bones;
 			renderer.materials = materials;
 
-			go.SaveMesh(mesh);
+			this.SaveMesh(mesh);
 
 			for(var j = 0; j < animationCount; ++j){
 				clipList[j].EnsureQuaternionContinuity();
-				go.SaveAnimationClip(clipList[j]);
+				this.SaveAnimationClip(clipList[j]);
 			}
 			
 			AnimationUtility.SetAnimationClips(animation, clipList);
 			animation.clip = clipList[0];
 		}
-		return go;
 	}
 	//*
 	private BoneWeight CreateBoneWeight(int boneIndex)
@@ -316,14 +355,12 @@ public class Parser
 			}
 
 			var texName = buffer.GetString(ref offset);
-			var tex = Resources.Load<Texture2D>(texName.Split('.')[0]);
-			//Debug.LogFormat("{0} {1}", texName, tex);
-			LoadTexture(texName);
+			texName = string.Format("Assets/MU_Textures{0}/{1}", prefix, texName);
 			Material material = new Material(Shader.Find("Legacy Shaders/Diffuse"));
 			material.name = i.ToString();
-			material.mainTexture = tex;
+			material.mainTexture = AssetDatabase.LoadAssetAtPath<Texture2D>(texName);
 			materials[i] = material;
-			go.SaveMaterial(material);
+			this.SaveMaterial(material);
 		}
 
 		mesh.vertices = vertexList.ToArray();
@@ -460,15 +497,6 @@ public class Parser
 		var w = cosX * cosY * cosZ + sinX * sinY * sinZ;
 
 		return new Quaternion(x, y, z, w);
-	}
-	
-	void LoadTexture(string name)
-	{
-		var dir = Path.GetDirectoryName(path);
-		var texPath = string.Format("{0}/{1}", dir, name);
-		Debug.Log(texPath);
-		//File.Exists()
-		//AssetDatabase.ImportAsset()
 	}
 }
 
