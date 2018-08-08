@@ -18,38 +18,47 @@ def decode(fileData):
 		return bytes(memory), 8
 	return (None, -1)
 
-def parse(fileData):
+def parse(fileData, fileName):
 	global ba
 	fileData, offset = decode(fileData)
-	if offset < 0: return
+	if offset < 0: return None, False
 	ba = ByteArrayR(fileData)
-	ba.position = offset
-	ba.readFixString(32)
+	ba.position = offset + 32
 	subMeshCount, boneCount, animationCount = [ba.readU16() for _ in range(3)]
-	subMeshList = [readSubMesh() for _ in range(subMeshCount)]
+	isAllSameBone = []
+	subMeshList = [readSubMesh(isAllSameBone) for _ in range(subMeshCount)]
 	animationList = [readAnimation() for _ in range(animationCount)]
 	boneInfolist = [readBone(animationList, i) for i in range(boneCount)]
+	boneCount = len([True for bone in boneInfolist if bone])
+
+	isStaticMesh = (subMeshCount >= boneCount and animationCount == 1 and animationList[0] == 1 and all(isAllSameBone))
+	#if isStaticMesh:
+	#	print(os.path.relpath(fileName, file_folder), subMeshCount, boneCount)
 
 	assert ba.position == len(fileData)
-	return subMeshList
-	print(subMeshCount, boneCount, animationCount)
+	return subMeshList, isStaticMesh
 
-def readSubMesh():
+def readSubMesh(sameBoneInfoList):
 	vetrexCount, normalCount, uvCount, triangleCount, subMeshIndex = [ba.readU16() for _ in range(5)]
 
 	vertexList = [[[ba.readU16(), ba.readU16()][0], ba.readVector3()] for _ in range(vetrexCount)]
-	normalList = [[ba.readU32(), ba.readVector3(), ba.readU32()][1] for _ in range(normalCount)]
-	uvList = [ba.readVector2() for _ in range(uvCount)]
+	ba.position += normalCount * 20
+	ba.position += uvCount * 8
 	
+	prevBoneID = None
+	isAllSameBone = True
 	for _ in range(triangleCount):
-		ba.readU16()
+		ba.position += 2
 		vertexIndex = [ba.readU16() for _ in range(3)]
-		ba.readU16()
-		normalIndex = [ba.readU16() for _ in range(3)]
-		ba.readU16()
-		uvIndex = [ba.readU16() for _ in range(3)]
-		ba.position += 40
+		ba.position += 16 + 40
 
+		for index in vertexIndex:
+			boneID = vertexList[index][0]
+			if prevBoneID is None:
+				prevBoneID = boneID
+			elif prevBoneID != boneID:
+				isAllSameBone = False
+	sameBoneInfoList.append(isAllSameBone)
 	return ba.readFixString(32)
 
 def readAnimation():
@@ -60,11 +69,8 @@ def readAnimation():
 
 def readBone(animationList, boneID):
 	if ba.readU8(): return
-	boneName = ba.readFixString(32)
-	boneParentID = ba.readS16()
-	for keyFrameCount in animationList:
-		readVector3List(keyFrameCount)
-		readVector3List(keyFrameCount)
+	ba.position += 34 + sum(animationList) * 24;
+	return True
 
 def readVector3List(count):
 	return [ba.readVector3() for _ in range(count)]
@@ -139,12 +145,20 @@ def main():
 			if entry.is_dir(): continue
 			if not entry.name.lower().endswith(".bmd"): continue
 			with open(entry.path, "rb") as f:
-				texList = parse(f.read())
+				texList, isStaticMesh = parse(f.read(), entry.path)
 			if texList is None: continue
 			if not os.path.exists(f"{dest_folder}/{folder}"):
 				os.mkdir(f"{dest_folder}/{folder}")
 			if not os.path.exists(f"{dest_folder}/{folder}/{entry.name}"):
-				shutil.copy(entry.path, f"{dest_folder}/{folder}")
+				if isStaticMesh:
+					with open(entry.path, "rb") as f:
+						data = bytearray(f.read())
+					with open(f"{dest_folder}/{folder}/{entry.name}", "wb") as f:
+						data[2] = ord('S')
+						f.write(data)
+						print(entry.path)
+				else:
+					shutil.copy(entry.path, f"{dest_folder}/{folder}")
 			continue
 			for tex in texList:
 				name, ext = os.path.splitext(tex)
@@ -163,5 +177,5 @@ def main():
 				
 
 if __name__ == "__main__":
-	prepareDir(file_folder)
+	#prepareDir(file_folder)
 	main()
